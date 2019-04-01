@@ -3,9 +3,9 @@ library requests_core;
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
-part 'SKUser.dart';
-part 'StudentClass.dart';
-part 'Assignment.dart';
+part 'user.dart';
+part 'student_class.dart';
+part 'assignment.dart';
 
 class RequestResponse {
   int status;

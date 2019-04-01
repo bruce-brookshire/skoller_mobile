@@ -1,14 +1,43 @@
 import 'package:flutter/material.dart';
 import 'requests/requests_core.dart';
-import 'sign_in.dart';
+import 'auth/auth_home.dart';
+import 'constants/constants.dart';
 
 void main() => runApp(MyApp());
 
 class MyApp extends StatelessWidget {
   @override
-  Widget build(BuildContext context) => MaterialApp(
-        home: SignIn(),
-      );
+  Widget build(BuildContext context) {
+    bool isDarkTheme = true;
+
+    ThemeData lightTheme = ThemeData(
+      primaryColor: SKColors.skoller_blue,
+      accentColor: SKColors.skoller_blue,
+      backgroundColor: SKColors.background_gray,
+      textTheme: TextTheme(
+        body1: TextStyle(color: SKColors.dark_gray, fontSize: 15, fontWeight: FontWeight.bold),
+        body2: TextStyle(color: SKColors.skoller_blue, fontSize: 15, fontWeight: FontWeight.bold),
+        button: TextStyle(color: Colors.white),
+      ),
+    );
+
+    ThemeData darkTheme = ThemeData(
+      primaryColor: SKColors.skoller_blue,
+      accentColor: SKColors.skoller_blue,
+      backgroundColor: SKColors.dark_gray,
+      textTheme: TextTheme(
+        body1: TextStyle(color: Colors.white, fontSize: 15, fontWeight: FontWeight.bold),
+        body2: TextStyle(color: SKColors.skoller_blue, fontSize: 15, fontWeight: FontWeight.bold),
+        button: TextStyle(color: Colors.white),
+      ),
+    );
+    
+
+    return MaterialApp(
+      theme: isDarkTheme ? darkTheme : lightTheme,
+      home: AuthHome(),
+    );
+  }
 }
 
 class MyHomePage extends StatefulWidget {

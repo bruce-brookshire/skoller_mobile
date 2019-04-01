@@ -2,6 +2,8 @@ library constants;
 
 import 'package:flutter/material.dart';
 
+part 'skoller_widgets.dart';
+
 class SKColors {
   static Color dark_gray = Color(0xFF4A4A4A);
   static Color skoller_blue = Color(0xFF57B9E4);
@@ -14,7 +16,6 @@ class SKColors {
 //     INACTIVEGRAY: '#EEEEEE',
 //     HOMEGREY: '#F8F8F8',
 //     WARNINGRED: '#FF4159',
-//     BACKGROUNDGREY: '#',
 //     TEXTLIGHTGRAY: '#C7C7CD'
 
 class UIAssets {
@@ -28,4 +29,5 @@ class ImageNames {
 
 class _SignUpImages {
   String happy_classmates = 'image_assets/sign_up_assets/happy_classmates.png';
+  String logo_wide_blue   = 'image_assets/sign_up_assets/logo_wide_blue.png';
 }
