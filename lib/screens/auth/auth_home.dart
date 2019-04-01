@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../constants/constants.dart';
+import '../../constants/constants.dart';
 import 'sign_in.dart';
 import 'sign_up.dart';
 
@@ -21,7 +21,6 @@ class AuthHome extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Scaffold(
         body: Container(
-          decoration: BoxDecoration(color: Theme.of(context).backgroundColor),
           child: SafeArea(
             child: Center(
               child: Column(

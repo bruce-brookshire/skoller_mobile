@@ -1,20 +1,35 @@
 import 'package:flutter/material.dart';
-import '../requests/requests_core.dart';
-import '../constants/constants.dart';
+import '../../requests/requests_core.dart';
+import '../../constants/constants.dart';
+import '../main_app/tab_bar.dart';
 
-class SignUp extends StatefulWidget {
-  SignUp({Key key}) : super(key: key);
+class SignIn extends StatefulWidget {
+  SignIn({Key key}) : super(key: key);
 
   @override
-  _SignUpState createState() => _SignUpState();
+  _SignInState createState() => _SignInState();
 }
 
-class _SignUpState extends State<SignUp> {
+class _SignInState extends State<SignIn> {
+  tappedLogIn(BuildContext context) {
+    Auth.logIn('bruce@skoller.co', 'password1').then((success) {
+      if (success) {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => MyHomePage()),
+        );
+      } else {
+        print('FAILURE');
+      }
+    }).catchError((onError) {
+      print(onError);
+    });
+  }
+
   @override
   Widget build(BuildContext context) => Scaffold(
         resizeToAvoidBottomInset: true,
         body: Container(
-          decoration: BoxDecoration(color: SKColors.background_gray),
           child: SafeArea(
             child: Container(
               child: Center(
@@ -65,24 +80,10 @@ class _SignUpState extends State<SignUp> {
                         ),
                       ),
                     ),
-                    Container(
-                      child: RaisedButton(
-                        color: Colors.white,
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(5)),
-                        child: Container(
-                          padding: EdgeInsets.symmetric(
-                              horizontal: 48, vertical: 10),
-                          child: Text(
-                            'Login',
-                            style: TextStyle(
-                                fontSize: 15,
-                                fontWeight: FontWeight.bold,
-                                color: SKColors.skoller_blue),
-                          ),
-                        ),
-                        onPressed: () {},
-                      ),
+                    SKButton(
+                      buttonText: 'Log in',
+                      width: 180,
+                      callback: tappedLogIn,
                     ),
                     Expanded(
                       flex: 1,
@@ -91,7 +92,7 @@ class _SignUpState extends State<SignUp> {
                     Container(
                       decoration: BoxDecoration(color: Colors.white),
                       padding:
-                          EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                          EdgeInsets.symmetric(horizontal: 16, vertical: 16),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: <Widget>[
@@ -100,7 +101,7 @@ class _SignUpState extends State<SignUp> {
                             style: TextStyle(color: SKColors.dark_gray),
                           ),
                           Text(
-                            ' Log In',
+                            ' Sign Up',
                             style: TextStyle(
                                 color: SKColors.skoller_blue,
                                 fontWeight: FontWeight.bold),

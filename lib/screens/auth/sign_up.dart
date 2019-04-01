@@ -1,20 +1,19 @@
 import 'package:flutter/material.dart';
-import '../requests/requests_core.dart';
-import '../constants/constants.dart';
+import '../../requests/requests_core.dart';
+import '../../constants/constants.dart';
 
-class SignIn extends StatefulWidget {
-  SignIn({Key key}) : super(key: key);
+class SignUp extends StatefulWidget {
+  SignUp({Key key}) : super(key: key);
 
   @override
-  _SignInState createState() => _SignInState();
+  _SignUpState createState() => _SignUpState();
 }
 
-class _SignInState extends State<SignIn> {
+class _SignUpState extends State<SignUp> {
   @override
   Widget build(BuildContext context) => Scaffold(
         resizeToAvoidBottomInset: true,
         body: Container(
-          decoration: BoxDecoration(color: Theme.of(context).backgroundColor),
           child: SafeArea(
             child: Container(
               child: Center(
@@ -91,16 +90,16 @@ class _SignInState extends State<SignIn> {
                     Container(
                       decoration: BoxDecoration(color: Colors.white),
                       padding:
-                          EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                          EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: <Widget>[
                           Text(
-                            'Don\'t have an account yet?',
+                            'Already have an account?',
                             style: TextStyle(color: SKColors.dark_gray),
                           ),
                           Text(
-                            ' Sign Up',
+                            ' Log In',
                             style: TextStyle(
                                 color: SKColors.skoller_blue,
                                 fontWeight: FontWeight.bold),

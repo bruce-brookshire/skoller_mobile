@@ -28,7 +28,6 @@ class StudentClass {
       '/students/${SKUser.current.student.id}/classes',
       listConstruct: _fromJsonArr,
     ).then((response) {
-      print(response);
       return response.obj;
     });
   }
