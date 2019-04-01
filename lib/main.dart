@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'requests/requests_core.dart';
 import 'screens/auth/auth_home.dart';
 import 'constants/constants.dart';
+import 'screens/main_app/tab_bar.dart';
 
 void main() => runApp(MyApp());
 
@@ -50,7 +51,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       builder: (context, widget) => Theme(data: currentTheme, child: widget),
       theme: currentTheme,
-      home: AuthHome(),
+      home: MyHomePage(),
     );
   }
 }

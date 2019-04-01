@@ -19,7 +19,7 @@ class SKColors {
 //     TEXTLIGHTGRAY: '#C7C7CD'
 
 class UIAssets {
-  static BoxShadow boxShadow = BoxShadow(color: Colors.black);
+  static BoxShadow boxShadow = BoxShadow(color: Color(0xFFFFFFFF), offset: Offset(0, 2), blurRadius: 120,);
 }
 
 /// Image paths within the image_assets/ folder

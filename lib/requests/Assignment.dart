@@ -16,4 +16,8 @@ class Assignment {
   static List<Assignment> _fromJsonArr(List content) {
     return JsonListMaker.convert(_fromJsonObj, content);
   }
+
+  // static Future<List<Assignment>> getTasks() {
+  //   return SKRequests.get('/')
+  // }
 }

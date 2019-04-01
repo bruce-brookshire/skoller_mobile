@@ -4,6 +4,7 @@ class StudentClass {
   int id;
   String name;
   List<Assignment> assignments;
+  static Map<int, StudentClass> currentClasses = {};
 
   StudentClass(
     this.id,
@@ -28,7 +29,13 @@ class StudentClass {
       '/students/${SKUser.current.student.id}/classes',
       listConstruct: _fromJsonArr,
     ).then((response) {
-      return response.obj;
+      List<StudentClass> classes = response.obj;
+      if (classes != null) {
+        for (var student_class in classes) {
+          currentClasses[student_class.id] = student_class;
+        }
+      }
+      return classes;
     });
   }
 }
