@@ -20,6 +20,7 @@ dependencies:
   shared_preferences: ^0.5.1+2
   flutter_keychain: ^1.0.0
   http: ^0.12.0+1
+  intl: ^0.15.8
   flutter:
     sdk: flutter
 
@@ -47,6 +48,8 @@ flutter:
   assets:
    - image_assets/tab_bar_assets/
    - image_assets/sign_up_assets/
+   - image_assets/navigation_arrow_assets/
+   - image_assets/right_button_assets/
   #  - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see

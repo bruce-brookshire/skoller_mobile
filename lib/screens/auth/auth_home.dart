@@ -2,8 +2,11 @@ import 'package:flutter/material.dart';
 import '../../constants/constants.dart';
 import 'sign_in.dart';
 import 'sign_up.dart';
+import '../../requests/requests_core.dart';
+import '../main_app/tab_bar.dart';
 
 class AuthHome extends StatelessWidget {
+
   tappedLogIn(BuildContext context) {
     Navigator.push(
       context,
@@ -12,10 +15,18 @@ class AuthHome extends StatelessWidget {
   }
 
   tappedSignUp(BuildContext context) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => SignUp()),
-    );
+    // Navigator.push(
+    //   context,
+    //   MaterialPageRoute(builder: (context) => SignUp()),
+    // );
+    Auth.logIn('bruce@skoller.co', 'password1').then((onValue) {
+      if (onValue) {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => MyHomePage()),
+        );
+      }
+    });
   }
 
   @override

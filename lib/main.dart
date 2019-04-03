@@ -51,7 +51,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       builder: (context, widget) => Theme(data: currentTheme, child: widget),
       theme: currentTheme,
-      home: MyHomePage(),
+      home: AuthHome(),
     );
   }
 }

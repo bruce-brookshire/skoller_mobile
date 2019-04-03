@@ -72,3 +72,62 @@ class SKButton extends StatelessWidget {
         ),
       );
 }
+
+class SKNavBar extends StatelessWidget {
+  final String _title;
+  final bool _isBack;
+  final bool _isDown;
+  final String _rightBtnImage;
+
+  SKNavBar(String title,
+      {Key key, bool backBtnEnabled, bool downBtnEnabled, String rightBtnImage})
+      : _title = title,
+        _isBack = backBtnEnabled ?? false,
+        _isDown = downBtnEnabled ?? false,
+        _rightBtnImage = rightBtnImage,
+        super(key: key) {
+    assert(_isBack != _isDown || !_isBack);
+  }
+
+  Widget build(BuildContext context) => Container(
+        height: 44,
+        decoration: BoxDecoration(boxShadow: [
+          BoxShadow(
+            color: Color(0x1C000000),
+            offset: Offset(0, 3.5),
+            blurRadius: 3.5,
+          )
+        ], color: Colors.white),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: <Widget>[
+            Container(
+              padding: EdgeInsets.only(left: 4),
+              child: (_isBack || _isDown)
+                  ? Center(
+                      child: Text('b'),
+                    )
+                  : null,
+              width: 44,
+              height: 44,
+            ),
+            Text(
+              _title,
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+            Container(
+              padding: EdgeInsets.only(right: 4),
+              child: (_rightBtnImage == null)
+                  ? null
+                  : Center(
+                      child: Image(
+                        image: AssetImage(_rightBtnImage),
+                      ),
+                    ),
+              width: 44,
+              height: 44,
+            ),
+          ],
+        ),
+      );
+}

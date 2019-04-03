@@ -2,6 +2,7 @@ library requests_core;
 
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'package:flutter/material.dart';
 
 part 'user.dart';
 part 'student_class.dart';
@@ -44,7 +45,7 @@ typedef T _ListConstructor<T>(Map content);
 
 class JsonListMaker {
   static List<T> convert<T>(_ListConstructor<T> maker, List content) {
-    return content.map((obj) => maker(obj)).toList(); 
+    return content.map((obj) => maker(obj)).toList();
   }
 }
 
@@ -62,9 +63,9 @@ class SKRequests {
     String url, {
     _DecodableConstructor jsonConstruct,
     _ListDecodableConstructor listConstruct,
-  }) {
+  }) async {
     // Construct and start request
-    Future<http.Response> request = http.get(
+    http.Response request = await http.get(
       _baseUrl + url,
       headers: _headers,
     );
@@ -78,9 +79,9 @@ class SKRequests {
     Map body, {
     _DecodableConstructor jsonConstruct,
     _ListDecodableConstructor listConstruct,
-  }) {
+  }) async {
     // Construct and start request
-    Future<http.Response> request = http.post(
+    http.Response request = await http.post(
       _baseUrl + url,
       body: json.encode(body),
       headers: _headers,
@@ -95,9 +96,9 @@ class SKRequests {
     Map body, {
     _DecodableConstructor jsonConstruct,
     _ListDecodableConstructor listConstruct,
-  }) {
+  }) async {
     // Construct and start request
-    Future<http.Response> request = http.put(
+    http.Response request = await http.put(
       _baseUrl + url,
       body: json.encode(body),
       headers: _headers,
@@ -107,25 +108,19 @@ class SKRequests {
     return futureProcessor(request, jsonConstruct, listConstruct);
   }
 
-  static Future<RequestResponse> futureProcessor(
-    Future<http.Response> request,
+  static RequestResponse futureProcessor(
+    http.Response request,
     _DecodableConstructor jsonConstruct,
     _ListDecodableConstructor listConstruct,
   ) {
-    return request.then(
-      (response) {
-        int statusCode = response.statusCode;
-        var content = statusCode == 200 ? json.decode(response.body) : null;
-        return RequestResponse(
-          statusCode,
-          content,
-          jsonConstruct: jsonConstruct,
-          listConstruct: listConstruct,
-        );
-      },
-    ).catchError((onError) {
-      return RequestResponse._fromError(onError.message);
-    });
+    int statusCode = request.statusCode;
+    var content = statusCode == 200 ? json.decode(request.body) : null;
+    return RequestResponse(
+      statusCode,
+      content,
+      jsonConstruct: jsonConstruct,
+      listConstruct: listConstruct,
+    );
   }
 }
 

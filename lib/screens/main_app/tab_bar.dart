@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../requests/requests_core.dart';
+// import '../../requests/requests_core.dart';
 import '../../constants/constants.dart';
 import 'tasks_view.dart';
 
@@ -33,6 +33,7 @@ class _MyHomePageState extends State<MyHomePage> {
         child: _widgetOptions.elementAt(_selectedIndex),
       ),
       bottomNavigationBar: BottomNavigationBar(
+        backgroundColor: Colors.white,
         items: <BottomNavigationBarItem>[
           BottomNavigationBarItem(
             icon: _selectedIndex == 0

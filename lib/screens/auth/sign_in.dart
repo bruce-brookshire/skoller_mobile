@@ -14,12 +14,16 @@ class _SignInState extends State<SignIn> {
   tappedLogIn(BuildContext context) {
     Auth.logIn('bruce@skoller.co', 'password1').then((success) {
       if (success) {
+        return StudentClass.getStudentClasses();
+      } else {
+        print('FAILURE');
+      }
+    }).then((response) {
+      if (response.wasSuccessful()) {
         Navigator.push(
           context,
           MaterialPageRoute(builder: (context) => MyHomePage()),
         );
-      } else {
-        print('FAILURE');
       }
     }).catchError((onError) {
       print(onError);
