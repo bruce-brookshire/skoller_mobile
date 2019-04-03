@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 import '../../constants/constants.dart';
 import '../../requests/requests_core.dart';
+import 'classes/assignment_info.dart';
 
 class TasksView extends StatefulWidget {
-  State createState() {
-    return _TasksViewState();
-  }
+  State createState() => _TasksViewState();
 }
 
 class _TasksViewState extends State<TasksView> {
@@ -39,7 +38,10 @@ class _TasksViewState extends State<TasksView> {
           child: Center(
             child: Column(
               children: <Widget>[
-                SKNavBar('Tasks', rightBtnImage: ImageNames.rightNavImages.plus,),
+                SKNavBar(
+                  'Tasks',
+                  rightBtnImage: ImageNames.rightNavImages.plus,
+                ),
                 Expanded(
                   child: ListView.builder(
                     padding: EdgeInsets.only(top: 4),
@@ -73,6 +75,11 @@ class _TasksViewState extends State<TasksView> {
       onTapUp: (details) {
         setState(() {
           print('finished');
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => AssignmentInfo(task: this._tasks[index])),
+          );
           _tappedIndex = null;
         });
       },

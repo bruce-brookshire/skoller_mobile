@@ -101,15 +101,26 @@ class SKNavBar extends StatelessWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
-            Container(
-              padding: EdgeInsets.only(left: 4),
-              child: (_isBack || _isDown)
-                  ? Center(
-                      child: Text('b'),
-                    )
-                  : null,
-              width: 44,
-              height: 44,
+            GestureDetector(
+              onTapUp: (details) {
+                print('popping');
+                if (_isBack) Navigator.pop(context);
+                // if (_isDown) Navigator.
+              },
+              child: Container(
+                padding: EdgeInsets.only(left: 4),
+                child: (_isBack || _isDown)
+                    ? Center(
+                        child: _isBack
+                            ? Image(
+                                image:
+                                    AssetImage(ImageNames.navArrowImages.left),
+                              )
+                            : null)
+                    : null,
+                width: 44,
+                height: 44,
+              ),
             ),
             Text(
               _title,

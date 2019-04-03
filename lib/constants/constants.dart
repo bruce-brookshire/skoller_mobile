@@ -41,7 +41,8 @@ class _SignUpImages {
 }
 
 class _NavigationArrowImages {
-
+  String left = 'image_assets/navigation_arrow_assets/back.png';
+  String right = 'image_assets/navigation_arrow_assets/right.png';
 }
 
 class _RightNavImages{
