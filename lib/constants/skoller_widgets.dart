@@ -75,16 +75,22 @@ class SKButton extends StatelessWidget {
 
 class SKNavBar extends StatelessWidget {
   final String _title;
+  final Color _titleColor;
   final bool _isBack;
   final bool _isDown;
   final String _rightBtnImage;
 
   SKNavBar(String title,
-      {Key key, bool backBtnEnabled, bool downBtnEnabled, String rightBtnImage})
+      {Key key,
+      bool backBtnEnabled,
+      bool downBtnEnabled,
+      String rightBtnImage,
+      Color titleColor})
       : _title = title,
         _isBack = backBtnEnabled ?? false,
         _isDown = downBtnEnabled ?? false,
         _rightBtnImage = rightBtnImage,
+        _titleColor = titleColor ?? SKColors.dark_gray,
         super(key: key) {
     assert(_isBack != _isDown || !_isBack);
   }
@@ -103,7 +109,6 @@ class SKNavBar extends StatelessWidget {
           children: <Widget>[
             GestureDetector(
               onTapUp: (details) {
-                print('popping');
                 if (_isBack) Navigator.pop(context);
                 // if (_isDown) Navigator.
               },
@@ -124,7 +129,7 @@ class SKNavBar extends StatelessWidget {
             ),
             Text(
               _title,
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: _titleColor),
             ),
             Container(
               padding: EdgeInsets.only(right: 4),

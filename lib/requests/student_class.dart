@@ -4,8 +4,11 @@ class StudentClass {
   int id;
   String name;
   List<Assignment> assignments;
-  String color;
+  String _color;
   static Map<int, StudentClass> currentClasses = {};
+  double grade;
+  double completion;
+  int enrollment;
 
   static final List<Color> colors = [
     Color(0xFFdd4a63), //Red
@@ -26,12 +29,15 @@ class StudentClass {
     this.id,
     this.name,
     this.assignments,
-    this.color,
+    this._color,
+    this.grade,
+    this.completion,
+    this.enrollment,
   );
 
   Color getColor() {
-    if (color != null) {
-      String substr = 'ff' + color.substring(0, color.length - 2);
+    if (_color != null) {
+      String substr = 'ff' + _color.substring(0, _color.length - 2);
       return Color(int.parse(substr, radix: 16));
     } else {
       return colors[1];
@@ -48,6 +54,9 @@ class StudentClass {
       content['name'],
       Assignment._fromJsonArr(content['assignments']),
       content['color'],
+      content['grade'],
+      content['completion'],
+      content['enrollment'],
     );
   }
 

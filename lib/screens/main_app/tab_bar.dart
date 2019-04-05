@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 // import '../../requests/requests_core.dart';
 import '../../constants/constants.dart';
-import 'tasks_view.dart';
+import 'tasks/tasks_view.dart';
+import 'classes/classes_view.dart';
 
 class MyHomePage extends StatefulWidget {
   MyHomePage({Key key}) : super(key: key);
@@ -14,7 +15,7 @@ class _MyHomePageState extends State<MyHomePage> {
   int _selectedIndex = 0;
   final _widgetOptions = [
     TasksView(),
-    Text('Index 1: Grades'),
+    ClassesView(),
     TasksView(),
   ];
 

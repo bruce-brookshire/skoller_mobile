@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import '../../constants/constants.dart';
-import '../../requests/requests_core.dart';
-import 'classes/assignment_info.dart';
+import '../../../constants/constants.dart';
+import '../../../requests/requests_core.dart';
+import '../classes/assignment_info_view.dart';
 
 class TasksView extends StatefulWidget {
   State createState() => _TasksViewState();
@@ -62,26 +62,23 @@ class _TasksViewState extends State<TasksView> {
     return GestureDetector(
       onTapDown: (details) {
         setState(() {
-          print('started');
           _tappedIndex = index;
         });
       },
       onTapCancel: () {
         setState(() {
-          print('canceled');
           _tappedIndex = null;
         });
       },
       onTapUp: (details) {
         setState(() {
-          print('finished');
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) => AssignmentInfo(task: this._tasks[index])),
-          );
           _tappedIndex = null;
         });
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) => AssignmentInfoView(task: task)),
+        );
       },
       child: Container(
         margin: EdgeInsets.fromLTRB(7, 3, 7, 4),
