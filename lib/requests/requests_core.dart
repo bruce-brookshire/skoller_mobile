@@ -8,7 +8,7 @@ part 'user.dart';
 part 'student_class.dart';
 part 'assignment.dart';
 
-class RequestResponse {
+class RequestResponse<T> {
   int status;
   dynamic obj;
   String _errorMsg;
@@ -16,14 +16,13 @@ class RequestResponse {
   RequestResponse(
     int status,
     dynamic context, {
-    _DecodableConstructor jsonConstruct,
-    _ListDecodableConstructor listConstruct,
+    _DecodableConstructor constructor,
   }) {
     if (context != null && status == 200) {
       if (context is List) {
-        this.obj = listConstruct(context);
+        this.obj = JsonListMaker.convert(constructor, context);
       } else {
-        this.obj = jsonConstruct(context);
+        this.obj = constructor(context);
       }
     } else {
       this.obj = null;
@@ -39,12 +38,12 @@ class RequestResponse {
   }
 }
 
-typedef dynamic _DecodableConstructor(Map content);
-typedef List _ListDecodableConstructor(List content);
-typedef T _ListConstructor<T>(Map content);
+typedef dynamic _DecodableConstructor<T>(Map content);
+// typedef List _ListDecodableConstructor(List content);
+// typedef T _ListConstructor<T>(Map content);
 
 class JsonListMaker {
-  static List<T> convert<T>(_ListConstructor<T> maker, List content) {
+  static List<T> convert<T>(_DecodableConstructor<T> maker, List content) {
     return content.map((obj) => maker(obj)).toList();
   }
 }
@@ -60,10 +59,9 @@ class SKRequests {
   };
 
   static Future<RequestResponse> get(
-    String url, {
-    _DecodableConstructor jsonConstruct,
-    _ListDecodableConstructor listConstruct,
-  }) async {
+    String url,
+    _DecodableConstructor construct,
+  ) async {
     // Construct and start request
     http.Response request = await http.get(
       _baseUrl + url,
@@ -71,15 +69,14 @@ class SKRequests {
     );
 
     // Handle request and return future
-    return futureProcessor(request, jsonConstruct, listConstruct);
+    return futureProcessor(request, construct);
   }
 
   static Future<RequestResponse> post(
     String url,
-    Map body, {
-    _DecodableConstructor jsonConstruct,
-    _ListDecodableConstructor listConstruct,
-  }) async {
+    Map body,
+    _DecodableConstructor constructor,
+  ) async {
     // Construct and start request
     http.Response request = await http.post(
       _baseUrl + url,
@@ -88,15 +85,14 @@ class SKRequests {
     );
 
     // Handle request and return future
-    return futureProcessor(request, jsonConstruct, listConstruct);
+    return futureProcessor(request, constructor);
   }
 
   static Future<RequestResponse> put(
     String url,
-    Map body, {
-    _DecodableConstructor jsonConstruct,
-    _ListDecodableConstructor listConstruct,
-  }) async {
+    Map body,
+    _DecodableConstructor constructor,
+  ) async {
     // Construct and start request
     http.Response request = await http.put(
       _baseUrl + url,
@@ -105,21 +101,19 @@ class SKRequests {
     );
 
     // Handle request and return future
-    return futureProcessor(request, jsonConstruct, listConstruct);
+    return futureProcessor(request, constructor);
   }
 
   static RequestResponse futureProcessor(
     http.Response request,
-    _DecodableConstructor jsonConstruct,
-    _ListDecodableConstructor listConstruct,
+    _DecodableConstructor constructor,
   ) {
     int statusCode = request.statusCode;
     var content = statusCode == 200 ? json.decode(request.body) : null;
     return RequestResponse(
       statusCode,
       content,
-      jsonConstruct: jsonConstruct,
-      listConstruct: listConstruct,
+      constructor: constructor,
     );
   }
 }
@@ -137,7 +131,7 @@ class Auth {
     return SKRequests.post(
       '/users/login',
       {"email": username, "password": password},
-      jsonConstruct: _fromJson,
+      _fromJson,
     ).then((onValue) {
       return onValue.wasSuccessful();
     });

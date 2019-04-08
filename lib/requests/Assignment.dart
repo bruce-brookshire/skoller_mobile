@@ -26,8 +26,15 @@ class Assignment {
     return SKRequests.put(
       '/assignments/${id}',
       {'is_completed': newComplete},
-      jsonConstruct: _fromJsonObj,
+      _fromJsonObj,
     );
+  }
+
+  String getWeightName() {
+    final parentClass = this.parentClass;
+    // if (weight_id == null || parentClass.weight)
+
+    return null;
   }
 
   //--------------//
@@ -47,17 +54,13 @@ class Assignment {
         content['is_completed']);
   }
 
-  static List<Assignment> _fromJsonArr(List content) {
-    return JsonListMaker.convert(_fromJsonObj, content);
-  }
-
   static Future<RequestResponse> getTasks() {
     DateTime now = DateTime.now();
     DateTime utcDate = DateTime.utc(now.year, now.month, now.day);
 
     return SKRequests.get(
       '/students/${SKUser.current.student.id}/assignments?is_complete=false&date=${utcDate.toIso8601String()}',
-      listConstruct: _fromJsonArr,
+      _fromJsonObj,
     );
   }
 }

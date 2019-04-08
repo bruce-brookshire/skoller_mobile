@@ -5,11 +5,11 @@ class StudentClass {
   String name;
   List<Assignment> assignments;
   String _color;
-  static Map<int, StudentClass> currentClasses = {};
   double grade;
   double completion;
   int enrollment;
 
+  static Map<int, StudentClass> currentClasses = {};
   static final List<Color> colors = [
     Color(0xFFdd4a63), //Red
     Color(0xFFFFAE42), //orange
@@ -44,6 +44,17 @@ class StudentClass {
     }
   }
 
+  Future<bool> refreshSelf() {
+    return getStudentClassById(id).then((response) {
+      if (!response.wasSuccessful()) {
+        return false;
+      } else {
+        // TODO: Need to update obj
+        return true;
+      }
+    });
+  }
+
   //----------------//
   //Static functions//
   //----------------//
@@ -52,7 +63,10 @@ class StudentClass {
     return StudentClass(
       content['id'],
       content['name'],
-      Assignment._fromJsonArr(content['assignments']),
+      JsonListMaker.convert(
+        Assignment._fromJsonObj,
+        content['assignments'],
+      ),
       content['color'],
       content['grade'],
       content['completion'],
@@ -60,14 +74,10 @@ class StudentClass {
     );
   }
 
-  static List<StudentClass> _fromJsonArr(List content) {
-    return JsonListMaker.convert(_fromJsonObj, content);
-  }
-
   static Future<RequestResponse> getStudentClasses() {
     return SKRequests.get(
       '/students/${SKUser.current.student.id}/classes',
-      listConstruct: _fromJsonArr,
+      _fromJsonObj,
     ).then((response) {
       List<StudentClass> classes = response.obj;
       if (classes != null) {
@@ -77,5 +87,21 @@ class StudentClass {
       }
       return response;
     });
+  }
+
+  static Future<RequestResponse> getStudentClassById(int id) {}
+}
+
+class Weight {
+  int id;
+  double weight;
+
+  Weight(this.id, this.weight);
+
+  static Weight _fromJsonObj(Map content) {
+    return Weight(
+      content['id'],
+      content['weight'],
+    );
   }
 }
