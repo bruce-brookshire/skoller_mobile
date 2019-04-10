@@ -25,8 +25,6 @@ class _SignInState extends State<SignIn> {
           MaterialPageRoute(builder: (context) => MyHomePage()),
         );
       }
-    }).catchError((onError) {
-      print(onError);
     });
   }
 

@@ -124,7 +124,7 @@ class _TasksViewState extends State<TasksView> {
                 Text(
                   task.weight_id == null
                       ? 'Not graded'
-                      : NumberUtilities.formatWeightAsPercentage(task.weight),
+                      : NumberUtilities.formatWeightAsPercent(task.weight),
                   style: TextStyle(fontSize: 14, fontWeight: FontWeight.normal),
                 ),
               ],

@@ -31,10 +31,9 @@ class Assignment {
   }
 
   String getWeightName() {
-    final parentClass = this.parentClass;
-    // if (weight_id == null || parentClass.weight)
+    final weight = this.parentClass.getWeightForId(weight_id);
 
-    return null;
+    return weight == null ? 'Not graded' : weight.name;
   }
 
   //--------------//

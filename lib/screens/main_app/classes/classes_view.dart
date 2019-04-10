@@ -89,12 +89,12 @@ class _ClassesViewState extends State<ClassesView> {
               color: SKColors.border_gray,
             ),
             boxShadow: [UIAssets.boxShadow]),
-        margin: EdgeInsets.fromLTRB(8, 4, 8, 6),
+        margin: EdgeInsets.symmetric(horizontal: 6, vertical: 4),
         child: Row(
           children: <Widget>[
             Container(
-              padding: EdgeInsets.symmetric(vertical: 28),
-              width: 64,
+              padding: EdgeInsets.symmetric(vertical: 23),
+              width: 58,
               alignment: Alignment.center,
               decoration: BoxDecoration(
                   color: studentClass.getColor(),
@@ -102,7 +102,9 @@ class _ClassesViewState extends State<ClassesView> {
                       topLeft: Radius.circular(5),
                       bottomLeft: Radius.circular(5))),
               child: Text(
-                grade == null ? '--%' : '${studentClass.grade}%',
+                grade == null
+                    ? '--%'
+                    : '${NumberUtilities.formatGradeAsPercent(grade)}',
                 style: TextStyle(
                     color: Colors.white,
                     fontWeight: FontWeight.normal,
@@ -111,26 +113,35 @@ class _ClassesViewState extends State<ClassesView> {
               ),
             ),
             Container(
-              padding: EdgeInsets.symmetric(horizontal: 8),
+              padding: EdgeInsets.only(left: 8, right: 8, bottom: 1),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
                   Container(
-                    padding: EdgeInsets.only(bottom: 2),
+                    padding: EdgeInsets.only(bottom: 1),
                     child: Text(
                       studentClass.name,
                       style: TextStyle(
                           fontSize: 17, color: studentClass.getColor()),
                     ),
                   ),
-                  Text(
-                    '${studentClass.enrollment - 1} enrolled',
-                    style:
-                        TextStyle(fontWeight: FontWeight.normal, fontSize: 14),
+                  Row(
+                    children: <Widget>[
+                      Container(
+                        padding: EdgeInsets.only(right: 5, bottom: 2),
+                        child: Image.asset(
+                            ImageNames.peopleImages.person_dark_gray),
+                      ),
+                      Text(
+                        '${studentClass.enrollment - 1} classmate${(studentClass.enrollment - 1) == 1 ? '' : 's'}',
+                        style: TextStyle(
+                            fontWeight: FontWeight.normal, fontSize: 14),
+                      ),
+                    ],
                   ),
                   Text(
-                    '${studentClass.completion * 100}% completed',
+                    '${(studentClass.completion * 100).round()}% complete',
                     style:
                         TextStyle(fontWeight: FontWeight.normal, fontSize: 14),
                   ),

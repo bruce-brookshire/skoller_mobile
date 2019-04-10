@@ -129,7 +129,10 @@ class SKNavBar extends StatelessWidget {
             ),
             Text(
               _title,
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: _titleColor),
+              style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: _titleColor),
             ),
             Container(
               padding: EdgeInsets.only(right: 4),

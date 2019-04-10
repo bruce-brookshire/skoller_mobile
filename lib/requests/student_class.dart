@@ -8,6 +8,46 @@ class StudentClass {
   double grade;
   double completion;
   int enrollment;
+  List<Weight> weights;
+
+  //----------------//
+  //Member functions//
+  //----------------//
+
+  StudentClass(this.id, this.name, this.assignments, this._color, this.grade,
+      this.completion, this.enrollment, this.weights);
+
+  Color getColor() {
+    if (_color != null) {
+      String substr = 'ff' + _color.substring(0, _color.length - 2);
+      return Color(int.parse(substr, radix: 16));
+    } else {
+      return colors[1];
+    }
+  }
+
+  Weight getWeightForId(weight_id) {
+    for (Weight weight in weights) {
+      if (weight.id == weight_id) {
+        return weight;
+      }
+    }
+    return null;
+  }
+
+  Future<RequestResponse> refetchSelf() {
+    return getStudentClassById(id).then((response) {
+      if (response.wasSuccessful()) {
+        StudentClass copy = response.obj;
+        StudentClass.currentClasses[copy.id] = copy;
+      }
+      return response;
+    });
+  }
+
+  //--------------//
+  //Static Members//
+  //--------------//
 
   static Map<int, StudentClass> currentClasses = {};
   static final List<Color> colors = [
@@ -21,44 +61,6 @@ class StudentClass {
     Color(0xFF9B55E5), //purple
   ];
 
-  //----------------//
-  //Member functions//
-  //----------------//
-
-  StudentClass(
-    this.id,
-    this.name,
-    this.assignments,
-    this._color,
-    this.grade,
-    this.completion,
-    this.enrollment,
-  );
-
-  Color getColor() {
-    if (_color != null) {
-      String substr = 'ff' + _color.substring(0, _color.length - 2);
-      return Color(int.parse(substr, radix: 16));
-    } else {
-      return colors[1];
-    }
-  }
-
-  Future<bool> refreshSelf() {
-    return getStudentClassById(id).then((response) {
-      if (!response.wasSuccessful()) {
-        return false;
-      } else {
-        // TODO: Need to update obj
-        return true;
-      }
-    });
-  }
-
-  //----------------//
-  //Static functions//
-  //----------------//
-
   static StudentClass _fromJsonObj(Map content) {
     return StudentClass(
       content['id'],
@@ -71,6 +73,10 @@ class StudentClass {
       content['grade'],
       content['completion'],
       content['enrollment'],
+      JsonListMaker.convert(
+        Weight._fromJsonObj,
+        content['weights'],
+      ),
     );
   }
 
@@ -79,29 +85,42 @@ class StudentClass {
       '/students/${SKUser.current.student.id}/classes',
       _fromJsonObj,
     ).then((response) {
-      List<StudentClass> classes = response.obj;
-      if (classes != null) {
-        for (var student_class in classes) {
-          currentClasses[student_class.id] = student_class;
+      List classes = response.obj;
+      if (classes != null && response.wasSuccessful()) {
+        for (StudentClass studentClass in classes) {
+          currentClasses[studentClass.id] = studentClass;
         }
       }
       return response;
     });
   }
 
-  static Future<RequestResponse> getStudentClassById(int id) {}
+  static Future<RequestResponse> getStudentClassById(int id) {
+    return SKRequests.get(
+      '/students/${SKUser.current.student.id}/classes/${id}',
+      _fromJsonObj,
+    ).then((response) {
+      if (response.wasSuccessful()) {
+        StudentClass studentClass = response.obj;
+        currentClasses[studentClass.id] = studentClass;
+      }
+      return response;
+    });
+  }
 }
 
 class Weight {
   int id;
   double weight;
+  String name;
 
-  Weight(this.id, this.weight);
+  Weight(this.id, this.weight, this.name);
 
   static Weight _fromJsonObj(Map content) {
     return Weight(
       content['id'],
       content['weight'],
+      content['name'],
     );
   }
 }

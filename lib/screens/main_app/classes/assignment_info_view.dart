@@ -35,6 +35,7 @@ class _AssignmentInfoViewState extends State<AssignmentInfoView> {
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
+        bottom: false,
         child: Container(
           color: SKColors.background_gray,
           child: Center(
@@ -104,7 +105,7 @@ class _AssignmentInfoViewState extends State<AssignmentInfoView> {
               child: Text(
                 task.weight_id == null
                     ? 'Not graded'
-                    : 'Worth ${NumberUtilities.formatWeightAsPercentage(task.weight)} of your total grade',
+                    : 'Worth ${NumberUtilities.formatWeightAsPercent(task.weight)} of your total grade',
                 style: TextStyle(fontSize: 13, fontWeight: FontWeight.normal),
               ),
             ),
@@ -123,7 +124,7 @@ class _AssignmentInfoViewState extends State<AssignmentInfoView> {
                     style: TextStyle(fontWeight: FontWeight.normal),
                   ),
                   Text(
-                    task.weight_id == null ? 'Not graded' : '${task.weight_id}',
+                    task.getWeightName(),
                   ),
                 ],
               ),
@@ -208,7 +209,7 @@ class _AssignmentInfoViewState extends State<AssignmentInfoView> {
                     child: Text(
                       widget.task.grade == null
                           ? '--%'
-                          : NumberUtilities.formatWeightAsPercentage(
+                          : NumberUtilities.formatWeightAsPercent(
                               widget.task.grade),
                       style: TextStyle(color: SKColors.skoller_blue),
                     ),

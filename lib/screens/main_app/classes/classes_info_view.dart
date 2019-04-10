@@ -5,7 +5,7 @@ import '../../../requests/requests_core.dart';
 import 'assignment_info_view.dart';
 
 class ClassesInfoView extends StatefulWidget {
-  int classId;
+  final int classId;
 
   ClassesInfoView({Key key, this.classId}) : super(key: key);
 
@@ -21,6 +21,13 @@ class _ClassesInfoViewState extends State<ClassesInfoView> {
   void initState() {
     super.initState();
     studentClass = StudentClass.currentClasses[widget.classId];
+    studentClass.refetchSelf().then((response) {
+      if (response.wasSuccessful()) {
+        setState(() {
+          // studentClass = response.obj;
+        });
+      }
+    });
   }
 
   @override
@@ -28,6 +35,7 @@ class _ClassesInfoViewState extends State<ClassesInfoView> {
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
+        bottom: false,
         child: Container(
           child: Center(
             child: Column(
@@ -73,7 +81,7 @@ class _ClassesInfoViewState extends State<ClassesInfoView> {
                 ),
                 Expanded(
                   child: ListView.builder(
-                    padding: EdgeInsets.only(top: 4),
+                    padding: EdgeInsets.only(top: 6),
                     itemCount: studentClass.assignments.length,
                     itemBuilder: assignmentCellBuilder,
                   ),
@@ -116,7 +124,7 @@ class _ClassesInfoViewState extends State<ClassesInfoView> {
             boxShadow: [UIAssets.boxShadow],
             borderRadius: BorderRadius.circular(5),
             border: Border.all(color: SKColors.border_gray)),
-        margin: EdgeInsets.fromLTRB(8, 4, 8, 6),
+        margin: EdgeInsets.fromLTRB(8, 3, 8, 4),
         child: Row(
           children: <Widget>[
             Container(
@@ -124,13 +132,15 @@ class _ClassesInfoViewState extends State<ClassesInfoView> {
               width: 44,
               alignment: Alignment.center,
               decoration: BoxDecoration(
-                  color: studentClass.getColor(),
+                  color: assignment.grade == null
+                      ? SKColors.light_gray
+                      : studentClass.getColor(),
                   borderRadius: BorderRadius.only(
                       topLeft: Radius.circular(5),
                       bottomLeft: Radius.circular(5))),
               child: Text(
-                studentClass.grade == null
-                    ? '--%'
+                assignment.grade == null
+                    ? '--'
                     : '${studentClass.grade.round()}%',
                 style: TextStyle(
                     color: Colors.white,
@@ -139,27 +149,39 @@ class _ClassesInfoViewState extends State<ClassesInfoView> {
                     letterSpacing: -0.75),
               ),
             ),
-            Container(
-              padding: EdgeInsets.only(left: 8),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: <Widget>[
-                      Text(assignment.name),
-                      Text(assignment.due.toString()),
-                    ],
-                  ),
-                  Text(
-                    assignment.weight == null
-                        ? 'Not graded'
-                        : '${assignment.weight}%',
-                    style:
-                        TextStyle(fontWeight: FontWeight.normal, fontSize: 13),
-                  )
-                ],
+            Expanded(
+              child: Container(
+                padding: EdgeInsets.symmetric(horizontal: 8),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: <Widget>[
+                        Text(assignment.name),
+                        Text(
+                          DateUtilities.getFutureRelativeString(assignment.due),
+                          style: TextStyle(
+                            fontSize: 12,
+                            fontWeight: FontWeight.normal,
+                          ),
+                        ),
+                      ],
+                    ),
+                    Text(
+                      assignment.weight == null
+                          ? ''
+                          : (assignment.weight == 0
+                              ? 'Not graded'
+                              : '${assignment.weight}%'),
+                      style: TextStyle(
+                        fontWeight: FontWeight.normal,
+                        fontSize: 13,
+                      ),
+                    )
+                  ],
+                ),
               ),
             ),
           ],

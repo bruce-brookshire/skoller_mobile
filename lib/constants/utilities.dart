@@ -2,8 +2,15 @@ part of 'constants.dart';
 
 class DateUtilities {
   static String getFutureRelativeString(DateTime date) {
+    if (date == null) {
+      return 'No due date';
+    }
     final now = DateTime.now();
     final today = DateTime(now.year, now.month, now.day);
+
+    if (today.isAfter(date)) {
+      return 'In the past';
+    }
 
     final comp = date.toLocal();
 
@@ -43,7 +50,11 @@ class DateUtilities {
 }
 
 class NumberUtilities {
-  static String formatWeightAsPercentage(double weight) {
+  static String formatWeightAsPercent(double weight) {
     return NumberFormat.percentPattern().format(weight);
+  }
+
+  static String formatGradeAsPercent(double grade) {
+    return '${grade.round()}%';
   }
 }

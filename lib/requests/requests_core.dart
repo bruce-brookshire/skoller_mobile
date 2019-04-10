@@ -16,11 +16,11 @@ class RequestResponse<T> {
   RequestResponse(
     int status,
     dynamic context, {
-    _DecodableConstructor constructor,
+    _DecodableConstructor<T> constructor,
   }) {
     if (context != null && status == 200) {
       if (context is List) {
-        this.obj = JsonListMaker.convert(constructor, context);
+        this.obj = JsonListMaker.convert<T>(constructor, context);
       } else {
         this.obj = constructor(context);
       }
@@ -38,13 +38,11 @@ class RequestResponse<T> {
   }
 }
 
-typedef dynamic _DecodableConstructor<T>(Map content);
-// typedef List _ListDecodableConstructor(List content);
-// typedef T _ListConstructor<T>(Map content);
+typedef T _DecodableConstructor<T>(Map content);
 
 class JsonListMaker {
-  static List<T> convert<T>(_DecodableConstructor<T> maker, List content) {
-    return content.map((obj) => maker(obj)).toList();
+  static List convert<T>(_DecodableConstructor<T> maker, List content) {
+    return content.map<T>((obj) => maker(obj)).toList();
   }
 }
 
@@ -58,9 +56,9 @@ class SKRequests {
     'Content-Type': 'application/json',
   };
 
-  static Future<RequestResponse> get(
+  static Future<RequestResponse> get<T>(
     String url,
-    _DecodableConstructor construct,
+    _DecodableConstructor<T> construct,
   ) async {
     // Construct and start request
     http.Response request = await http.get(
@@ -69,13 +67,13 @@ class SKRequests {
     );
 
     // Handle request and return future
-    return futureProcessor(request, construct);
+    return futureProcessor<T>(request, construct);
   }
 
-  static Future<RequestResponse> post(
+  static Future<RequestResponse> post<T>(
     String url,
     Map body,
-    _DecodableConstructor constructor,
+    _DecodableConstructor<T> constructor,
   ) async {
     // Construct and start request
     http.Response request = await http.post(
@@ -85,13 +83,13 @@ class SKRequests {
     );
 
     // Handle request and return future
-    return futureProcessor(request, constructor);
+    return futureProcessor<T>(request, constructor);
   }
 
-  static Future<RequestResponse> put(
+  static Future<RequestResponse> put<T>(
     String url,
     Map body,
-    _DecodableConstructor constructor,
+    _DecodableConstructor<T> constructor,
   ) async {
     // Construct and start request
     http.Response request = await http.put(
@@ -101,16 +99,16 @@ class SKRequests {
     );
 
     // Handle request and return future
-    return futureProcessor(request, constructor);
+    return futureProcessor<T>(request, constructor);
   }
 
-  static RequestResponse futureProcessor(
+  static RequestResponse futureProcessor<T>(
     http.Response request,
-    _DecodableConstructor constructor,
+    _DecodableConstructor<T> constructor,
   ) {
     int statusCode = request.statusCode;
     var content = statusCode == 200 ? json.decode(request.body) : null;
-    return RequestResponse(
+    return RequestResponse<T>(
       statusCode,
       content,
       constructor: constructor,
