@@ -60,96 +60,106 @@ class _AssignmentInfoViewState extends State<AssignmentInfoView> {
   //Assignment Details//
   //------------------//
 
-  Widget buildAssignmentDetails(Assignment task) => Container(
-        margin: EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          boxShadow: [UIAssets.boxShadow],
-          borderRadius: BorderRadius.circular(10),
-        ),
-        child: Column(
-          children: <Widget>[
-            Container(
-              decoration: BoxDecoration(
-                color: SKColors.selected_gray,
-                borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(10),
-                  topRight: Radius.circular(10),
+  Widget buildAssignmentDetails(Assignment task) {
+    String weightDescr;
+
+    if (task.weight_id == null) {
+      weightDescr = 'Not graded';
+    } else if (task.weight == null) {
+      weightDescr = '';
+    } else {
+      weightDescr =
+          'Worth ${NumberUtilities.formatWeightAsPercent(task.weight)} of your total grade';
+    }
+    return Container(
+      margin: EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        boxShadow: [UIAssets.boxShadow],
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: Column(
+        children: <Widget>[
+          Container(
+            decoration: BoxDecoration(
+              color: SKColors.selected_gray,
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(10),
+                topRight: Radius.circular(10),
+              ),
+            ),
+            padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+            child: Row(
+              children: <Widget>[
+                Text(
+                  'Assignment details',
+                  style: TextStyle(fontSize: 17),
                 ),
-              ),
-              padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-              child: Row(
-                children: <Widget>[
-                  Text(
-                    'Assignment details',
-                    style: TextStyle(fontSize: 17),
-                  ),
-                ],
-              ),
+              ],
             ),
-            Container(
-              alignment: Alignment.centerLeft,
-              margin: EdgeInsets.only(left: 12, right: 12, top: 4),
-              child: Text(
-                task.name,
-              ),
+          ),
+          Container(
+            alignment: Alignment.centerLeft,
+            margin: EdgeInsets.only(left: 12, right: 12, top: 4),
+            child: Text(
+              task.name,
             ),
-            Container(
-              decoration: BoxDecoration(
-                  border: Border(
-                      bottom:
-                          BorderSide(color: SKColors.selected_gray, width: 1))),
-              alignment: Alignment.centerLeft,
-              padding: EdgeInsets.only(bottom: 4),
-              margin: EdgeInsets.only(left: 12, right: 12, top: 1),
-              child: Text(
-                task.weight_id == null
-                    ? 'Not graded'
-                    : 'Worth ${NumberUtilities.formatWeightAsPercent(task.weight)} of your total grade',
-                style: TextStyle(fontSize: 13, fontWeight: FontWeight.normal),
-              ),
+          ),
+          Container(
+            decoration: BoxDecoration(
+                border: Border(
+                    bottom:
+                        BorderSide(color: SKColors.selected_gray, width: 1))),
+            alignment: Alignment.centerLeft,
+            padding: EdgeInsets.only(bottom: 4),
+            margin: EdgeInsets.only(left: 12, right: 12, top: 1),
+            child: Text(
+              weightDescr,
+              style: TextStyle(fontSize: 13, fontWeight: FontWeight.normal),
             ),
-            Container(
-              decoration: BoxDecoration(
-                  border: Border(
-                      bottom:
-                          BorderSide(color: SKColors.selected_gray, width: 1))),
-              margin: EdgeInsets.symmetric(horizontal: 12, vertical: 2),
-              padding: EdgeInsets.symmetric(vertical: 8),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: <Widget>[
-                  Text(
-                    'Grading category:',
-                    style: TextStyle(fontWeight: FontWeight.normal),
-                  ),
-                  Text(
-                    task.getWeightName(),
-                  ),
-                ],
-              ),
+          ),
+          Container(
+            decoration: BoxDecoration(
+                border: Border(
+                    bottom:
+                        BorderSide(color: SKColors.selected_gray, width: 1))),
+            margin: EdgeInsets.symmetric(horizontal: 12, vertical: 2),
+            padding: EdgeInsets.symmetric(vertical: 8),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: <Widget>[
+                Text(
+                  'Grading category:',
+                  style: TextStyle(fontWeight: FontWeight.normal),
+                ),
+                Text(
+                  task.getWeightName(),
+                ),
+              ],
             ),
-            Container(
-              margin: EdgeInsets.only(left: 12, right: 12, bottom: 6),
-              padding: EdgeInsets.symmetric(vertical: 8),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: <Widget>[
-                  Text(
-                    'Due date:',
-                    style: TextStyle(fontWeight: FontWeight.normal),
-                  ),
-                  Text(
-                    task.due == null
-                        ? 'No due date'
-                        : DateFormat('E, MMM. d').format(task.due),
-                  ),
-                ],
-              ),
-            )
-          ],
-        ),
-      );
+          ),
+          Container(
+            margin: EdgeInsets.only(left: 12, right: 12, bottom: 6),
+            padding: EdgeInsets.symmetric(vertical: 8),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: <Widget>[
+                Text(
+                  'Due date:',
+                  style: TextStyle(fontWeight: FontWeight.normal),
+                ),
+                Text(
+                  task.due == null
+                      ? 'No due date'
+                      : DateFormat('E, MMM. d').format(task.due),
+                ),
+              ],
+            ),
+          )
+        ],
+      ),
+    );
+  }
 
   //----------------//
   //Personal Details//

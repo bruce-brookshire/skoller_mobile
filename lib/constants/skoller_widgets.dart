@@ -150,3 +150,30 @@ class SKNavBar extends StatelessWidget {
         ),
       );
 }
+
+class SimplePieChart extends StatelessWidget {
+  final double completion;
+
+  SimplePieChart(this.completion);
+
+  @override
+  Widget build(BuildContext context) {
+    return new charts.PieChart([
+      new charts.Series<_ChartData, int>(
+        id: 'Sales',
+        domainFn: (_ChartData sales, _) => sales.id,
+        measureFn: (_ChartData sales, _) => sales.val,
+        data: [
+          _ChartData(0, completion),
+          _ChartData(1, 1 - completion),
+        ],
+      )
+    ], animate: false, );
+  }
+}
+
+class _ChartData {
+  final int id;
+  final double val;
+  _ChartData(this.id, this.val);
+}

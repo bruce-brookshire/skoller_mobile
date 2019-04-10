@@ -24,7 +24,7 @@ class _ClassesInfoViewState extends State<ClassesInfoView> {
     studentClass.refetchSelf().then((response) {
       if (response.wasSuccessful()) {
         setState(() {
-          // studentClass = response.obj;
+          studentClass = response.obj;
         });
       }
     });
@@ -32,16 +32,25 @@ class _ClassesInfoViewState extends State<ClassesInfoView> {
 
   @override
   Widget build(BuildContext context) {
+    final grade = (studentClass.grade == null || studentClass.grade == 0)
+        ? '-- %'
+        : '${studentClass.grade}%';
+
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
         bottom: false,
         child: Container(
+          color: SKColors.background_gray,
           child: Center(
             child: Column(
               children: <Widget>[
                 Container(
-                  height: 44,
+                  padding: EdgeInsets.only(
+                    bottom: 8,
+                    left: 4,
+                    right: 4,
+                  ),
                   decoration: BoxDecoration(boxShadow: [
                     BoxShadow(
                       color: Color(0x1C000000),
@@ -49,32 +58,87 @@ class _ClassesInfoViewState extends State<ClassesInfoView> {
                       blurRadius: 3.5,
                     )
                   ], color: Colors.white),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  child: Column(
                     children: <Widget>[
-                      GestureDetector(
-                        onTapUp: (details) {
-                          Navigator.pop(context);
-                        },
-                        child: Container(
-                          padding: EdgeInsets.only(left: 4),
-                          child: Image.asset(ImageNames.navArrowImages.left),
-                          width: 44,
-                          height: 44,
-                        ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: <Widget>[
+                          GestureDetector(
+                            onTapUp: (details) {
+                              Navigator.pop(context);
+                            },
+                            child: Container(
+                              child:
+                                  Image.asset(ImageNames.navArrowImages.left),
+                              width: 44,
+                              height: 44,
+                            ),
+                          ),
+                          Text(
+                            studentClass.name,
+                            style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                                color: studentClass.getColor()),
+                          ),
+                          Container(
+                            child: Image.asset(ImageNames.rightNavImages.info),
+                            width: 44,
+                            height: 44,
+                          ),
+                        ],
                       ),
-                      Text(
-                        studentClass.name,
-                        style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                            color: studentClass.getColor()),
-                      ),
-                      Container(
-                        padding: EdgeInsets.only(right: 4),
-                        child: null,
-                        width: 44,
-                        height: 44,
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: <Widget>[
+                          Expanded(
+                            flex: 1,
+                            child: Container(
+                              alignment: Alignment.center,
+                              child: GestureDetector(
+                                child: Text(
+                                  'Speculate Grade',
+                                  style: TextStyle(
+                                      color: SKColors.skoller_blue,
+                                      fontWeight: FontWeight.normal,
+                                      fontSize: 14),
+                                ),
+                              ),
+                            ),
+                          ),
+                          Container(
+                            width: 80,
+                            alignment: Alignment.center,
+                            padding: EdgeInsets.symmetric(vertical: 8),
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(5),
+                              boxShadow: [UIAssets.boxShadow],
+                              color: studentClass.getColor(),
+                            ),
+                            child: Text(
+                              '${grade}',
+                              style: TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.normal,
+                                  fontSize: 18),
+                            ),
+                          ),
+                          Expanded(
+                            flex: 1,
+                            child: Container(
+                              alignment: Alignment.center,
+                              child: GestureDetector(
+                                child: Text(
+                                  '${(studentClass.completion * 100).round()}% complete',
+                                  style: TextStyle(
+                                      color: SKColors.skoller_blue,
+                                      fontWeight: FontWeight.normal,
+                                      fontSize: 14),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
                     ],
                   ),
@@ -96,6 +160,19 @@ class _ClassesInfoViewState extends State<ClassesInfoView> {
 
   Widget assignmentCellBuilder(BuildContext context, int index) {
     final assignment = studentClass.assignments[index];
+    double pre_weight =
+        assignment.weight != null ? assignment.weight * 100 : null;
+    String weight;
+
+    if (pre_weight == null) {
+      weight = '';
+    } else if (pre_weight == 0 && assignment.weight_id == null) {
+      weight = 'Not graded';
+    } else if (pre_weight % 1 == 0) {
+      weight = '${pre_weight.round()}%';
+    } else {
+      weight = '${(assignment.weight * 1000).roundToDouble() / 10}%';
+    }
     return GestureDetector(
       onTapDown: (details) {
         setState(() {
@@ -124,12 +201,12 @@ class _ClassesInfoViewState extends State<ClassesInfoView> {
             boxShadow: [UIAssets.boxShadow],
             borderRadius: BorderRadius.circular(5),
             border: Border.all(color: SKColors.border_gray)),
-        margin: EdgeInsets.fromLTRB(8, 3, 8, 4),
+        margin: EdgeInsets.fromLTRB(6, 3, 6, 3),
         child: Row(
           children: <Widget>[
             Container(
-              padding: EdgeInsets.symmetric(vertical: 16),
-              width: 44,
+              padding: EdgeInsets.symmetric(vertical: 18),
+              width: 46,
               alignment: Alignment.center,
               decoration: BoxDecoration(
                   color: assignment.grade == null
@@ -141,11 +218,11 @@ class _ClassesInfoViewState extends State<ClassesInfoView> {
               child: Text(
                 assignment.grade == null
                     ? '--'
-                    : '${studentClass.grade.round()}%',
+                    : '${(assignment.grade).round()}%',
                 style: TextStyle(
                     color: Colors.white,
                     fontWeight: FontWeight.normal,
-                    fontSize: 14,
+                    fontSize: 13,
                     letterSpacing: -0.75),
               ),
             ),
@@ -172,9 +249,7 @@ class _ClassesInfoViewState extends State<ClassesInfoView> {
                     Text(
                       assignment.weight == null
                           ? ''
-                          : (assignment.weight == 0
-                              ? 'Not graded'
-                              : '${assignment.weight}%'),
+                          : (assignment.weight == 0 ? 'Not graded' : weight),
                       style: TextStyle(
                         fontWeight: FontWeight.normal,
                         fontSize: 13,

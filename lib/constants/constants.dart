@@ -2,6 +2,7 @@ library constants;
 
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:charts_flutter/flutter.dart' as charts;
 
 part 'skoller_widgets.dart';
 part 'utilities.dart';
@@ -50,6 +51,7 @@ class _NavigationArrowImages {
 
 class _RightNavImages {
   final plus = 'image_assets/right_button_assets/plus.png';
+  final info = 'image_assets/right_button_assets/info.png';
 }
 
 class _AssignmentInfoImages {
