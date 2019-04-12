@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
 // import '../../requests/requests_core.dart';
 import '../../constants/constants.dart';
 import 'tasks/tasks_view.dart';
@@ -28,38 +29,38 @@ class _MyHomePageState extends State<MyHomePage> {
     //     });
     //   }
     // });
-
-    return Scaffold(
-      body: Center(
-        child: _widgetOptions.elementAt(_selectedIndex),
-      ),
-      bottomNavigationBar: BottomNavigationBar(
+//TODO: CupertinoPageScaffold necessary?
+    return CupertinoTabScaffold(
+      tabBuilder: (context, index) {
+        return CupertinoTabView(builder: (context) {
+          return CupertinoPageScaffold(child: _widgetOptions[index]);
+        });
+      },
+      tabBar: CupertinoTabBar(
         backgroundColor: Colors.white,
         items: <BottomNavigationBarItem>[
           BottomNavigationBarItem(
             icon: _selectedIndex == 0
                 ? Image.asset("image_assets/tab_bar_assets/tasks_blue.png")
                 : Image.asset("image_assets/tab_bar_assets/tasks_gray.png"),
-            title: Text('Home'),
           ),
           BottomNavigationBarItem(
             icon: _selectedIndex == 1
                 ? Image.asset("image_assets/tab_bar_assets/classes_blue.png")
                 : Image.asset("image_assets/tab_bar_assets/classes_gray.png"),
-            title: Text('Business'),
           ),
           BottomNavigationBarItem(
             icon: _selectedIndex == 2
                 ? Image.asset("image_assets/tab_bar_assets/activity_blue.png")
                 : Image.asset("image_assets/tab_bar_assets/activity_gray.png"),
-            title: Text('School'),
           ),
         ],
         currentIndex: _selectedIndex,
         onTap: _onItemTapped,
-        type: BottomNavigationBarType.fixed,
-        showSelectedLabels: false,
-        showUnselectedLabels: false,
+
+        // type: BottomNavigationBarType.fixed,
+        // showSelectedLabels: false,
+        // showUnselectedLabels: false,
       ),
     );
   }

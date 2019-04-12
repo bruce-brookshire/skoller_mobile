@@ -79,18 +79,21 @@ class SKNavBar extends StatelessWidget {
   final bool _isBack;
   final bool _isDown;
   final String _rightBtnImage;
+  final VoidCallback _callback_right;
 
   SKNavBar(String title,
       {Key key,
       bool backBtnEnabled,
       bool downBtnEnabled,
       String rightBtnImage,
-      Color titleColor})
+      Color titleColor,
+      VoidCallback right_btn_callback})
       : _title = title,
         _isBack = backBtnEnabled ?? false,
         _isDown = downBtnEnabled ?? false,
         _rightBtnImage = rightBtnImage,
         _titleColor = titleColor ?? SKColors.dark_gray,
+        _callback_right = right_btn_callback,
         super(key: key) {
     assert(_isBack != _isDown || !_isBack);
   }
@@ -101,7 +104,7 @@ class SKNavBar extends StatelessWidget {
           BoxShadow(
             color: Color(0x1C000000),
             offset: Offset(0, 3.5),
-            blurRadius: 3.5,
+            blurRadius: 2,
           )
         ], color: Colors.white),
         child: Row(
@@ -134,46 +137,138 @@ class SKNavBar extends StatelessWidget {
                   fontWeight: FontWeight.bold,
                   color: _titleColor),
             ),
-            Container(
-              padding: EdgeInsets.only(right: 4),
-              child: (_rightBtnImage == null)
-                  ? null
-                  : Center(
-                      child: Image(
-                        image: AssetImage(_rightBtnImage),
+            GestureDetector(
+              onTapUp: (details) {
+                if (_rightBtnImage != null && _callback_right != null) {
+                  _callback_right();
+                }
+              },
+              child: Container(
+                padding: EdgeInsets.only(right: 4),
+                child: (_rightBtnImage == null)
+                    ? null
+                    : Center(
+                        child: Image(
+                          image: AssetImage(_rightBtnImage),
+                        ),
                       ),
-                    ),
-              width: 44,
-              height: 44,
+                width: 44,
+                height: 44,
+              ),
             ),
           ],
         ),
       );
 }
 
-class SimplePieChart extends StatelessWidget {
-  final double completion;
+class SKNavView extends StatelessWidget {
+  final String title;
+  final Color titleColor;
+  final bool isBack;
+  final bool isDown;
+  final String rightBtnImage;
+  final VoidCallback callbackRight;
+  final List<Widget> children;
 
-  SimplePieChart(this.completion);
+  SKNavView({
+    Key key,
+    @required this.children,
+    @required this.title,
+    this.titleColor,
+    this.isBack = true,
+    this.isDown = false,
+    this.rightBtnImage,
+    this.callbackRight,
+    bool downBtnEnabled,
+  }) : super(key: key);
 
-  @override
   Widget build(BuildContext context) {
-    return new charts.PieChart([
-      new charts.Series<_ChartData, int>(
-        id: 'Sales',
-        domainFn: (_ChartData sales, _) => sales.id,
-        measureFn: (_ChartData sales, _) => sales.val,
-        data: [
-          _ChartData(0, completion),
-          _ChartData(1, 1 - completion),
-        ],
-      )
-    ], animate: false, );
+    final navBar = SKNavBar(
+      title,
+      backBtnEnabled: isBack,
+      downBtnEnabled: isDown,
+      rightBtnImage: rightBtnImage,
+      titleColor: titleColor,
+      right_btn_callback: callbackRight,
+    );
+    return Scaffold(
+      backgroundColor: Colors.white,
+      body: SafeArea(
+        bottom: false,
+        child: Stack(
+          children: <Widget>[
+            Align(
+              alignment: Alignment.center,
+              child: Container(
+                margin: EdgeInsets.only(top: 44),
+                color: SKColors.background_gray,
+                child: Center(
+                  child: Column(
+                    children: children,
+                  ),
+                ),
+              ),
+            ),
+            Align(
+              child: navBar,
+              alignment: Alignment.topCenter,
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }
 
-class _ChartData {
-  final int id;
-  final double val;
-  _ChartData(this.id, this.val);
+class ClassCompletionChart extends StatefulWidget {
+  final double completion;
+  final Color color;
+
+  ClassCompletionChart(this.completion, this.color) : super();
+
+  @override
+  State createState() => _ClassCompletionChartState();
+}
+
+class _ClassCompletionChartState extends State<ClassCompletionChart> {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      child: CustomPaint(
+        painter: _ChartPainter(widget.color, widget.completion),
+        child: Container(
+          height: 12,
+          width: 12,
+        ),
+      ),
+    );
+  }
+}
+
+class _ChartPainter extends CustomPainter {
+  final Color color;
+  final double completion;
+
+  _ChartPainter(this.color, this.completion) : super();
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint1 = Paint();
+    final paint2 = Paint();
+    // set the color property of the paint
+    paint1.color = color;
+    paint2.color = Colors.white;
+
+    final radius = size.width / 2;
+    final center = Offset(radius, radius);
+    final rect = Rect.fromCircle(center: center, radius: radius);
+
+    // draw the circle on centre of canvas having radius 75.0
+    canvas.drawCircle(center, radius, paint1);
+    canvas.drawCircle(center, radius - 0.75, paint2);
+    canvas.drawArc(rect, -1.5708, 6.2831 * completion, true, paint1);
+  }
+
+  @override
+  bool shouldRepaint(CustomPainter oldDelegate) => false;
 }

@@ -1,8 +1,8 @@
 library constants;
 
 import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:intl/intl.dart';
-import 'package:charts_flutter/flutter.dart' as charts;
 
 part 'skoller_widgets.dart';
 part 'utilities.dart';
@@ -28,6 +28,7 @@ class UIAssets {
     offset: Offset(0, 1.75),
     blurRadius: 3.5,
   );
+  static CupertinoTabBar tabBar;
 }
 
 /// Image paths within the image_assets/ folder
@@ -64,4 +65,5 @@ class _PeopleImages {
   final person_blue = 'image_assets/people_assets/person_blue.png';
   final people_gray = 'image_assets/people_assets/people_gray.png';
   final people_blue = 'image_assets/people_assets/people_blue.png';
+  final people_white = 'image_assets/people_assets/people_white.png';
 }

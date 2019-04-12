@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
+import 'package:flutter/cupertino.dart';
 import '../../../constants/constants.dart';
 import '../../../requests/requests_core.dart';
 import 'assignment_info_view.dart';
@@ -35,30 +35,48 @@ class _ClassesInfoViewState extends State<ClassesInfoView> {
     final grade = (studentClass.grade == null || studentClass.grade == 0)
         ? '-- %'
         : '${studentClass.grade}%';
+    final classmates = studentClass.enrollment - 1;
 
     return Scaffold(
       backgroundColor: Colors.white,
-      body: SafeArea(
-        bottom: false,
-        child: Container(
-          color: SKColors.background_gray,
-          child: Center(
-            child: Column(
-              children: <Widget>[
-                Container(
-                  padding: EdgeInsets.only(
-                    bottom: 8,
-                    left: 4,
-                    right: 4,
-                  ),
-                  decoration: BoxDecoration(boxShadow: [
-                    BoxShadow(
-                      color: Color(0x1C000000),
-                      offset: Offset(0, 3.5),
-                      blurRadius: 3.5,
-                    )
-                  ], color: Colors.white),
+      body: Stack(
+        children: <Widget>[
+          Align(
+            alignment: Alignment.center,
+            child: SafeArea(
+              bottom: false,
+              child: Container(
+                margin: EdgeInsets.only(top: 96),
+                color: SKColors.background_gray,
+                child: ListView.builder(
+                  padding: EdgeInsets.only(top: 6),
+                  itemCount: studentClass.assignments.length,
+                  itemBuilder: assignmentCellBuilder,
+                ),
+              ),
+            ),
+          ),
+          Align(
+            alignment: Alignment.topCenter,
+            child: SafeArea(
+              bottom: false,
+              child: Container(
+                height: 96,
+                padding: EdgeInsets.only(
+                  bottom: 8,
+                  left: 4,
+                  right: 4,
+                ),
+                decoration: BoxDecoration(boxShadow: [
+                  BoxShadow(
+                    color: Color(0x1C000000),
+                    offset: Offset(0, 3.5),
+                    blurRadius: 3.5,
+                  )
+                ], color: Colors.white),
+                child: Center(
                   child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
                     children: <Widget>[
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -126,14 +144,28 @@ class _ClassesInfoViewState extends State<ClassesInfoView> {
                           Expanded(
                             flex: 1,
                             child: Container(
+                              height: 44,
                               alignment: Alignment.center,
                               child: GestureDetector(
-                                child: Text(
-                                  '${(studentClass.completion * 100).round()}% complete',
-                                  style: TextStyle(
-                                      color: SKColors.skoller_blue,
-                                      fontWeight: FontWeight.normal,
-                                      fontSize: 14),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: <Widget>[
+                                    Container(
+                                      padding:
+                                          EdgeInsets.only(right: 4, bottom: 1),
+                                      child: ClassCompletionChart(
+                                        studentClass.completion,
+                                        SKColors.skoller_blue,
+                                      ),
+                                    ),
+                                    Text(
+                                      '${(studentClass.completion * 100).round()}% complete',
+                                      style: TextStyle(
+                                          color: SKColors.skoller_blue,
+                                          fontWeight: FontWeight.normal,
+                                          fontSize: 14),
+                                    ),
+                                  ],
                                 ),
                               ),
                             ),
@@ -143,17 +175,46 @@ class _ClassesInfoViewState extends State<ClassesInfoView> {
                     ],
                   ),
                 ),
-                Expanded(
-                  child: ListView.builder(
-                    padding: EdgeInsets.only(top: 6),
-                    itemCount: studentClass.assignments.length,
-                    itemBuilder: assignmentCellBuilder,
-                  ),
-                ),
-              ],
+              ),
             ),
           ),
-        ),
+          Align(
+            alignment: Alignment.bottomCenter,
+            child: SafeArea(
+              top: false,
+              child: Container(
+                decoration: BoxDecoration(
+                    color:
+                        classmates < 4 ? studentClass.getColor() : Colors.white,
+                    boxShadow: [UIAssets.boxShadow],
+                    border: Border.all(color: classmates < 4 ? Colors.white : SKColors.skoller_blue,),
+                    borderRadius: BorderRadius.circular(5)),
+                padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                margin: EdgeInsets.only(bottom: 8),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    Container(
+                      padding: EdgeInsets.only(right: 8),
+                      child: Image.asset(classmates < 4 ? ImageNames.peopleImages.people_white : ImageNames.peopleImages.people_blue),
+                    ),
+                    Text(
+                      classmates < 4
+                          ? '${4 - classmates} classmate${classmates == 1 ? '' : 's'} away'
+                          : '${classmates} classmate${classmates == 1 ? '' : 's'}',
+                      style: TextStyle(
+                          color: classmates < 4
+                              ? Colors.white
+                              : SKColors.skoller_blue,
+                          fontSize: 15),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -190,7 +251,7 @@ class _ClassesInfoViewState extends State<ClassesInfoView> {
         });
         Navigator.push(
           context,
-          MaterialPageRoute(
+          CupertinoPageRoute(
               builder: (context) => AssignmentInfoView(task: assignment)),
         );
       },

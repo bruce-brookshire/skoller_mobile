@@ -40,6 +40,8 @@ class Assignment {
   //Static Members//
   //--------------//
 
+  static List<Assignment> currentTasks;
+
   static Assignment _fromJsonObj(Map content) {
     var due = content['due'] != null ? DateTime.parse(content['due']) : null;
     return Assignment(
@@ -60,6 +62,11 @@ class Assignment {
     return SKRequests.get(
       '/students/${SKUser.current.student.id}/assignments?is_complete=false&date=${utcDate.toIso8601String()}',
       _fromJsonObj,
-    );
+    ).then((response) {
+      if (response.wasSuccessful() && response.obj != null) {
+        currentTasks = response.obj;
+      }
+      return response;
+    });
   }
 }

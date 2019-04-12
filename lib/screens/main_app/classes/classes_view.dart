@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
 import '../../../constants/constants.dart';
 import '../../../requests/requests_core.dart';
 import 'classes_info_view.dart';
@@ -76,7 +77,7 @@ class _ClassesViewState extends State<ClassesView> {
         });
         Navigator.push(
             context,
-            MaterialPageRoute(
+            CupertinoPageRoute(
                 builder: (context) =>
                     ClassesInfoView(classId: studentClass.id)));
       },
@@ -140,10 +141,21 @@ class _ClassesViewState extends State<ClassesView> {
                       ),
                     ],
                   ),
-                  Text(
-                    '${(studentClass.completion * 100).round()}% complete',
-                    style:
-                        TextStyle(fontWeight: FontWeight.normal, fontSize: 14),
+                  Row(
+                    children: <Widget>[
+                      Padding(
+                        padding: EdgeInsets.only(bottom: 1, right: 4),
+                        child: ClassCompletionChart(
+                          studentClass.completion,
+                          SKColors.dark_gray,
+                        ),
+                      ),
+                      Text(
+                        '${(studentClass.completion * 100).round()}% complete',
+                        style: TextStyle(
+                            fontWeight: FontWeight.normal, fontSize: 14),
+                      ),
+                    ],
                   ),
                 ],
               ),

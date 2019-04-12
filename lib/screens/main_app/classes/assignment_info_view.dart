@@ -32,27 +32,13 @@ class _AssignmentInfoViewState extends State<AssignmentInfoView> {
   Widget build(BuildContext context) {
     final task = widget.task;
 
-    return Scaffold(
-      backgroundColor: Colors.white,
-      body: SafeArea(
-        bottom: false,
-        child: Container(
-          color: SKColors.background_gray,
-          child: Center(
-            child: Column(
-              children: <Widget>[
-                SKNavBar(
-                  task.parentClass.name,
-                  backBtnEnabled: true,
-                  titleColor: task.parentClass.getColor(),
-                ),
-                buildAssignmentDetails(task),
-                buildPersonalDetails(task)
-              ],
-            ),
-          ),
-        ),
-      ),
+    return SKNavView(
+      title: task.parentClass.name,
+      titleColor: task.parentClass.getColor(),
+      children: <Widget>[
+        buildAssignmentDetails(task),
+        buildPersonalDetails(task)
+      ],
     );
   }
 
