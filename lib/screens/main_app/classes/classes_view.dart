@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import '../../../constants/constants.dart';
 import '../../../requests/requests_core.dart';
-import 'classes_info_view.dart';
+import 'class_detail_view.dart';
 
 class ClassesView extends StatefulWidget {
   @override
@@ -32,29 +32,19 @@ class _ClassesViewState extends State<ClassesView> {
   }
 
   @override
-  Widget build(BuildContext build) => Scaffold(
-      backgroundColor: Colors.white,
-      body: SafeArea(
-        child: Container(
-          color: SKColors.background_gray,
-          child: Center(
-            child: Column(
-              children: <Widget>[
-                SKNavBar(
-                  'Classes',
-                ),
-                Expanded(
-                  child: ListView.builder(
-                    padding: EdgeInsets.only(top: 4),
-                    itemCount: classes.length,
-                    itemBuilder: createClassCard,
-                  ),
-                )
-              ],
+  Widget build(BuildContext build) => SKNavView(
+        title: 'Classes',
+        isBack: false,
+        children: <Widget>[
+          Expanded(
+            child: ListView.builder(
+              padding: EdgeInsets.only(top: 4),
+              itemCount: classes.length,
+              itemBuilder: createClassCard,
             ),
-          ),
-        ),
-      ));
+          )
+        ],
+      );
 
   Widget createClassCard(BuildContext context, int index) {
     final studentClass = classes[index];
@@ -79,7 +69,7 @@ class _ClassesViewState extends State<ClassesView> {
             context,
             CupertinoPageRoute(
                 builder: (context) =>
-                    ClassesInfoView(classId: studentClass.id)));
+                    ClassDetailView(classId: studentClass.id)));
       },
       child: Container(
         decoration: BoxDecoration(

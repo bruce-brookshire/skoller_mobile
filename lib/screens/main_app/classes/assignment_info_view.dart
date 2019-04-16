@@ -205,8 +205,7 @@ class _AssignmentInfoViewState extends State<AssignmentInfoView> {
                     child: Text(
                       widget.task.grade == null
                           ? '--%'
-                          : NumberUtilities.formatWeightAsPercent(
-                              widget.task.grade),
+                          : '${widget.task.grade}%',
                       style: TextStyle(color: SKColors.skoller_blue),
                     ),
                   ),

@@ -9,13 +9,24 @@ class StudentClass {
   double completion;
   int enrollment;
   List<Weight> weights;
+  String meetDays;
+  String meetTime;
 
   //----------------//
   //Member functions//
   //----------------//
 
-  StudentClass(this.id, this.name, this.assignments, this._color, this.grade,
-      this.completion, this.enrollment, this.weights);
+  StudentClass(
+      this.id,
+      this.name,
+      this.assignments,
+      this._color,
+      this.grade,
+      this.completion,
+      this.enrollment,
+      this.weights,
+      this.meetDays,
+      this.meetTime);
 
   Color getColor() {
     if (_color != null) {
@@ -77,6 +88,8 @@ class StudentClass {
         Weight._fromJsonObj,
         content['weights'],
       ),
+      content['meet_days'],
+      content['meet_time'],
     );
   }
 
