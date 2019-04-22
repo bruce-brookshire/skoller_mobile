@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import '../../constants/constants.dart';
 import 'tasks/tasks_view.dart';
 import 'classes/classes_view.dart';
+import 'calendar/calendar.dart';
 
 class MyHomePage extends StatefulWidget {
   MyHomePage({Key key}) : super(key: key);
@@ -16,8 +17,8 @@ class _MyHomePageState extends State<MyHomePage> {
   int _selectedIndex = 0;
   final _widgetOptions = [
     TasksView(),
+    CalendarView(),
     ClassesView(),
-    TasksView(),
   ];
 
   @override
@@ -46,13 +47,13 @@ class _MyHomePageState extends State<MyHomePage> {
           ),
           BottomNavigationBarItem(
             icon: _selectedIndex == 1
-                ? Image.asset("image_assets/tab_bar_assets/classes_blue.png")
-                : Image.asset("image_assets/tab_bar_assets/classes_gray.png"),
+                ? Image.asset("image_assets/tab_bar_assets/calendar_blue.png")
+                : Image.asset("image_assets/tab_bar_assets/calendar_gray.png"),
           ),
           BottomNavigationBarItem(
             icon: _selectedIndex == 2
-                ? Image.asset("image_assets/tab_bar_assets/activity_blue.png")
-                : Image.asset("image_assets/tab_bar_assets/activity_gray.png"),
+                ? Image.asset("image_assets/tab_bar_assets/classes_blue.png")
+                : Image.asset("image_assets/tab_bar_assets/classes_gray.png"),
           ),
         ],
         currentIndex: _selectedIndex,

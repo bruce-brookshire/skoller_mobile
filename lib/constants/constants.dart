@@ -16,12 +16,13 @@ class SKColors {
   static final selected_gray = Color(0xFFF8F8F8);
   static final light_gray = Color(0xFFAAAAAA);
   static final alert_orange = Color(0xFFFF6D00);
+  static final text_light_gray = Color(0xFFC7C7CD);
+  static final inactive_gray = Color(0xFFEEEEEE);
 }
 //     ERASERPINK: '#FDBA22',
 //     IOSLIGHTGRAY: 'rgb(170,170,170)',
 //     INACTIVEGRAY: '#EEEEEE',
 //     WARNINGRED: '#FF4159',
-//     TEXTLIGHTGRAY: '#C7C7CD'
 
 class UIAssets {
   static BoxShadow boxShadow = BoxShadow(

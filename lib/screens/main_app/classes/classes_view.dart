@@ -409,7 +409,7 @@ class _ClassesViewState extends State<ClassesView> {
               padding: EdgeInsets.only(left: 8, right: 8, bottom: 1),
               decoration: BoxDecoration(
                   border: Border(
-                      left: BorderSide(color: SKColors.border_gray, width: 2))),
+                      left: BorderSide(color: SKColors.text_light_gray, width: 2))),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 crossAxisAlignment: CrossAxisAlignment.start,

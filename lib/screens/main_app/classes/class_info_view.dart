@@ -189,7 +189,33 @@ class _ClassInfoViewState extends State<ClassInfoView> {
               ),
             ],
           ),
-        )
+        ),
+        Spacer(
+          flex: 1,
+        ),
+        GestureDetector(
+          onTapUp: (details) {
+            //Change color
+          },
+          child: Container(
+            height: 40,
+            margin: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+            decoration: BoxDecoration(
+              color: null,
+              border: Border.all(color: Colors.red),
+              borderRadius: BorderRadius.circular(5),
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Text(
+                  'Drop class',
+                  style: TextStyle(color: Colors.red),
+                ),
+              ],
+            ),
+          ),
+        ),
       ],
     );
   }
