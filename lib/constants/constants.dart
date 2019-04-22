@@ -15,6 +15,7 @@ class SKColors {
   static final border_gray = Color(0xFFEDEDED);
   static final selected_gray = Color(0xFFF8F8F8);
   static final light_gray = Color(0xFFAAAAAA);
+  static final alert_orange = Color(0xFFFF6D00);
 }
 //     ERASERPINK: '#FDBA22',
 //     IOSLIGHTGRAY: 'rgb(170,170,170)',
@@ -31,6 +32,14 @@ class UIAssets {
   static CupertinoTabBar tabBar;
 }
 
+class ClassStatuses {
+  static final needs_setup = 1100;
+  static final syllabus_submitted = 1200;
+  static final needs_student_input = 1300;
+  static final class_setup = 1400;
+  static final class_issue = 1500;
+}
+
 /// Image paths within the image_assets/ folder
 class ImageNames {
   static final signUpImages = _SignUpImages();
@@ -38,6 +47,7 @@ class ImageNames {
   static final navArrowImages = _NavigationArrowImages();
   static final assignmentInfoImages = _AssignmentInfoImages();
   static final peopleImages = _PeopleImages();
+  static final statusImages = _StatusImages();
 }
 
 class _SignUpImages {
@@ -63,7 +73,13 @@ class _PeopleImages {
   final person_light_gray = 'image_assets/people_assets/person_light_gray.png';
   final person_dark_gray = 'image_assets/people_assets/person_dark_gray.png';
   final person_blue = 'image_assets/people_assets/person_blue.png';
+  final person_edit = 'image_assets/people_assets/user_edit.png';
   final people_gray = 'image_assets/people_assets/people_gray.png';
   final people_blue = 'image_assets/people_assets/people_blue.png';
   final people_white = 'image_assets/people_assets/people_white.png';
+}
+
+class _StatusImages {
+  final diy = 'image_assets/status_assets/diy.png';
+  final clock = 'image_assets/status_assets/clock.png';
 }

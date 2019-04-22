@@ -2,31 +2,47 @@ part of 'requests_core.dart';
 
 class StudentClass {
   int id;
-  String name;
-  List<Assignment> assignments;
-  String _color;
+  int enrollment;
+
   double grade;
   double completion;
-  int enrollment;
-  List<Weight> weights;
+
+  String name;
+  String _color;
   String meetDays;
-  String meetTime;
+  String subject;
+  String code;
+  String section;
+
+  TimeOfDay meetTime;
+
+  Status status;
+  Professor professor;
+
+  List<Weight> weights;
+  List<Assignment> assignments;
 
   //----------------//
   //Member functions//
   //----------------//
 
   StudentClass(
-      this.id,
-      this.name,
-      this.assignments,
-      this._color,
-      this.grade,
-      this.completion,
-      this.enrollment,
-      this.weights,
-      this.meetDays,
-      this.meetTime);
+    this.id,
+    this.name,
+    this.assignments,
+    this._color,
+    this.grade,
+    this.completion,
+    this.enrollment,
+    this.weights,
+    this.meetDays,
+    this.meetTime,
+    this.status,
+    this.subject,
+    this.code,
+    this.section,
+    this.professor,
+  );
 
   Color getColor() {
     if (_color != null) {
@@ -73,6 +89,17 @@ class StudentClass {
   ];
 
   static StudentClass _fromJsonObj(Map content) {
+    final String startString = content['meet_start_time'];
+    final startComponents = startString == null
+        ? null
+        : startString
+            .split(':')
+            .map((component) => int.parse(component))
+            .toList();
+    final startTime = (startString == null || startComponents.length < 2)
+        ? null
+        : TimeOfDay(hour: startComponents[0], minute: startComponents[1]);
+
     return StudentClass(
       content['id'],
       content['name'],
@@ -89,7 +116,12 @@ class StudentClass {
         content['weights'],
       ),
       content['meet_days'],
-      content['meet_time'],
+      startTime,
+      Status._fromJsonObj(content['status']),
+      content['subject'],
+      content['code'],
+      content['section'],
+      Professor._fromJsonObj(content['professor']),
     );
   }
 
@@ -134,6 +166,52 @@ class Weight {
       content['id'],
       content['weight'],
       content['name'],
+    );
+  }
+}
+
+class Status {
+  int id;
+  String name;
+
+  Status(this.id, this.name);
+
+  static Status _fromJsonObj(Map content) {
+    return Status(
+      content['id'],
+      content['name'],
+    );
+  }
+}
+
+class Professor {
+  int id;
+  String first_name;
+  String last_name;
+  String email;
+  String phone_number;
+  String availability;
+  String office_location;
+
+  Professor(
+    this.id,
+    this.first_name,
+    this.last_name,
+    this.email,
+    this.phone_number,
+    this.availability,
+    this.office_location,
+  );
+
+  static Professor _fromJsonObj(Map content) {
+    return Professor(
+      content['id'],
+      content['name_first'],
+      content['name_last'],
+      content['email'],
+      content['phone_number'],
+      content['availability'],
+      content['office_location'],
     );
   }
 }

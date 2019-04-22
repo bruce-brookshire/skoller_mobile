@@ -3,7 +3,7 @@ import 'package:flutter/cupertino.dart';
 import '../../../constants/constants.dart';
 import '../../../requests/requests_core.dart';
 import 'assignment_info_view.dart';
-import 'classes_info_view.dart';
+import 'class_info_view.dart';
 
 class ClassDetailView extends StatefulWidget {
   final int classId;
