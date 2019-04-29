@@ -55,12 +55,32 @@ class Assignment {
         content['is_completed']);
   }
 
+/**
+ * Gets the current tasks for the User.
+ * Tasks are assignments for active classes that are in the future (and on today) and have not been completed
+ */
   static Future<RequestResponse> getTasks() {
     DateTime now = DateTime.now();
     DateTime utcDate = DateTime.utc(now.year, now.month, now.day);
 
     return SKRequests.get(
       '/students/${SKUser.current.student.id}/assignments?is_complete=false&date=${utcDate.toIso8601String()}',
+      _fromJsonObj,
+    ).then((response) {
+      if (response.wasSuccessful() && response.obj != null) {
+        currentTasks = response.obj;
+      }
+      return response;
+    });
+  }
+
+/**
+ * Gets the current assignments for the User.
+ * Assignments are from all active classes
+ */
+  static Future<RequestResponse> getAssignments() {
+    return SKRequests.get(
+      '/students/${SKUser.current.student.id}/assignments',
       _fromJsonObj,
     ).then((response) {
       if (response.wasSuccessful() && response.obj != null) {

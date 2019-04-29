@@ -1,6 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/rendering.dart';
 import 'package:intl/intl.dart';
+import 'package:skoller/screens/main_app/classes/assignment_info_view.dart';
+import 'package:skoller/screens/main_app/classes/assignment_weight_view.dart';
 import '../../../constants/constants.dart';
+import '../../../requests/requests_core.dart';
 
 class CalendarView extends StatefulWidget {
   @override
@@ -14,6 +19,8 @@ class _CalendarViewState extends State<CalendarView> {
   DateTime startDate;
   DateTime today;
 
+  Map<String, List<Assignment>> assignments = {};
+
   @override
   void initState() {
     super.initState();
@@ -23,20 +30,87 @@ class _CalendarViewState extends State<CalendarView> {
     startDate = firstOfMonth.weekday == 7
         ? firstOfMonth
         : DateTime(today.year, today.month, 1 - firstOfMonth.weekday);
+
+    Assignment.getAssignments().then((response) {
+      if (response.wasSuccessful()) {
+        setState(() {
+          assignments = {};
+          //Add assignments to the day hash map
+          for (var assignment in response.obj) {
+            if (assignment.due != null) {
+              final dateStr = createDateStr(assignment.due);
+
+              if (assignments[dateStr] == null) {
+                assignments[dateStr] = [assignment];
+              } else {
+                assignments[dateStr].add(assignment);
+              }
+            }
+          }
+        });
+      }
+    });
+  }
+
+  String createDateStr(DateTime date) {
+    return '${date.day}-${date.month}-${date.year}';
+  }
+
+  void tappedNextMonth(dynamic details) {
+    setState(() {
+      firstOfMonth = DateTime(firstOfMonth.year, firstOfMonth.month + 1, 1);
+      startDate = firstOfMonth.weekday == 7
+          ? firstOfMonth
+          : DateTime(
+              firstOfMonth.year, firstOfMonth.month, 1 - firstOfMonth.weekday);
+    });
+  }
+
+  void tappedPreviousMonth(dynamic details) {
+    setState(() {
+      firstOfMonth = DateTime(firstOfMonth.year, firstOfMonth.month - 1, 1);
+      startDate = firstOfMonth.weekday == 7
+          ? firstOfMonth
+          : DateTime(
+              firstOfMonth.year, firstOfMonth.month, 1 - firstOfMonth.weekday);
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     return SKNavView(
+      isBack: false,
       title: 'Calendar',
       children: <Widget>[
         Container(
-          alignment: Alignment.centerLeft,
           color: Colors.white,
-          padding: EdgeInsets.symmetric(horizontal: 12, vertical: 12),
-          child: Text(
-            DateFormat('MMMM yyyy').format(DateTime.now()),
-            style: TextStyle(fontSize: 17),
+          padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: <Widget>[
+              GestureDetector(
+                onTapUp: tappedPreviousMonth,
+                child: Container(
+                  width: 40,
+                  height: 40,
+                  child: Image.asset(ImageNames.navArrowImages.left),
+                ),
+              ),
+              Container(
+                child: Text(
+                  DateFormat('MMMM yyyy').format(firstOfMonth),
+                  style: TextStyle(fontSize: 16),
+                ),
+              ),
+              GestureDetector(
+                onTapUp: tappedNextMonth,
+                child: Container(
+                  width: 40,
+                  height: 40,
+                  child: Image.asset(ImageNames.navArrowImages.right),
+                ),
+              ),
+            ],
           ),
         ),
         Container(
@@ -99,6 +173,42 @@ class _CalendarViewState extends State<CalendarView> {
   }
 
   Widget day(DateTime date) {
+    final isCurrent = date.month == firstOfMonth.month;
+    final dateStr = createDateStr(date);
+
+    final dayListAssignments = assignments[dateStr] ?? [];
+    final endIndex =
+        dayListAssignments.length <= 4 ? dayListAssignments.length : 4;
+    final dayAssignments =
+        (assignments[createDateStr(date)] ?? []).getRange(0, endIndex);
+
+    final widgetAssignments = dayAssignments
+        .map(
+          (assignment) => Container(
+                margin: EdgeInsets.only(bottom: 2),
+                padding: EdgeInsets.symmetric(horizontal: 2, vertical: 1),
+                decoration: BoxDecoration(
+                  color: !isCurrent
+                      ? Color(0xFFD0D0D0)
+                      : assignment.parentClass.getColor(),
+                  borderRadius: BorderRadius.circular(3),
+                ),
+                // alignment: Alignment.center,
+                child: Text(
+                  assignment.name,
+                  maxLines: 1,
+                  softWrap: false,
+                  overflow: TextOverflow.fade,
+                  style: TextStyle(
+                      letterSpacing: -1,
+                      fontSize: 10,
+                      fontWeight: FontWeight.normal,
+                      color: Colors.white),
+                ),
+              ),
+        )
+        .toList();
+
     return Expanded(
       child: Column(
         children: <Widget>[
@@ -108,7 +218,9 @@ class _CalendarViewState extends State<CalendarView> {
                 padding: EdgeInsets.fromLTRB(2, 1, 2, 0),
                 margin: EdgeInsets.only(left: 3),
                 decoration: BoxDecoration(
-                  color: date.day == today.day && date.month == today.month
+                  color: date.day == today.day &&
+                          date.month == today.month &&
+                          isCurrent
                       ? SKColors.skoller_blue
                       : null,
                   borderRadius: BorderRadius.circular(3),
@@ -118,8 +230,8 @@ class _CalendarViewState extends State<CalendarView> {
                   style: TextStyle(
                       fontSize: 12,
                       fontWeight: FontWeight.normal,
-                      color: date.month == firstOfMonth.month
-                          ? (date.day == today.day
+                      color: isCurrent
+                          ? (date.day == today.day && date.month == today.month
                               ? Colors.white
                               : SKColors.dark_gray)
                           : SKColors.text_light_gray),
@@ -128,29 +240,40 @@ class _CalendarViewState extends State<CalendarView> {
             ],
           ),
           Expanded(
-            child: Container(
-              margin: EdgeInsets.fromLTRB(2.5, 1.5, 2.5, 4),
-              decoration: BoxDecoration(
-                color: date.month == firstOfMonth.month
-                    ? Colors.white
-                    : SKColors.inactive_gray,
-                borderRadius: BorderRadius.circular(5),
-                border: Border.all(color: SKColors.border_gray),
-                boxShadow: [
-                  BoxShadow(
-                    color: Color(0x0A000000),
-                    offset: Offset(0, 1.75),
-                    blurRadius: 3,
-                  )
-                ],
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: <Widget>[
-                  Container(
-                    child: null,
-                  ),
-                ],
+            child: GestureDetector(
+              onTapUp: (details) {
+                if (!isCurrent) {
+                  if (date.month < firstOfMonth.month) {
+                    this.tappedPreviousMonth(details);
+                  } else {
+                    this.tappedNextMonth(details);
+                  }
+                } else if (endIndex > 0) {
+                  this.detailModal(dayListAssignments);
+                }
+              },
+              child: Container(
+                margin: EdgeInsets.fromLTRB(2, 1.5, 2, 4),
+                padding: EdgeInsets.all(2),
+                decoration: BoxDecoration(
+                  color: date.month == firstOfMonth.month
+                      ? Colors.white
+                      : SKColors.inactive_gray,
+                  borderRadius: BorderRadius.circular(5),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Color(0x0A000000),
+                      offset: Offset(0, 1.75),
+                      blurRadius: 3,
+                    )
+                  ],
+                ),
+                child: widgetAssignments.length == 0
+                    ? null
+                    : Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: widgetAssignments,
+                      ),
               ),
             ),
           ),
@@ -158,4 +281,110 @@ class _CalendarViewState extends State<CalendarView> {
       ),
     );
   }
+
+  void detailModal(List<Assignment> dateAssignments) async {
+    final result = await showDialog(
+        context: context,
+        builder: (context) {
+          return Dialog(
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.all(Radius.circular(10))),
+            child: Container(
+              padding: EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                  color: Colors.white,
+                  border: Border.all(color: SKColors.border_gray),
+                  borderRadius: BorderRadius.circular(10)),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Container(
+                    alignment: Alignment.center,
+                    child: Text('Schedule', style: TextStyle(fontSize: 17),),
+                  ),
+                  Container(
+                    alignment: Alignment.center,
+                    padding: EdgeInsets.only(bottom: 12),
+                    child: Text(
+                      DateFormat('MMMM d').format(dateAssignments.first.due),
+                      style: TextStyle(fontWeight: FontWeight.normal),
+                    ),
+                  ),
+                  ...generateAssignmentCells(context, dateAssignments),
+                  GestureDetector(
+                    behavior: HitTestBehavior.opaque,
+                    onTapUp: (details) {
+                      Navigator.pop(context);
+                    },
+                    child: Container(
+                      alignment: Alignment.center,
+                      padding: EdgeInsets.only(top: 16, bottom: 4),
+                      child: Text(
+                        'Dismiss',
+                        style: TextStyle(
+                            color: SKColors.skoller_blue),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          );
+        });
+
+    if (result != null && result is Assignment) {
+      Navigator.push(
+        context,
+        CupertinoPageRoute(
+          builder: (context) => AssignmentInfoView(
+                task: result,
+              ),
+        ),
+      );
+    }
+  }
+
+  List<Widget> generateAssignmentCells(
+    BuildContext context,
+    List<Assignment> dateAssignments,
+  ) =>
+      dateAssignments
+          .map(
+            (assignment) => GestureDetector(
+                  onTapUp: (details) {
+                    Navigator.pop(context, assignment);
+                  },
+                  behavior: HitTestBehavior.opaque,
+                  child: Container(
+                    padding: EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                    margin: EdgeInsets.symmetric(vertical: 4),
+                    decoration: BoxDecoration(
+                      border:
+                          Border.all(color: assignment.parentClass.getColor()),
+                      borderRadius: BorderRadius.circular(5),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: <Widget>[
+                        Text(
+                          assignment.parentClass.name,
+                          style: TextStyle(
+                            color: assignment.parentClass.getColor(),
+                            fontSize: 16,
+                          ),
+                        ),
+                        Text(
+                          assignment.name,
+                          style: TextStyle(
+                              fontSize: 13, fontWeight: FontWeight.normal),
+                        )
+                      ],
+                    ),
+                  ),
+                ),
+          )
+          .toList();
 }

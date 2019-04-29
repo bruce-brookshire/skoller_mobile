@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:auto_size_text/auto_size_text.dart';
 import '../../../constants/constants.dart';
 import '../../../requests/requests_core.dart';
 import 'assignment_info_view.dart';
+import 'assignment_weight_view.dart';
 import 'class_info_view.dart';
 
 class ClassDetailView extends StatefulWidget {
@@ -82,38 +84,78 @@ class _ClassDetailViewState extends State<ClassDetailView> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: <Widget>[
-                          GestureDetector(
-                            onTapUp: (details) {
-                              Navigator.pop(context);
-                            },
-                            child: Container(
-                              child:
-                                  Image.asset(ImageNames.navArrowImages.left),
-                              width: 44,
-                              height: 44,
+                          Row(
+                            children: <Widget>[
+                              GestureDetector(
+                                onTapUp: (details) {
+                                  Navigator.pop(context);
+                                },
+                                child: Container(
+                                  child: Image.asset(
+                                      ImageNames.navArrowImages.left),
+                                  width: 36,
+                                  height: 44,
+                                ),
+                              ),
+                              GestureDetector(
+                                onTapUp: (details) {
+                                  Navigator.pop(context);
+                                },
+                                child: Container(
+                                  child: Image.asset(
+                                      ImageNames.rightNavImages.link),
+                                  width: 36,
+                                  height: 44,
+                                ),
+                              ),
+                            ],
+                          ),
+                          Expanded(
+                            child: AutoSizeText(
+                              studentClass.name,
+                              textAlign: TextAlign.center,
+                              maxLines: 1,
+                              minFontSize: 10,
+                              style: TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                  color: studentClass.getColor()),
                             ),
                           ),
-                          Text(
-                            studentClass.name,
-                            style: TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
-                                color: studentClass.getColor()),
-                          ),
-                          GestureDetector(
-                            onTapUp: (details) {
-                              Navigator.push(
-                                  context,
-                                  CupertinoPageRoute(
-                                      builder: (context) =>
-                                          ClassInfoView(studentClass.id)));
-                            },
-                            child: Container(
-                              child:
-                                  Image.asset(ImageNames.rightNavImages.info),
-                              width: 44,
-                              height: 44,
-                            ),
+                          Row(
+                            children: <Widget>[
+                              GestureDetector(
+                                onTapUp: (details) {
+                                  Navigator.push(
+                                      context,
+                                      CupertinoPageRoute(
+                                          builder: (context) =>
+                                              ClassInfoView(studentClass.id)));
+                                },
+                                child: Container(
+                                  child: Image.asset(
+                                      ImageNames.rightNavImages.info),
+                                  width: 36,
+                                  height: 44,
+                                ),
+                              ),
+                              GestureDetector(
+                                onTapUp: (details) {
+                                  Navigator.push(
+                                      context,
+                                      CupertinoPageRoute(
+                                          builder: (context) =>
+                                              AssignmentWeightView(
+                                                  studentClass.id)));
+                                },
+                                child: Container(
+                                  child: Image.asset(
+                                      ImageNames.rightNavImages.plus),
+                                  width: 36,
+                                  height: 44,
+                                ),
+                              ),
+                            ],
                           ),
                         ],
                       ),

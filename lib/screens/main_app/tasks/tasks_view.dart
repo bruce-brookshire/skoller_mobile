@@ -3,7 +3,7 @@ import 'package:flutter/cupertino.dart';
 import '../../../constants/constants.dart';
 import '../../../requests/requests_core.dart';
 import '../classes/assignment_info_view.dart';
-import '../classes/assignment_add_view.dart';
+import '../classes/assignment_weight_view.dart';
 
 class TasksView extends StatefulWidget {
   State createState() => _TasksViewState();
@@ -121,7 +121,7 @@ class _TasksViewState extends State<TasksView> {
       Navigator.push(
         context,
         CupertinoPageRoute(
-          builder: (context) => AssignmentAddView(class_id),
+          builder: (context) => AssignmentWeightView(class_id),
         ),
       );
     }

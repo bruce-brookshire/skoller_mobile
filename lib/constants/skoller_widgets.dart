@@ -111,6 +111,7 @@ class SKNavBar extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
             GestureDetector(
+              behavior: HitTestBehavior.opaque,
               onTapUp: (details) {
                 if (_isBack) Navigator.pop(context);
                 // if (_isDown) Navigator.
@@ -138,6 +139,7 @@ class SKNavBar extends StatelessWidget {
                   color: _titleColor),
             ),
             GestureDetector(
+              behavior: HitTestBehavior.opaque,
               onTapUp: (details) {
                 if (_rightBtnImage != null && _callback_right != null) {
                   _callback_right();

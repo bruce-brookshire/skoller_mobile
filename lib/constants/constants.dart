@@ -64,6 +64,7 @@ class _NavigationArrowImages {
 class _RightNavImages {
   final plus = 'image_assets/right_button_assets/plus.png';
   final info = 'image_assets/right_button_assets/info.png';
+  final link = 'image_assets/right_button_assets/link.png';
 }
 
 class _AssignmentInfoImages {
