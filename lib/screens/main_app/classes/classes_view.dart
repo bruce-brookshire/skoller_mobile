@@ -280,7 +280,7 @@ class _ClassesViewState extends State<ClassesView> {
                     needsAssignments
                         ? 'Add your first assignment'
                         : 'Set up this class',
-                    style: TextStyle(color: needsAssignments ? SKColors.dark_gray : SKColors.skoller_blue),
+                    style: TextStyle(color: needsAssignments ? SKColors.dark_gray : SKColors.skoller_blue, fontSize: 14),
                   )
                 ],
               ),
@@ -352,7 +352,7 @@ class _ClassesViewState extends State<ClassesView> {
                   ),
                   Text(
                     'DIY required',
-                    style: TextStyle(color: SKColors.alert_orange),
+                    style: TextStyle(color: SKColors.alert_orange, fontSize: 14),
                   )
                 ],
               ),
@@ -423,7 +423,7 @@ class _ClassesViewState extends State<ClassesView> {
                   ),
                   Text(
                     'Syllabus in review',
-                    style: TextStyle(color: SKColors.dark_gray),
+                    style: TextStyle(color: SKColors.dark_gray, fontSize: 14),
                   )
                 ],
               ),

@@ -200,7 +200,7 @@ class _CalendarViewState extends State<CalendarView> {
                   softWrap: false,
                   overflow: TextOverflow.fade,
                   style: TextStyle(
-                      letterSpacing: -1,
+                      letterSpacing: -0.8,
                       fontSize: 10,
                       fontWeight: FontWeight.normal,
                       color: Colors.white),
@@ -217,6 +217,7 @@ class _CalendarViewState extends State<CalendarView> {
               Container(
                 padding: EdgeInsets.fromLTRB(2, 1, 2, 0),
                 margin: EdgeInsets.only(left: 3),
+                alignment: Alignment.center,
                 decoration: BoxDecoration(
                   color: date.day == today.day &&
                           date.month == today.month &&
@@ -358,7 +359,7 @@ class _CalendarViewState extends State<CalendarView> {
                   },
                   behavior: HitTestBehavior.opaque,
                   child: Container(
-                    padding: EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                    padding: EdgeInsets.symmetric(horizontal: 6, vertical: 4),
                     margin: EdgeInsets.symmetric(vertical: 4),
                     decoration: BoxDecoration(
                       border:
