@@ -40,6 +40,7 @@ class AssignmentWeightView extends StatelessWidget {
                 ),
                 Expanded(
                   child: ListView.builder(
+                    padding: EdgeInsets.only(top: 4),
                     itemCount: weights.length + 1,
                     itemBuilder: (context, index) {
                       return index == weights.length
@@ -56,7 +57,7 @@ class AssignmentWeightView extends StatelessWidget {
                               },
                               child: Container(
                                 padding: EdgeInsets.symmetric(
-                                    horizontal: 12, vertical: 12),
+                                    horizontal: 12, vertical: 8),
                                 child: Row(
                                   mainAxisAlignment:
                                       MainAxisAlignment.spaceBetween,
@@ -66,6 +67,17 @@ class AssignmentWeightView extends StatelessWidget {
                                         crossAxisAlignment:
                                             CrossAxisAlignment.start,
                                         children: [
+                                          Container(
+                                            margin: EdgeInsets.only(bottom: 12),
+                                            child: null,
+                                            decoration: BoxDecoration(
+                                              border: Border(
+                                                bottom: BorderSide(
+                                                  color: SKColors.border_gray,
+                                                ),
+                                              ),
+                                            ),
+                                          ),
                                           Text('Not weighted'),
                                           Text(
                                             'Assignments in this category do not count towards your grade',

@@ -14,6 +14,25 @@ class AssignmentAddView extends StatefulWidget {
 }
 
 class _AssignmentAddViewState extends State<AssignmentAddView> {
+  DateTime dueDate;
+
+  void tappedDateSelector(TapUpDetails details) {
+    final now = DateTime.now();
+
+    SKCalendarPicker.presentDateSelector(
+            title: 'Due Date',
+            subtitle: 'When is this assignment due?',
+            context: context,
+            startDate: DateTime(now.year, now.month, now.day))
+        .then((selectedDate) {
+      if (selectedDate != null) {
+        setState(() {
+          dueDate = selectedDate;
+        });
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final studentClass = StudentClass.currentClasses[widget.class_id];
@@ -91,10 +110,15 @@ class _AssignmentAddViewState extends State<AssignmentAddView> {
                   style: TextStyle(fontWeight: FontWeight.normal, fontSize: 15),
                 ),
                 GestureDetector(
+                  onTapUp: tappedDateSelector,
                   child: Text(
-                    'Oct. 15th',
-                    style:
-                        TextStyle(fontWeight: FontWeight.normal, fontSize: 15),
+                    dueDate == null
+                        ? 'Select...'
+                        : DateFormat('EEE, MMMM d').format(dueDate),
+                    style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 15,
+                        color: SKColors.skoller_blue),
                   ),
                 ),
               ],

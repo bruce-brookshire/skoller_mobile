@@ -1,5 +1,8 @@
 part of 'constants.dart';
 
+typedef ContextCallback(BuildContext context);
+typedef void DateCallback(DateTime date);
+
 class SKTextField extends StatelessWidget {
   final String fillText;
   final EdgeInsets margins;
@@ -28,8 +31,6 @@ class SKTextField extends StatelessWidget {
         ),
       );
 }
-
-typedef ContextCallback(BuildContext context);
 
 class SKButton extends StatelessWidget {
   final String buttonText;
@@ -273,4 +274,297 @@ class _ChartPainter extends CustomPainter {
 
   @override
   bool shouldRepaint(CustomPainter oldDelegate) => false;
+}
+
+class SKCalendarPicker extends StatefulWidget {
+  final DateTime startDate;
+  final DateCallback _completionHandler;
+
+  SKCalendarPicker._(this.startDate, this._completionHandler) : super();
+
+  @override
+  State createState() => _SKCalendarPickerState();
+
+  static Future<DateTime> presentDateSelector({
+    @required String title,
+    @required String subtitle,
+    @required BuildContext context,
+    @required DateTime startDate,
+  }) async {
+    DateTime selectedDate = startDate;
+
+    final calendar = SKCalendarPicker._(startDate, (date) {
+      selectedDate = date;
+    });
+
+    return showDialog(
+        context: context,
+        builder: (context) {
+          return Dialog(
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.all(Radius.circular(10))),
+            child: Container(
+              padding: EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                  color: Colors.white,
+                  border: Border.all(color: SKColors.border_gray),
+                  borderRadius: BorderRadius.circular(10)),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Container(
+                    alignment: Alignment.center,
+                    child: Text(
+                      title,
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: SKColors.dark_gray,
+                          fontSize: 15),
+                    ),
+                  ),
+                  Container(
+                    alignment: Alignment.center,
+                    padding: EdgeInsets.only(bottom: 6, top: 4),
+                    child: Text(
+                      subtitle,
+                      style: TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.normal,
+                          color: SKColors.dark_gray),
+                    ),
+                  ),
+                  Row(
+                    mainAxisSize: MainAxisSize.max,
+                    children: <Widget>[
+                      Expanded(
+                        child: Container(
+                          child: null,
+                          margin: EdgeInsets.only(bottom: 8),
+                          height: 1.25,
+                          color: SKColors.border_gray,
+                        ),
+                      ),
+                    ],
+                  ),
+                  calendar,
+                  Row(
+                    children: <Widget>[
+                      Expanded(
+                        child: GestureDetector(
+                          behavior: HitTestBehavior.opaque,
+                          onTapUp: (details) {
+                            Navigator.pop(context);
+                          },
+                          child: Container(
+                            alignment: Alignment.center,
+                            padding: EdgeInsets.only(top: 12, bottom: 8),
+                            child: Text(
+                              'Dismiss',
+                              style: TextStyle(
+                                  color: SKColors.skoller_blue,
+                                  fontWeight: FontWeight.normal),
+                            ),
+                          ),
+                        ),
+                      ),
+                      Expanded(
+                        child: GestureDetector(
+                          behavior: HitTestBehavior.opaque,
+                          onTapUp: (details) {
+                            Navigator.pop(context, selectedDate);
+                          },
+                          child: Container(
+                            alignment: Alignment.center,
+                            padding: EdgeInsets.only(top: 12, bottom: 8),
+                            child: Text(
+                              'Select',
+                              style: TextStyle(color: SKColors.skoller_blue),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  )
+                ],
+              ),
+            ),
+          );
+        });
+  }
+}
+
+class _SKCalendarPickerState extends State<SKCalendarPicker> {
+  final weekDayStyle = TextStyle(fontSize: 14, color: SKColors.text_light_gray);
+
+  DateTime firstOfMonth;
+  DateTime startDate;
+
+  DateTime selectedDay;
+
+  @override
+  void initState() {
+    super.initState();
+
+    selectedDay = widget.startDate;
+    firstOfMonth = DateTime(selectedDay.year, selectedDay.month, 1);
+    startDate = firstOfMonth.weekday == 7
+        ? firstOfMonth
+        : DateTime(
+            selectedDay.year, selectedDay.month, 1 - firstOfMonth.weekday);
+  }
+
+  void tappedNextMonth(dynamic details) {
+    setState(() {
+      firstOfMonth = DateTime(firstOfMonth.year, firstOfMonth.month + 1, 1);
+      startDate = firstOfMonth.weekday == 7
+          ? firstOfMonth
+          : DateTime(
+              firstOfMonth.year, firstOfMonth.month, 1 - firstOfMonth.weekday);
+    });
+  }
+
+  void tappedPreviousMonth(dynamic details) {
+    setState(() {
+      firstOfMonth = DateTime(firstOfMonth.year, firstOfMonth.month - 1, 1);
+      startDate = firstOfMonth.weekday == 7
+          ? firstOfMonth
+          : DateTime(
+              firstOfMonth.year, firstOfMonth.month, 1 - firstOfMonth.weekday);
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AspectRatio(
+      aspectRatio: 1,
+      child: Container(
+        child: Column(
+          children: <Widget>[
+            Container(
+              padding: EdgeInsets.symmetric(horizontal: 4),
+              margin: EdgeInsets.symmetric(vertical: 8),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: <Widget>[
+                  GestureDetector(
+                    onTapUp: tappedPreviousMonth,
+                    child: Container(
+                      padding: EdgeInsets.all(4),
+                      child: Image.asset(ImageNames.navArrowImages.left),
+                    ),
+                  ),
+                  Text(DateFormat('MMMM, yyyy').format(firstOfMonth)),
+                  GestureDetector(
+                    onTapUp: tappedNextMonth,
+                    child: Container(
+                      padding: EdgeInsets.all(4),
+                      child: Image.asset(ImageNames.navArrowImages.right),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Container(
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  // border: Border(
+                  //     bottom: BorderSide(color: SKColors.text_light_gray)),
+                ),
+                alignment: Alignment.centerLeft,
+                padding: EdgeInsets.symmetric(horizontal: 2, vertical: 4),
+                margin: EdgeInsets.only(bottom: 4),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: <Widget>[
+                    Text('U', style: weekDayStyle),
+                    Text('M', style: weekDayStyle),
+                    Text('T', style: weekDayStyle),
+                    Text('W', style: weekDayStyle),
+                    Text('R', style: weekDayStyle),
+                    Text('F', style: weekDayStyle),
+                    Text('S', style: weekDayStyle),
+                  ],
+                )),
+            ...calendarBody(),
+          ],
+        ),
+      ),
+    );
+  }
+
+  List<Widget> calendarBody() {
+    return <Widget>[
+      week(startDate),
+      week(DateTime(startDate.year, startDate.month, startDate.day + 7)),
+      week(DateTime(startDate.year, startDate.month, startDate.day + 14)),
+      week(DateTime(startDate.year, startDate.month, startDate.day + 21)),
+      week(DateTime(startDate.year, startDate.month, startDate.day + 28)),
+      week(DateTime(startDate.year, startDate.month, startDate.day + 35)),
+    ];
+  }
+
+  Widget week(DateTime date) {
+    final isEmptyBottomRow = date.weekday == 7 &&
+        date.day != startDate.day &&
+        date.month != firstOfMonth.month;
+
+    return isEmptyBottomRow
+        ? Container(child: null)
+        : Expanded(
+            child: Container(
+              padding: EdgeInsets.symmetric(horizontal: 2),
+              child: Row(
+                children: <Widget>[
+                  createDay(date),
+                  createDay(DateTime(date.year, date.month, date.day + 1)),
+                  createDay(DateTime(date.year, date.month, date.day + 2)),
+                  createDay(DateTime(date.year, date.month, date.day + 3)),
+                  createDay(DateTime(date.year, date.month, date.day + 4)),
+                  createDay(DateTime(date.year, date.month, date.day + 5)),
+                  createDay(DateTime(date.year, date.month, date.day + 6)),
+                ],
+              ),
+            ),
+          );
+  }
+
+  Widget createDay(DateTime date) {
+    final isSelected = date.day == selectedDay.day &&
+        date.month == selectedDay.month &&
+        selectedDay.year == date.year;
+
+    return date.month != firstOfMonth.month
+        ? Expanded(child: Container(child: null))
+        : Expanded(
+            child: AspectRatio(
+              aspectRatio: 1,
+              child: GestureDetector(
+                onTapUp: (details) {
+                  setState(() {
+                    selectedDay = date;
+                    widget._completionHandler(date);
+                  });
+                },
+                child: Container(
+                  margin: EdgeInsets.all(3),
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: isSelected ? SKColors.skoller_blue : Colors.white,
+                  ),
+                  alignment: Alignment.center,
+                  child: Text(
+                    "${date.day}",
+                    style: TextStyle(
+                      color: isSelected ? Colors.white : SKColors.dark_gray,
+                      fontWeight: FontWeight.normal,
+                      fontSize: 14,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          );
+  }
 }
