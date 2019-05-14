@@ -22,53 +22,49 @@ class AssignmentBatchAddView extends StatefulWidget {
 }
 
 class _AssignmentBatchAddViewState extends State<AssignmentBatchAddView> {
-  DateTime dueDate;
-
-  bool isValidState = false;
-
   List<_UnsavedAssignment> queuedAssignments = [];
 
-  TextEditingController textFieldController = TextEditingController();
+  void tappedCreateAssignment(TapUpDetails details) async {
+    final _UnsavedAssignment result = await showDialog(
+      context: context,
+      builder: (context) {
+        return Dialog(
+          shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.all(Radius.circular(10))),
+          child: _AddAssignmentSubview(
+            weight: widget.weight,
+          ),
+        );
+      },
+    );
 
-  checkState() {
-    bool prevState = isValidState;
-    bool newState = textFieldController.text.trim() != "" && dueDate != null;
-    if (prevState != newState) {
+    if (result != null) {
+      int index = queuedAssignments
+          .indexWhere((element) => element.dueDate.isAfter(result.dueDate));
+
       setState(() {
-        isValidState = newState;
+        queuedAssignments.insert(
+            index == -1 ? queuedAssignments.length : index, result);
       });
     }
-  }
-
-  void tappedDateSelector(TapUpDetails details) {
-    final now = DateTime.now();
-
-    SKCalendarPicker.presentDateSelector(
-            title: 'Due Date',
-            subtitle: 'When is this assignment due?',
-            context: context,
-            startDate: DateTime(now.year, now.month, now.day))
-        .then((selectedDate) {
-      if (selectedDate != null) {
-        setState(() {
-          dueDate = selectedDate;
-          checkState();
-        });
-      }
-    });
   }
 
   @override
   Widget build(BuildContext context) {
     final studentClass = StudentClass.currentClasses[widget.class_id];
 
+    List<Widget> children = [
+      createInfoContainer(),
+    ];
+
+    if (queuedAssignments.length > 0) {
+      children.add(createAssignmentQueueContainer(studentClass));
+    }
+
     return SKNavView(
       title: studentClass.name,
       titleColor: studentClass.getColor(),
-      children: <Widget>[
-        createInfoContainer(),
-        createAssignmentQueueContainer(studentClass),
-      ],
+      children: children,
     );
   }
 
@@ -118,75 +114,18 @@ class _AssignmentBatchAddViewState extends State<AssignmentBatchAddView> {
               ],
             ),
           ),
-          Container(
-            padding: EdgeInsets.only(left: 16, right: 16, top: 4),
-            child: TextField(
-              controller: textFieldController,
-              decoration: InputDecoration(hintText: 'Assignment name'),
-              style: TextStyle(fontSize: 14),
-              onChanged: (newStr) {
-                checkState();
-              },
-            ),
-          ),
-          Container(
-            padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: <Widget>[
-                Text(
-                  'Due date: ',
-                  style: TextStyle(fontWeight: FontWeight.normal, fontSize: 15),
-                ),
-                GestureDetector(
-                  onTapUp: tappedDateSelector,
-                  child: Text(
-                    dueDate == null
-                        ? 'Select date'
-                        : DateFormat('EEE, MMMM d').format(dueDate),
-                    style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 15,
-                        color: SKColors.skoller_blue),
-                  ),
-                ),
-              ],
-            ),
-          ),
           GestureDetector(
-            onTapUp: (details) {
-              if (isValidState) {
-                final newAssignment = _UnsavedAssignment(
-                    name: textFieldController.text, dueDate: dueDate);
-
-                int index = queuedAssignments.indexWhere((element) =>
-                    element.dueDate.isAfter(newAssignment.dueDate));
-
-                setState(() {
-                  queuedAssignments.insert(
-                      index == -1 ? queuedAssignments.length : index,
-                      newAssignment);
-                  isValidState = false;
-                  textFieldController.clear();
-                  dueDate = null;
-                  textFieldController;
-                });
-              }
-            },
+            onTapUp: tappedCreateAssignment,
             child: Container(
               margin: EdgeInsets.fromLTRB(12, 8, 12, 12),
               alignment: Alignment.center,
               padding: EdgeInsets.symmetric(vertical: 8),
               decoration: BoxDecoration(
-                  color: isValidState
-                      ? SKColors.skoller_blue
-                      : SKColors.inactive_gray,
+                  color: SKColors.skoller_blue,
                   borderRadius: BorderRadius.circular(5)),
               child: Text(
-                'Save',
-                style: TextStyle(
-                  color: isValidState ? Colors.white : SKColors.dark_gray,
-                ),
+                'Add Assignment',
+                style: TextStyle(color: Colors.white, fontSize: 14),
               ),
             ),
           ),
@@ -196,7 +135,9 @@ class _AssignmentBatchAddViewState extends State<AssignmentBatchAddView> {
   }
 
   Widget createAssignmentQueueContainer(StudentClass studentClass) {
-    final weightId = widget.weight == null ? null : widget.weight.id;
+    if (queuedAssignments.length == 0) {
+      return null;
+    }
     final dateFormatter = DateFormat('EEE, MMM d');
 
     final listElements = queuedAssignments.map((assignment) {
@@ -241,15 +182,179 @@ class _AssignmentBatchAddViewState extends State<AssignmentBatchAddView> {
                   )),
               padding: EdgeInsets.fromLTRB(12, 12, 8, 8),
               child: Text(
-                'Current Assignments',
+                'Added Assignments',
                 style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
               ),
             ),
             Expanded(
               child: ListView(children: listElements),
             ),
+            GestureDetector(
+              child: Container(
+                margin: EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                    color: SKColors.success,
+                    borderRadius: BorderRadius.circular(5)),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    Container(
+                      padding: EdgeInsets.symmetric(vertical: 6),
+                      child: Text(
+                        "Submit",
+                        style: TextStyle(color: Colors.white),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            )
           ],
         ),
+      ),
+    );
+  }
+}
+
+class _AddAssignmentSubview extends StatefulWidget {
+  final Weight weight;
+
+  _AddAssignmentSubview({Key key, @required this.weight}) : super(key: key);
+
+  @override
+  State createState() => _AddAssignmentSubviewState();
+}
+
+class _AddAssignmentSubviewState extends State<_AddAssignmentSubview> {
+  DateTime dueDate;
+
+  bool isValidState = false;
+
+  TextEditingController textFieldController = TextEditingController();
+
+  checkState() {
+    bool prevState = isValidState;
+    bool newState = textFieldController.text.trim() != "" && dueDate != null;
+    if (prevState != newState) {
+      setState(() {
+        isValidState = newState;
+      });
+    }
+  }
+
+  void tappedDateSelector(TapUpDetails details) {
+    final now = DateTime.now();
+
+    SKCalendarPicker.presentDateSelector(
+            title: 'Due Date',
+            subtitle: 'When is this assignment due?',
+            context: context,
+            startDate: DateTime(now.year, now.month, now.day))
+        .then((selectedDate) {
+      if (selectedDate != null) {
+        setState(() {
+          dueDate = selectedDate;
+          checkState();
+        });
+      }
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: EdgeInsets.all(16),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          Container(
+            alignment: Alignment.centerLeft,
+            // padding: EdgeInsets.symmetric(horizontal: 4, vertical: 4),
+            child: Text.rich(
+              TextSpan(
+                text: '', // default text style
+                children: <TextSpan>[
+                  TextSpan(
+                      text: 'Add: ',
+                      style: TextStyle(
+                          fontWeight: FontWeight.normal, fontSize: 16)),
+                  TextSpan(
+                      text: widget.weight == null
+                          ? 'Not graded'
+                          : widget.weight.name,
+                      style:
+                          TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                ],
+              ),
+            ),
+          ),
+          Container(
+            padding: EdgeInsets.only(top: 8),
+            child: TextField(
+              controller: textFieldController,
+              decoration: InputDecoration(hintText: 'Assignment name'),
+              style: TextStyle(fontSize: 14),
+              onChanged: (newStr) {
+                checkState();
+              },
+            ),
+          ),
+          Container(
+            padding: EdgeInsets.symmetric(vertical: 16),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: <Widget>[
+                Text(
+                  'Due date: ',
+                  style: TextStyle(fontWeight: FontWeight.normal, fontSize: 15),
+                ),
+                GestureDetector(
+                  onTapUp: tappedDateSelector,
+                  child: Text(
+                    dueDate == null
+                        ? 'Select date'
+                        : DateFormat('EEE, MMMM d').format(dueDate),
+                    style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 15,
+                        color: SKColors.skoller_blue),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          GestureDetector(
+            onTapUp: (details) {
+              if (isValidState) {
+                final newAssignment = _UnsavedAssignment(
+                    name: textFieldController.text, dueDate: dueDate);
+
+                Navigator.pop(context, newAssignment);
+              }
+            },
+            child: Container(
+              decoration: BoxDecoration(
+                  color: SKColors.skoller_blue,
+                  borderRadius: BorderRadius.circular(5)),
+              child: Row(
+                mainAxisSize: MainAxisSize.max,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Padding(
+                    padding: EdgeInsets.symmetric(vertical: 8),
+                    child: Text(
+                      "Add Assignment",
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 15,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          )
+        ],
       ),
     );
   }

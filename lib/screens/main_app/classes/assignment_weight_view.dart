@@ -7,10 +7,14 @@ import 'assignment_batch_add_view.dart';
 
 class AssignmentWeightView extends StatelessWidget {
   final int class_id;
+  final List<Weight> weights;
 
   final Map<int, int> weightAssignmentDensity = {};
 
-  AssignmentWeightView(this.class_id, {Key key}) : super(key: key) {
+  AssignmentWeightView(this.class_id, {Key key})
+      : weights =
+            (StudentClass.currentClasses[class_id].weights ?? []).toList(),
+        super(key: key) {
     final studentClass = StudentClass.currentClasses[class_id];
 
     for (var assignment in studentClass.assignments) {
@@ -22,11 +26,26 @@ class AssignmentWeightView extends StatelessWidget {
         }
       }
     }
+
+    weights.sort((w1, w2) {
+      final w1_d = weightAssignmentDensity[w1.id];
+      final w2_d = weightAssignmentDensity[w2.id];
+
+      if (w1_d == null && w1_d != w2_d) {
+        // W1 is null and W2 is not, sort W1 before W2
+        return -1;
+      } else if (w2_d == null && w1_d != w2_d) {
+        // W2 is null and W1 is not, sort W2 before W1
+        return 1;
+      } else {
+        // Both are same type, sort by names
+        return w1.name.compareTo(w2.name);
+      }
+    });
   }
 
   Widget build(BuildContext context) {
     final studentClass = StudentClass.currentClasses[class_id];
-    final weights = studentClass.weights ?? [];
 
     return SKNavView(
       title: studentClass.name,
@@ -147,7 +166,12 @@ class AssignmentWeightView extends StatelessWidget {
                               },
                               child: Container(
                                 padding: EdgeInsets.symmetric(
-                                    horizontal: 12, vertical: weightAssignmentDensity[weights[index]] == null ? 8 : 12),
+                                    horizontal: 12,
+                                    vertical: weightAssignmentDensity[
+                                                weights[index].id] ==
+                                            null
+                                        ? 6
+                                        : 12),
                                 child: Row(
                                   mainAxisAlignment:
                                       MainAxisAlignment.spaceBetween,
