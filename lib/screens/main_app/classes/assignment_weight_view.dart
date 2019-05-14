@@ -3,14 +3,29 @@ import 'package:flutter/cupertino.dart';
 import '../../../requests/requests_core.dart';
 import '../../../constants/constants.dart';
 import 'assignment_add_view.dart';
+import 'assignment_batch_add_view.dart';
 
 class AssignmentWeightView extends StatelessWidget {
-  final int classId;
+  final int class_id;
 
-  AssignmentWeightView(this.classId, {Key key}) : super(key: key);
+  final Map<int, int> weightAssignmentDensity = {};
+
+  AssignmentWeightView(this.class_id, {Key key}) : super(key: key) {
+    final studentClass = StudentClass.currentClasses[class_id];
+
+    for (var assignment in studentClass.assignments) {
+      if (assignment.weight_id != null) {
+        if (weightAssignmentDensity[assignment.weight_id] == null) {
+          weightAssignmentDensity[assignment.weight_id] = 0;
+        } else {
+          weightAssignmentDensity[assignment.weight_id] += 1;
+        }
+      }
+    }
+  }
 
   Widget build(BuildContext context) {
-    final studentClass = StudentClass.currentClasses[classId];
+    final studentClass = StudentClass.currentClasses[class_id];
     final weights = studentClass.weights ?? [];
     return SKNavView(
       title: studentClass.name,
@@ -51,7 +66,7 @@ class AssignmentWeightView extends StatelessWidget {
                                   context,
                                   CupertinoPageRoute(
                                     builder: (context) =>
-                                        AssignmentAddView(classId, null),
+                                        AssignmentAddView(class_id, null),
                                   ),
                                 );
                               },
@@ -98,15 +113,32 @@ class AssignmentWeightView extends StatelessWidget {
                           : GestureDetector(
                               behavior: HitTestBehavior.opaque,
                               onTapUp: (details) {
-                                Navigator.push(
-                                  context,
-                                  CupertinoPageRoute(
-                                    builder: (context) => AssignmentAddView(
-                                          classId,
-                                          weights[index],
-                                        ),
-                                  ),
-                                );
+                                final weight = weights[index];
+
+                                if (weightAssignmentDensity[weight.id] !=
+                                    null) {
+                                  // This weight has assignments. Send to single add page
+                                  Navigator.push(
+                                    context,
+                                    CupertinoPageRoute(
+                                      builder: (context) => AssignmentAddView(
+                                            class_id,
+                                            weights[index],
+                                          ),
+                                    ),
+                                  );
+                                } else {
+                                  Navigator.push(
+                                    context,
+                                    CupertinoPageRoute(
+                                      builder: (context) =>
+                                          AssignmentBatchAddView(
+                                            class_id: class_id,
+                                            weight: weight,
+                                          ),
+                                    ),
+                                  );
+                                }
                               },
                               child: Container(
                                 padding: EdgeInsets.symmetric(

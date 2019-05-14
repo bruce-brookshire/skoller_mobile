@@ -72,6 +72,24 @@ class StudentClass {
     });
   }
 
+  Future<RequestResponse> createAssignment(
+    String name,
+    Weight weight,
+    DateTime dueDate,
+  ) {
+    return SKRequests.post(
+        '/students/${SKUser.current.student.id}/classes/${this.id}/assignments',
+        {
+          "due": dueDate.toIso8601String(),
+          "weight_id": weight.id,
+          "name": name,
+          "is_completed": false,
+          "is_private": false,
+          "created_on": "mobile"
+        },
+        Assignment._fromJsonObj);
+  }
+
   //--------------//
   //Static Members//
   //--------------//

@@ -16,6 +16,8 @@ class AssignmentAddView extends StatefulWidget {
 class _AssignmentAddViewState extends State<AssignmentAddView> {
   DateTime dueDate;
 
+  String assignmentName;
+
   void tappedDateSelector(TapUpDetails details) {
     final now = DateTime.now();
 
@@ -31,6 +33,10 @@ class _AssignmentAddViewState extends State<AssignmentAddView> {
         });
       }
     });
+  }
+
+  bool validState() {
+    return assignmentName != null && dueDate != null;
   }
 
   @override
@@ -98,6 +104,23 @@ class _AssignmentAddViewState extends State<AssignmentAddView> {
             child: TextField(
               decoration: InputDecoration(hintText: 'Assignment name'),
               style: TextStyle(fontSize: 14),
+              onChanged: (newStr) {
+                String trimmedString = newStr.trim();
+                bool makeNull =
+                    trimmedString == "" && this.assignmentName != null;
+
+                if (makeNull) {
+                  setState(() {
+                    this.assignmentName = null;
+                  });
+                } else if (this.assignmentName == null) {
+                  setState(() {
+                    this.assignmentName = trimmedString;
+                  });
+                } else {
+                  this.assignmentName = trimmedString;
+                }
+              },
             ),
           ),
           Container(
@@ -113,7 +136,7 @@ class _AssignmentAddViewState extends State<AssignmentAddView> {
                   onTapUp: tappedDateSelector,
                   child: Text(
                     dueDate == null
-                        ? 'Select...'
+                        ? 'Select date'
                         : DateFormat('EEE, MMMM d').format(dueDate),
                     style: TextStyle(
                         fontWeight: FontWeight.bold,
@@ -124,17 +147,34 @@ class _AssignmentAddViewState extends State<AssignmentAddView> {
               ],
             ),
           ),
-          Container(
-            margin: EdgeInsets.fromLTRB(12, 8, 12, 12),
-            alignment: Alignment.center,
-            padding: EdgeInsets.symmetric(vertical: 8),
-            decoration: BoxDecoration(
-                color: SKColors.skoller_blue,
-                borderRadius: BorderRadius.circular(5)),
-            child: Text(
-              'Save',
-              style: TextStyle(
-                color: Colors.white,
+          GestureDetector(
+            onTapUp: (details) {
+              if (validState()) {
+                StudentClass.currentClasses[widget.class_id]
+                    .createAssignment(
+                  assignmentName,
+                  widget.weight,
+                  dueDate,
+                )
+                    .then((response) {
+                  print(response.wasSuccessful());
+                });
+              }
+            },
+            child: Container(
+              margin: EdgeInsets.fromLTRB(12, 8, 12, 12),
+              alignment: Alignment.center,
+              padding: EdgeInsets.symmetric(vertical: 8),
+              decoration: BoxDecoration(
+                  color: validState()
+                      ? SKColors.skoller_blue
+                      : SKColors.inactive_gray,
+                  borderRadius: BorderRadius.circular(5)),
+              child: Text(
+                'Save',
+                style: TextStyle(
+                  color: validState() ? Colors.white : SKColors.dark_gray,
+                ),
               ),
             ),
           ),
