@@ -1,22 +1,44 @@
 import 'package:flutter/material.dart';
-import '../../../requests/requests_core.dart';
-import '../../../constants/constants.dart';
+import 'package:skoller/constants/constants.dart';
+import 'package:skoller/requests/requests_core.dart';
 import 'package:intl/intl.dart';
 
-class AssignmentAddView extends StatefulWidget {
+class _UnsavedAssignment {
+  String name;
+  DateTime dueDate;
+
+  _UnsavedAssignment({@required this.name, @required this.dueDate});
+}
+
+class AssignmentBatchAddView extends StatefulWidget {
   final int class_id;
   final Weight weight;
 
-  AssignmentAddView(this.class_id, this.weight, {Key key}) : super(key: key);
+  AssignmentBatchAddView({Key key, this.class_id, this.weight})
+      : super(key: key);
 
   @override
-  State createState() => _AssignmentAddViewState();
+  State createState() => _AssignmentBatchAddViewState();
 }
 
-class _AssignmentAddViewState extends State<AssignmentAddView> {
+class _AssignmentBatchAddViewState extends State<AssignmentBatchAddView> {
   DateTime dueDate;
 
-  String assignmentName;
+  bool isValidState = false;
+
+  List<_UnsavedAssignment> queuedAssignments = [];
+
+  TextEditingController textFieldController = TextEditingController();
+
+  checkState() {
+    bool prevState = isValidState;
+    bool newState = textFieldController.text.trim() != "" && dueDate != null;
+    if (prevState != newState) {
+      setState(() {
+        isValidState = newState;
+      });
+    }
+  }
 
   void tappedDateSelector(TapUpDetails details) {
     final now = DateTime.now();
@@ -30,13 +52,10 @@ class _AssignmentAddViewState extends State<AssignmentAddView> {
       if (selectedDate != null) {
         setState(() {
           dueDate = selectedDate;
+          checkState();
         });
       }
     });
-  }
-
-  bool validState() {
-    return assignmentName != null && dueDate != null;
   }
 
   @override
@@ -48,7 +67,7 @@ class _AssignmentAddViewState extends State<AssignmentAddView> {
       titleColor: studentClass.getColor(),
       children: <Widget>[
         createInfoContainer(),
-        createCurrentAssignments(studentClass),
+        createAssignmentQueueContainer(studentClass),
       ],
     );
   }
@@ -102,24 +121,11 @@ class _AssignmentAddViewState extends State<AssignmentAddView> {
           Container(
             padding: EdgeInsets.only(left: 16, right: 16, top: 4),
             child: TextField(
+              controller: textFieldController,
               decoration: InputDecoration(hintText: 'Assignment name'),
               style: TextStyle(fontSize: 14),
               onChanged: (newStr) {
-                String trimmedString = newStr.trim();
-                bool makeNull =
-                    trimmedString == "" && this.assignmentName != null;
-
-                if (makeNull) {
-                  setState(() {
-                    this.assignmentName = null;
-                  });
-                } else if (this.assignmentName == null) {
-                  setState(() {
-                    this.assignmentName = trimmedString;
-                  });
-                } else {
-                  this.assignmentName = trimmedString;
-                }
+                checkState();
               },
             ),
           ),
@@ -149,19 +155,21 @@ class _AssignmentAddViewState extends State<AssignmentAddView> {
           ),
           GestureDetector(
             onTapUp: (details) {
-              if (validState()) {
-                StudentClass.currentClasses[widget.class_id]
-                    .createAssignment(
-                  assignmentName,
-                  widget.weight,
-                  dueDate,
-                )
-                    .then((response) {
-                  if (response.wasSuccessful()) {
-                    Navigator.popUntil(context, (route) {
-                      return route.settings.isInitialRoute;
-                    });
-                  }
+              if (isValidState) {
+                final newAssignment = _UnsavedAssignment(
+                    name: textFieldController.text, dueDate: dueDate);
+
+                int index = queuedAssignments.indexWhere((element) =>
+                    element.dueDate.isAfter(newAssignment.dueDate));
+
+                setState(() {
+                  queuedAssignments.insert(
+                      index == -1 ? queuedAssignments.length : index,
+                      newAssignment);
+                  isValidState = false;
+                  textFieldController.clear();
+                  dueDate = null;
+                  textFieldController;
                 });
               }
             },
@@ -170,14 +178,14 @@ class _AssignmentAddViewState extends State<AssignmentAddView> {
               alignment: Alignment.center,
               padding: EdgeInsets.symmetric(vertical: 8),
               decoration: BoxDecoration(
-                  color: validState()
+                  color: isValidState
                       ? SKColors.skoller_blue
                       : SKColors.inactive_gray,
                   borderRadius: BorderRadius.circular(5)),
               child: Text(
                 'Save',
                 style: TextStyle(
-                  color: validState() ? Colors.white : SKColors.dark_gray,
+                  color: isValidState ? Colors.white : SKColors.dark_gray,
                 ),
               ),
             ),
@@ -187,13 +195,29 @@ class _AssignmentAddViewState extends State<AssignmentAddView> {
     );
   }
 
-  Widget createCurrentAssignments(StudentClass studentClass) {
+  Widget createAssignmentQueueContainer(StudentClass studentClass) {
     final weightId = widget.weight == null ? null : widget.weight.id;
-    final weightAssignments = (studentClass.assignments ?? []).toList();
     final dateFormatter = DateFormat('EEE, MMM d');
 
-    weightAssignments
-        .removeWhere((assignment) => weightId != assignment.weight_id);
+    final listElements = queuedAssignments.map((assignment) {
+      final due = assignment.dueDate;
+      final name = assignment.name;
+
+      return Container(
+        padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+        child:
+            Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+          Text(
+            name,
+            style: TextStyle(fontSize: 14),
+          ),
+          Text(
+            due == null ? 'Not due' : dateFormatter.format(due),
+            style: TextStyle(fontSize: 14, fontWeight: FontWeight.normal),
+          ),
+        ]),
+      );
+    }).toList();
 
     return Expanded(
       child: Container(
@@ -222,30 +246,7 @@ class _AssignmentAddViewState extends State<AssignmentAddView> {
               ),
             ),
             Expanded(
-              child: ListView.builder(
-                itemCount: weightAssignments.length,
-                itemBuilder: (BuildContext context, int index) {
-                  final due = weightAssignments[index].due;
-                  final name = weightAssignments[index].name;
-
-                  return Container(
-                    padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                    child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            name,
-                            style: TextStyle(fontSize: 14),
-                          ),
-                          Text(
-                            due == null ? 'Not due' : dateFormatter.format(due),
-                            style: TextStyle(
-                                fontSize: 14, fontWeight: FontWeight.normal),
-                          ),
-                        ]),
-                  );
-                },
-              ),
+              child: ListView(children: listElements),
             ),
           ],
         ),

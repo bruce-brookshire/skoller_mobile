@@ -27,6 +27,7 @@ class AssignmentWeightView extends StatelessWidget {
   Widget build(BuildContext context) {
     final studentClass = StudentClass.currentClasses[class_id];
     final weights = studentClass.weights ?? [];
+
     return SKNavView(
       title: studentClass.name,
       titleColor: studentClass.getColor(),
@@ -94,12 +95,16 @@ class AssignmentWeightView extends StatelessWidget {
                                             ),
                                           ),
                                           Text('Not weighted'),
-                                          Text(
-                                            'Assignments in this category do not count towards your grade',
-                                            style: TextStyle(
-                                              fontSize: 13,
-                                              fontWeight: FontWeight.normal,
-                                              color: SKColors.text_light_gray,
+                                          Container(
+                                            padding: EdgeInsets.only(
+                                                left: 12, top: 2),
+                                            child: Text(
+                                              'Assignments in this category do not count towards your grade',
+                                              style: TextStyle(
+                                                fontSize: 13,
+                                                fontWeight: FontWeight.normal,
+                                                color: SKColors.text_light_gray,
+                                              ),
                                             ),
                                           )
                                         ],
@@ -142,12 +147,38 @@ class AssignmentWeightView extends StatelessWidget {
                               },
                               child: Container(
                                 padding: EdgeInsets.symmetric(
-                                    horizontal: 12, vertical: 8),
+                                    horizontal: 12, vertical: weightAssignmentDensity[weights[index]] == null ? 8 : 12),
                                 child: Row(
                                   mainAxisAlignment:
                                       MainAxisAlignment.spaceBetween,
                                   children: [
-                                    Text(weights[index].name),
+                                    Expanded(
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Text(weights[index].name),
+                                          Container(
+                                            padding: EdgeInsets.only(
+                                                left: 12, top: 2),
+                                            child: weightAssignmentDensity[
+                                                        weights[index].id] ==
+                                                    null
+                                                ? Text(
+                                                    'Add assignments',
+                                                    style: TextStyle(
+                                                      fontSize: 13,
+                                                      fontWeight:
+                                                          FontWeight.normal,
+                                                      color:
+                                                          SKColors.skoller_blue,
+                                                    ),
+                                                  )
+                                                : null,
+                                          )
+                                        ],
+                                      ),
+                                    ),
                                     Image.asset(ImageNames.navArrowImages.right)
                                   ],
                                 ),
