@@ -7,12 +7,22 @@ class Assignment {
 
   int id;
   int class_id;
+  int weight_id;
+
+  double weight;
+  double grade;
+
+  bool completed;
+
   String name;
   DateTime due;
-  double weight;
-  int weight_id;
-  double grade;
-  bool completed;
+
+  Future configureDateTimeOffset() async {
+    due = await TimeZoneManager.createLocalRelativeAssignmentDueDate(
+      due,
+      parentClass.getSchool().timezone,
+    );
+  }
 
   StudentClass get parentClass {
     return StudentClass.currentClasses[class_id];
@@ -41,18 +51,26 @@ class Assignment {
   //--------------//
 
   static List<Assignment> currentTasks;
+  static Map<int, Assignment> currentAssignments = {};
 
   static Assignment _fromJsonObj(Map content) {
     var due = content['due'] != null ? DateTime.parse(content['due']) : null;
-    return Assignment(
-        content['id'],
-        content['name'],
-        due,
-        content['class_id'],
-        content['weight'],
-        content['weight_id'],
-        content['grade'],
-        content['is_completed']);
+
+    Assignment assignment = Assignment(
+      content['id'],
+      content['name'],
+      DateTime(due.year, due.month, due.day, due.hour, due.minute),
+      content['class_id'],
+      content['weight'],
+      content['weight_id'],
+      content['grade'],
+      content['is_completed'],
+    );
+
+    assignment.configureDateTimeOffset();
+    currentAssignments[assignment.id] = assignment;
+
+    return assignment;
   }
 
 /**

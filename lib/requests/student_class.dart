@@ -18,9 +18,12 @@ class StudentClass {
 
   Status status;
   Professor professor;
+  Period classPeriod;
 
   List<Weight> weights;
   List<Assignment> assignments;
+
+  static DateTimeZoneProvider tzdb;
 
   //----------------//
   //Member functions//
@@ -42,7 +45,10 @@ class StudentClass {
     this.code,
     this.section,
     this.professor,
+    this.classPeriod,
   );
+
+  School getSchool() => Period.currentPeriods[classPeriod.id].getSchool();
 
   Color getColor() {
     if (_color != null) {
@@ -72,15 +78,30 @@ class StudentClass {
     });
   }
 
+  /**
+   * Creates an assignment for [this] StudentClass due at the local reference DateTime specified
+   */
   Future<RequestResponse> createAssignment(
     String name,
     Weight weight,
     DateTime dueDate,
-  ) {
+  ) async {
+    String tzCorrectedString = dueDate.toUtc().toIso8601String();
+
+    DateTime correctedDueDate =
+        await TimeZoneManager.convertUtcOffsetFromLocalToSchool(
+      dueDate,
+      getSchool().timezone,
+    );
+
+    if (correctedDueDate != null) {
+      tzCorrectedString = correctedDueDate.toIso8601String();
+    }
+
     return SKRequests.post(
         '/students/${SKUser.current.student.id}/classes/${this.id}/assignments',
         {
-          "due": dueDate.toIso8601String(),
+          "due": tzCorrectedString,
           "weight_id": weight.id,
           "name": name,
           "is_completed": false,
@@ -88,6 +109,22 @@ class StudentClass {
           "created_on": "mobile"
         },
         Assignment._fromJsonObj);
+  }
+
+  Future<RequestResponse> acquireAssignmentLock(Weight weight) {
+    return SKRequests.post(
+      "/classes/${id}/lock/assignments",
+      {"subsection": weight.id},
+      null,
+    );
+  }
+
+  Future<RequestResponse> releaseDIYLock({bool isCompleted = true}) {
+    return SKRequests.post(
+      "/classes/${id}/unlock",
+      {"is_completed": isCompleted},
+      null,
+    );
   }
 
   //--------------//
@@ -118,7 +155,7 @@ class StudentClass {
         ? null
         : TimeOfDay(hour: startComponents[0], minute: startComponents[1]);
 
-    return StudentClass(
+    StudentClass studentClass = StudentClass(
       content['id'],
       content['name'],
       JsonListMaker.convert(
@@ -140,35 +177,26 @@ class StudentClass {
       content['code'],
       content['section'],
       Professor._fromJsonObj(content['professor']),
+      Period._fromJsonObj(content['class_period']),
     );
+
+    StudentClass.currentClasses[studentClass.id] = studentClass;
+
+    return studentClass;
   }
 
   static Future<RequestResponse> getStudentClasses() {
     return SKRequests.get(
       '/students/${SKUser.current.student.id}/classes',
       _fromJsonObj,
-    ).then((response) {
-      List classes = response.obj;
-      if (classes != null && response.wasSuccessful()) {
-        for (StudentClass studentClass in classes) {
-          currentClasses[studentClass.id] = studentClass;
-        }
-      }
-      return response;
-    });
+    );
   }
 
   static Future<RequestResponse> getStudentClassById(int id) {
     return SKRequests.get(
       '/students/${SKUser.current.student.id}/classes/${id}',
       _fromJsonObj,
-    ).then((response) {
-      if (response.wasSuccessful()) {
-        StudentClass studentClass = response.obj;
-        currentClasses[studentClass.id] = studentClass;
-      }
-      return response;
-    });
+    );
   }
 }
 

@@ -81,20 +81,24 @@ class SKNavBar extends StatelessWidget {
   final bool _isDown;
   final String _rightBtnImage;
   final VoidCallback _callback_right;
+  final VoidCallback _callback_back;
 
-  SKNavBar(String title,
-      {Key key,
-      bool backBtnEnabled,
-      bool downBtnEnabled,
-      String rightBtnImage,
-      Color titleColor,
-      VoidCallback right_btn_callback})
-      : _title = title,
+  SKNavBar(
+    String title, {
+    Key key,
+    bool backBtnEnabled,
+    bool downBtnEnabled,
+    String rightBtnImage,
+    Color titleColor,
+    VoidCallback right_btn_callback,
+    VoidCallback back_btn_callback,
+  })  : _title = title,
         _isBack = backBtnEnabled ?? false,
         _isDown = downBtnEnabled ?? false,
         _rightBtnImage = rightBtnImage,
         _titleColor = titleColor ?? SKColors.dark_gray,
         _callback_right = right_btn_callback,
+        _callback_back = back_btn_callback,
         super(key: key) {
     assert(_isBack != _isDown || !_isBack);
   }
@@ -171,6 +175,7 @@ class SKNavView extends StatelessWidget {
   final bool isDown;
   final String rightBtnImage;
   final VoidCallback callbackRight;
+  final VoidCallback callbackBack;
   final List<Widget> children;
 
   SKNavView({
@@ -182,6 +187,7 @@ class SKNavView extends StatelessWidget {
     this.isDown = false,
     this.rightBtnImage,
     this.callbackRight,
+    this.callbackBack,
     bool downBtnEnabled,
   }) : super(key: key);
 

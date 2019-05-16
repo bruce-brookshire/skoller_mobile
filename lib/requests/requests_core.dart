@@ -1,12 +1,17 @@
 library requests_core;
 
+import 'package:time_machine/time_machine.dart';
+import '../constants/timezone_manager.dart';
 import 'package:http/http.dart' as http;
-import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'dart:convert';
 
-part 'user.dart';
 part 'student_class.dart';
 part 'assignment.dart';
+part 'school.dart';
+part 'chat.dart';
+part 'user.dart';
+part 'mod.dart';
 
 class RequestResponse<T> {
   int status;
@@ -18,7 +23,7 @@ class RequestResponse<T> {
     dynamic context, {
     _DecodableConstructor<T> constructor,
   }) {
-    if (context != null && status == 200) {
+    if (context != null && status == 200 && constructor != null) {
       if (context is List) {
         this.obj = JsonListMaker.convert<T>(constructor, context);
       } else {

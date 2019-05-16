@@ -24,6 +24,20 @@ class AssignmentBatchAddView extends StatefulWidget {
 class _AssignmentBatchAddViewState extends State<AssignmentBatchAddView> {
   List<_UnsavedAssignment> queuedAssignments = [];
 
+  @override
+  void initState() {
+    super.initState();
+
+    StudentClass.currentClasses[widget.class_id]
+        .acquireAssignmentLock(widget.weight)
+        .then((response) {
+      if (!response.wasSuccessful()) {
+        print("popping");
+        Navigator.pop(context);
+      }
+    });
+  }
+
   void tappedCreateAssignment(TapUpDetails details) async {
     final _UnsavedAssignment result = await showDialog(
       context: context,
@@ -46,6 +60,32 @@ class _AssignmentBatchAddViewState extends State<AssignmentBatchAddView> {
         queuedAssignments.insert(
             index == -1 ? queuedAssignments.length : index, result);
       });
+    }
+  }
+
+  void tappedSaveAssignments(TapUpDetails details) async {
+    List<Future<RequestResponse>> futureQueue = [];
+    final studentClass = StudentClass.currentClasses[widget.class_id];
+
+    for (final assignment in queuedAssignments) {
+      final future = studentClass.createAssignment(
+          assignment.name, widget.weight, assignment.dueDate);
+
+      futureQueue.add(future);
+    }
+
+    //Wait till all Assignments are created
+
+    while (futureQueue.length != 0) {
+      await futureQueue.removeLast();
+    }
+
+    final response = await studentClass.releaseDIYLock();
+
+    if (response.wasSuccessful()) {
+      Navigator.pop(context);
+    } else {
+      //TODO: Error message
     }
   }
 
@@ -117,7 +157,7 @@ class _AssignmentBatchAddViewState extends State<AssignmentBatchAddView> {
           GestureDetector(
             onTapUp: tappedCreateAssignment,
             child: Container(
-              margin: EdgeInsets.fromLTRB(12, 8, 12, 12),
+              margin: EdgeInsets.all(12),
               alignment: Alignment.center,
               padding: EdgeInsets.symmetric(vertical: 8),
               decoration: BoxDecoration(
@@ -146,11 +186,27 @@ class _AssignmentBatchAddViewState extends State<AssignmentBatchAddView> {
 
       return Container(
         padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-        child:
-            Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-          Text(
-            name,
-            style: TextStyle(fontSize: 14),
+        child: Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
+          GestureDetector(
+            onTapUp: (details) {
+              setState(() {
+                queuedAssignments.removeWhere(
+                    (test_assignment) => test_assignment == assignment);
+              });
+            },
+            child: Container(
+              padding: EdgeInsets.only(top: 4, bottom: 4, right: 6),
+              child: Image.asset(ImageNames.assignmentInfoImages.circle_x),
+            ),
+          ),
+          Expanded(
+            child: Text(
+              name,
+              style: TextStyle(fontSize: 14),
+              maxLines: 1,
+              softWrap: false,
+              overflow: TextOverflow.ellipsis,
+            ),
           ),
           Text(
             due == null ? 'Not due' : dateFormatter.format(due),
@@ -190,6 +246,7 @@ class _AssignmentBatchAddViewState extends State<AssignmentBatchAddView> {
               child: ListView(children: listElements),
             ),
             GestureDetector(
+              onTapUp: tappedSaveAssignments,
               child: Container(
                 margin: EdgeInsets.all(8),
                 decoration: BoxDecoration(
@@ -267,32 +324,21 @@ class _AddAssignmentSubviewState extends State<_AddAssignmentSubview> {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
-          Container(
-            alignment: Alignment.centerLeft,
-            // padding: EdgeInsets.symmetric(horizontal: 4, vertical: 4),
-            child: Text.rich(
-              TextSpan(
-                text: '', // default text style
-                children: <TextSpan>[
-                  TextSpan(
-                      text: 'Add: ',
-                      style: TextStyle(
-                          fontWeight: FontWeight.normal, fontSize: 16)),
-                  TextSpan(
-                      text: widget.weight == null
-                          ? 'Not graded'
-                          : widget.weight.name,
-                      style:
-                          TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
-                ],
-              ),
+          Center(
+            child: Container(
+              alignment: Alignment.center,
+              padding: EdgeInsets.only(bottom: 4),
+              child: Text("Add Assignment"),
             ),
           ),
           Container(
-            padding: EdgeInsets.only(top: 8),
+            // padding: EdgeInsets.only(top: 8),
+            // height: 44,
             child: TextField(
               controller: textFieldController,
-              decoration: InputDecoration(hintText: 'Assignment name'),
+              textCapitalization: TextCapitalization.words,
+              maxLines: 1,
+              decoration: InputDecoration(hintText: 'Name'),
               style: TextStyle(fontSize: 14),
               onChanged: (newStr) {
                 checkState();
@@ -300,7 +346,7 @@ class _AddAssignmentSubviewState extends State<_AddAssignmentSubview> {
             ),
           ),
           Container(
-            padding: EdgeInsets.symmetric(vertical: 16),
+            padding: EdgeInsets.symmetric(vertical: 24),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
@@ -334,7 +380,9 @@ class _AddAssignmentSubviewState extends State<_AddAssignmentSubview> {
             },
             child: Container(
               decoration: BoxDecoration(
-                  color: SKColors.skoller_blue,
+                  color: isValidState
+                      ? SKColors.skoller_blue
+                      : SKColors.inactive_gray,
                   borderRadius: BorderRadius.circular(5)),
               child: Row(
                 mainAxisSize: MainAxisSize.max,
@@ -343,10 +391,11 @@ class _AddAssignmentSubviewState extends State<_AddAssignmentSubview> {
                   Padding(
                     padding: EdgeInsets.symmetric(vertical: 8),
                     child: Text(
-                      "Add Assignment",
+                      "Add",
                       style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 15,
+                        color: isValidState ? Colors.white : SKColors.dark_gray,
+                        fontWeight: FontWeight.normal,
+                        fontSize: 14,
                       ),
                     ),
                   ),

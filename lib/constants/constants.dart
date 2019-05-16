@@ -69,6 +69,7 @@ class _RightNavImages {
 
 class _AssignmentInfoImages {
   final notes = 'image_assets/assignment_info_assets/notes.png';
+  final circle_x = 'image_assets/assignment_info_assets/circle_x.png';
 }
 
 class _PeopleImages {

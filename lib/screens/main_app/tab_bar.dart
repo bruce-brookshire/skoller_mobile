@@ -30,39 +30,39 @@ class _MyHomePageState extends State<MyHomePage> {
     //     });
     //   }
     // });
-//TODO: CupertinoPageScaffold necessary?
     return CupertinoTabScaffold(
-      tabBuilder: (context, index) {
-        return CupertinoTabView(builder: (context) {
-          return CupertinoPageScaffold(child: _widgetOptions[index]);
-        });
-      },
-      tabBar: CupertinoTabBar(
-        backgroundColor: Colors.white,
-        items: <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
-            icon: _selectedIndex == 0
-                ? Image.asset("image_assets/tab_bar_assets/tasks_blue.png")
-                : Image.asset("image_assets/tab_bar_assets/tasks_gray.png"),
-          ),
-          BottomNavigationBarItem(
-            icon: _selectedIndex == 1
-                ? Image.asset("image_assets/tab_bar_assets/calendar_blue.png")
-                : Image.asset("image_assets/tab_bar_assets/calendar_gray.png"),
-          ),
-          BottomNavigationBarItem(
-            icon: _selectedIndex == 2
-                ? Image.asset("image_assets/tab_bar_assets/classes_blue.png")
-                : Image.asset("image_assets/tab_bar_assets/classes_gray.png"),
-          ),
-        ],
-        currentIndex: _selectedIndex,
-        onTap: _onItemTapped,
+        tabBuilder: (context, index) {
+          return CupertinoTabView(builder: (context) {
+            return CupertinoPageScaffold(child: _widgetOptions[index]);
+          });
+        },
+        tabBar: CupertinoTabBar(
+          backgroundColor: Colors.white,
+          items: <BottomNavigationBarItem>[
+            BottomNavigationBarItem(
+              icon: _selectedIndex == 0
+                  ? Image.asset("image_assets/tab_bar_assets/tasks_blue.png")
+                  : Image.asset("image_assets/tab_bar_assets/tasks_gray.png"),
+            ),
+            BottomNavigationBarItem(
+              icon: _selectedIndex == 1
+                  ? Image.asset("image_assets/tab_bar_assets/calendar_blue.png")
+                  : Image.asset(
+                      "image_assets/tab_bar_assets/calendar_gray.png"),
+            ),
+            BottomNavigationBarItem(
+              icon: _selectedIndex == 2
+                  ? Image.asset("image_assets/tab_bar_assets/classes_blue.png")
+                  : Image.asset("image_assets/tab_bar_assets/classes_gray.png"),
+            ),
+          ],
+          currentIndex: _selectedIndex,
+          onTap: _onItemTapped,
 
-        // type: BottomNavigationBarType.fixed,
-        // showSelectedLabels: false,
-        // showUnselectedLabels: false,
-      ),
+          // type: BottomNavigationBarType.fixed,
+          // showSelectedLabels: false,
+          // showUnselectedLabels: false,
+        ),
     );
   }
   //Icon(Icons.school)

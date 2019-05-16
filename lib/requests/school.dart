@@ -1,0 +1,54 @@
+part of 'requests_core.dart';
+
+class School {
+  int id;
+  List<Period> periods;
+  String timezone;
+
+  School(this.id, this.timezone, this.periods);
+
+  static Map<int, School> currentSchools = {};
+
+  static School _fromJsonObject(Map content) {
+    List<Period> period_list = JsonListMaker.convert(
+          Period._fromJsonObj,
+          content['periods'],
+        ) ??
+        [];
+    Period.currentPeriods = {};
+
+    for (final period in period_list) {
+      Period.currentPeriods[period.id] = period;
+    }
+
+    return School(
+      content['id'],
+      content['timezone'],
+      period_list,
+    );
+  }
+}
+
+class Period {
+  int id;
+  int schoolId;
+  String name;
+  String startDate;
+  String endDate;
+
+  Period(this.id, this.schoolId, this.name, this.startDate, this.endDate);
+
+  School getSchool() => School.currentSchools[schoolId];
+
+  static Map<int, Period> currentPeriods = {};
+
+  static Period _fromJsonObj(Map content) {
+    return Period(
+      content['id'],
+      content['school_id'],
+      content['end_date'],
+      content['start_date'],
+      content['name'],
+    );
+  }
+}

@@ -27,8 +27,17 @@ class Student {
   bool isVerified;
   int points;
   String gradYear;
+  List<School> schools;
 
   Student._fromJson(Map content) {
+    final school_list =
+        JsonListMaker.convert(School._fromJsonObject, content['schools']) ?? [];
+    School.currentSchools = {};
+
+    for (final school in school_list) {
+      School.currentSchools[school.id] = school;
+    }
+
     id = content['id'];
     nameFirst = content['name_first'];
     nameLast = content['name_last'];
@@ -37,5 +46,6 @@ class Student {
     isVerified = content['is_verified'];
     points = content['points'];
     gradYear = content['grad_year'];
+    schools = school_list;
   }
 }
