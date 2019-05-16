@@ -144,6 +144,10 @@ class StudentClass {
   ];
 
   static StudentClass _fromJsonObj(Map content) {
+    if (content == null) {
+      return null;
+    }
+
     final String startString = content['meet_start_time'];
     final startComponents = startString == null
         ? null
@@ -160,7 +164,7 @@ class StudentClass {
       content['name'],
       JsonListMaker.convert(
         Assignment._fromJsonObj,
-        content['assignments'],
+        content['assignments'] ?? [],
       ),
       content['color'],
       content['grade'],
@@ -168,7 +172,7 @@ class StudentClass {
       content['enrollment'],
       JsonListMaker.convert(
         Weight._fromJsonObj,
-        content['weights'],
+        content['weights'] ?? [],
       ),
       content['meet_days'],
       startTime,
@@ -181,6 +185,9 @@ class StudentClass {
     );
 
     StudentClass.currentClasses[studentClass.id] = studentClass;
+
+    (studentClass.assignments ?? [])
+        .forEach((assignment) => assignment.configureDateTimeOffset());
 
     return studentClass;
   }
@@ -208,6 +215,10 @@ class Weight {
   Weight(this.id, this.weight, this.name);
 
   static Weight _fromJsonObj(Map content) {
+    if (content == null) {
+      return null;
+    }
+
     return Weight(
       content['id'],
       content['weight'],
@@ -223,6 +234,10 @@ class Status {
   Status(this.id, this.name);
 
   static Status _fromJsonObj(Map content) {
+    if (content == null) {
+      return null;
+    }
+
     return Status(
       content['id'],
       content['name'],
@@ -250,6 +265,10 @@ class Professor {
   );
 
   static Professor _fromJsonObj(Map content) {
+    if (content == null) {
+      return null;
+    }
+
     return Professor(
       content['id'],
       content['name_first'],

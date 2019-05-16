@@ -13,15 +13,20 @@ class Assignment {
   double grade;
 
   bool completed;
+  bool _dueDateShifted = false;
 
   String name;
   DateTime due;
 
   Future configureDateTimeOffset() async {
-    due = await TimeZoneManager.createLocalRelativeAssignmentDueDate(
-      due,
-      parentClass.getSchool().timezone,
-    );
+    if (!_dueDateShifted) {
+      _dueDateShifted = true;
+
+      due = await TimeZoneManager.createLocalRelativeAssignmentDueDate(
+        due,
+        parentClass.getSchool().timezone,
+      );
+    }
   }
 
   StudentClass get parentClass {
@@ -54,6 +59,9 @@ class Assignment {
   static Map<int, Assignment> currentAssignments = {};
 
   static Assignment _fromJsonObj(Map content) {
+    if (content == null) {
+      return null;
+    }
     var due = content['due'] != null ? DateTime.parse(content['due']) : null;
 
     Assignment assignment = Assignment(
@@ -67,7 +75,6 @@ class Assignment {
       content['is_completed'],
     );
 
-    assignment.configureDateTimeOffset();
     currentAssignments[assignment.id] = assignment;
 
     return assignment;
@@ -87,6 +94,8 @@ class Assignment {
     ).then((response) {
       if (response.wasSuccessful() && response.obj != null) {
         currentTasks = response.obj;
+        currentTasks
+            .forEach((assignment) => assignment.configureDateTimeOffset());
       }
       return response;
     });

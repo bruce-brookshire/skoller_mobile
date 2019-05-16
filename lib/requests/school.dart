@@ -10,11 +10,14 @@ class School {
   static Map<int, School> currentSchools = {};
 
   static School _fromJsonObject(Map content) {
+    if (content == null) {
+      return null;
+    }
+
     List<Period> period_list = JsonListMaker.convert(
-          Period._fromJsonObj,
-          content['periods'],
-        ) ??
-        [];
+      Period._fromJsonObj,
+      content['periods'] ?? [],
+    );
     Period.currentPeriods = {};
 
     for (final period in period_list) {
@@ -43,6 +46,10 @@ class Period {
   static Map<int, Period> currentPeriods = {};
 
   static Period _fromJsonObj(Map content) {
+    if (content == null) {
+      return null;
+    }
+
     return Period(
       content['id'],
       content['school_id'],

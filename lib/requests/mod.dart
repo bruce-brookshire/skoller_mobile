@@ -43,17 +43,41 @@ class Mod {
   Assignment get parentAssigment =>
       Assignment.currentAssignments[_parentAssignmentId];
 
+  Future<RequestResponse> declineMod() {
+    return _submitModResponse(false);
+  }
+
+  Future<RequestResponse> acceptMod() {
+    return _submitModResponse(true);
+  }
+
+  Future<RequestResponse> _submitModResponse(bool withStatus) {
+    return SKRequests.post(
+      '/students/${SKUser.current.student.id}/mods/${id}',
+      {'is_accepted': withStatus},
+      Assignment._fromJsonObj,
+    );
+  }
+
+  //--------------//
+  //Static members//
+  //--------------//
+
+  static List<Mod> currentMods = [];
+
   static Mod _fromJsonObj(Map content) {
+    if (content == null) {
+      return null;
+    }
+
     DateTime createdOn = content['mod_created_at'] == null
         ? null
         : DateTime.parse(content['mod_created_at']);
 
-    StudentClass studentClass = StudentClass._fromJsonObj(content['class']);
-
     ModType modType;
     dynamic data;
 
-    if (content['mod_type'] != null) {
+    if (content['mod_type'] != null && content['data'] != null) {
       switch (content['mod_type']) {
         case 'Name':
           modType = ModType.name;
@@ -82,7 +106,7 @@ class Mod {
     return Mod(
       content['id'],
       content['student_assignment_id'],
-      studentClass.id,
+      content['class']['id'],
       content['students_accepted_count'],
       content['short_msg'],
       createdOn,
@@ -90,5 +114,17 @@ class Mod {
       content['is_accepted'],
       data,
     );
+  }
+
+  static Future<RequestResponse> fetchMods() {
+    return SKRequests.get(
+      '/students/${SKUser.current.student.id}/mods/',
+      Mod._fromJsonObj,
+    ).then((response) {
+      if (response.wasSuccessful()) {
+        currentMods = response.obj;
+      }
+      return response;
+    });
   }
 }

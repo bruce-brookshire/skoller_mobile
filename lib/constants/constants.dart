@@ -49,6 +49,19 @@ class ImageNames {
   static final assignmentInfoImages = _AssignmentInfoImages();
   static final peopleImages = _PeopleImages();
   static final statusImages = _StatusImages();
+  static final activityImages = _ActivityImages();
+}
+
+class _ActivityImages {
+  final add_gray = 'image_assets/activity_assets/add_gray.png';
+  final add_white = 'image_assets/activity_assets/add_white.png';
+  final weight_gray = 'image_assets/activity_assets/weight_gray.png';
+  final weight_white = 'image_assets/activity_assets/weight_white.png';
+  final due_gray = 'image_assets/activity_assets/due_gray.png';
+  final due_white = 'image_assets/activity_assets/due_white.png';
+  final delete_gray = 'image_assets/activity_assets/delete_gray.png';
+  final delete_white = 'image_assets/activity_assets/delete_white.png';
+  final chat_white = 'image_assets/activity_assets/chat_white.png';
 }
 
 class _SignUpImages {
