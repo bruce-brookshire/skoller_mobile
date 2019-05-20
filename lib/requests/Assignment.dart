@@ -18,8 +18,10 @@ class Assignment {
   String name;
   DateTime due;
 
+  List<AssignmentChat> posts;
+
   Future configureDateTimeOffset() async {
-    if (!_dueDateShifted) {
+    if (!_dueDateShifted && due != null) {
       _dueDateShifted = true;
 
       due = await TimeZoneManager.createLocalRelativeAssignmentDueDate(
@@ -33,8 +35,17 @@ class Assignment {
     return StudentClass.currentClasses[class_id];
   }
 
-  Assignment(this.id, this.name, this.due, this.class_id, this.weight,
-      this.weight_id, this.grade, this.completed);
+  Assignment(
+    this.id,
+    this.name,
+    this.due,
+    this.class_id,
+    this.weight,
+    this.weight_id,
+    this.grade,
+    this.completed,
+    this.posts,
+  );
 
   Future<RequestResponse> toggleComplete() {
     final newComplete = !(completed ?? false);
@@ -67,12 +78,14 @@ class Assignment {
     Assignment assignment = Assignment(
       content['id'],
       content['name'],
-      DateTime(due.year, due.month, due.day, due.hour, due.minute),
+      due,
       content['class_id'],
       content['weight'],
       content['weight_id'],
       content['grade'],
       content['is_completed'],
+      JsonListMaker.convert(
+          AssignmentChat._fromJsonObj, content['posts'] ?? []),
     );
 
     currentAssignments[assignment.id] = assignment;
@@ -115,5 +128,27 @@ class Assignment {
       }
       return response;
     });
+  }
+}
+
+class AssignmentChat {
+  int id;
+  PublicStudent student;
+  String post;
+  DateTime inserted_at;
+
+  AssignmentChat(
+    this.id,
+    this.student,
+    this.post,
+    this.inserted_at,
+  );
+
+  static AssignmentChat _fromJsonObj(Map content) {
+    return AssignmentChat(
+        content['id'],
+        PublicStudent._fromJsonObj(content['student']),
+        content['post'],
+        DateTime.parse(content['inserted_at']));
   }
 }

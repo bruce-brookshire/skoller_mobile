@@ -47,6 +47,29 @@ class DateUtilities {
       return '${days} days';
     }
   }
+
+  static String getPastRelativeString(DateTime date) {
+    final now_ms = DateTime.now().millisecondsSinceEpoch;
+    final date_ms = date.millisecondsSinceEpoch;
+
+    final diff = ((now_ms - date_ms) / 1000).truncate();
+
+    if (diff < 5) {
+      return 'Now';
+    } else if (diff < 60) {
+      return '${diff} sec ago';
+    } else if (diff < 3600) {
+      return '${(diff / 60).truncate()} min ago';
+    } else if (diff < 86400) {
+      final hrs = (diff / 3600).truncate();
+      return '${hrs} ${hrs == 1 ? 'hr' : 'hrs'} ago';
+    } else if (diff < 604800) {
+      final days = (diff / 86400).truncate();
+      return '${days} ${days == 1 ? 'day' : 'days'} ago';
+    } else {
+      return DateFormat('M/d/yy').format(date);
+    }
+  }
 }
 
 class NumberUtilities {

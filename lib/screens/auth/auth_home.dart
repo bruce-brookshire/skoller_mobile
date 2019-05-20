@@ -32,6 +32,8 @@ class AuthHome extends StatelessWidget {
     });
   }
 
+  
+
   @override
   Widget build(BuildContext context) {
     if (_Temp.once) {
@@ -44,7 +46,7 @@ class AuthHome extends StatelessWidget {
         }
       }).then((response) {
         if (response.wasSuccessful()) {
-          Navigator.push(
+          Navigator.pushReplacement(
             context,
             MaterialPageRoute(builder: (context) => MyHomePage()),
           );

@@ -3,8 +3,13 @@ import 'requests/requests_core.dart';
 import 'screens/auth/auth_home.dart';
 import 'constants/constants.dart';
 import 'screens/main_app/tab_bar.dart';
+import 'constants/timezone_manager.dart';
 
-void main() => runApp(MyApp());
+void main() {
+  runApp(MyApp());
+  //Allow currentTZ to cache through heuristic exploration before we need it
+  TimeZoneManager.verifyTzDbActive();
+}
 
 class MyApp extends StatelessWidget {
   @override
@@ -55,4 +60,3 @@ class MyApp extends StatelessWidget {
     );
   }
 }
-

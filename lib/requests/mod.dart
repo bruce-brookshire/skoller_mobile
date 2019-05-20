@@ -85,7 +85,16 @@ class Mod {
           break;
         case 'Weight Category':
           modType = ModType.weight;
-          data = content['data']['weight_id'];
+
+          final weightId = content['data']['weight_id'];
+          final parentClass =
+              StudentClass.currentClasses[content['class']['id']];
+
+          for (final weight in parentClass.weights) {
+            if (weight.id == weightId) {
+              data = weight;
+            }
+          }
           break;
         case 'Due Date':
           modType = ModType.due;
@@ -94,6 +103,7 @@ class Mod {
         case 'New Assignment':
           modType = ModType.newAssignment;
           data = Assignment._fromJsonObj(content['data']['assignment']);
+          (data as Assignment).configureDateTimeOffset();
           break;
         case 'Delete Assignment':
           modType = ModType.delete;

@@ -9,20 +9,19 @@ part 'utilities.dart';
 
 class SKColors {
   static final dark_gray = Color(0xFF4A4A4A);
-  static final skoller_blue = Color(0xFF57B9E4);
-  static final success = Color(0xFF4ADD58);
   static final background_gray = Color(0xFFF5F7F9);
-  static final border_gray = Color(0xFFEDEDED);
   static final selected_gray = Color(0xFFF8F8F8);
+  static final border_gray = Color(0xFFEDEDED);
   static final light_gray = Color(0xFFAAAAAA);
-  static final alert_orange = Color(0xFFFF6D00);
   static final text_light_gray = Color(0xFFC7C7CD);
   static final inactive_gray = Color(0xFFEEEEEE);
+
+  static final skoller_blue = Color(0xFF57B9E4);
+  static final success = Color(0xFF4ADD58);
+  static final alert_orange = Color(0xFFFF6D00);
+  static final warning_red = Color(0xFFFF4159);
 }
 //     ERASERPINK: '#FDBA22',
-//     IOSLIGHTGRAY: 'rgb(170,170,170)',
-//     INACTIVEGRAY: '#EEEEEE',
-//     WARNINGRED: '#FF4159',
 
 class UIAssets {
   static BoxShadow boxShadow = BoxShadow(
@@ -53,49 +52,64 @@ class ImageNames {
 }
 
 class _ActivityImages {
-  final add_gray = 'image_assets/activity_assets/add_gray.png';
-  final add_white = 'image_assets/activity_assets/add_white.png';
-  final weight_gray = 'image_assets/activity_assets/weight_gray.png';
-  final weight_white = 'image_assets/activity_assets/weight_white.png';
-  final due_gray = 'image_assets/activity_assets/due_gray.png';
-  final due_white = 'image_assets/activity_assets/due_white.png';
-  final delete_gray = 'image_assets/activity_assets/delete_gray.png';
-  final delete_white = 'image_assets/activity_assets/delete_white.png';
-  final chat_white = 'image_assets/activity_assets/chat_white.png';
+  static final _base = 'image_assets/activity_assets';
+
+  final add_gray = '${_base}/add_gray.png';
+  final add_white = '${_base}/add_white.png';
+  final weight_gray = '${_base}/weight_gray.png';
+  final weight_white = '${_base}/weight_white.png';
+  final due_gray = '${_base}/due_gray.png';
+  final due_white = '${_base}/due_white.png';
+  final delete_gray = '${_base}/delete_gray.png';
+  final delete_white = '${_base}/delete_white.png';
+  final chat_white = '${_base}/chat_white.png';
 }
 
 class _SignUpImages {
-  final happy_classmates = 'image_assets/sign_up_assets/happy_classmates.png';
-  final logo_wide_blue = 'image_assets/sign_up_assets/logo_wide_blue.png';
+  static final _base = 'image_assets/sign_up_assets';
+
+  final happy_classmates = '${_base}/happy_classmates.png';
+  final logo_wide_blue = '${_base}/logo_wide_blue.png';
 }
 
 class _NavigationArrowImages {
-  final left = 'image_assets/navigation_arrow_assets/back.png';
-  final right = 'image_assets/navigation_arrow_assets/right.png';
+  static final _base = 'image_assets/navigation_arrow_assets';
+
+  final left = '${_base}/back.png';
+  final right = '${_base}/right.png';
 }
 
 class _RightNavImages {
-  final plus = 'image_assets/right_button_assets/plus.png';
-  final info = 'image_assets/right_button_assets/info.png';
-  final link = 'image_assets/right_button_assets/link.png';
+  static final _base = 'image_assets/right_button_assets';
+
+  final plus = '${_base}/plus.png';
+  final info = '${_base}/info.png';
+  final link = '${_base}/link.png';
 }
 
 class _AssignmentInfoImages {
-  final notes = 'image_assets/assignment_info_assets/notes.png';
-  final circle_x = 'image_assets/assignment_info_assets/circle_x.png';
+  static final _base = 'image_assets/assignment_info_assets';
+
+  final notes = '${_base}/notes.png';
+  final circle_x = '${_base}/circle_x.png';
+  final comment = '${_base}/comment.png';
 }
 
 class _PeopleImages {
-  final person_light_gray = 'image_assets/people_assets/person_light_gray.png';
-  final person_dark_gray = 'image_assets/people_assets/person_dark_gray.png';
-  final person_blue = 'image_assets/people_assets/person_blue.png';
-  final person_edit = 'image_assets/people_assets/user_edit.png';
-  final people_gray = 'image_assets/people_assets/people_gray.png';
-  final people_blue = 'image_assets/people_assets/people_blue.png';
-  final people_white = 'image_assets/people_assets/people_white.png';
+  static final _base = 'image_assets/people_assets';
+
+  final person_light_gray = '${_base}/person_light_gray.png';
+  final person_dark_gray = '${_base}/person_dark_gray.png';
+  final person_blue = '${_base}/person_blue.png';
+  final person_edit = '${_base}/user_edit.png';
+  final people_gray = '${_base}/people_gray.png';
+  final people_blue = '${_base}/people_blue.png';
+  final people_white = '${_base}/people_white.png';
 }
 
 class _StatusImages {
-  final diy = 'image_assets/status_assets/diy.png';
-  final clock = 'image_assets/status_assets/clock.png';
+  static final _base = 'image_assets/status_assets';
+
+  final diy = '${_base}/diy.png';
+  final clock = '${_base}/clock.png';
 }

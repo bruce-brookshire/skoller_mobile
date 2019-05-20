@@ -30,7 +30,8 @@ class Student {
   List<School> schools;
 
   Student._fromJson(Map content) {
-    final school_list = JsonListMaker.convert(School._fromJsonObject, content['schools']) ?? [];
+    final school_list =
+        JsonListMaker.convert(School._fromJsonObject, content['schools']) ?? [];
     School.currentSchools = {};
 
     for (final school in school_list) {
@@ -46,5 +47,28 @@ class Student {
     points = content['points'];
     gradYear = content['grad_year'];
     schools = school_list;
+  }
+}
+
+class PublicStudent {
+  int id;
+  String name_first;
+  String name_last;
+  String avatar;
+
+  PublicStudent(
+    this.id,
+    this.name_first,
+    this.name_last,
+    this.avatar,
+  );
+
+  static PublicStudent _fromJsonObj(Map content) {
+    return PublicStudent(
+      content['id'],
+      content['name_first'],
+      content['name_last'],
+      content['avatar'],
+    );
   }
 }

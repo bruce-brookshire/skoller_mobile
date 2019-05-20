@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:skoller/screens/main_app/activity/update_info_view.dart';
 import '../../../requests/requests_core.dart';
 import 'package:skoller/constants/constants.dart';
 
@@ -8,21 +10,53 @@ class ActivityView extends StatefulWidget {
 }
 
 class _ActivityViewState extends State<ActivityView> {
-  List<Mod> currentMods = [];
+  List<List<Mod>> stackedMods = [];
 
   @override
   void initState() {
     super.initState();
 
-    currentMods = Mod.currentMods;
+    stackedMods = stackAndSortMods(Mod.currentMods);
 
     Mod.fetchMods().then((response) {
       if (response.wasSuccessful()) {
+        final mods = stackAndSortMods(response.obj ?? []);
         setState(() {
-          currentMods = response.obj;
+          stackedMods = mods;
         });
       }
     });
+  }
+
+  List<List<Mod>> stackAndSortMods(List<Mod> mods) {
+    Map<String, List<Mod>> modHash = {};
+
+    for (Mod mod in mods) {
+      if (mod.modType == ModType.newAssignment) {
+        modHash['${mod.id} new'] = [mod];
+      } else {
+        String key = '${mod.parentAssigment.id} ${mod.modType.index}';
+        
+        if (modHash[key] == null) {
+          modHash[key] = [mod];
+        } else {
+          modHash[key].add(mod);
+        }
+      }
+    }
+
+    final unsortedStack = modHash.values.toList();
+    unsortedStack.forEach((typeList) {
+      typeList.sort((elem1, elem2) {
+        return elem2.createdOn.compareTo(elem1.createdOn);
+      });
+    });
+
+    unsortedStack.sort((elem1, elem2) {
+      return elem2[0].createdOn.compareTo(elem1[0].createdOn);
+    });
+
+    return unsortedStack;
   }
 
   String getDescrImageName(Mod mod) {
@@ -43,6 +77,8 @@ class _ActivityViewState extends State<ActivityView> {
         return ImageNames.activityImages.delete_white;
         break;
     }
+
+    throw 'image not found';
   }
 
   @override
@@ -54,7 +90,7 @@ class _ActivityViewState extends State<ActivityView> {
         Expanded(
           child: ListView.builder(
             padding: EdgeInsets.only(top: 4),
-            itemCount: currentMods.length,
+            itemCount: stackedMods.length,
             itemBuilder: buildListItem,
           ),
         )
@@ -63,70 +99,80 @@ class _ActivityViewState extends State<ActivityView> {
   }
 
   Widget buildListItem(BuildContext context, int index) {
-    Mod mod = currentMods[index];
+    Mod mod = stackedMods[index][0];
 
-    return Container(
-      margin: EdgeInsets.fromLTRB(7, 3, 7, 4),
-      padding: EdgeInsets.symmetric(horizontal: 8, vertical: 6),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        boxShadow: [UIAssets.boxShadow],
-        borderRadius: BorderRadius.circular(5),
-        border: Border.all(color: SKColors.border_gray),
-      ),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Container(
-            width: 28,
-            height: 28,
-            margin: EdgeInsets.only(right: 6),
-            decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: mod.isAccepted == null
-                    ? mod.parentClass.getColor()
-                    : SKColors.light_gray),
-            child: Image.asset(this.getDescrImageName(mod)),
+    return GestureDetector(
+      onTapUp: (details) {
+        Navigator.push(
+          context,
+          CupertinoPageRoute(
+            builder: (context) => UpdateInfoView(stackedMods[index]),
           ),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    Text(
-                      mod.parentClass.name,
-                      style: TextStyle(
-                          color: mod.isAccepted == null
-                              ? mod.parentClass.getColor()
-                              : SKColors.light_gray),
-                    ),
-                    Text(
-                      '1 hr.',
-                      style: TextStyle(
-                          color: SKColors.text_light_gray,
-                          fontSize: 13,
-                          fontWeight: FontWeight.normal),
-                    ),
-                  ],
-                ),
-                Text(
-                  mod.isAccepted == null
-                      ? mod.shortMsg
-                      : '${mod.isAccepted ? 'Copied:' : 'Dismissed:'} ${mod.shortMsg}',
-                  style: TextStyle(
-                      fontWeight: FontWeight.normal,
-                      fontSize: 13,
-                      color: mod.isAccepted == null
-                          ? SKColors.dark_gray
-                          : SKColors.light_gray),
-                ),
-              ],
+        );
+      },
+      child: Container(
+        margin: EdgeInsets.fromLTRB(7, 3, 7, 4),
+        padding: EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          boxShadow: [UIAssets.boxShadow],
+          borderRadius: BorderRadius.circular(5),
+          border: Border.all(color: SKColors.border_gray),
+        ),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Container(
+              width: 28,
+              height: 28,
+              margin: EdgeInsets.only(right: 6),
+              decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: mod.isAccepted == null
+                      ? mod.parentClass.getColor()
+                      : SKColors.light_gray),
+              child: Image.asset(this.getDescrImageName(mod)),
             ),
-          ),
-        ],
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      Text(
+                        mod.parentClass.name,
+                        style: TextStyle(
+                            color: mod.isAccepted == null
+                                ? mod.parentClass.getColor()
+                                : SKColors.light_gray),
+                      ),
+                      Text(
+                        DateUtilities.getPastRelativeString(mod.createdOn),
+                        style: TextStyle(
+                            color: SKColors.text_light_gray,
+                            fontSize: 13,
+                            fontWeight: FontWeight.normal),
+                      ),
+                    ],
+                  ),
+                  Text(
+                    mod.isAccepted == null
+                        ? mod.shortMsg
+                        : '${mod.isAccepted ? 'Copied:' : 'Dismissed:'} ${mod.shortMsg}',
+                    style: TextStyle(
+                        fontWeight: FontWeight.normal,
+                        fontSize: 13,
+                        color: mod.isAccepted == null
+                            ? SKColors.dark_gray
+                            : SKColors.light_gray),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

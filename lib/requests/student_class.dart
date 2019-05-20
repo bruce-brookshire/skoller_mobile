@@ -48,7 +48,7 @@ class StudentClass {
     this.classPeriod,
   );
 
-  School getSchool() => Period.currentPeriods[classPeriod.id].getSchool();
+  School getSchool() => School.currentSchools[classPeriod.schoolId];
 
   Color getColor() {
     if (_color != null) {
