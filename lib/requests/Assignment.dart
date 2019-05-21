@@ -6,6 +6,7 @@ class Assignment {
   //----------------//
 
   int id;
+  int _parent_assignment_id;
   int class_id;
   int weight_id;
 
@@ -45,21 +46,62 @@ class Assignment {
     this.grade,
     this.completed,
     this.posts,
+    this._parent_assignment_id,
   );
 
   Future<RequestResponse> toggleComplete() {
     final newComplete = !(completed ?? false);
-    return SKRequests.put(
+
+    Future<RequestResponse> request = SKRequests.put(
       '/assignments/${id}',
       {'is_completed': newComplete},
       _fromJsonObj,
     );
+
+    return _storeSuccessfulRequest(request);
   }
 
   String getWeightName() {
     final weight = this.parentClass.getWeightForId(weight_id);
 
     return weight == null ? 'Not graded' : weight.name;
+  }
+
+  Future<RequestResponse> savePost(String post) {
+    return SKRequests.post(
+      '/assignments/${_parent_assignment_id}/posts',
+      {'post': post},
+      AssignmentChat._fromJsonObj,
+    );
+  }
+
+  Future<RequestResponse> saveGrade(num grade) {
+    return SKRequests.post(
+      '/assignments/${id}/grades',
+      {'grade': grade},
+      Assignment._fromJsonObj,
+    );
+  }
+
+  Future<RequestResponse> removeGrade() {
+    return SKRequests.post(
+      '/assignments/${id}/grades',
+      {'grade': null},
+      Assignment._fromJsonObj,
+    );
+  }
+
+  Future<RequestResponse> _storeSuccessfulRequest(
+    Future<RequestResponse> request,
+  ) async {
+    RequestResponse response = await request;
+
+    if (response.wasSuccessful()) {
+      Assignment assignment = response.obj;
+      currentAssignments[assignment.id] = assignment;
+    }
+
+    return response;
   }
 
   //--------------//
@@ -86,6 +128,7 @@ class Assignment {
       content['is_completed'],
       JsonListMaker.convert(
           AssignmentChat._fromJsonObj, content['posts'] ?? []),
+      content['assignment_id'],
     );
 
     currentAssignments[assignment.id] = assignment;
@@ -107,8 +150,10 @@ class Assignment {
     ).then((response) {
       if (response.wasSuccessful() && response.obj != null) {
         currentTasks = response.obj;
-        currentTasks
-            .forEach((assignment) => assignment.configureDateTimeOffset());
+        currentTasks.forEach((assignment) {
+          Assignment.currentAssignments[assignment.id] = assignment;
+          assignment.configureDateTimeOffset();
+        });
       }
       return response;
     });
@@ -124,7 +169,8 @@ class Assignment {
       _fromJsonObj,
     ).then((response) {
       if (response.wasSuccessful() && response.obj != null) {
-        currentTasks = response.obj;
+        (response.obj as List<Assignment>).forEach((assignment) =>
+            Assignment.currentAssignments[assignment.id] = assignment);
       }
       return response;
     });

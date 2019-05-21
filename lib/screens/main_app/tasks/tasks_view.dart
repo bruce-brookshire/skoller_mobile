@@ -168,7 +168,7 @@ class _TasksViewState extends State<TasksView> {
         Navigator.push(
           context,
           CupertinoPageRoute(
-              builder: (context) => AssignmentInfoView(task: task)),
+              builder: (context) => AssignmentInfoView(assignment_id: task.id)),
         );
       },
       child: Container(

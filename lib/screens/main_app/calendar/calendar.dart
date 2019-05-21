@@ -340,7 +340,7 @@ class _CalendarViewState extends State<CalendarView> {
         context,
         CupertinoPageRoute(
           builder: (context) => AssignmentInfoView(
-                task: result,
+                assignment_id: result.id,
               ),
         ),
       );

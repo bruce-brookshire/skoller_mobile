@@ -310,7 +310,7 @@ class _ClassDetailViewState extends State<ClassDetailView> {
         Navigator.push(
           context,
           CupertinoPageRoute(
-              builder: (context) => AssignmentInfoView(task: assignment)),
+              builder: (context) => AssignmentInfoView(assignment_id: assignment.id)),
         );
       },
       child: Container(
