@@ -15,8 +15,11 @@ class Assignment {
 
   bool completed;
   bool _dueDateShifted = false;
+  bool isPostNotifications;
 
   String name;
+  String notes;
+
   DateTime due;
 
   List<AssignmentChat> posts;
@@ -47,9 +50,11 @@ class Assignment {
     this.completed,
     this.posts,
     this._parent_assignment_id,
+    this.isPostNotifications,
+    this.notes,
   );
 
-  Future<RequestResponse> toggleComplete() {
+  Future<bool> toggleComplete() {
     final newComplete = !(completed ?? false);
 
     Future<RequestResponse> request = SKRequests.put(
@@ -91,17 +96,39 @@ class Assignment {
     );
   }
 
-  Future<RequestResponse> _storeSuccessfulRequest(
+  Future<bool> saveNotes(String notes) {
+    Future<RequestResponse> request = SKRequests.put(
+      '/assignments/${id}',
+      {'notes': notes},
+      _fromJsonObj,
+    );
+
+    return _storeSuccessfulRequest(request);
+  }
+
+  Future<bool> togglePostNotifications() {
+    Future<RequestResponse> request = SKRequests.put(
+      '/assignments/${id}',
+      {'is_post_notifications': !isPostNotifications},
+      Assignment._fromJsonObj,
+    );
+
+    return _storeSuccessfulRequest(request);
+  }
+
+  Future<bool> _storeSuccessfulRequest(
     Future<RequestResponse> request,
   ) async {
     RequestResponse response = await request;
 
-    if (response.wasSuccessful()) {
+    bool success = response.wasSuccessful();
+
+    if (success) {
       Assignment assignment = response.obj;
       currentAssignments[assignment.id] = assignment;
     }
 
-    return response;
+    return success;
   }
 
   //--------------//
@@ -129,6 +156,8 @@ class Assignment {
       JsonListMaker.convert(
           AssignmentChat._fromJsonObj, content['posts'] ?? []),
       content['assignment_id'],
+      content['is_post_notifications'],
+      content['notes'],
     );
 
     currentAssignments[assignment.id] = assignment;

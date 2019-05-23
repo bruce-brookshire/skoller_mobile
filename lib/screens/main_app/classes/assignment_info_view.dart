@@ -1,3 +1,5 @@
+import 'dart:collection';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/widgets.dart';
@@ -29,8 +31,8 @@ class _AssignmentInfoViewState extends State<AssignmentInfoView> {
   updateGrade(double grade) {}
 
   void toggleComplete() {
-    assignment.toggleComplete().then((response) {
-      if (!response.wasSuccessful()) {
+    assignment.toggleComplete().then((success) {
+      if (!success) {
         setState(() {
           assignment.completed = !assignment.completed;
         });
@@ -39,6 +41,119 @@ class _AssignmentInfoViewState extends State<AssignmentInfoView> {
     setState(() {
       assignment.completed = !assignment.completed;
     });
+  }
+
+  void tappedEditNotes(TapUpDetails details) async {
+    TextEditingController controller =
+        TextEditingController(text: assignment.notes);
+
+    final successful = await showDialog(
+      context: context,
+      builder: (context) => Dialog(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.all(Radius.circular(10)),
+            ),
+            child: Container(
+              height: MediaQuery.of(context).size.height / 2,
+              decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(10),
+                  border: Border.all(color: SKColors.border_gray)),
+              child: Column(
+                mainAxisSize: MainAxisSize.max,
+                children: [
+                  Container(
+                    padding: EdgeInsets.only(top: 16, bottom: 4),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        Expanded(
+                          flex: 1,
+                          child: GestureDetector(
+                            onTapUp: (details) {
+                              Navigator.pop(context, false);
+                            },
+                            child: Container(
+                              padding: EdgeInsets.only(left: 8),
+                              alignment: Alignment.centerLeft,
+                              child: Text(
+                                'Cancel',
+                                style: TextStyle(
+                                  color: SKColors.warning_red,
+                                  fontWeight: FontWeight.normal,
+                                  fontSize: 14,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                        Expanded(
+                          flex: 2,
+                          child: Text(
+                            'Personal Notes',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(fontSize: 17),
+                          ),
+                        ),
+                        Expanded(
+                          flex: 1,
+                          child: GestureDetector(
+                            onTapUp: (details) {
+                              Navigator.pop(context, true);
+                            },
+                            child: Container(
+                              padding: EdgeInsets.only(right: 8),
+                              alignment: Alignment.centerRight,
+                              child: Text(
+                                'Save',
+                                style: TextStyle(
+                                  color: SKColors.skoller_blue,
+                                  fontWeight: FontWeight.normal,
+                                  fontSize: 14,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Expanded(
+                    child: Container(
+                      alignment: Alignment.topLeft,
+                      margin: EdgeInsets.all(8),
+                      child: CupertinoTextField(
+                        decoration: BoxDecoration(border: null),
+                        maxLength: 2000,
+                        maxLengthEnforced: true,
+                        autofocus: true,
+                        maxLines: null,
+                        keyboardType: TextInputType.multiline,
+                        controller: controller,
+                        placeholder: 'Add a note...',
+                        style: TextStyle(
+                            color: SKColors.dark_gray,
+                            fontSize: 15,
+                            fontWeight: FontWeight.normal),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+    );
+
+    if (successful != null && successful) {
+      String notes = controller.text.trim();
+      assignment.saveNotes(notes == '' ? null : notes).then((success) {
+        if (success) {
+          setState(() {
+            assignment.notes =
+                Assignment.currentAssignments[assignment.id].notes;
+          });
+        }
+      });
+    }
   }
 
   void presentGradeSelector(BuildContext context) async {
@@ -54,6 +169,9 @@ class _AssignmentInfoViewState extends State<AssignmentInfoView> {
             assignment.grade = response.obj.grade;
           });
         }
+      });
+      setState(() {
+        assignment.grade = grade;
       });
     }
   }
@@ -82,6 +200,25 @@ class _AssignmentInfoViewState extends State<AssignmentInfoView> {
         }
       });
     }
+  }
+
+  void tappedToggleNotifications(bool enabled) {
+    assignment.togglePostNotifications().then((success) {
+      if (!success) {
+        setState(() {
+          assignment.isPostNotifications = !assignment.isPostNotifications;
+        });
+      }
+    });
+    setState(() {
+      assignment.isPostNotifications = !assignment.isPostNotifications;
+    });
+  }
+
+  void tappedEdit(TapUpDetails details) async {
+    final results = await showDialog(
+        context: context,
+        builder: (context) => _AssignmentEditModal(assignment.id));
   }
 
   @override
@@ -152,11 +289,25 @@ class _AssignmentInfoViewState extends State<AssignmentInfoView> {
             ),
             padding: EdgeInsets.fromLTRB(12, 12, 12, 8),
             child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
                 Text(
                   'Assignment details',
                   style: TextStyle(fontSize: 17),
                 ),
+                GestureDetector(
+                  onTapUp: tappedEdit,
+                  child: Container(
+                    padding: EdgeInsets.only(right: 4, top: 4),
+                    child: Text(
+                      'Edit',
+                      style: TextStyle(
+                        color: SKColors.skoller_blue,
+                        fontSize: 14,
+                      ),
+                    ),
+                  ),
+                )
               ],
             ),
           ),
@@ -318,37 +469,38 @@ class _AssignmentInfoViewState extends State<AssignmentInfoView> {
                         BorderSide(color: SKColors.selected_gray, width: 1))),
             margin: EdgeInsets.only(left: 12, right: 12, bottom: 6),
             padding: EdgeInsets.symmetric(vertical: 8),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: <Widget>[
-                Row(
-                  children: <Widget>[
-                    Container(
-                      height: 32,
-                      width: 32,
-                      padding: EdgeInsets.only(right: 8),
-                      child: Image.asset(ImageNames.assignmentInfoImages.notes),
+            child: GestureDetector(
+              behavior: HitTestBehavior.opaque,
+              onTapUp: tappedEditNotes,
+              child: Row(
+                children: <Widget>[
+                  Image.asset(ImageNames.assignmentInfoImages.notes),
+                  Expanded(
+                    child: Container(
+                      padding: EdgeInsets.symmetric(horizontal: 8),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          Text(
+                            'Notes',
+                            style: TextStyle(fontWeight: FontWeight.normal),
+                          ),
+                          Text(
+                            (assignment.notes ?? '').length == 0
+                                ? 'Tap to add a personal note'
+                                : assignment.notes,
+                            style: TextStyle(
+                                fontStyle: FontStyle.italic,
+                                fontSize: 13,
+                                fontWeight: FontWeight.normal),
+                          )
+                        ],
+                      ),
                     ),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        Text(
-                          'Notes',
-                          style: TextStyle(fontWeight: FontWeight.normal),
-                        ),
-                        Text(
-                          'Tap to add a personal note',
-                          style: TextStyle(
-                              fontStyle: FontStyle.italic,
-                              fontSize: 13,
-                              fontWeight: FontWeight.normal),
-                        )
-                      ],
-                    ),
-                  ],
-                ),
-                Image.asset(ImageNames.navArrowImages.right)
-              ],
+                  ),
+                  Image.asset(ImageNames.navArrowImages.right)
+                ],
+              ),
             ),
           ),
           Container(
@@ -446,10 +598,8 @@ class _AssignmentInfoViewState extends State<AssignmentInfoView> {
                     ),
                   ),
                   CupertinoSwitch(
-                      value: true,
-                      onChanged: (result) {
-                        //TODO hook this up
-                      },
+                      value: assignment.isPostNotifications,
+                      onChanged: tappedToggleNotifications,
                       activeColor: SKColors.skoller_blue),
                 ],
               ),
@@ -708,13 +858,12 @@ class _AssignmentInfoViewState extends State<AssignmentInfoView> {
 class _GradeSelection extends StatefulWidget {
   final Assignment assignment;
 
-  final TextEditingController numerator = TextEditingController();
-  final TextEditingController denominator = TextEditingController();
+  final _GradePickerResults resultsCaddy = _GradePickerResults();
 
   _GradeSelection(this.assignment);
 
   @override
-  State createState() => _GradeSelectionState();
+  State createState() => _GradeSelectionState(this.resultsCaddy);
 
   static Future<num> presentDateSelector({
     @required BuildContext context,
@@ -797,16 +946,28 @@ class _GradeSelection extends StatefulWidget {
                         child: GestureDetector(
                           behavior: HitTestBehavior.opaque,
                           onTapUp: (details) {
-                            String grade = controller.numerator.text.trim();
-                            String basis = controller.denominator.text.trim();
+                            if (controller.resultsCaddy.selectedSegment == 0) {
+                              String grade =
+                                  controller.resultsCaddy.numerator.trim();
+                              String basis =
+                                  controller.resultsCaddy.denominator.trim();
 
-                            if (grade.length != 0) {
-                              int grade_num = int.tryParse(grade);
-                              int basis_num =
-                                  int.tryParse(basis == '' ? '100' : basis);
+                              if (grade.length != 0) {
+                                int grade_num = int.tryParse(grade);
+                                int basis_num =
+                                    int.tryParse(basis == '' ? '100' : basis);
 
-                              Navigator.pop(
-                                  context, (grade_num / basis_num) * 100);
+                                Navigator.pop(
+                                    context, (grade_num / basis_num) * 100);
+                              }
+                            } else {
+                              num result = controller
+                                      .resultsCaddy.picker_digit +
+                                  (controller.resultsCaddy.picker_decimal / 10);
+
+                              print(result);
+
+                              Navigator.pop(context, result);
                             }
                           },
                           child: Container(
@@ -829,42 +990,384 @@ class _GradeSelection extends StatefulWidget {
   }
 }
 
+class _GradePickerResults {
+  //Active segment
+  int selectedSegment = 0;
+
+  //Fields
+  String numerator = '';
+  String denominator = '';
+
+  //Picker
+  num picker_digit = 100;
+  num picker_decimal = 0;
+}
+
 class _GradeSelectionState extends State<_GradeSelection> {
+  final _GradePickerResults resultsCaddy;
+
+  _GradeSelectionState(this.resultsCaddy);
+
   @override
   Widget build(BuildContext context) {
-    return Container(
-        padding: EdgeInsets.symmetric(horizontal: 12, vertical: 24),
-        child: Center(
-          child: Row(
-            children: <Widget>[
-              Expanded(
-                child: Container(
-                    margin: EdgeInsets.symmetric(horizontal: 24),
-                    child: CupertinoTextField(
-                      placeholder: '100',
-                      controller: widget.numerator,
-                      keyboardType: TextInputType.number,
-                      //TODO has this been fixed on Flutter yet?
-                      // textAlign: TextAlign.center,
-                      style: TextStyle(fontSize: 14),
-                    )),
-              ),
-              Text('out of'),
-              Expanded(
-                child: Container(
-                  margin: EdgeInsets.symmetric(horizontal: 24),
+    List<Widget> segmentElements = [
+      Container(
+        padding: EdgeInsets.symmetric(vertical: 36),
+        child: Row(
+          children: <Widget>[
+            Spacer(
+              flex: 1,
+            ),
+            Expanded(
+              flex: 3,
+              child: Container(
+                  margin: EdgeInsets.symmetric(horizontal: 12),
                   child: CupertinoTextField(
                     placeholder: '100',
-                    controller: widget.denominator,
                     keyboardType: TextInputType.number,
+                    onChanged: (newStr) => resultsCaddy.numerator = newStr,
                     //TODO has this been fixed on Flutter yet?
                     // textAlign: TextAlign.center,
-                    style: TextStyle(fontSize: 14),
-                  ),
+                    style: TextStyle(fontSize: 15),
+                  )),
+            ),
+            Text(
+              'out of',
+              style: TextStyle(color: SKColors.dark_gray, fontSize: 15),
+            ),
+            Expanded(
+              flex: 3,
+              child: Container(
+                margin: EdgeInsets.symmetric(horizontal: 12),
+                child: CupertinoTextField(
+                  placeholder: '100',
+                  onChanged: (newStr) => resultsCaddy.denominator = newStr,
+                  keyboardType: TextInputType.number,
+                  //TODO has this been fixed on Flutter yet?
+                  // textAlign: TextAlign.center,
+                  style: TextStyle(fontSize: 15),
                 ),
               ),
-            ],
+            ),
+            Spacer(
+              flex: 1,
+            ),
+          ],
+        ),
+      ),
+      Container(
+        padding: EdgeInsets.symmetric(vertical: 4),
+        child: Row(
+          children: <Widget>[
+            Spacer(),
+            Container(
+              height: 140,
+              width: 44,
+              // color: Colors.white,
+              child: CupertinoPicker.builder(
+                backgroundColor: Colors.white,
+                childCount: 101,
+                itemBuilder: (context, index) => Container(
+                      alignment: Alignment.centerRight,
+                      child: Text(
+                        '${100 - index}',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          color: SKColors.dark_gray,
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                itemExtent: 24,
+                onSelectedItemChanged: (index) {
+                  resultsCaddy.picker_digit = 100 - index;
+                },
+              ),
+            ),
+            Container(
+              padding: EdgeInsets.symmetric(horizontal: 4),
+              child: Text('.'),
+            ),
+            Container(
+              height: 140,
+              width: 20,
+              child: CupertinoPicker.builder(
+                backgroundColor: Colors.white,
+                childCount: 10,
+                itemBuilder: (context, index) => Text(
+                      '${(index) % 10}',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        color: SKColors.dark_gray,
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                itemExtent: 24,
+                onSelectedItemChanged: (index) {
+                  resultsCaddy.picker_decimal = (index) % 10;
+                },
+              ),
+            ),
+            Container(
+              padding: EdgeInsets.only(left: 6),
+              child: Text('%'),
+            ),
+            Spacer(),
+          ],
+        ),
+      ),
+    ];
+
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 12),
+      child: Center(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            CupertinoSegmentedControl(
+              children: LinkedHashMap.fromIterables(
+                [0, 1],
+                [
+                  Text('Points', style: TextStyle(fontSize: 14)),
+                  Text('Percentage', style: TextStyle(fontSize: 14))
+                ],
+              ),
+              onValueChanged: (newKey) {
+                setState(() {
+                  resultsCaddy.selectedSegment = newKey;
+                });
+              },
+              groupValue: resultsCaddy.selectedSegment,
+              selectedColor: SKColors.skoller_blue,
+              borderColor: SKColors.skoller_blue,
+            ),
+            segmentElements[resultsCaddy.selectedSegment]
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _AssignmentEditModal extends StatefulWidget {
+  final int assignment_id;
+
+  _AssignmentEditModal(this.assignment_id);
+
+  @override
+  State createState() => _AssignmentEditModalState();
+}
+
+class _AssignmentEditModalState extends State<_AssignmentEditModal> {
+  DateTime selectedDate;
+  Weight selectedWeight;
+
+  bool isPrivate = false;
+
+  Assignment assignment;
+
+  @override
+  void initState() {
+    super.initState();
+    assignment = Assignment.currentAssignments[widget.assignment_id];
+    selectedDate = assignment.due;
+    // selectedWeight = assignment.
+  }
+
+  void tappedDueDate(TapUpDetails details) async {
+    final result = await SKCalendarPicker.presentDateSelector(
+        title: 'Due date',
+        subtitle: 'When is this assignment due?',
+        context: context,
+        startDate: selectedDate);
+
+    if (result != null && result is DateTime) {
+      setState(() {
+        selectedDate = result;
+      });
+    }
+  }
+
+  void tappedWeight(TapUpDetails details) async {
+    List<Weight> classWeights = assignment.parentClass.weights;
+
+    Weight selectedWeight;
+
+    final bool result = await showDialog(
+      context: context,
+      builder: (context) => SKAlertDialog(
+            title: 'Grading category',
+            subTitle: 'Select how this assignment is graded',
+            child: Container(
+              height: 160,
+              child: CupertinoPicker.builder(
+                backgroundColor: Colors.white,
+                childCount: classWeights.length,
+                itemExtent: 24,
+                itemBuilder: (context, index) => Container(
+                      alignment: Alignment.center,
+                      child: Text(
+                        classWeights[index].name,
+                        style: TextStyle(
+                          color: SKColors.dark_gray,
+                          fontSize: 15,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                onSelectedItemChanged: (index) =>
+                    selectedWeight = classWeights[index],
+              ),
+            ),
           ),
-        ));
+    );
+
+    if (result != null && result) {
+      setState(() {
+        this.selectedWeight = selectedWeight;
+      });
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final Assignment assignment =
+        Assignment.currentAssignments[widget.assignment_id];
+
+    return Dialog(
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.all(Radius.circular(10)),
+      ),
+      child: Container(
+        padding: EdgeInsets.all(12),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Text(
+              'Edit assignment details',
+              textAlign: TextAlign.center,
+              style: TextStyle(fontSize: 17),
+            ),
+            Container(
+              child: null,
+              margin: EdgeInsets.fromLTRB(16, 4, 16, 16),
+              height: 1.25,
+              color: SKColors.border_gray,
+            ),
+            Container(
+              padding: EdgeInsets.symmetric(vertical: 8),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: <Widget>[
+                  Text(
+                    'Due date:',
+                    style: TextStyle(fontWeight: FontWeight.normal),
+                  ),
+                  GestureDetector(
+                    onTapUp: tappedDueDate,
+                    child: Text(
+                      selectedDate == null
+                          ? 'No due date'
+                          : DateFormat('E, MMM. d').format(selectedDate),
+                      style: TextStyle(color: SKColors.skoller_blue),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Container(
+              padding: EdgeInsets.symmetric(vertical: 8),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: <Widget>[
+                  Text(
+                    'Grading category:',
+                    style: TextStyle(fontWeight: FontWeight.normal),
+                  ),
+                  GestureDetector(
+                    onTapUp: tappedWeight,
+                    child: Text(
+                      assignment.getWeightName(),
+                      style: TextStyle(color: SKColors.skoller_blue),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Container(
+              padding: EdgeInsets.symmetric(vertical: 8),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Container(
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                      'Share changes',
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.normal,
+                      ),
+                    ),
+                  ),
+                  CupertinoSwitch(
+                      value: !isPrivate,
+                      onChanged: (value) {
+                        setState(() {
+                          isPrivate = !value;
+                        });
+                      },
+                      activeColor: SKColors.skoller_blue),
+                ],
+              ),
+            ),
+            Container(
+              padding: EdgeInsets.symmetric(vertical: 8),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Image.asset(ImageNames.assignmentInfoImages.circle_x),
+                  Container(
+                    width: 4,
+                    child: null,
+                  ),
+                  Text(
+                    'Delete',
+                    style: TextStyle(color: SKColors.warning_red),
+                  ),
+                ],
+              ),
+            ),
+            Container(
+              alignment: Alignment.center,
+              decoration: BoxDecoration(
+                color: isPrivate ? SKColors.skoller_blue : SKColors.success,
+                borderRadius: BorderRadius.circular(5),
+                border: Border.all(color: SKColors.border_gray),
+              ),
+              height: 32,
+              margin: EdgeInsets.only(top: 12),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Padding(
+                    padding: EdgeInsets.only(right: 8),
+                    child: Image.asset(isPrivate
+                        ? ImageNames.peopleImages.person_dark_gray
+                        : ImageNames.peopleImages.people_white),
+                  ),
+                  Text(
+                    isPrivate ? 'Save updates' : 'Share updates',
+                    style: TextStyle(color: Colors.white),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }

@@ -52,7 +52,7 @@ class _ClassDetailViewState extends State<ClassDetailView> {
                 margin: EdgeInsets.only(top: 96),
                 color: SKColors.background_gray,
                 child: ListView.builder(
-                  padding: EdgeInsets.only(top: 6),
+                  padding: EdgeInsets.only(top: 6, bottom: 64),
                   itemCount: studentClass.assignments.length,
                   itemBuilder: assignmentCellBuilder,
                 ),
@@ -233,42 +233,39 @@ class _ClassDetailViewState extends State<ClassDetailView> {
           ),
           Align(
             alignment: Alignment.bottomCenter,
-            child: SafeArea(
-              top: false,
-              child: Container(
-                decoration: BoxDecoration(
+            child: Container(
+              decoration: BoxDecoration(
+                  color:
+                      classmates < 4 ? studentClass.getColor() : Colors.white,
+                  boxShadow: [UIAssets.boxShadow],
+                  border: Border.all(
                     color:
-                        classmates < 4 ? studentClass.getColor() : Colors.white,
-                    boxShadow: [UIAssets.boxShadow],
-                    border: Border.all(
-                      color:
-                          classmates < 4 ? Colors.white : SKColors.skoller_blue,
-                    ),
-                    borderRadius: BorderRadius.circular(5)),
-                padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                margin: EdgeInsets.only(bottom: 8),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  mainAxisSize: MainAxisSize.min,
-                  children: <Widget>[
-                    Container(
-                      padding: EdgeInsets.only(right: 8),
-                      child: Image.asset(classmates < 4
-                          ? ImageNames.peopleImages.people_white
-                          : ImageNames.peopleImages.people_blue),
-                    ),
-                    Text(
-                      classmates < 4
-                          ? '${4 - classmates} classmate${classmates == 1 ? '' : 's'} away'
-                          : '${classmates} classmate${classmates == 1 ? '' : 's'}',
-                      style: TextStyle(
-                          color: classmates < 4
-                              ? Colors.white
-                              : SKColors.skoller_blue,
-                          fontSize: 15),
-                    ),
-                  ],
-                ),
+                        classmates < 4 ? Colors.white : SKColors.skoller_blue,
+                  ),
+                  borderRadius: BorderRadius.circular(5)),
+              padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+              margin: EdgeInsets.only(bottom: 16),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  Container(
+                    padding: EdgeInsets.only(right: 8),
+                    child: Image.asset(classmates < 4
+                        ? ImageNames.peopleImages.people_white
+                        : ImageNames.peopleImages.people_blue),
+                  ),
+                  Text(
+                    classmates < 4
+                        ? '${4 - classmates} classmate${classmates == 1 ? '' : 's'} away'
+                        : '${classmates} classmate${classmates == 1 ? '' : 's'}',
+                    style: TextStyle(
+                        color: classmates < 4
+                            ? Colors.white
+                            : SKColors.skoller_blue,
+                        fontSize: 15),
+                  ),
+                ],
               ),
             ),
           ),
@@ -310,7 +307,8 @@ class _ClassDetailViewState extends State<ClassDetailView> {
         Navigator.push(
           context,
           CupertinoPageRoute(
-              builder: (context) => AssignmentInfoView(assignment_id: assignment.id)),
+              builder: (context) =>
+                  AssignmentInfoView(assignment_id: assignment.id)),
         );
       },
       child: Container(

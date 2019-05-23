@@ -574,3 +574,115 @@ class _SKCalendarPickerState extends State<SKCalendarPicker> {
           );
   }
 }
+
+class SKAlertDialog extends StatelessWidget {
+  final String title;
+  final String subTitle;
+
+  final String confirmText;
+  final String cancelText;
+
+  final Widget child;
+
+  SKAlertDialog({
+    @required this.title,
+    this.subTitle,
+    @required this.child,
+    this.confirmText,
+    this.cancelText,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    List<Widget> children = [];
+
+    children.add(
+      Padding(
+        padding: EdgeInsets.only(top: 12, left: 4, right: 4),
+        child: Text(
+          title,
+          textAlign: TextAlign.center,
+        ),
+      ),
+    );
+
+    if (subTitle != null) {
+      children.add(
+        Padding(
+          padding: EdgeInsets.all(4),
+          child: Text(
+            subTitle,
+            textAlign: TextAlign.center,
+            style: TextStyle(fontWeight: FontWeight.normal, fontSize: 14),
+          ),
+        ),
+      );
+    }
+    children.add(
+      Container(
+        child: null,
+        margin: EdgeInsets.fromLTRB(16, 4, 16, 12,),
+        height: 1.25,
+        color: SKColors.border_gray,
+      ),
+    );
+
+    children.add(child);
+
+    children.add(
+      Row(
+        children: <Widget>[
+          Expanded(
+            child: GestureDetector(
+              behavior: HitTestBehavior.opaque,
+              onTapUp: (details) => Navigator.pop(context, false),
+              child: Container(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.only(
+                    bottomLeft: Radius.circular(10),
+                  ),
+                ),
+                padding: EdgeInsets.symmetric(vertical: 12),
+                child: Text(
+                  cancelText ?? 'Cancel',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                      color: SKColors.skoller_blue,
+                      fontWeight: FontWeight.normal),
+                ),
+              ),
+            ),
+          ),
+          Expanded(
+            child: GestureDetector(
+              onTapUp: (details) => Navigator.pop(context, true),
+              child: Container(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.only(
+                    bottomRight: Radius.circular(10),
+                  ),
+                ),
+                padding: EdgeInsets.symmetric(vertical: 12),
+                child: Text(
+                  confirmText ?? 'Select',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(color: SKColors.skoller_blue, fontSize: 15),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+
+    return Dialog(
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.all(Radius.circular(10)),
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: children,
+      ),
+    );
+  }
+}

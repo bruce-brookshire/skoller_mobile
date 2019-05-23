@@ -33,23 +33,28 @@ class _CalendarViewState extends State<CalendarView> {
 
     Assignment.getAssignments().then((response) {
       if (response.wasSuccessful()) {
-        setState(() {
-          assignments = {};
-          //Add assignments to the day hash map
-          for (var assignment in response.obj) {
-            if (assignment.due != null) {
-              final dateStr = createDateStr(assignment.due);
-
-              if (assignments[dateStr] == null) {
-                assignments[dateStr] = [assignment];
-              } else {
-                assignments[dateStr].add(assignment);
-              }
-            }
-          }
-        });
+        updateAssignments(response.obj);
       }
     });
+
+    updateAssignments(Assignment.currentAssignments.values);
+  }
+
+  void updateAssignments(Iterable<Assignment> new_assignments) {
+    assignments = {};
+    //Add assignments to the day hash map
+    for (var assignment in new_assignments) {
+      if (assignment.due != null) {
+        final dateStr = createDateStr(assignment.due);
+
+        if (assignments[dateStr] == null) {
+          assignments[dateStr] = [assignment];
+        } else {
+          assignments[dateStr].add(assignment);
+        }
+      }
+    }
+    setState(() {});
   }
 
   String createDateStr(DateTime date) {
@@ -76,11 +81,111 @@ class _CalendarViewState extends State<CalendarView> {
     });
   }
 
+  void tappedAdd(BuildContext context) async {
+    final classes = StudentClass.currentClasses.values.toList();
+
+    if (classes.length == 0) {
+      return;
+    }
+
+    classes.sort((class1, class2) {
+      return class1.name.compareTo(class2.name);
+    });
+
+    int selectedIndex = 0;
+
+    final result = await showCupertinoDialog(
+        context: context,
+        builder: (context) {
+          return CupertinoAlertDialog(
+            title: Column(
+              children: <Widget>[
+                Text(
+                  'Add an assignment',
+                  style: TextStyle(fontSize: 16),
+                ),
+                Container(
+                  padding: EdgeInsets.only(bottom: 8, top: 2),
+                  child: Text(
+                    'Select a class',
+                    style:
+                        TextStyle(fontSize: 12, fontWeight: FontWeight.normal),
+                  ),
+                ),
+              ],
+            ),
+            content: Container(
+              decoration: BoxDecoration(
+                border: Border(
+                  bottom: BorderSide(color: SKColors.border_gray),
+                  top: BorderSide(color: SKColors.border_gray),
+                ),
+              ),
+              height: 180,
+              child: CupertinoPicker.builder(
+                backgroundColor: Colors.white,
+                childCount: classes.length,
+                itemBuilder: (context, index) => Container(
+                      alignment: Alignment.center,
+                      child: Text(
+                        classes[index].name,
+                        style: TextStyle(fontSize: 15),
+                      ),
+                    ),
+                itemExtent: 32,
+                onSelectedItemChanged: (index) {
+                  selectedIndex = index;
+                },
+              ),
+            ),
+            actions: <Widget>[
+              CupertinoDialogAction(
+                child: Text(
+                  'Cancel',
+                  style: TextStyle(color: SKColors.skoller_blue, fontSize: 16),
+                ),
+                isDefaultAction: false,
+                onPressed: () {
+                  Navigator.pop(context, false);
+                },
+              ),
+              CupertinoDialogAction(
+                child: Text(
+                  'Select',
+                  style: TextStyle(
+                      color: SKColors.skoller_blue,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16),
+                ),
+                isDefaultAction: true,
+                onPressed: () {
+                  Navigator.pop(context, true);
+                },
+              )
+            ],
+          );
+        });
+
+    if (result is bool && result) {
+      final class_id = classes[selectedIndex].id;
+      Navigator.push(
+        context,
+        CupertinoPageRoute(
+          builder: (context) => AssignmentWeightView(class_id),
+        ),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return SKNavView(
       isBack: false,
       title: 'Calendar',
+      rightBtnImage: ImageNames.rightNavImages.plus,
+      callbackRight: () {
+        tappedAdd(context);
+      },
       children: <Widget>[
         Container(
           color: Colors.white,
@@ -182,32 +287,44 @@ class _CalendarViewState extends State<CalendarView> {
     final dayAssignments =
         (assignments[createDateStr(date)] ?? []).getRange(0, endIndex);
 
-    final widgetAssignments = dayAssignments
+    final List<Widget> widgetAssignments = dayAssignments
         .map(
-          (assignment) => Container(
-                margin: EdgeInsets.only(bottom: 2),
-                padding: EdgeInsets.symmetric(horizontal: 2, vertical: 1),
-                decoration: BoxDecoration(
-                  color: !isCurrent
-                      ? Color(0xFFD0D0D0)
-                      : assignment.parentClass.getColor(),
-                  borderRadius: BorderRadius.circular(3),
-                ),
-                // alignment: Alignment.center,
-                child: Text(
-                  assignment.name,
-                  maxLines: 1,
-                  softWrap: false,
-                  overflow: TextOverflow.fade,
-                  style: TextStyle(
-                      letterSpacing: -0.8,
-                      fontSize: 10,
-                      fontWeight: FontWeight.normal,
-                      color: Colors.white),
+          (assignment) => Expanded(
+                child: Container(
+                  margin: EdgeInsets.only(bottom: 2),
+                  padding: EdgeInsets.symmetric(horizontal: 2, vertical: 1),
+                  decoration: BoxDecoration(
+                    color: !isCurrent
+                        ? Color(0xFFD0D0D0)
+                        : assignment.parentClass.getColor(),
+                    borderRadius: BorderRadius.circular(3),
+                  ),
+                  // alignment: Alignment.center,
+                  child: Text(
+                    assignment.name,
+                    maxLines: 1,
+                    softWrap: false,
+                    overflow: TextOverflow.fade,
+                    style: TextStyle(
+                        letterSpacing: -0.8,
+                        fontSize: 10,
+                        fontWeight: FontWeight.normal,
+                        color: Colors.white),
+                  ),
                 ),
               ),
         )
         .toList();
+
+    while (widgetAssignments.length < 4) {
+      widgetAssignments.add(
+        Expanded(
+          child: Container(
+            margin: EdgeInsets.only(bottom: 2),
+          ),
+        ),
+      );
+    }
 
     return Expanded(
       child: Column(
@@ -303,7 +420,10 @@ class _CalendarViewState extends State<CalendarView> {
                 children: [
                   Container(
                     alignment: Alignment.center,
-                    child: Text('Schedule', style: TextStyle(fontSize: 17),),
+                    child: Text(
+                      'Schedule',
+                      style: TextStyle(fontSize: 17),
+                    ),
                   ),
                   Container(
                     alignment: Alignment.center,
@@ -324,8 +444,7 @@ class _CalendarViewState extends State<CalendarView> {
                       padding: EdgeInsets.only(top: 16, bottom: 4),
                       child: Text(
                         'Dismiss',
-                        style: TextStyle(
-                            color: SKColors.skoller_blue),
+                        style: TextStyle(color: SKColors.skoller_blue),
                       ),
                     ),
                   ),
