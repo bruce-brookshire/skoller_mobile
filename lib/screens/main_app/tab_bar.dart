@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
-// import '../../requests/requests_core.dart';
-import '../../constants/constants.dart';
 import 'tasks/tasks_view.dart';
 import 'classes/classes_view.dart';
 import 'calendar/calendar.dart';

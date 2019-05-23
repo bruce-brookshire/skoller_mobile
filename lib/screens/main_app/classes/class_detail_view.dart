@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:auto_size_text/auto_size_text.dart';
+import 'package:skoller/screens/main_app/classes/class_link_sharing_modal.dart';
+import 'package:skoller/screens/main_app/classes/classmates_view.dart';
+import 'package:share/share.dart';
 import '../../../constants/constants.dart';
 import '../../../requests/requests_core.dart';
 import 'assignment_info_view.dart';
@@ -31,6 +34,12 @@ class _ClassDetailViewState extends State<ClassDetailView> {
         });
       }
     });
+  }
+
+  void tappedLink(TapUpDetails details) async {
+    final results = await showDialog(
+        context: context,
+        builder: (context) => ClassLinkSharingModal(widget.classId));
   }
 
   @override
@@ -98,9 +107,7 @@ class _ClassDetailViewState extends State<ClassDetailView> {
                                 ),
                               ),
                               GestureDetector(
-                                onTapUp: (details) {
-                                  Navigator.pop(context);
-                                },
+                                onTapUp: tappedLink,
                                 child: Container(
                                   child: Image.asset(
                                       ImageNames.rightNavImages.link),
@@ -233,39 +240,49 @@ class _ClassDetailViewState extends State<ClassDetailView> {
           ),
           Align(
             alignment: Alignment.bottomCenter,
-            child: Container(
-              decoration: BoxDecoration(
-                  color:
-                      classmates < 4 ? studentClass.getColor() : Colors.white,
-                  boxShadow: [UIAssets.boxShadow],
-                  border: Border.all(
+            child: GestureDetector(
+              // behavior: HitTestBehavior.opaque,
+              onTapUp: (details) {
+                Navigator.push(
+                  context,
+                  CupertinoPageRoute(
+                      builder: (context) => ClassmatesView(widget.classId)),
+                );
+              },
+              child: Container(
+                decoration: BoxDecoration(
                     color:
-                        classmates < 4 ? Colors.white : SKColors.skoller_blue,
-                  ),
-                  borderRadius: BorderRadius.circular(5)),
-              padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-              margin: EdgeInsets.only(bottom: 16),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                mainAxisSize: MainAxisSize.min,
-                children: <Widget>[
-                  Container(
-                    padding: EdgeInsets.only(right: 8),
-                    child: Image.asset(classmates < 4
-                        ? ImageNames.peopleImages.people_white
-                        : ImageNames.peopleImages.people_blue),
-                  ),
-                  Text(
-                    classmates < 4
-                        ? '${4 - classmates} classmate${classmates == 1 ? '' : 's'} away'
-                        : '${classmates} classmate${classmates == 1 ? '' : 's'}',
-                    style: TextStyle(
-                        color: classmates < 4
-                            ? Colors.white
-                            : SKColors.skoller_blue,
-                        fontSize: 15),
-                  ),
-                ],
+                        classmates < 4 ? studentClass.getColor() : Colors.white,
+                    boxShadow: [UIAssets.boxShadow],
+                    border: Border.all(
+                      color:
+                          classmates < 4 ? Colors.white : SKColors.skoller_blue,
+                    ),
+                    borderRadius: BorderRadius.circular(5)),
+                padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                margin: EdgeInsets.only(bottom: 16),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    Container(
+                      padding: EdgeInsets.only(right: 8),
+                      child: Image.asset(classmates < 4
+                          ? ImageNames.peopleImages.people_white
+                          : ImageNames.peopleImages.people_blue),
+                    ),
+                    Text(
+                      classmates < 4
+                          ? '${4 - classmates} classmate${classmates == 1 ? '' : 's'} away'
+                          : '${classmates} classmate${classmates == 1 ? '' : 's'}',
+                      style: TextStyle(
+                          color: classmates < 4
+                              ? Colors.white
+                              : SKColors.skoller_blue,
+                          fontSize: 15),
+                    ),
+                  ],
+                ),
               ),
             ),
           ),

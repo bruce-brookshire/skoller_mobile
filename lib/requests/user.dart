@@ -52,15 +52,23 @@ class Student {
 
 class PublicStudent {
   int id;
+  int points;
+
   String name_first;
   String name_last;
-  String avatar;
+  String org;
+  String bio;
+
+  PublicUser user;
 
   PublicStudent(
     this.id,
     this.name_first,
     this.name_last,
-    this.avatar,
+    this.user,
+    this.points,
+    this.org,
+    this.bio,
   );
 
   static PublicStudent _fromJsonObj(Map content) {
@@ -68,6 +76,29 @@ class PublicStudent {
       content['id'],
       content['name_first'],
       content['name_last'],
+      PublicUser._fromJsonObj(content['user']),
+      content['points'],
+      content['organization'],
+      content['bio'],
+    );
+  }
+}
+
+class PublicUser {
+  int id;
+  String email;
+  String avatar;
+
+  PublicUser(
+    this.id,
+    this.email,
+    this.avatar,
+  );
+
+  static PublicUser _fromJsonObj(Map content) {
+    return PublicUser(
+      content['id'],
+      content['email'],
       content['avatar'],
     );
   }

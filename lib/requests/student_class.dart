@@ -13,6 +13,7 @@ class StudentClass {
   String subject;
   String code;
   String section;
+  String enrollmentLink;
 
   TimeOfDay meetTime;
 
@@ -22,6 +23,7 @@ class StudentClass {
 
   List<Weight> weights;
   List<Assignment> assignments;
+  List<PublicStudent> students;
 
   static DateTimeZoneProvider tzdb;
 
@@ -46,6 +48,8 @@ class StudentClass {
     this.section,
     this.professor,
     this.classPeriod,
+    this.students,
+    this.enrollmentLink,
   );
 
   School getSchool() => School.currentSchools[classPeriod.schoolId];
@@ -182,6 +186,11 @@ class StudentClass {
       content['section'],
       Professor._fromJsonObj(content['professor']),
       Period._fromJsonObj(content['class_period']),
+      JsonListMaker.convert(
+        PublicStudent._fromJsonObj,
+        content['students'] ?? [],
+      ),
+      content['enrollment_link'],
     );
 
     StudentClass.currentClasses[studentClass.id] = studentClass;

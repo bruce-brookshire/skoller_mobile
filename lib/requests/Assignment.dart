@@ -116,6 +116,66 @@ class Assignment {
     return _storeSuccessfulRequest(request);
   }
 
+  Future<RequestResponse> updateDueDate(
+    bool isPrivate,
+    DateTime dueDate,
+  ) async {
+    String tzCorrectedString = dueDate.toUtc().toIso8601String();
+
+    DateTime correctedDueDate =
+        await TimeZoneManager.convertUtcOffsetFromLocalToSchool(
+      dueDate,
+      parentClass.getSchool().timezone,
+    );
+
+    if (correctedDueDate != null) {
+      tzCorrectedString = correctedDueDate.toIso8601String();
+    }
+
+    return await SKRequests.put(
+      '/assignments/${id}',
+      {
+        'is_private': isPrivate,
+        'due': tzCorrectedString,
+      },
+      Assignment._fromJsonObj,
+    );
+  }
+
+  Future<RequestResponse> updateWeightCategory(bool isPrivate, Weight weight) {
+    return SKRequests.put(
+      '/assignments/${id}',
+      {
+        'is_private': isPrivate,
+        'weight_id': weight.id,
+      },
+      Assignment._fromJsonObj,
+    );
+  }
+
+  Future<bool> delete(bool isPrivate) async {
+    int statusCode = await SKRequests.delete(
+      '/assignments/${id}',
+      {'is_private': isPrivate},
+    );
+
+    if ([200, 204].contains(statusCode)) {
+      Assignment.currentAssignments.remove(id);
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  Future<bool> fetchSelf() {
+    Future<RequestResponse> request = SKRequests.get(
+      '/assignments/${id}',
+      Assignment._fromJsonObj,
+    );
+
+    return _storeSuccessfulRequest(request);
+  }
+
   Future<bool> _storeSuccessfulRequest(
     Future<RequestResponse> request,
   ) async {

@@ -28,8 +28,6 @@ class _AssignmentInfoViewState extends State<AssignmentInfoView> {
     assignment = Assignment.currentAssignments[widget.assignment_id];
   }
 
-  updateGrade(double grade) {}
-
   void toggleComplete() {
     assignment.toggleComplete().then((success) {
       if (!success) {
@@ -219,6 +217,27 @@ class _AssignmentInfoViewState extends State<AssignmentInfoView> {
     final results = await showDialog(
         context: context,
         builder: (context) => _AssignmentEditModal(assignment.id));
+
+    if (results != null && results is List<Map>) {
+      for (final modAction in results) {
+        //If we are deleting the assignment, no need to refetch it, so we just pop it if the request is successful
+        if (modAction['mod_type'] == 'delete') {
+          final result = await modAction['request'];
+          if (result != null && result) {
+            Navigator.pop(context);
+            return;
+          }
+        }
+      }
+    }
+
+    bool response = await assignment.fetchSelf();
+
+    if (response != null && response) {
+      setState(() {
+        assignment = Assignment.currentAssignments[widget.assignment_id];
+      });
+    }
   }
 
   @override
@@ -1166,6 +1185,8 @@ class _AssignmentEditModalState extends State<_AssignmentEditModal> {
 
   bool isPrivate = false;
 
+  bool shouldDelete = false;
+
   Assignment assignment;
 
   @override
@@ -1173,7 +1194,13 @@ class _AssignmentEditModalState extends State<_AssignmentEditModal> {
     super.initState();
     assignment = Assignment.currentAssignments[widget.assignment_id];
     selectedDate = assignment.due;
-    // selectedWeight = assignment.
+
+    for (final Weight weight in assignment.parentClass.weights) {
+      if (assignment.weight_id == weight.id) {
+        selectedWeight = weight;
+        break;
+      }
+    }
   }
 
   void tappedDueDate(TapUpDetails details) async {
@@ -1186,6 +1213,7 @@ class _AssignmentEditModalState extends State<_AssignmentEditModal> {
     if (result != null && result is DateTime) {
       setState(() {
         selectedDate = result;
+        shouldDelete = false;
       });
     }
   }
@@ -1193,7 +1221,7 @@ class _AssignmentEditModalState extends State<_AssignmentEditModal> {
   void tappedWeight(TapUpDetails details) async {
     List<Weight> classWeights = assignment.parentClass.weights;
 
-    Weight selectedWeight;
+    Weight tempWeight = classWeights.first;
 
     final bool result = await showDialog(
       context: context,
@@ -1218,7 +1246,7 @@ class _AssignmentEditModalState extends State<_AssignmentEditModal> {
                       ),
                     ),
                 onSelectedItemChanged: (index) =>
-                    selectedWeight = classWeights[index],
+                    tempWeight = classWeights[index],
               ),
             ),
           ),
@@ -1226,16 +1254,14 @@ class _AssignmentEditModalState extends State<_AssignmentEditModal> {
 
     if (result != null && result) {
       setState(() {
-        this.selectedWeight = selectedWeight;
+        this.selectedWeight = tempWeight;
+        shouldDelete = false;
       });
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    final Assignment assignment =
-        Assignment.currentAssignments[widget.assignment_id];
-
     return Dialog(
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.all(Radius.circular(10)),
@@ -1290,7 +1316,7 @@ class _AssignmentEditModalState extends State<_AssignmentEditModal> {
                   GestureDetector(
                     onTapUp: tappedWeight,
                     child: Text(
-                      assignment.getWeightName(),
+                      selectedWeight.name,
                       style: TextStyle(color: SKColors.skoller_blue),
                     ),
                   ),
@@ -1323,51 +1349,145 @@ class _AssignmentEditModalState extends State<_AssignmentEditModal> {
                 ],
               ),
             ),
-            Container(
-              padding: EdgeInsets.symmetric(vertical: 8),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  Image.asset(ImageNames.assignmentInfoImages.circle_x),
-                  Container(
-                    width: 4,
-                    child: null,
-                  ),
-                  Text(
-                    'Delete',
-                    style: TextStyle(color: SKColors.warning_red),
-                  ),
-                ],
+            GestureDetector(
+              onTapUp: (details) {
+                setState(() {
+                  shouldDelete = !shouldDelete;
+                });
+              },
+              child: Container(
+                padding: EdgeInsets.symmetric(vertical: 8),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    Image.asset(ImageNames.assignmentInfoImages.trash),
+                    Container(
+                      width: 4,
+                      child: null,
+                    ),
+                    Text(
+                      shouldDelete ? 'Cancel' : 'Delete',
+                      style: TextStyle(color: SKColors.warning_red),
+                    ),
+                  ],
+                ),
               ),
             ),
-            Container(
-              alignment: Alignment.center,
-              decoration: BoxDecoration(
-                color: isPrivate ? SKColors.skoller_blue : SKColors.success,
-                borderRadius: BorderRadius.circular(5),
-                border: Border.all(color: SKColors.border_gray),
-              ),
-              height: 32,
-              margin: EdgeInsets.only(top: 12),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Padding(
-                    padding: EdgeInsets.only(right: 8),
-                    child: Image.asset(isPrivate
-                        ? ImageNames.peopleImages.person_dark_gray
-                        : ImageNames.peopleImages.people_white),
-                  ),
-                  Text(
-                    isPrivate ? 'Save updates' : 'Share updates',
-                    style: TextStyle(color: Colors.white),
-                  ),
-                ],
-              ),
-            ),
+            createActionButton(context),
           ],
         ),
       ),
+    );
+  }
+
+  Widget createActionButton(BuildContext context) {
+    Widget child;
+    Color backgroundColor;
+
+    if (shouldDelete) {
+      backgroundColor = SKColors.warning_red;
+      child = Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Padding(
+            padding: EdgeInsets.only(right: 8),
+            child: Image.asset(
+              isPrivate
+                  ? ImageNames.peopleImages.person_white
+                  : ImageNames.peopleImages.people_white,
+            ),
+          ),
+          Text(
+            'Delete this assignment',
+            style: TextStyle(color: Colors.white),
+          )
+        ],
+      );
+    } else if (selectedDate.isAtSameMomentAs(assignment.due) &&
+        selectedWeight.id == assignment.weight_id)
+    //Basically, show a gray button if the user has not changed any of the assignment details
+    {
+      backgroundColor = SKColors.text_light_gray;
+      child = Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Padding(
+            padding: EdgeInsets.only(right: 8),
+            child: Image.asset(
+              isPrivate
+                  ? ImageNames.peopleImages.person_white
+                  : ImageNames.peopleImages.people_white,
+            ),
+          ),
+          Text(
+            isPrivate ? 'Save updates' : 'Share updates',
+            style: TextStyle(color: Colors.white),
+          ),
+        ],
+      );
+    } else {
+      backgroundColor = isPrivate ? SKColors.skoller_blue : SKColors.success;
+      child = Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Padding(
+            padding: EdgeInsets.only(right: 8),
+            child: Image.asset(
+              isPrivate
+                  ? ImageNames.peopleImages.person_white
+                  : ImageNames.peopleImages
+                      .people_white, /*scale: isPrivate ? 1.35 : 1,*/
+            ),
+          ),
+          Text(
+            isPrivate ? 'Save updates' : 'Share updates',
+            style: TextStyle(color: Colors.white),
+          ),
+        ],
+      );
+    }
+
+    return GestureDetector(
+      onTapUp: (details) {
+        List<Map> requests = [];
+        if (shouldDelete) {
+          requests.add({
+            'request': assignment.delete(isPrivate),
+            'mod_type': 'delete',
+          });
+        } else {
+          if (!selectedDate.isAtSameMomentAs(assignment.due)) {
+            requests.add({
+              'request': assignment.updateDueDate(
+                isPrivate,
+                selectedDate,
+              ),
+              'mod_type': 'delete',
+            });
+          }
+          if (selectedWeight.id != assignment.weight_id) {
+            requests.add({
+              'request': assignment.updateWeightCategory(
+                isPrivate,
+                selectedWeight,
+              ),
+              'mod_type': 'delete',
+            });
+          }
+        }
+
+        Navigator.pop(context, requests);
+      },
+      child: Container(
+          alignment: Alignment.center,
+          decoration: BoxDecoration(
+            color: backgroundColor,
+            borderRadius: BorderRadius.circular(5),
+            border: Border.all(color: SKColors.border_gray),
+          ),
+          height: 32,
+          margin: EdgeInsets.only(top: 12),
+          child: child),
     );
   }
 }

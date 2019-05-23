@@ -108,12 +108,26 @@ class SKRequests {
     return futureProcessor<T>(request, constructor);
   }
 
+  static Future<int> delete(
+    String url,
+    Map body,
+  ) async {
+    // Construct and start request
+    http.Response request = await http.delete(
+      _baseUrl + url,
+      headers: _headers,
+    );
+
+    // Handle request and return future
+    return request.statusCode;
+  }
+
   static RequestResponse futureProcessor<T>(
     http.Response request,
     _DecodableConstructor<T> constructor,
   ) {
     int statusCode = request.statusCode;
-    var content = statusCode == 200 ? json.decode(request.body) : null;
+    var content = statusCode == 200 && request.body != null ? json.decode(request.body) : null;
     return RequestResponse<T>(
       statusCode,
       content,

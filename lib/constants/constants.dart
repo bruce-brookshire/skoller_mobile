@@ -76,6 +76,7 @@ class _NavigationArrowImages {
   static final _base = 'image_assets/navigation_arrow_assets';
 
   final left = '${_base}/back.png';
+  final down = '${_base}/down.png';
   final right = '${_base}/right.png';
 }
 
@@ -93,6 +94,7 @@ class _AssignmentInfoImages {
   final notes = '${_base}/notes.png';
   final circle_x = '${_base}/circle_x.png';
   final comment = '${_base}/comment.png';
+  final trash = '${_base}/trash.png';
 }
 
 class _PeopleImages {
@@ -100,11 +102,13 @@ class _PeopleImages {
 
   final person_light_gray = '${_base}/person_light_gray.png';
   final person_dark_gray = '${_base}/person_dark_gray.png';
+  final person_white = '${_base}/person_white.png';
   final person_blue = '${_base}/person_blue.png';
   final person_edit = '${_base}/user_edit.png';
+  final people_white = '${_base}/people_white.png';
   final people_gray = '${_base}/people_gray.png';
   final people_blue = '${_base}/people_blue.png';
-  final people_white = '${_base}/people_white.png';
+  final static_profile = '${_base}/static_profile.png';
 }
 
 class _StatusImages {

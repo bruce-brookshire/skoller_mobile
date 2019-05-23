@@ -169,14 +169,19 @@ class SKNavBar extends StatelessWidget {
 }
 
 class SKNavView extends StatelessWidget {
-  final String title;
-  final Color titleColor;
   final bool isBack;
   final bool isDown;
+
   final String rightBtnImage;
+  final String title;
+
   final VoidCallback callbackRight;
   final VoidCallback callbackBack;
+
   final List<Widget> children;
+
+  final Color titleColor;
+  final Color backgroundColor;
 
   SKNavView({
     Key key,
@@ -189,6 +194,7 @@ class SKNavView extends StatelessWidget {
     this.callbackRight,
     this.callbackBack,
     bool downBtnEnabled,
+    this.backgroundColor,
   }) : super(key: key);
 
   Widget build(BuildContext context) {
@@ -210,7 +216,7 @@ class SKNavView extends StatelessWidget {
               alignment: Alignment.center,
               child: Container(
                 margin: EdgeInsets.only(top: 44),
-                color: SKColors.background_gray,
+                color: backgroundColor ?? SKColors.background_gray,
                 child: Center(
                   child: Column(
                     children: children,
@@ -621,7 +627,12 @@ class SKAlertDialog extends StatelessWidget {
     children.add(
       Container(
         child: null,
-        margin: EdgeInsets.fromLTRB(16, 4, 16, 12,),
+        margin: EdgeInsets.fromLTRB(
+          16,
+          4,
+          16,
+          12,
+        ),
         height: 1.25,
         color: SKColors.border_gray,
       ),
