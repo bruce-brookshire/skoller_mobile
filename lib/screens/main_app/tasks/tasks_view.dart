@@ -11,7 +11,7 @@ class TasksView extends StatefulWidget {
 }
 
 class _TasksViewState extends State<TasksView> {
-  List<Assignment> _tasks = [];
+  List<_TaskLikeItem> _tasks = [];
   int _tappedIndex;
 
   SlidableController controller = SlidableController();
@@ -20,17 +20,50 @@ class _TasksViewState extends State<TasksView> {
   void initState() {
     super.initState();
 
-    if (Assignment.currentTasks != null) _tasks = Assignment.currentTasks;
+    if (Assignment.currentTasks != null) {
+      _tasks = Assignment.currentTasks
+          .map((task) => _TaskLikeItem(
+                task.id,
+                false,
+              ))
+          .toList();
+    }
     _fetchTasks();
   }
 
-  void _fetchTasks() {
-    Assignment.getTasks().then((response) {
-      if (response.wasSuccessful()) {
-        setState(() {
-          _tasks = response.obj;
-        });
-      } //Else: error out
+  void _fetchTasks() async {
+    Future<RequestResponse> assignmentsRequest = Assignment.getTasks();
+    Future<RequestResponse> modsRequest = Mod.fetchNewAssignmentMods();
+
+    RequestResponse assignmentResponse = await assignmentsRequest;
+    List<_TaskLikeItem> tasks;
+
+    if (assignmentResponse.wasSuccessful()) {
+      tasks = (assignmentResponse.obj as List<Assignment>)
+          .map(
+            (task) => _TaskLikeItem(
+                  task.id,
+                  false,
+                ),
+          )
+          .toList();
+    }
+
+    RequestResponse modResponse = await modsRequest;
+
+    if (modResponse.wasSuccessful()) {
+      tasks.addAll(
+        (modResponse.obj as List<Mod>).map(
+          (mod) => _TaskLikeItem(
+                mod.id,
+                true,
+              ),
+        ),
+      );
+    }
+
+    setState(() {
+      _tasks = tasks;
     });
   }
 
@@ -143,7 +176,11 @@ class _TasksViewState extends State<TasksView> {
         Expanded(
           child: ListView.builder(
             padding: EdgeInsets.only(top: 4),
-            itemBuilder: buildCell,
+            itemBuilder: (context, index) {
+              _tasks[index].isMod
+                  ? buildTaskCell(context, index)
+                  : buildModCell(context, index);
+            },
             itemCount: _tasks.length,
           ),
         ),
@@ -151,8 +188,9 @@ class _TasksViewState extends State<TasksView> {
     );
   }
 
-  Widget buildCell(BuildContext context, int index) {
-    final task = _tasks[index];
+  Widget buildTaskCell(BuildContext context, int index) {
+    final Assignment task = _tasks[index].getParent;
+
     return GestureDetector(
       onTapDown: (details) {
         setState(() {
@@ -268,4 +306,21 @@ class _TasksViewState extends State<TasksView> {
       ),
     );
   }
+
+  Widget buildModCell(BuildContext context, int index) {
+    return Container(
+      child: Text('this is a mod'),
+    );
+  }
+}
+
+class _TaskLikeItem {
+  bool isMod;
+  int parentObjectId;
+
+  dynamic get getParent => isMod
+      ? Mod.currentMods[parentObjectId]
+      : Assignment.currentAssignments[parentObjectId];
+
+  _TaskLikeItem(this.parentObjectId, this.isMod);
 }

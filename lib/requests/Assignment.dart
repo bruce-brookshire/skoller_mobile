@@ -7,7 +7,7 @@ class Assignment {
 
   int id;
   int _parent_assignment_id;
-  int class_id;
+  int classId;
   int weight_id;
 
   double weight;
@@ -36,14 +36,14 @@ class Assignment {
   }
 
   StudentClass get parentClass {
-    return StudentClass.currentClasses[class_id];
+    return StudentClass.currentClasses[classId];
   }
 
   Assignment(
     this.id,
     this.name,
     this.due,
-    this.class_id,
+    this.classId,
     this.weight,
     this.weight_id,
     this.grade,

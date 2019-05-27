@@ -63,7 +63,7 @@ class Mod {
   //Static members//
   //--------------//
 
-  static List<Mod> currentMods = [];
+  static Map<int, Mod> currentMods = {};
 
   static Mod _fromJsonObj(Map content) {
     if (content == null) {
@@ -132,7 +132,23 @@ class Mod {
       Mod._fromJsonObj,
     ).then((response) {
       if (response.wasSuccessful()) {
-        currentMods = response.obj;
+        for (final Mod mod in response.obj) {
+          currentMods[mod.id] = mod;
+        }
+      }
+      return response;
+    });
+  }
+
+  static Future<RequestResponse> fetchNewAssignmentMods() {
+    return SKRequests.get(
+      '/students/${SKUser.current.student.id}/mods?is_new_assignments=true',
+      Mod._fromJsonObj,
+    ).then((response) {
+      if (response.wasSuccessful()) {
+        for (final Mod mod in response.obj) {
+          currentMods[mod.id] = mod;
+        }
       }
       return response;
     });

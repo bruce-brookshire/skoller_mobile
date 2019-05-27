@@ -16,7 +16,7 @@ class _ActivityViewState extends State<ActivityView> {
   void initState() {
     super.initState();
 
-    stackedMods = stackAndSortMods(Mod.currentMods);
+    stackedMods = stackAndSortMods(Mod.currentMods.values.toList());
 
     Mod.fetchMods().then((response) {
       if (response.wasSuccessful()) {
@@ -36,7 +36,7 @@ class _ActivityViewState extends State<ActivityView> {
         modHash['${mod.id} new'] = [mod];
       } else {
         String key = '${mod.parentAssigment.id} ${mod.modType.index}';
-        
+
         if (modHash[key] == null) {
           modHash[key] = [mod];
         } else {
