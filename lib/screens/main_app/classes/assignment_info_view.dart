@@ -726,7 +726,7 @@ class _AssignmentInfoViewState extends State<AssignmentInfoView> {
                       ),
                       Expanded(
                         child: Container(
-                          padding: EdgeInsets.only(bottom: 16, right: 4),
+                          padding: EdgeInsets.only(bottom: 8, right: 4),
                           child: Text(
                             currentChat.post,
                             style: TextStyle(

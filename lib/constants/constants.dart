@@ -49,6 +49,27 @@ class ImageNames {
   static final peopleImages = _PeopleImages();
   static final statusImages = _StatusImages();
   static final activityImages = _ActivityImages();
+  static final chatImages = _ChatImages();
+}
+
+class _ChatImages {
+  static final _base = 'image_assets/chat_assets';
+
+  final star_yellow = '${_base}/star_yellow.png';
+  final commented_blue = '${_base}/commented_blue.png';
+  final commented_gray = '${_base}/commented_gray.png';
+  final commented_white = '${_base}/commented_white.png';
+  final compose = '${_base}/compose.png';
+  final filter = '${_base}/filter.png';
+  final inbox_unread = '${_base}/inbox_unread.png';
+  final inbox = '${_base}/inbox.png';
+  final like_blue = '${_base}/like_blue.png';
+  final like_gray = '${_base}/like_gray.png';
+  final reply_back_gray = '${_base}/reply_back_gray.png';
+  final reply_down_gray = '${_base}/reply_down_gray.png';
+  final reply_down_white = '${_base}/reply_down_white.png';
+  final reply_forward_gray = '${_base}/reply_forward_gray.png';
+  final star_gray = '${_base}/star_gray.png';
 }
 
 class _ActivityImages {

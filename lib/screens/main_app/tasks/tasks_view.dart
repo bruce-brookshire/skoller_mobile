@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
 import '../../../constants/constants.dart';
 import '../../../requests/requests_core.dart';
 import '../classes/assignment_info_view.dart';
@@ -12,6 +13,8 @@ class TasksView extends StatefulWidget {
 class _TasksViewState extends State<TasksView> {
   List<Assignment> _tasks = [];
   int _tappedIndex;
+
+  SlidableController controller = SlidableController();
 
   @override
   void initState() {
@@ -171,57 +174,97 @@ class _TasksViewState extends State<TasksView> {
               builder: (context) => AssignmentInfoView(assignment_id: task.id)),
         );
       },
-      child: Container(
-        margin: EdgeInsets.fromLTRB(7, 3, 7, 4),
-        padding: EdgeInsets.symmetric(horizontal: 8, vertical: 6),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(5),
-          border: Border.all(color: SKColors.border_gray, width: 1),
-          boxShadow: [UIAssets.boxShadow],
-          color: _tappedIndex == index
-              ? SKColors.selected_gray
-              : Theme.of(context).cardColor,
+      child: Slidable(
+        key: Key('${task.id}'),
+        dismissal: SlidableDismissal(
+          child: SlidableDrawerDismissal(),
+          onDismissed: (actionType) {
+            setState(() {
+              _tasks.removeAt(index);
+            });
+          },
         ),
-        child: Column(
-          // mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: <Widget>[
-            Container(
-              padding: EdgeInsets.only(bottom: 4),
-              child: Row(
+        actionPane: SlidableDrawerActionPane(
+            key: Key('${task.id}')), //SlidableScrollActionPane(),
+        actionExtentRatio: 0.25,
+        closeOnScroll: true,
+        child: Container(
+          margin: EdgeInsets.fromLTRB(7, 3, 7, 4),
+          padding: EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(5),
+            border: Border.all(color: SKColors.border_gray, width: 1),
+            boxShadow: [UIAssets.boxShadow],
+            color: _tappedIndex == index
+                ? SKColors.selected_gray
+                : Theme.of(context).cardColor,
+          ),
+          child: Column(
+            // mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: <Widget>[
+              Container(
+                padding: EdgeInsets.only(bottom: 4),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    Text(
+                      task.parentClass.name,
+                      style: TextStyle(
+                          color: task.parentClass.getColor(),
+                          fontWeight: FontWeight.bold,
+                          fontSize: 17),
+                    ),
+                    Text(
+                      DateUtilities.getFutureRelativeString(task.due),
+                      style: TextStyle(
+                          fontSize: 13, fontWeight: FontWeight.normal),
+                    ),
+                  ],
+                ),
+              ),
+              Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
                   Text(
-                    task.parentClass.name,
-                    style: TextStyle(
-                        color: task.parentClass.getColor(),
-                        fontWeight: FontWeight.bold,
-                        fontSize: 17),
+                    task.name,
+                    style:
+                        TextStyle(fontSize: 15, fontWeight: FontWeight.normal),
                   ),
                   Text(
-                    DateUtilities.getFutureRelativeString(task.due),
+                    task.weight_id == null
+                        ? 'Not graded'
+                        : NumberUtilities.formatWeightAsPercent(task.weight),
                     style:
-                        TextStyle(fontSize: 13, fontWeight: FontWeight.normal),
+                        TextStyle(fontSize: 14, fontWeight: FontWeight.normal),
                   ),
                 ],
+              )
+            ],
+          ),
+        ),
+        secondaryActions: <Widget>[
+          SlideAction(
+            onTap: () {
+              task.toggleComplete();
+            },
+            child: Container(
+              color: SKColors.skoller_blue,
+              child: Center(
+                child:
+                    Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
+                  Container(
+                    padding: EdgeInsets.only(bottom: 4),
+                    child: Text('Done',
+                        style: TextStyle(
+                          color: Colors.white,
+                        )),
+                  ),
+                  Image.asset(ImageNames.activityImages.add_white),
+                ]),
               ),
             ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: <Widget>[
-                Text(
-                  task.name,
-                  style: TextStyle(fontSize: 15, fontWeight: FontWeight.normal),
-                ),
-                Text(
-                  task.weight_id == null
-                      ? 'Not graded'
-                      : NumberUtilities.formatWeightAsPercent(task.weight),
-                  style: TextStyle(fontSize: 14, fontWeight: FontWeight.normal),
-                ),
-              ],
-            )
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

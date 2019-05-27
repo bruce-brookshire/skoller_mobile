@@ -368,9 +368,11 @@ class _ClassDetailViewState extends State<ClassDetailView> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
                     Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
-                        Text(assignment.name),
+                        Expanded(
+                          child: Text(assignment.name),
+                        ),
                         Text(
                           DateUtilities.getFutureRelativeString(assignment.due),
                           style: TextStyle(
@@ -380,15 +382,41 @@ class _ClassDetailViewState extends State<ClassDetailView> {
                         ),
                       ],
                     ),
-                    Text(
-                      assignment.weight == null
-                          ? ''
-                          : (assignment.weight == 0 ? 'Not graded' : weight),
-                      style: TextStyle(
-                        fontWeight: FontWeight.normal,
-                        fontSize: 13,
-                      ),
-                    )
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: <Widget>[
+                        Expanded(
+                          child: Container(
+                            padding: EdgeInsets.only(top: 2),
+                            child: Text(
+                              assignment.weight == null
+                                  ? ''
+                                  : (assignment.weight == 0
+                                      ? 'Not graded'
+                                      : weight),
+                              style: TextStyle(
+                                fontWeight: FontWeight.normal,
+                                fontSize: 13,
+                              ),
+                            ),
+                          ),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.only(right: 2),
+                          child: assignment.posts.length == 0
+                              ? null
+                              : Image.asset(
+                                  ImageNames.chatImages.commented_gray),
+                        ),
+                        Text(
+                          '${assignment.posts.length == 0 ? '' : assignment.posts.length}',
+                          style: TextStyle(
+                              fontSize: 12,
+                              fontWeight: FontWeight.normal,
+                              color: SKColors.light_gray),
+                        ),
+                      ],
+                    ),
                   ],
                 ),
               ),

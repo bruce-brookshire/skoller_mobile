@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:skoller/screens/chat/chat_list_view.dart';
 import 'tasks/tasks_view.dart';
 import 'classes/classes_view.dart';
 import 'calendar/calendar.dart';
@@ -17,6 +18,7 @@ class _MyHomePageState extends State<MyHomePage> {
   final _widgetOptions = [
     TasksView(),
     CalendarView(),
+    ChatListView(),
     ClassesView(),
     ActivityView(),
   ];
@@ -51,11 +53,16 @@ class _MyHomePageState extends State<MyHomePage> {
           ),
           BottomNavigationBarItem(
             icon: _selectedIndex == 2
+                ? Image.asset("image_assets/tab_bar_assets/chat_blue.png")
+                : Image.asset("image_assets/tab_bar_assets/chat_gray.png"),
+          ),
+          BottomNavigationBarItem(
+            icon: _selectedIndex == 3
                 ? Image.asset("image_assets/tab_bar_assets/classes_blue.png")
                 : Image.asset("image_assets/tab_bar_assets/classes_gray.png"),
           ),
           BottomNavigationBarItem(
-            icon: _selectedIndex == 3
+            icon: _selectedIndex == 4
                 ? Image.asset("image_assets/tab_bar_assets/activity_blue.png")
                 : Image.asset("image_assets/tab_bar_assets/activity_gray.png"),
           ),
