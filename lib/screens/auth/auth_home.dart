@@ -5,15 +5,27 @@ import 'sign_up.dart';
 import '../../requests/requests_core.dart';
 import '../main_app/tab_bar.dart';
 
-class _Temp {
-  static bool once = true;
-}
-
 class AuthHome extends StatelessWidget {
+  final AppStateCallback appStateCallback;
+
+  AuthHome(this.appStateCallback) {
+    // Auth.logIn('bruce@skoller1.co', 'password1').then((success) {
+    //   if (success) {
+    //     return StudentClass.getStudentClasses();
+    //   } else {
+    //     print('FAILURE');
+    //   }
+    // }).then((response) {
+    //   if (response.wasSuccessful()) {
+    //     appStateCallback(AppState.mainApp);
+    //   }
+    // });
+  }
+
   tappedLogIn(BuildContext context) {
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => SignIn()),
+      MaterialPageRoute(builder: (context) => SignIn(appStateCallback)),
     );
   }
 
@@ -24,35 +36,13 @@ class AuthHome extends StatelessWidget {
     // );
     Auth.logIn('bruce@skoller.co', 'password1').then((onValue) {
       if (onValue) {
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => MyHomePage()),
-        );
+        appStateCallback(AppState.mainApp);
       }
     });
   }
 
-  
-
   @override
   Widget build(BuildContext context) {
-    if (_Temp.once) {
-      _Temp.once = false;
-      Auth.logIn('bruce@skoller.co', 'password1').then((success) {
-        if (success) {
-          return StudentClass.getStudentClasses();
-        } else {
-          print('FAILURE');
-        }
-      }).then((response) {
-        if (response.wasSuccessful()) {
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(builder: (context) => MyHomePage()),
-          );
-        }
-      });
-    }
     return Scaffold(
       body: Container(
         child: SafeArea(

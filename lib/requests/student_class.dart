@@ -25,6 +25,8 @@ class StudentClass {
   List<Assignment> assignments;
   List<PublicStudent> students;
 
+  Map<String, String> gradeScale;
+
   static DateTimeZoneProvider tzdb;
 
   //----------------//
@@ -50,6 +52,7 @@ class StudentClass {
     this.classPeriod,
     this.students,
     this.enrollmentLink,
+    this.gradeScale,
   );
 
   School getSchool() => School.currentSchools[classPeriod.schoolId];
@@ -191,6 +194,7 @@ class StudentClass {
         content['students'] ?? [],
       ),
       content['enrollment_link'],
+      content['grade_scale'],
     );
 
     StudentClass.currentClasses[studentClass.id] = studentClass;

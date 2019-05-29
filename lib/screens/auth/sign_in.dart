@@ -4,7 +4,9 @@ import '../../constants/constants.dart';
 import '../main_app/tab_bar.dart';
 
 class SignIn extends StatefulWidget {
-  SignIn({Key key}) : super(key: key);
+  final AppStateCallback appStateCallback;
+
+  SignIn(this.appStateCallback, {Key key}) : super(key: key);
 
   @override
   _SignInState createState() => _SignInState();
@@ -20,10 +22,8 @@ class _SignInState extends State<SignIn> {
       }
     }).then((response) {
       if (response.wasSuccessful()) {
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => MyHomePage()),
-        );
+        Navigator.pop(context);
+        widget.appStateCallback(AppState.mainApp);
       }
     });
   }

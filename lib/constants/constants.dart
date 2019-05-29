@@ -17,6 +17,7 @@ class SKColors {
   static final inactive_gray = Color(0xFFEEEEEE);
 
   static final skoller_blue = Color(0xFF57B9E4);
+  static final menu_blue = Color(0xFFEDFAFF);
   static final success = Color(0xFF4ADD58);
   static final alert_orange = Color(0xFFFF6D00);
   static final warning_red = Color(0xFFFF4159);
@@ -116,6 +117,7 @@ class _AssignmentInfoImages {
   final circle_x = '${_base}/circle_x.png';
   final comment = '${_base}/comment.png';
   final trash = '${_base}/trash.png';
+  final updates_available = '${_base}/updates_available.png';
 }
 
 class _PeopleImages {

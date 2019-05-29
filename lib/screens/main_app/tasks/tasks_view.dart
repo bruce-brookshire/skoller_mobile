@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:skoller/screens/main_app/activity/update_info_view.dart';
 import '../../../constants/constants.dart';
 import '../../../requests/requests_core.dart';
 import '../classes/assignment_info_view.dart';
@@ -11,7 +12,7 @@ class TasksView extends StatefulWidget {
 }
 
 class _TasksViewState extends State<TasksView> {
-  List<_TaskLikeItem> _tasks = [];
+  List<_TaskLikeItem> _taskItems;
   int _tappedIndex;
 
   SlidableController controller = SlidableController();
@@ -21,10 +22,11 @@ class _TasksViewState extends State<TasksView> {
     super.initState();
 
     if (Assignment.currentTasks != null) {
-      _tasks = Assignment.currentTasks
+      _taskItems = Assignment.currentTasks
           .map((task) => _TaskLikeItem(
                 task.id,
                 false,
+                task.due,
               ))
           .toList();
     }
@@ -32,38 +34,64 @@ class _TasksViewState extends State<TasksView> {
   }
 
   void _fetchTasks() async {
+    _taskItems = [];
+
     Future<RequestResponse> assignmentsRequest = Assignment.getTasks();
     Future<RequestResponse> modsRequest = Mod.fetchNewAssignmentMods();
 
     RequestResponse assignmentResponse = await assignmentsRequest;
-    List<_TaskLikeItem> tasks;
+
+    List<_TaskLikeItem> tasks = [];
 
     if (assignmentResponse.wasSuccessful()) {
-      tasks = (assignmentResponse.obj as List<Assignment>)
+      tasks.addAll((assignmentResponse.obj as List<Assignment>)
           .map(
             (task) => _TaskLikeItem(
                   task.id,
                   false,
+                  task.due,
                 ),
           )
-          .toList();
+          .toList());
     }
 
     RequestResponse modResponse = await modsRequest;
 
     if (modResponse.wasSuccessful()) {
-      tasks.addAll(
-        (modResponse.obj as List<Mod>).map(
-          (mod) => _TaskLikeItem(
-                mod.id,
-                true,
-              ),
-        ),
-      );
+      List<_TaskLikeItem> temp = (modResponse.obj as List<Mod>)
+          .map(
+            (mod) => _TaskLikeItem(
+                  mod.id,
+                  true,
+                  mod.data.due,
+                ),
+          )
+          .toList();
+
+      final now = DateTime.now();
+      final referenceDate = DateTime(now.year, now.month, now.day);
+
+      temp.removeWhere((task) =>
+          task.dueDate.isBefore(referenceDate) ||
+          task.getParent.isAccepted != null);
+
+      tasks.addAll(temp);
     }
 
+    tasks.sort((task1, task2) {
+      if (task1.dueDate == null && task2.dueDate == null) {
+        return task1.parentObjectId.compareTo(task2.parentObjectId);
+      } else if (task1.dueDate != null && task2.dueDate == null) {
+        return -1;
+      } else if (task1.dueDate == null && task2.dueDate != null) {
+        return 1;
+      } else {
+        return task1.dueDate.compareTo(task2.dueDate);
+      }
+    });
+
     setState(() {
-      _tasks = tasks;
+      _taskItems = tasks;
     });
   }
 
@@ -176,12 +204,10 @@ class _TasksViewState extends State<TasksView> {
         Expanded(
           child: ListView.builder(
             padding: EdgeInsets.only(top: 4),
-            itemBuilder: (context, index) {
-              _tasks[index].isMod
-                  ? buildTaskCell(context, index)
-                  : buildModCell(context, index);
-            },
-            itemCount: _tasks.length,
+            itemBuilder: (context, index) => _taskItems[index].isMod
+                ? buildModCell(context, index)
+                : buildTaskCell(context, index),
+            itemCount: _taskItems.length,
           ),
         ),
       ],
@@ -189,7 +215,7 @@ class _TasksViewState extends State<TasksView> {
   }
 
   Widget buildTaskCell(BuildContext context, int index) {
-    final Assignment task = _tasks[index].getParent;
+    final Assignment task = _taskItems[index].getParent;
 
     return GestureDetector(
       onTapDown: (details) {
@@ -218,7 +244,7 @@ class _TasksViewState extends State<TasksView> {
           child: SlidableDrawerDismissal(),
           onDismissed: (actionType) {
             setState(() {
-              _tasks.removeAt(index);
+              _taskItems.removeAt(index);
             });
           },
         ),
@@ -308,8 +334,93 @@ class _TasksViewState extends State<TasksView> {
   }
 
   Widget buildModCell(BuildContext context, int index) {
-    return Container(
-      child: Text('this is a mod'),
+    final Mod mod = _taskItems[index].getParent;
+
+    return GestureDetector(
+      onTapDown: (details) {
+        setState(() {
+          _tappedIndex = index;
+        });
+      },
+      onTapCancel: () {
+        setState(() {
+          _tappedIndex = null;
+        });
+      },
+      onTapUp: (details) {
+        setState(() {
+          _tappedIndex = null;
+        });
+        Navigator.push(
+          context,
+          CupertinoPageRoute(
+            builder: (context) => UpdateInfoView([mod]),
+          ),
+        );
+      },
+      child: Container(
+        margin: EdgeInsets.fromLTRB(7, 3, 7, 4),
+        padding: EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(5),
+          border: Border.all(color: SKColors.border_gray, width: 1),
+          boxShadow: [UIAssets.boxShadow],
+          color: _tappedIndex == index
+              ? SKColors.selected_gray
+              : SKColors.menu_blue,
+        ),
+        child: Column(
+          children: <Widget>[
+            Container(
+              padding: EdgeInsets.only(bottom: 4),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: <Widget>[
+                  Expanded(
+                    child: Text(
+                      mod.parentClass.name,
+                      style: TextStyle(
+                          color: mod.parentClass.getColor(),
+                          fontWeight: FontWeight.bold,
+                          fontSize: 17),
+                    ),
+                  ),
+                  Text(
+                    'New Assignment',
+                    style: TextStyle(
+                      fontSize: 13,
+                      fontWeight: FontWeight.normal,
+                      color: SKColors.skoller_blue,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: <Widget>[
+                Container(
+                  decoration: BoxDecoration(
+                      color: mod.parentClass.getColor(),
+                      shape: BoxShape.circle),
+                  padding: EdgeInsets.all(5),
+                  margin: EdgeInsets.only(right: 4),
+                  child: Image.asset(
+                    ImageNames.assignmentInfoImages.updates_available,
+                  ),
+                ),
+                Expanded(
+                  child: Text(
+                    mod.data.name,
+                    style:
+                        TextStyle(fontSize: 15, fontWeight: FontWeight.normal),
+                  ),
+                ),
+              ],
+            )
+          ],
+        ),
+      ),
     );
   }
 }
@@ -317,10 +428,11 @@ class _TasksViewState extends State<TasksView> {
 class _TaskLikeItem {
   bool isMod;
   int parentObjectId;
+  DateTime dueDate;
 
   dynamic get getParent => isMod
       ? Mod.currentMods[parentObjectId]
       : Assignment.currentAssignments[parentObjectId];
 
-  _TaskLikeItem(this.parentObjectId, this.isMod);
+  _TaskLikeItem(this.parentObjectId, this.isMod, this.dueDate);
 }

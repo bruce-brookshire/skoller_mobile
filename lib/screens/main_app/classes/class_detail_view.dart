@@ -42,6 +42,53 @@ class _ClassDetailViewState extends State<ClassDetailView> {
         builder: (context) => ClassLinkSharingModal(widget.classId));
   }
 
+  void tappedSpeculate(TapUpDetails details) async {
+    bool shouldProceed = true;
+
+    if (studentClass.gradeScale == null) {
+      final result = await showGradeScalePicker();
+      if (result == null) {
+        shouldProceed = false;
+      }
+    }
+
+    if (shouldProceed) {
+      showSpeculate();
+    }
+  }
+
+  void showSpeculate() async {
+    final result = await showDialog(
+      context: context,
+      builder: (context) => Dialog(
+            child: Container(
+              decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(10),
+                  border: Border.all(
+                    color: SKColors.border_gray,
+                  )),
+            ),
+          ),
+    );
+  }
+
+  Future<bool> showGradeScalePicker() async {
+    return showDialog(
+      context: context,
+      builder: (context) => Dialog(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  alignment: Alignment.center,
+                  child: CircularProgressIndicator(),
+                ),
+              ],
+            ),
+          ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final grade = (studentClass.grade == null || studentClass.grade == 0)
@@ -171,15 +218,18 @@ class _ClassDetailViewState extends State<ClassDetailView> {
                         children: <Widget>[
                           Expanded(
                             flex: 1,
-                            child: Container(
-                              alignment: Alignment.center,
-                              child: GestureDetector(
-                                child: Text(
-                                  'Speculate Grade',
-                                  style: TextStyle(
-                                      color: SKColors.skoller_blue,
-                                      fontWeight: FontWeight.normal,
-                                      fontSize: 14),
+                            child: GestureDetector(
+                              onTapUp: tappedSpeculate,
+                              child: Container(
+                                alignment: Alignment.center,
+                                child: GestureDetector(
+                                  child: Text(
+                                    'Speculate Grade',
+                                    style: TextStyle(
+                                        color: SKColors.skoller_blue,
+                                        fontWeight: FontWeight.normal,
+                                        fontSize: 14),
+                                  ),
                                 ),
                               ),
                             ),

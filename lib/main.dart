@@ -6,18 +6,31 @@ import 'screens/main_app/tab_bar.dart';
 import 'constants/timezone_manager.dart';
 
 void main() {
-  runApp(MyApp());
+  runApp(SkollerApp());
   //Allow currentTZ to cache through heuristic exploration before we need it
   TimeZoneManager.verifyTzDbActive();
 }
 
-class MyApp extends StatelessWidget {
+class SkollerApp extends StatefulWidget {
+  @override
+  State createState() => _SkollerAppState();
+}
+
+class _SkollerAppState extends State<SkollerApp> {
+  bool _darkTheme = false;
+  AppState currentState = AppState.loading;
+
+  void changeAppState(AppState newState) {
+    setState(() {
+      currentState = newState;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
-    bool isDarkTheme = false;
-
     ThemeData currentTheme;
-    if (isDarkTheme) {
+
+    if (_darkTheme) {
       currentTheme = ThemeData(
         primaryColor: SKColors.skoller_blue,
         accentColor: SKColors.skoller_blue,
@@ -52,11 +65,27 @@ class MyApp extends StatelessWidget {
         ),
       );
     }
+    Widget currentWidget;
+
+    switch (currentState) {
+      case AppState.loading:
+        currentWidget = AuthHome(changeAppState);
+        break;
+      case AppState.failedLoading:
+        currentWidget = AuthHome(changeAppState);
+        break;
+      case AppState.authScreen:
+        currentWidget = AuthHome(changeAppState);
+        break;
+      case AppState.mainApp:
+        currentWidget = MyHomePage(changeAppState);
+        break;
+    }
 
     return MaterialApp(
       builder: (context, widget) => Theme(data: currentTheme, child: widget),
       theme: currentTheme,
-      home: AuthHome(),
+      home: currentWidget,
     );
   }
 }

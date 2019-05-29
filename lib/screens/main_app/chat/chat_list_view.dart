@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import '../../requests/requests_core.dart';
-import '../../constants/constants.dart';
+import '../../../requests/requests_core.dart';
+import '../../../constants/constants.dart';
 
 class ChatListView extends StatefulWidget {
   @override
