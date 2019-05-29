@@ -26,6 +26,20 @@ class Chat {
 
   StudentClass get parentClass => StudentClass.currentClasses[classId ?? 0];
 
+  Future<RequestResponse> refetch() {
+    return SKRequests.get(
+      '/classes/$classId/posts/$id',
+      Chat._fromJsonObj,
+    ).then((response) {
+      if (response.wasSuccessful()) {
+        Chat.currentChats[id] = response.obj;
+      }
+      return response;
+    });
+  }
+
+  static Map<int, Chat> currentChats = {};
+
   static Chat _fromJsonObj(Map content) => Chat(
         content['id'],
         content['post'],
@@ -35,14 +49,19 @@ class Chat {
         DateTime.parse(content['inserted_at']),
         PublicStudent._fromJsonObj(content['student']),
         JsonListMaker.convert(Like._fromJsonObj, content['likes'] ?? []),
-        JsonListMaker.convert(Comment._fromJsonObj, content['comment'] ?? []),
+        JsonListMaker.convert(Comment._fromJsonObj, content['comments'] ?? []),
       );
 
   static Future<RequestResponse> getStudentChats() {
     return SKRequests.get(
       '/students/${SKUser.current.student.id}/chat?sort=200',
       Chat._fromJsonObj,
-    );
+    ).then((response) {
+      if (response.wasSuccessful()) {
+        (response.obj as List).forEach((chat) => currentChats[chat.id] = chat);
+      }
+      return response;
+    });
   }
 }
 

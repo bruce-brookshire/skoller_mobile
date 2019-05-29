@@ -9,17 +9,17 @@ class AuthHome extends StatelessWidget {
   final AppStateCallback appStateCallback;
 
   AuthHome(this.appStateCallback) {
-    // Auth.logIn('bruce@skoller1.co', 'password1').then((success) {
-    //   if (success) {
-    //     return StudentClass.getStudentClasses();
-    //   } else {
-    //     print('FAILURE');
-    //   }
-    // }).then((response) {
-    //   if (response.wasSuccessful()) {
-    //     appStateCallback(AppState.mainApp);
-    //   }
-    // });
+    Auth.logIn('bruce@skoller1.co', 'password1').then((success) {
+      if (success) {
+        return StudentClass.getStudentClasses();
+      } else {
+        print('FAILURE');
+      }
+    }).then((response) {
+      if (response.wasSuccessful()) {
+        appStateCallback(AppState.mainApp);
+      }
+    });
   }
 
   tappedLogIn(BuildContext context) {

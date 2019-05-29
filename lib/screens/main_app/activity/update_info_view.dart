@@ -131,7 +131,7 @@ class _UpdateInfoViewState extends State<UpdateInfoView> {
                           // mod.acceptMod();
                         },
                         child: Container(
-                          padding: EdgeInsets.symmetric(vertical: 4),
+                          padding: EdgeInsets.symmetric(vertical: 5),
                           margin: EdgeInsets.only(left: 2, right: 5),
                           alignment: Alignment.center,
                           decoration: BoxDecoration(
@@ -153,7 +153,7 @@ class _UpdateInfoViewState extends State<UpdateInfoView> {
                           }
                         },
                         child: Container(
-                          padding: EdgeInsets.symmetric(vertical: 4),
+                          padding: EdgeInsets.symmetric(vertical: 5),
                           margin: EdgeInsets.only(right: 2, left: 5),
                           alignment: Alignment.center,
                           decoration: BoxDecoration(

@@ -29,6 +29,17 @@ class StudentClass {
 
   static DateTimeZoneProvider tzdb;
 
+  static final _classColors = [
+    '9b55e5ff', // purple
+    'ff71a8ff', // pink
+    '57b9e4ff', // blue
+    '4cd8bdff', // mint
+    '4add58ff', // green
+    'f7d300ff', // yellow
+    'ffae42ff', // orange
+    'dd4a63ff', // red
+  ];
+
   //----------------//
   //Member functions//
   //----------------//
@@ -58,11 +69,39 @@ class StudentClass {
   School getSchool() => School.currentSchools[classPeriod.schoolId];
 
   Color getColor() {
-    if (_color != null) {
-      String substr = 'ff' + _color.substring(0, _color.length - 2);
+    final colorizer = (String colorStr) {
+      String substr = 'ff' + colorStr.substring(0, colorStr.length - 2);
       return Color(int.parse(substr, radix: 16));
+    };
+
+    if (_color != null) {
+      return colorizer(_color);
     } else {
-      return colors[1];
+      String newColor;
+
+      //Make this an ordered map so we can iterate in order through the available colors
+      final colorMap = LinkedHashMap.fromIterables(
+        StudentClass._classColors,
+        List.generate(StudentClass._classColors.length, (val) => false),
+      );
+
+      for (final studentClass in StudentClass.currentClasses.values) {
+        if (studentClass._color != null) {
+          colorMap[studentClass._color] = true;
+        }
+      }
+
+      if (colorMap.containsValue(false)) {
+        colorMap.removeWhere((key, val) => val);
+        newColor = colorMap.keys.first;
+      } else {
+        final loc = Random.secure().nextInt(colorMap.length);
+        newColor = colorMap.keys.toList()[loc];
+      }
+
+      _update({'color': newColor});
+
+      return colorizer(newColor);
     }
   }
 
@@ -83,6 +122,14 @@ class StudentClass {
       }
       return response;
     });
+  }
+
+  Future<RequestResponse> _update(Map params) {
+    return SKRequests.put(
+      '/students/${SKUser.current.student.id}/classes/',
+      params,
+      StudentClass._fromJsonObj,
+    );
   }
 
   /**

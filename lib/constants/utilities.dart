@@ -52,24 +52,24 @@ class DateUtilities {
     }
   }
 
-  static String getPastRelativeString(DateTime date) {
+  static String getPastRelativeString(DateTime date, {bool ago = true}) {
     final now_ms = DateTime.now().millisecondsSinceEpoch;
     final date_ms = date.millisecondsSinceEpoch;
 
     final diff = ((now_ms - date_ms) / 1000).truncate();
-
+    
     if (diff < 5) {
       return 'Now';
     } else if (diff < 60) {
-      return '${diff} sec ago';
+      return '${diff} sec${ago ? ' ago' : ''}';
     } else if (diff < 3600) {
-      return '${(diff / 60).truncate()} min ago';
+      return '${(diff / 60).truncate()} min${ago ? ' ago' : ''}';
     } else if (diff < 86400) {
       final hrs = (diff / 3600).truncate();
-      return '${hrs} ${hrs == 1 ? 'hr' : 'hrs'} ago';
+      return '${hrs} ${hrs == 1 ? 'hr' : 'hrs'}${ago ? ' ago' : ''}';
     } else if (diff < 604800) {
       final days = (diff / 86400).truncate();
-      return '${days} ${days == 1 ? 'day' : 'days'} ago';
+      return '${days} ${days == 1 ? 'day' : 'days'}${ago ? ' ago' : ''}';
     } else {
       return DateFormat('M/d/yy').format(date);
     }
