@@ -3,7 +3,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:skoller/screens/main_app/classes/class_link_sharing_modal.dart';
 import 'package:skoller/screens/main_app/classes/classmates_view.dart';
-import 'package:share/share.dart';
 import '../../../constants/constants.dart';
 import '../../../requests/requests_core.dart';
 import 'assignment_info_view.dart';

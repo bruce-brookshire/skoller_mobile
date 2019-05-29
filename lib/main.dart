@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'requests/requests_core.dart';
 import 'screens/auth/auth_home.dart';
 import 'constants/constants.dart';
 import 'screens/main_app/tab_bar.dart';

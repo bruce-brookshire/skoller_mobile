@@ -102,7 +102,10 @@ class Mod {
           break;
         case 'New Assignment':
           modType = ModType.newAssignment;
-          data = Assignment._fromJsonObj(content['data']['assignment']);
+          data = Assignment._fromJsonObj(
+            content['data']['assignment'],
+            shouldPersist: false,
+          );
           (data as Assignment).configureDateTimeOffset();
           break;
         case 'Delete Assignment':

@@ -1,7 +1,5 @@
 library requests_core;
 
-
-import 'package:skoller/constants/constants.dart';
 import 'package:time_machine/time_machine.dart';
 import '../constants/timezone_manager.dart';
 import 'package:http/http.dart' as http;

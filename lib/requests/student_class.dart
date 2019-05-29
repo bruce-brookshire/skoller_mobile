@@ -181,6 +181,18 @@ class StudentClass {
     );
   }
 
+  Future<RequestResponse> createStudentChat(String post) {
+    return SKRequests.get(
+      '/classes/$id/posts',
+      Chat._fromJsonObj,
+    ).then((response) {
+      if (response.wasSuccessful()) {
+        Chat.currentChats[response.obj.id] = response.obj;
+      }
+      return response;
+    });
+  }
+
   //--------------//
   //Static Members//
   //--------------//

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:skoller/screens/main_app/activity/update_info_view.dart';
 import 'package:skoller/screens/main_app/chat/chat_info_view.dart';
 import '../../../requests/requests_core.dart';
 import '../../../constants/constants.dart';
@@ -24,12 +23,111 @@ class _ChatListViewState extends State<ChatListView> {
     });
   }
 
+  void tappedCreatePost() async {
+    final result = await showDialog(
+      context: context,
+      builder: (context) => Dialog(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.all(Radius.circular(10)),
+            ),
+            child: Container(
+              height: MediaQuery.of(context).size.height / 2,
+              decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(10),
+                  border: Border.all(color: SKColors.border_gray)),
+              child: Column(
+                mainAxisSize: MainAxisSize.max,
+                children: [
+                  Container(
+                    padding: EdgeInsets.only(top: 16, bottom: 4),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        Expanded(
+                          flex: 1,
+                          child: GestureDetector(
+                            onTapUp: (details) {
+                              Navigator.pop(context, false);
+                            },
+                            child: Container(
+                              padding: EdgeInsets.only(left: 8),
+                              alignment: Alignment.centerLeft,
+                              child: Text(
+                                'Cancel',
+                                style: TextStyle(
+                                  color: SKColors.warning_red,
+                                  fontWeight: FontWeight.normal,
+                                  fontSize: 14,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                        Expanded(
+                          flex: 2,
+                          child: Text(
+                            'Create a post',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(fontSize: 17),
+                          ),
+                        ),
+                        Expanded(
+                          flex: 1,
+                          child: GestureDetector(
+                            onTapUp: (details) {
+                              Navigator.pop(context, true);
+                            },
+                            child: Container(
+                              padding: EdgeInsets.only(right: 8),
+                              alignment: Alignment.centerRight,
+                              child: Text(
+                                'Save',
+                                style: TextStyle(
+                                  color: SKColors.skoller_blue,
+                                  fontWeight: FontWeight.normal,
+                                  fontSize: 14,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Expanded(
+                    child: Container(
+                      alignment: Alignment.topLeft,
+                      margin: EdgeInsets.all(8),
+                      child: CupertinoTextField(
+                        decoration: BoxDecoration(border: null),
+                        maxLength: 2000,
+                        maxLengthEnforced: true,
+                        autofocus: true,
+                        maxLines: null,
+                        keyboardType: TextInputType.multiline,
+                        // controller: controller,
+                        placeholder: 'What\'s on your mind?',
+                        style: TextStyle(
+                            color: SKColors.dark_gray,
+                            fontSize: 15,
+                            fontWeight: FontWeight.normal),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return SKNavView(
       isBack: false,
       title: 'Chat',
       rightBtnImage: ImageNames.rightNavImages.plus,
+      callbackRight: tappedCreatePost,
       children: <Widget>[
         Expanded(
           child: ListView.builder(
@@ -124,7 +222,13 @@ class _ChatListViewState extends State<ChatListView> {
               children: <Widget>[
                 GestureDetector(
                   behavior: HitTestBehavior.opaque,
-                  onTapUp: (details) {},
+                  onTapUp: (details) {
+                    chat.toggleLike().then((success) {
+                      if (success) {
+                        setState(() {});
+                      }
+                    });
+                  },
                   child: Container(
                     padding: EdgeInsets.only(top: 4, left: 4, right: 4),
                     child: Row(
@@ -137,7 +241,7 @@ class _ChatListViewState extends State<ChatListView> {
                         Padding(
                           padding: EdgeInsets.only(top: 4, left: 3),
                           child: Text(
-                            '${chat.likes?.length ?? 0}',
+                            '${chat.likes}',
                             style: TextStyle(
                                 color: SKColors.light_gray,
                                 fontSize: 13,
@@ -170,7 +274,11 @@ class _ChatListViewState extends State<ChatListView> {
                 GestureDetector(
                   behavior: HitTestBehavior.opaque,
                   onTapUp: (details) {
-                    print('hit it');
+                    chat.toggleStar().then((success) {
+                      if (success) {
+                        setState(() {});
+                      }
+                    });
                   },
                   child: Container(
                     padding: EdgeInsets.only(top: 4, left: 4, right: 4),

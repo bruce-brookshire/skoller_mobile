@@ -13,7 +13,8 @@ class ChatInfoView extends StatefulWidget {
 }
 
 class _ChatInfoViewState extends State<ChatInfoView> {
-  TextEditingController postFieldController = TextEditingController();
+  TextEditingController commentFieldController = TextEditingController();
+  FocusNode commentFieldFocusNode = FocusNode();
 
   @override
   void initState() {
@@ -26,7 +27,32 @@ class _ChatInfoViewState extends State<ChatInfoView> {
     });
   }
 
-  void tappedPost(TapUpDetails details) async {}
+  @override
+  void dispose() {
+    commentFieldFocusNode.dispose();
+    commentFieldController.dispose();
+
+    super.dispose();
+  }
+
+  void tappedPost(TapUpDetails details) {
+    final String post = commentFieldController.text.trim();
+
+    if (post == '') {
+      return;
+    }
+
+    Chat chat = Chat.currentChats[widget.chatId];
+
+    chat.createChatComment(post).then((response) {
+      if (response.wasSuccessful()) {
+        setState(() {
+          commentFieldController.clear();
+          FocusScope.of(context).unfocus();
+        });
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -61,7 +87,7 @@ class _ChatInfoViewState extends State<ChatInfoView> {
                 ),
               ),
               Align(
-                child: composePostView(),
+                child: composeCommentView(),
                 alignment: Alignment.bottomCenter,
               )
             ],
@@ -130,7 +156,13 @@ class _ChatInfoViewState extends State<ChatInfoView> {
             children: <Widget>[
               GestureDetector(
                 behavior: HitTestBehavior.opaque,
-                onTapUp: (details) {},
+                onTapUp: (details) {
+                  chat.toggleLike().then((success) {
+                    if (success) {
+                      setState(() {});
+                    }
+                  });
+                },
                 child: Container(
                   padding: EdgeInsets.only(top: 4, left: 4, right: 4),
                   child: Row(
@@ -143,7 +175,7 @@ class _ChatInfoViewState extends State<ChatInfoView> {
                       Padding(
                         padding: EdgeInsets.only(top: 4, left: 3),
                         child: Text(
-                          '${chat.likes?.length ?? 0}',
+                          '${chat.likes}',
                           style: TextStyle(
                               color: SKColors.light_gray,
                               fontSize: 13,
@@ -156,6 +188,9 @@ class _ChatInfoViewState extends State<ChatInfoView> {
               ),
               GestureDetector(
                 behavior: HitTestBehavior.opaque,
+                onTapUp: (details) {
+                  FocusScope.of(context).requestFocus(commentFieldFocusNode);
+                },
                 child: Padding(
                   padding: EdgeInsets.fromLTRB(4, 7, 4, 2),
                   child: Image.asset(ImageNames.chatImages.reply_back_gray),
@@ -165,7 +200,11 @@ class _ChatInfoViewState extends State<ChatInfoView> {
               GestureDetector(
                 behavior: HitTestBehavior.opaque,
                 onTapUp: (details) {
-                  print('hit it');
+                  chat.toggleStar().then((success) {
+                    if (success) {
+                      setState(() {});
+                    }
+                  });
                 },
                 child: Container(
                   padding: EdgeInsets.only(top: 4, left: 4, right: 4),
@@ -216,14 +255,27 @@ class _ChatInfoViewState extends State<ChatInfoView> {
     for (final comment in chat.comments) {
       content.add(
         buildCard(
-          true,
-          comment.student,
-          comment.comment,
-          comment.insertedAt,
-          comment.isLiked,
-          (comment.likes ?? []).length,
-          isStarred: comment.isStarred,
-        ),
+            true,
+            comment.student,
+            comment.comment,
+            comment.insertedAt,
+            comment.isLiked,
+            comment.likes,
+            () {
+              comment.toggleLike(chat.classId).then((success) {
+                if (success) {
+                  setState(() {});
+                }
+              });
+            },
+            isStarred: comment.isStarred,
+            onStar: () {
+              comment.toggleStar(chat.classId).then((success) {
+                if (success) {
+                  setState(() {});
+                }
+              });
+            }),
       );
 
       comment.replies.sort(
@@ -238,7 +290,14 @@ class _ChatInfoViewState extends State<ChatInfoView> {
             reply.reply,
             reply.insertedAt,
             reply.isLiked,
-            (reply.likes ?? []).length,
+            reply.likes,
+            () {
+              reply.toggleLike(chat.classId).then((success) {
+                if (success) {
+                  setState(() {});
+                }
+              });
+            },
             isFirstReply: comment.replies.first.id == reply.id,
           ),
         );
@@ -254,8 +313,10 @@ class _ChatInfoViewState extends State<ChatInfoView> {
     String content,
     DateTime insertedAt,
     bool isLiked,
-    int numLikes, {
+    int numLikes,
+    VoidCallback onLiked, {
     bool isStarred,
+    VoidCallback onStar,
     bool isFirstReply,
   }) {
     Widget cell = Container(
@@ -317,7 +378,9 @@ class _ChatInfoViewState extends State<ChatInfoView> {
             children: <Widget>[
               GestureDetector(
                 behavior: HitTestBehavior.opaque,
-                onTapUp: (details) {},
+                onTapUp: (details) {
+                  onLiked();
+                },
                 child: Container(
                   padding: EdgeInsets.only(left: 4, right: 4),
                   child: Row(
@@ -355,7 +418,7 @@ class _ChatInfoViewState extends State<ChatInfoView> {
                       GestureDetector(
                         behavior: HitTestBehavior.opaque,
                         onTapUp: (details) {
-                          print('hit it');
+                          onStar();
                         },
                         child: Container(
                           padding: EdgeInsets.only(top: 4, left: 4, right: 4),
@@ -394,7 +457,7 @@ class _ChatInfoViewState extends State<ChatInfoView> {
     }
   }
 
-  Widget composePostView() {
+  Widget composeCommentView() {
     return Container(
       margin: EdgeInsets.fromLTRB(8, 0, 8, 8),
       padding: EdgeInsets.symmetric(horizontal: 4),
@@ -419,9 +482,10 @@ class _ChatInfoViewState extends State<ChatInfoView> {
           Expanded(
             child: Container(
               child: CupertinoTextField(
-                placeholder: 'Write a post...',
+                focusNode: commentFieldFocusNode,
+                placeholder: 'Respond with a comment...',
                 decoration: BoxDecoration(border: null),
-                controller: postFieldController,
+                controller: commentFieldController,
                 style: TextStyle(fontSize: 14),
               ),
             ),

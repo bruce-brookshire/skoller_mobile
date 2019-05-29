@@ -9,7 +9,7 @@ class Chat {
   DateTime postDate;
   PublicStudent student;
 
-  List<Like> likes;
+  int likes;
   List<Comment> comments;
 
   Chat(
@@ -38,6 +38,85 @@ class Chat {
     });
   }
 
+  Future<RequestResponse> createChatComment(String comment) {
+    return SKRequests.post(
+      '/classes/$classId/posts/$id/comments',
+      {'comment': comment},
+      Comment._fromJsonObj,
+    ).then((response) {
+      if (response.wasSuccessful()) {
+        Chat.currentChats[id].comments.add(response.obj);
+      }
+      return response;
+    });
+  }
+
+  Future<bool> toggleLike() {
+    bool newState = isLiked == null ? true : !isLiked;
+
+    if (newState) {
+      return SKRequests.post(
+        '/classes/$classId/posts/$id/like',
+        null,
+        Comment._fromJsonObj,
+      ).then((response) {
+        bool status = response.wasSuccessful();
+
+        if (status) {
+          this.likes++;
+        }
+
+        this.isLiked = status;
+        return status;
+      });
+    } else {
+      return SKRequests.delete(
+        '/classes/$classId/posts/$id/unlike',
+        null,
+      ).then((responseCode) {
+        final bool status = [200, 204].contains(responseCode);
+
+        if (status) {
+          this.likes--;
+        }
+
+        this.isLiked = !status;
+        return status;
+      });
+    }
+  }
+
+  Future<bool> toggleStar() {
+    bool newState = isStarred == null ? true : !isStarred;
+
+    if (newState) {
+      return SKRequests.post(
+        '/classes/$classId/posts/$id/star',
+        null,
+        Comment._fromJsonObj,
+      ).then((response) {
+        bool status = response.wasSuccessful();
+
+        if (status) {
+          this.likes++;
+        }
+
+        this.isStarred = status;
+        return status;
+      });
+    } else {
+      return SKRequests.delete(
+        '/classes/$classId/posts/$id/unstar',
+        null,
+      ).then((responseCode) {
+        final bool status = [200, 204].contains(responseCode);
+
+        this.isStarred = !status;
+        return status;
+      });
+    }
+  }
+
   static Map<int, Chat> currentChats = {};
 
   static Chat _fromJsonObj(Map content) => Chat(
@@ -48,7 +127,7 @@ class Chat {
         content['class']['id'],
         DateTime.parse(content['inserted_at']),
         PublicStudent._fromJsonObj(content['student']),
-        JsonListMaker.convert(Like._fromJsonObj, content['likes'] ?? []),
+        (content['likes'] ?? []).length,
         JsonListMaker.convert(Comment._fromJsonObj, content['comments'] ?? []),
       );
 
@@ -73,7 +152,7 @@ class Comment {
   DateTime insertedAt;
   bool isLiked;
   bool isStarred;
-  List<Like> likes;
+  int likes;
 
   Comment(
     this.id,
@@ -86,6 +165,85 @@ class Comment {
     this.likes,
   );
 
+  Future<RequestResponse> createReply(int classId, String reply) {
+    return SKRequests.post(
+      '/classes/$classId/comments/$id/replies',
+      {'reply': reply},
+      Chat._fromJsonObj,
+    ).then((response) {
+      if (response.wasSuccessful()) {
+        Chat.currentChats[response.obj.id] = response.obj;
+      }
+      return response;
+    });
+  }
+
+  Future<bool> toggleLike(int classId) {
+    bool newState = isLiked == null ? true : !isLiked;
+
+    if (newState) {
+      return SKRequests.post(
+        '/classes/$classId/comments/$id/like',
+        null,
+        Comment._fromJsonObj,
+      ).then((response) {
+        bool status = response.wasSuccessful();
+
+        if (status) {
+          this.likes++;
+        }
+
+        this.isLiked = status;
+        return status;
+      });
+    } else {
+      return SKRequests.delete(
+        '/classes/$classId/comments/$id/unlike',
+        null,
+      ).then((responseCode) {
+        final bool status = [200, 204].contains(responseCode);
+
+        if (status) {
+          this.likes--;
+        }
+
+        this.isLiked = !status;
+        return status;
+      });
+    }
+  }
+
+  Future<bool> toggleStar(int classId) {
+    bool newState = isStarred == null ? true : !isStarred;
+
+    if (newState) {
+      return SKRequests.post(
+        '/classes/$classId/comments/$id/star',
+        null,
+        Comment._fromJsonObj,
+      ).then((response) {
+        bool status = response.wasSuccessful();
+
+        if (status) {
+          this.likes++;
+        }
+
+        this.isStarred = status;
+        return status;
+      });
+    } else {
+      return SKRequests.delete(
+        '/classes/$classId/comments/$id/unstar',
+        null,
+      ).then((responseCode) {
+        final bool status = [200, 204].contains(responseCode);
+
+        this.isStarred = !status;
+        return status;
+      });
+    }
+  }
+
   static Comment _fromJsonObj(Map content) => Comment(
         content['id'],
         JsonListMaker.convert(Reply._fromJsonObj, content['replies'] ?? []),
@@ -94,7 +252,7 @@ class Comment {
         DateTime.parse(content['inserted_at']),
         content['is_liked'],
         content['is_starred'],
-        JsonListMaker.convert(Like._fromJsonObj, content['likes'] ?? []),
+        (content['likes'] ?? []).length,
       );
 }
 
@@ -104,7 +262,7 @@ class Reply {
   String reply;
   DateTime insertedAt;
   bool isLiked;
-  List<Like> likes;
+  int likes;
 
   Reply(
     this.id,
@@ -115,13 +273,48 @@ class Reply {
     this.likes,
   );
 
+  Future<bool> toggleLike(int classId) {
+    bool newState = isLiked == null ? true : !isLiked;
+
+    if (newState) {
+      return SKRequests.post(
+        '/classes/$classId/replies/$id/like',
+        null,
+        Comment._fromJsonObj,
+      ).then((response) {
+        bool status = response.wasSuccessful();
+
+        if (status) {
+          this.likes++;
+        }
+
+        this.isLiked = status;
+        return status;
+      });
+    } else {
+      return SKRequests.delete(
+        '/classes/$classId/replies/$id/unlike',
+        null,
+      ).then((responseCode) {
+        final bool status = [200, 204].contains(responseCode);
+
+        if (status) {
+          this.likes--;
+        }
+
+        this.isLiked = !status;
+        return status;
+      });
+    }
+  }
+
   static Reply _fromJsonObj(Map content) => Reply(
         content['id'],
         PublicStudent._fromJsonObj(content['student']),
         content['reply'],
         DateTime.parse(content['inserted_at']),
         content['is_liked'],
-        JsonListMaker.convert(Like._fromJsonObj, content['likes'] ?? []),
+        (content['likes'] ?? []).length,
       );
 }
 

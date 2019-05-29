@@ -3,7 +3,6 @@ import '../../constants/constants.dart';
 import 'sign_in.dart';
 import 'sign_up.dart';
 import '../../requests/requests_core.dart';
-import '../main_app/tab_bar.dart';
 
 class AuthHome extends StatelessWidget {
   final AppStateCallback appStateCallback;

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../requests/requests_core.dart';
 import '../../constants/constants.dart';
-import '../main_app/tab_bar.dart';
 
 class SignIn extends StatefulWidget {
   final AppStateCallback appStateCallback;

@@ -198,7 +198,7 @@ class Assignment {
   static List<Assignment> currentTasks;
   static Map<int, Assignment> currentAssignments = {};
 
-  static Assignment _fromJsonObj(Map content) {
+  static Assignment _fromJsonObj(Map content, {bool shouldPersist = true}) {
     if (content == null) {
       return null;
     }
@@ -220,7 +220,9 @@ class Assignment {
       content['notes'],
     );
 
-    currentAssignments[assignment.id] = assignment;
+    if (shouldPersist) {
+      currentAssignments[assignment.id] = assignment;
+    }
 
     return assignment;
   }
