@@ -27,15 +27,7 @@ class Chat {
   StudentClass get parentClass => StudentClass.currentClasses[classId ?? 0];
 
   Future<RequestResponse> refetch() {
-    return SKRequests.get(
-      '/classes/$classId/posts/$id',
-      Chat._fromJsonObj,
-    ).then((response) {
-      if (response.wasSuccessful()) {
-        Chat.currentChats[id] = response.obj;
-      }
-      return response;
-    });
+    return Chat.getChatById(classId: classId, chatId: id);
   }
 
   Future<RequestResponse> createChatComment(String comment) {
@@ -134,10 +126,25 @@ class Chat {
   static Future<RequestResponse> getStudentChats() {
     return SKRequests.get(
       '/students/${SKUser.current.student.id}/chat?sort=200',
-      Chat._fromJsonObj,
+      _fromJsonObj,
     ).then((response) {
       if (response.wasSuccessful()) {
         (response.obj as List).forEach((chat) => currentChats[chat.id] = chat);
+      }
+      return response;
+    });
+  }
+
+  static Future<RequestResponse> getChatById({
+    @required int classId,
+    @required int chatId,
+  }) {
+    return SKRequests.get(
+      '/classes/$classId/posts/$chatId',
+      _fromJsonObj,
+    ).then((response) {
+      if (response.wasSuccessful()) {
+        Chat.currentChats[chatId] = response.obj;
       }
       return response;
     });
@@ -169,13 +176,8 @@ class Comment {
     return SKRequests.post(
       '/classes/$classId/comments/$id/replies',
       {'reply': reply},
-      Chat._fromJsonObj,
-    ).then((response) {
-      if (response.wasSuccessful()) {
-        Chat.currentChats[response.obj.id] = response.obj;
-      }
-      return response;
-    });
+      Reply._fromJsonObj,
+    );
   }
 
   Future<bool> toggleLike(int classId) {
@@ -338,12 +340,28 @@ class InboxNotification {
 
   InboxNotification(this.chatPost, this.response, this.isRead, this.color);
 
+  static List<InboxNotification> currentInbox = [];
+
   static InboxNotification _fromJsonObj(Map content) => InboxNotification(
         InboxPost._fromJsonObj(content['chat_post']),
         InboxReply._fromJsonObj(content['response']),
         content['is_read'],
         content['color'],
       );
+
+  static Future<RequestResponse> getChatInbox() {
+    return SKRequests.get(
+      '/students/${SKUser.current.student.id}/inbox',
+      _fromJsonObj,
+    ).then(
+      (response) {
+        if (response.wasSuccessful()) {
+          currentInbox = response.obj;
+        }
+        return response;
+      },
+    );
+  }
 }
 
 class InboxPost {

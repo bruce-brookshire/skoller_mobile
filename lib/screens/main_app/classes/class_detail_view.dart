@@ -71,18 +71,63 @@ class _ClassDetailViewState extends State<ClassDetailView> {
     );
   }
 
-  Future<bool> showGradeScalePicker() async {
+  Future<bool> showGradeScalePicker() {
     return showDialog(
       context: context,
       builder: (context) => Dialog(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Container(
-                  alignment: Alignment.center,
-                  child: CircularProgressIndicator(),
-                ),
-              ],
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: Container(
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Container(
+                    padding: EdgeInsets.fromLTRB(8, 12, 8, 8),
+                    alignment: Alignment.center,
+                    decoration: BoxDecoration(
+                      color: SKColors.skoller_blue,
+                      borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(10),
+                        topRight: Radius.circular(10),
+                      ),
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: <Widget>[
+                        Text(
+                          'Select grade scale',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 16,
+                          ),
+                        ),
+                        Text(
+                          'for entire class',
+                          style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 13,
+                              fontWeight: FontWeight.normal),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Container(
+                    margin: EdgeInsets.symmetric(vertical: 8),
+                    child: Text(
+                      'Select the grade scale for this class',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(fontSize: 14),
+                    ),
+                  )
+                ],
+              ),
             ),
           ),
     );

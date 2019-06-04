@@ -182,8 +182,9 @@ class StudentClass {
   }
 
   Future<RequestResponse> createStudentChat(String post) {
-    return SKRequests.get(
+    return SKRequests.post(
       '/classes/$id/posts',
+      {'post': post},
       Chat._fromJsonObj,
     ).then((response) {
       if (response.wasSuccessful()) {

@@ -118,8 +118,7 @@ class SKNavBar extends StatelessWidget {
             GestureDetector(
               behavior: HitTestBehavior.opaque,
               onTapUp: (details) {
-                if (_isBack) Navigator.pop(context);
-                // if (_isDown) Navigator.
+                if (_isBack || _isDown) Navigator.pop(context);
               },
               child: Container(
                 padding: EdgeInsets.only(left: 4),
@@ -130,7 +129,8 @@ class SKNavBar extends StatelessWidget {
                                 image:
                                     AssetImage(ImageNames.navArrowImages.left),
                               )
-                            : null)
+                            : Image.asset(ImageNames.navArrowImages.down),
+                      )
                     : null,
                 width: 44,
                 height: 44,

@@ -54,6 +54,190 @@ class _ChatInfoViewState extends State<ChatInfoView> {
     });
   }
 
+  void tappedCommentReply(Comment comment) async {
+    TextEditingController controller = TextEditingController();
+
+    final result = await showDialog(
+      context: context,
+      builder: (context) => Dialog(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.all(Radius.circular(10)),
+            ),
+            child: Container(
+              height: MediaQuery.of(context).size.height / 2,
+              decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(10),
+                  border: Border.all(color: SKColors.border_gray)),
+              child: Column(
+                mainAxisSize: MainAxisSize.max,
+                children: [
+                  Container(
+                    padding: EdgeInsets.only(top: 12, bottom: 4),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        Expanded(
+                          flex: 1,
+                          child: GestureDetector(
+                            onTapUp: (details) {
+                              Navigator.pop(context, false);
+                            },
+                            child: Container(
+                              padding: EdgeInsets.only(left: 8),
+                              alignment: Alignment.centerLeft,
+                              child: Text(
+                                'Cancel',
+                                style: TextStyle(
+                                  color: SKColors.warning_red,
+                                  fontWeight: FontWeight.normal,
+                                  fontSize: 14,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                        Expanded(
+                          flex: 2,
+                          child: Text(
+                            'Reply',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(fontSize: 17),
+                          ),
+                        ),
+                        Expanded(
+                          flex: 1,
+                          child: GestureDetector(
+                            onTapUp: (details) {
+                              Navigator.pop(context, true);
+                            },
+                            child: Container(
+                              padding: EdgeInsets.only(right: 8),
+                              alignment: Alignment.centerRight,
+                              child: Text(
+                                'Save',
+                                style: TextStyle(
+                                  color: SKColors.skoller_blue,
+                                  fontWeight: FontWeight.normal,
+                                  fontSize: 14,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Container(
+                    margin: EdgeInsets.fromLTRB(8, 10, 8, 2),
+                    padding: EdgeInsets.symmetric(horizontal: 6, vertical: 4),
+                    decoration: BoxDecoration(
+                      boxShadow: [UIAssets.boxShadow],
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(5),
+                      border: Border.all(color: SKColors.border_gray),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: <Widget>[
+                        Row(
+                          children: <Widget>[
+                            Container(
+                                width: 26,
+                                height: 28,
+                                margin: EdgeInsets.only(right: 6),
+                                padding: EdgeInsets.only(left: 1),
+                                alignment: Alignment.center,
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  color: SKColors.light_gray,
+                                ),
+                                child: Text(
+                                  '${comment.student.name_first[0]}${comment.student.name_last[0]}',
+                                  style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 13,
+                                      fontWeight: FontWeight.normal),
+                                )),
+                            Expanded(
+                              child: Text(
+                                '${comment.student.name_first} ${comment.student.name_last}',
+                                style: TextStyle(fontSize: 14),
+                              ),
+                            ),
+                            Text(
+                              DateUtilities.getPastRelativeString(
+                                  comment.insertedAt,
+                                  ago: false),
+                              style: TextStyle(
+                                  fontWeight: FontWeight.normal,
+                                  fontSize: 12,
+                                  color: SKColors.dark_gray),
+                            ),
+                          ],
+                        ),
+                        Padding(
+                          padding:
+                              EdgeInsets.symmetric(vertical: 3, horizontal: 6),
+                          child: Text(
+                            comment.comment ?? 'Loading...',
+                            maxLines: 3,
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(
+                                fontWeight: FontWeight.normal, fontSize: 14),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Expanded(
+                    child: Container(
+                      alignment: Alignment.topLeft,
+                      margin: EdgeInsets.all(8),
+                      child: CupertinoTextField(
+                        decoration: BoxDecoration(border: null),
+                        maxLength: 2000,
+                        maxLengthEnforced: true,
+                        autofocus: true,
+                        maxLines: null,
+                        keyboardType: TextInputType.multiline,
+                        controller: controller,
+                        placeholder: 'Reply to a comment',
+                        style: TextStyle(
+                            color: SKColors.dark_gray,
+                            fontSize: 15,
+                            fontWeight: FontWeight.normal),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+    );
+
+    final reply = controller.text.trim();
+
+    if (result != null && result && reply != '') {
+      Chat chat = Chat.currentChats[widget.chatId];
+      comment
+          .createReply(
+        chat.parentClass?.id,
+        reply,
+      )
+          .then((response) {
+        if (response.wasSuccessful()) {
+          return chat.refetch();
+        } else {
+          throw 'unsuccessful';
+        }
+      }).then((response) {
+        if (response.wasSuccessful()) {
+          setState(() {});
+        }
+      }).catchError((error) => print("ERRROR: $error"));
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     Chat chat = Chat.currentChats[widget.chatId];
@@ -189,7 +373,7 @@ class _ChatInfoViewState extends State<ChatInfoView> {
               GestureDetector(
                 behavior: HitTestBehavior.opaque,
                 onTapUp: (details) {
-                  FocusScope.of(context).requestFocus(commentFieldFocusNode);
+                  commentFieldFocusNode.requestFocus();
                 },
                 child: Padding(
                   padding: EdgeInsets.fromLTRB(4, 7, 4, 2),
@@ -226,7 +410,9 @@ class _ChatInfoViewState extends State<ChatInfoView> {
     if ((chat.comments ?? []).length == 0) {
       return [
         GestureDetector(
-          onTapUp: (details) {/*TODO do something*/},
+          onTapUp: (details) {
+            commentFieldFocusNode.requestFocus();
+          },
           child: Container(
             margin: EdgeInsets.symmetric(vertical: 12, horizontal: 80),
             height: 36,
@@ -269,6 +455,7 @@ class _ChatInfoViewState extends State<ChatInfoView> {
               });
             },
             isStarred: comment.isStarred,
+            onTappedReply: () => tappedCommentReply(comment),
             onStar: () {
               comment.toggleStar(chat.classId).then((success) {
                 if (success) {
@@ -317,6 +504,7 @@ class _ChatInfoViewState extends State<ChatInfoView> {
     VoidCallback onLiked, {
     bool isStarred,
     VoidCallback onStar,
+    VoidCallback onTappedReply,
     bool isFirstReply,
   }) {
     Widget cell = Container(
@@ -408,6 +596,9 @@ class _ChatInfoViewState extends State<ChatInfoView> {
                   ? [
                       GestureDetector(
                         behavior: HitTestBehavior.opaque,
+                        onTapUp: (details) {
+                          onTappedReply();
+                        },
                         child: Padding(
                           padding: EdgeInsets.fromLTRB(4, 7, 4, 2),
                           child: Image.asset(

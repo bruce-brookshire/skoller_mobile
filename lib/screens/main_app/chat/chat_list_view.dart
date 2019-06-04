@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:skoller/screens/main_app/chat/chat_inbox_view.dart';
 import 'package:skoller/screens/main_app/chat/chat_info_view.dart';
 import '../../../requests/requests_core.dart';
 import '../../../constants/constants.dart';
@@ -11,19 +12,147 @@ class ChatListView extends StatefulWidget {
 
 class _ChatListViewState extends State<ChatListView> {
   List<Chat> chats = [];
+  bool unreadInbox = false;
 
   @override
   void initState() {
     super.initState();
 
-    Chat.getStudentChats().then((response) {
+    Chat.getStudentChats().then(
+      (response) {
+        if (response.wasSuccessful()) {
+          setState(() => chats = response.obj);
+        }
+      },
+    );
+
+    InboxNotification.getChatInbox().then((response) {
       if (response.wasSuccessful()) {
-        setState(() => chats = response.obj);
+        final needsRead = InboxNotification.currentInbox
+            .any((inbox) => !(inbox.isRead ?? false));
+        print(needsRead);
+
+        if (needsRead) {
+          setState(() {
+            unreadInbox = true;
+          });
+        }
       }
     });
   }
 
+  void tappedCheckInbox(TapUpDetails details) async {
+    final chatId = await Navigator.push(
+      context,
+      CupertinoPageRoute(
+        fullscreenDialog: true,
+        builder: (context) => ChatInboxView(),
+      ),
+    );
+
+    if (chatId != null) {
+      await Chat.getStudentChats();
+
+      Navigator.push(
+        context,
+        CupertinoPageRoute(
+          builder: (context) => ChatInfoView(chatId),
+        ),
+      );
+    }
+  }
+
   void tappedCreatePost() async {
+    final classes = StudentClass.currentClasses.values.toList();
+
+    if (classes.length == 0) {
+      return;
+    }
+
+    classes.sort((class1, class2) {
+      return class1.name.compareTo(class2.name);
+    });
+
+    int selectedIndex = 0;
+
+    final result1 = await showCupertinoDialog(
+        context: context,
+        builder: (context) {
+          return CupertinoAlertDialog(
+            title: Column(
+              children: <Widget>[
+                Text(
+                  'Create a post',
+                  style: TextStyle(fontSize: 16),
+                ),
+                Container(
+                  padding: EdgeInsets.only(bottom: 8, top: 2),
+                  child: Text(
+                    'Select a class',
+                    style:
+                        TextStyle(fontSize: 12, fontWeight: FontWeight.normal),
+                  ),
+                ),
+              ],
+            ),
+            content: Container(
+              decoration: BoxDecoration(
+                border: Border(
+                  bottom: BorderSide(color: SKColors.border_gray),
+                  top: BorderSide(color: SKColors.border_gray),
+                ),
+              ),
+              height: 180,
+              child: CupertinoPicker.builder(
+                backgroundColor: Colors.white,
+                childCount: classes.length,
+                itemBuilder: (context, index) => Container(
+                      alignment: Alignment.center,
+                      child: Text(
+                        classes[index].name,
+                        style: TextStyle(fontSize: 15),
+                      ),
+                    ),
+                itemExtent: 32,
+                onSelectedItemChanged: (index) {
+                  selectedIndex = index;
+                },
+              ),
+            ),
+            actions: <Widget>[
+              CupertinoDialogAction(
+                child: Text(
+                  'Cancel',
+                  style: TextStyle(color: SKColors.skoller_blue, fontSize: 16),
+                ),
+                isDefaultAction: false,
+                onPressed: () {
+                  Navigator.pop(context, false);
+                },
+              ),
+              CupertinoDialogAction(
+                child: Text(
+                  'Select',
+                  style: TextStyle(
+                      color: SKColors.skoller_blue,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16),
+                ),
+                isDefaultAction: true,
+                onPressed: () {
+                  Navigator.pop(context, true);
+                },
+              )
+            ],
+          );
+        });
+
+    if (result1 == null || !result1) {
+      return;
+    }
+
+    TextEditingController controller = TextEditingController();
+
     final result = await showDialog(
       context: context,
       builder: (context) => Dialog(
@@ -105,7 +234,7 @@ class _ChatListViewState extends State<ChatListView> {
                         autofocus: true,
                         maxLines: null,
                         keyboardType: TextInputType.multiline,
-                        // controller: controller,
+                        controller: controller,
                         placeholder: 'What\'s on your mind?',
                         style: TextStyle(
                             color: SKColors.dark_gray,
@@ -119,25 +248,137 @@ class _ChatListViewState extends State<ChatListView> {
             ),
           ),
     );
+
+    String post = controller.text.trim();
+
+    if (result != null && result && post != '') {
+      classes[selectedIndex].createStudentChat(post).then((response) {
+        if (response.wasSuccessful()) {
+          return (response.obj as Chat).refetch();
+        } else {
+          throw 'Unable to create post';
+        }
+      }).then((response) {
+        if (response.wasSuccessful()) {
+          setState(() {
+            chats.insert(0, response.obj);
+          });
+        }
+      });
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    return SKNavView(
-      isBack: false,
-      title: 'Chat',
-      rightBtnImage: ImageNames.rightNavImages.plus,
-      callbackRight: tappedCreatePost,
-      children: <Widget>[
-        Expanded(
-          child: ListView.builder(
-            padding: EdgeInsets.only(top: 4),
-            itemCount: chats.length,
-            itemBuilder: buildCard,
-          ),
-        )
-      ],
+    return Scaffold(
+      backgroundColor: Colors.white,
+      body: SafeArea(
+        bottom: false,
+        child: Stack(
+          children: <Widget>[
+            Align(
+              alignment: Alignment.center,
+              child: Container(
+                margin: EdgeInsets.only(top: 44),
+                color: SKColors.background_gray,
+                child: Center(
+                  child: Column(
+                    children: [
+                      Expanded(
+                        child: ListView.builder(
+                          padding: EdgeInsets.only(top: 4),
+                          itemCount: chats.length,
+                          itemBuilder: buildCard,
+                        ),
+                      )
+                    ],
+                  ),
+                ),
+              ),
+            ),
+            Align(
+              child: Container(
+                height: 44,
+                decoration: BoxDecoration(boxShadow: [
+                  BoxShadow(
+                    color: Color(0x1C000000),
+                    offset: Offset(0, 3.5),
+                    blurRadius: 2,
+                  )
+                ], color: Colors.white),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    Container(
+                      width: 92,
+                    ),
+                    Expanded(
+                      child: Container(
+                        child: Text(
+                          'Chat',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                              fontSize: 18, fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                    ),
+                    Row(
+                      children: <Widget>[
+                        GestureDetector(
+                          behavior: HitTestBehavior.opaque,
+                          onTapUp: tappedCheckInbox,
+                          child: Container(
+                            width: 44,
+                            height: 44,
+                            child: Center(
+                              child: Image(
+                                image: AssetImage(
+                                  this.unreadInbox
+                                      ? ImageNames.chatImages.inbox_unread
+                                      : ImageNames.chatImages.inbox,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                        GestureDetector(
+                          behavior: HitTestBehavior.opaque,
+                          onTapUp: (details) {
+                            tappedCreatePost();
+                          },
+                          child: Container(
+                            padding: EdgeInsets.only(right: 4),
+                            child: Center(
+                              child: Image(
+                                image:
+                                    AssetImage(ImageNames.chatImages.compose),
+                              ),
+                            ),
+                            width: 44,
+                            height: 44,
+                          ),
+                        ),
+                      ],
+                    )
+                  ],
+                ),
+              ),
+              alignment: Alignment.topCenter,
+            ),
+          ],
+        ),
+      ),
     );
+
+    // SKNavView(
+    //   isBack: false,
+    //   title: 'Chat',
+    //   rightBtnImage: ImageNames.chatImages.compose,
+    //   callbackRight: tappedCreatePost,
+    //   children: <Widget>[
+
+    //   ],
+    // );
   }
 
   Widget buildCard(BuildContext context, int index) {
@@ -196,7 +437,8 @@ class _ChatListViewState extends State<ChatListView> {
                   ),
                 ),
                 Text(
-                  'Now',
+                  DateUtilities.getPastRelativeString(chat.postDate,
+                      ago: false),
                   style: TextStyle(
                       fontWeight: FontWeight.normal,
                       fontSize: 14,
