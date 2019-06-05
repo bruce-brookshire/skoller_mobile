@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:skoller/screens/main_app/classes/weights_info_view.dart';
 import '../../../requests/requests_core.dart';
 import '../../../constants/constants.dart';
 
@@ -12,6 +14,119 @@ class ClassInfoView extends StatefulWidget {
 }
 
 class _ClassInfoViewState extends State<ClassInfoView> {
+  void tappedGradeScale(TapUpDetails details) async {
+    StudentClass studentClass = StudentClass.currentClasses[widget.classId];
+
+    bool showGradeScale = true;
+
+    if (studentClass.gradeScale == null) {
+      final result = await showDialog(
+        context: context,
+        builder: (context) => Dialog(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: GradeScaleModalView(studentClass),
+            ),
+      );
+
+      showGradeScale = result != null && result;
+
+      if (showGradeScale) {
+        studentClass = StudentClass.currentClasses[widget.classId];
+        setState(() {});
+      }
+    }
+
+    if (showGradeScale) {
+      List<Map<String, dynamic>> scale = [];
+
+      for (final key in studentClass.gradeScale.keys) {
+        final val = studentClass.gradeScale[key];
+        scale.add({'letter': key, 'grade': val});
+      }
+
+      // scale.sort(
+      //   (elem1, elem2) =>
+      //       (elem2['grade'] as num).compareTo(elem1['grade'] as num),
+      // );
+
+      showDialog(
+        context: context,
+        builder: (context) => Dialog(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Container(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(10),
+                  color: Colors.white,
+                ),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Container(
+                      // alignment: Alignment.centerLeft,
+                      padding: EdgeInsets.fromLTRB(12, 12, 0, 8),
+                      decoration: BoxDecoration(
+                          color: SKColors.selected_gray,
+                          borderRadius: BorderRadius.only(
+                              topLeft: Radius.circular(10),
+                              topRight: Radius.circular(10))),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          GestureDetector(
+                            behavior: HitTestBehavior.opaque,
+                            onTapUp: (details) => Navigator.pop(context),
+                            child: Container(
+                              width: 36,
+                              child:
+                                  Image.asset(ImageNames.navArrowImages.down),
+                            ),
+                          ),
+                          Text(
+                            'Grade scale',
+                            style: TextStyle(fontSize: 17),
+                            textAlign: TextAlign.center,
+                          ),
+                          Container(
+                            width: 36,
+                            child:
+                                null, //Text('edit', style: TextStyle(color: SKColors.skoller_blue, fontWeight: FontWeight.normal),),
+                          ),
+                        ],
+                      ),
+                    ),
+                    ...scale
+                        .map(
+                          (elem) => Container(
+                                padding: EdgeInsets.symmetric(
+                                    horizontal: 16, vertical: 6),
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: <Widget>[
+                                    Text(elem['letter']),
+                                    Text(
+                                      '> ${elem['grade']}',
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.normal),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                        )
+                        .toList(),
+                  ],
+                ),
+              ),
+            ),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final studentClass = StudentClass.currentClasses[widget.classId];
@@ -56,7 +171,7 @@ class _ClassInfoViewState extends State<ClassInfoView> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[
-                    Text('Vanderbilt University'),
+                    Text(studentClass.classPeriod.getSchool()?.name ?? 'N/A'),
                     Text(
                       'Spring 2019',
                       style: TextStyle(
@@ -149,6 +264,14 @@ class _ClassInfoViewState extends State<ClassInfoView> {
             children: <Widget>[
               Expanded(
                 child: GestureDetector(
+                  onTapUp: (details) {
+                    Navigator.push(
+                      context,
+                      CupertinoPageRoute(
+                        builder: (context) => WeightsInfoView(studentClass.id),
+                      ),
+                    );
+                  },
                   child: Container(
                     alignment: Alignment.center,
                     height: 40,
@@ -169,6 +292,7 @@ class _ClassInfoViewState extends State<ClassInfoView> {
               ),
               Expanded(
                 child: GestureDetector(
+                  onTapUp: tappedGradeScale,
                   child: Container(
                     height: 40,
                     alignment: Alignment.center,
@@ -177,12 +301,19 @@ class _ClassInfoViewState extends State<ClassInfoView> {
                     decoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(5),
-                      border: Border.all(color: SKColors.border_gray),
+                      border: Border.all(
+                        color: studentClass.gradeScale == null
+                            ? SKColors.warning_red
+                            : SKColors.border_gray,
+                      ),
                       boxShadow: [UIAssets.boxShadow],
                     ),
                     child: Text(
                       'Grade Scale',
-                      style: TextStyle(color: SKColors.skoller_blue),
+                      style: TextStyle(
+                          color: studentClass.gradeScale == null
+                              ? SKColors.warning_red
+                              : SKColors.skoller_blue),
                     ),
                   ),
                 ),

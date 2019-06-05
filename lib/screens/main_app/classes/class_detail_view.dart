@@ -46,7 +46,7 @@ class _ClassDetailViewState extends State<ClassDetailView> {
 
     if (studentClass.gradeScale == null) {
       final result = await showGradeScalePicker();
-      if (result == null) {
+      if (result == null || !result) {
         shouldProceed = false;
       }
     }
@@ -56,21 +56,6 @@ class _ClassDetailViewState extends State<ClassDetailView> {
     }
   }
 
-  void showSpeculate() async {
-    final result = await showDialog(
-      context: context,
-      builder: (context) => Dialog(
-            child: Container(
-              decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10),
-                  border: Border.all(
-                    color: SKColors.border_gray,
-                  )),
-            ),
-          ),
-    );
-  }
-
   Future<bool> showGradeScalePicker() {
     return showDialog(
       context: context,
@@ -78,7 +63,38 @@ class _ClassDetailViewState extends State<ClassDetailView> {
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(10),
             ),
-            child: _GradeScaleModalView(studentClass),
+            child: GradeScaleModalView(studentClass),
+          ),
+    );
+  }
+
+  void showSpeculate() async {
+    final speculate = await studentClass.speculateClass().then(
+      (response) {
+        return response.obj;
+      },
+    );
+
+    if (!(speculate is List)) {
+      return;
+    }
+
+    (speculate as List).sort(
+      (elem1, elem2) =>
+          (elem2['speculation'] as num).compareTo(elem1['speculation'] as num),
+    );
+
+    int selectedIndex = 0;
+
+    final result = await showDialog(
+      context: context,
+      builder: (context) => Dialog(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.all(Radius.circular(10)),
+            ),
+            child: _SpeculateModalView(
+              speculate,
+            ),
           ),
     );
   }
@@ -472,162 +488,110 @@ class _ClassDetailViewState extends State<ClassDetailView> {
   }
 }
 
-class _GradeScaleModalView extends StatefulWidget {
-  StudentClass studentClass;
+class _SpeculateModalView extends StatefulWidget {
+  final List speculate;
 
-  _GradeScaleModalView(this.studentClass);
+  _SpeculateModalView(this.speculate);
 
   @override
-  State createState() => _GradeScaleModalViewState();
+  State createState() => _SpeculateModalViewState();
 }
 
-class _GradeScaleModalViewState extends State<_GradeScaleModalView> {
+class _SpeculateModalViewState extends State<_SpeculateModalView> {
   int selectedIndex = 0;
-
-  final scaleMapper = (List<String> scale, bool isSelected) => Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: scale
-            .map((elem) => Text(
-                  elem,
-                  style: TextStyle(
-                      color: isSelected ? Colors.white : SKColors.dark_gray),
-                ))
-            .toList(),
-      );
 
   @override
   Widget build(BuildContext context) {
-    final scales = [
-      [
-        ['A', 'B', 'C', 'D'],
-        ['90', '80', '70', '60']
-      ],
-      [
-        ['A+', 'A', 'B+', 'B', 'B-', 'C+', 'C', 'C-', 'D'],
-        ['93', '90', '87', '83', '80', '77', '73', '70', '60'],
-      ],
-      [
-        ['A+', 'A', 'B+', 'B', 'B-', 'C+', 'C', 'C-', 'D+', 'D', 'D-'],
-        ['93', '90', '87', '83', '80', '77', '73', '70', '67', '63', '60'],
-      ],
-    ];
-
-    int curIndex = 0;
-    List<Widget> containers = [];
-
-    for (final scale in scales) {
-      int curTemp = curIndex.toInt();
-
-      containers.add(
-        Expanded(
-          child: GestureDetector(
-            onTapUp: (details) {
-              if (selectedIndex != curTemp) {
-                setState(() {
-                  selectedIndex = curTemp;
-                });
-              }
-            },
-            child: Container(
-              height: 220,
-              padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-              margin: EdgeInsets.symmetric(horizontal: 8),
-              decoration: BoxDecoration(
-                border: Border.all(color: SKColors.border_gray),
-                borderRadius: BorderRadius.circular(5),
-                boxShadow: [UIAssets.boxShadow],
-                color: selectedIndex == curTemp
-                    ? SKColors.skoller_blue
-                    : Colors.white,
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: scale
-                    .map((elem) => scaleMapper(elem, selectedIndex == curTemp))
-                    .toList(),
-              ),
-            ),
-          ),
-        ),
-      );
-
-      curIndex += 1;
-    }
-
     return Container(
+      padding: EdgeInsets.only(top: 12),
       decoration: BoxDecoration(
-        color: Colors.white,
         borderRadius: BorderRadius.circular(10),
+        border: Border.all(
+          color: SKColors.border_gray,
+        ),
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Container(
-            padding: EdgeInsets.fromLTRB(8, 12, 8, 8),
-            alignment: Alignment.center,
-            decoration: BoxDecoration(
-              color: SKColors.skoller_blue,
-              borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(10),
-                topRight: Radius.circular(10),
-              ),
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: <Widget>[
-                Text(
-                  'Select grade scale',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 16,
-                  ),
-                ),
-                Text(
-                  'for entire class',
-                  style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 13,
-                      fontWeight: FontWeight.normal),
-                ),
-              ],
-            ),
+          Text(
+            'Speculate',
+            style: TextStyle(fontSize: 17),
           ),
-          Container(
-            margin: EdgeInsets.symmetric(vertical: 8),
+          Padding(
+            padding: EdgeInsets.fromLTRB(24, 8, 24, 0),
             child: Text(
-              'Select the grade scale for this class',
+              'What grade do you want to make in this class?',
               textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 14),
-            ),
-          ),
-          Container(
-            margin: EdgeInsets.fromLTRB(8, 8, 8, 16),
-            child: Row(
-              mainAxisSize: MainAxisSize.max,
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              crossAxisAlignment: CrossAxisAlignment.baseline,
-              textBaseline: TextBaseline.alphabetic,
-              children: containers,
-            ),
-          ),
-          Container(
-            alignment: Alignment.center,
-            padding: EdgeInsets.symmetric(vertical: 8),
-            margin: EdgeInsets.symmetric(horizontal: 12, vertical: 12),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(5),
-              color: SKColors.skoller_blue,
-              boxShadow: [UIAssets.boxShadow],
-            ),
-            child: Text(
-              'Select',
               style: TextStyle(
-                color: Colors.white,
+                fontSize: 14,
+                fontWeight: FontWeight.normal,
               ),
             ),
           ),
+          Container(
+            height: 140,
+            child: CupertinoPicker.builder(
+              backgroundColor: Colors.white,
+              childCount: widget.speculate.length,
+              itemBuilder: (context, index) => Container(
+                    alignment: Alignment.center,
+                    child: Text(
+                      '${widget.speculate[index]['grade']}',
+                      style: TextStyle(
+                        color: SKColors.dark_gray,
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+              itemExtent: 32,
+              onSelectedItemChanged: (index) {
+                setState(() {
+                  selectedIndex = index;
+                });
+              },
+            ),
+          ),
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 16),
+            child: Text.rich(
+              TextSpan(
+                children: [
+                  TextSpan(
+                    text: 'You need to average at least a ',
+                    style: TextStyle(fontWeight: FontWeight.normal),
+                  ),
+                  TextSpan(
+                      text:
+                          '${widget.speculate[selectedIndex]['speculation']}%'),
+                  TextSpan(
+                    text:
+                        ' on your remaining assignments to achieve the grade ',
+                    style: TextStyle(fontWeight: FontWeight.normal),
+                  ),
+                  TextSpan(
+                      text: '${widget.speculate[selectedIndex]['grade']}.'),
+                ],
+              ),
+              textAlign: TextAlign.center,
+            ),
+          ),
+          GestureDetector(
+            onTapUp: (details) => Navigator.pop(context),
+            child: Container(
+              margin: EdgeInsets.only(top: 24, left: 16, right: 16),
+              padding: EdgeInsets.symmetric(vertical: 12),
+              decoration: BoxDecoration(
+                  border: Border(top: BorderSide(color: SKColors.border_gray))),
+              alignment: Alignment.center,
+              child: Text(
+                'Dismiss',
+                style: TextStyle(
+                  color: SKColors.skoller_blue,
+                ),
+              ),
+            ),
+          )
         ],
       ),
     );

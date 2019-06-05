@@ -25,7 +25,7 @@ class StudentClass {
   List<Assignment> assignments;
   List<PublicStudent> students;
 
-  Map<String, String> gradeScale;
+  Map<String, dynamic> gradeScale;
 
   static DateTimeZoneProvider tzdb;
 
@@ -192,6 +192,26 @@ class StudentClass {
       }
       return response;
     });
+  }
+
+  Future<RequestResponse> addGradeScale(Map scale) {
+    return SKRequests.put(
+      '/classes/$id',
+      {'grade_scale': scale},
+      null,
+    ).then((response) {
+      if (response.wasSuccessful()) {
+        StudentClass.currentClasses[id].gradeScale = response.obj['grade_scale'];
+      }
+      return response;
+    });
+  }
+
+  Future<RequestResponse> speculateClass() {
+    return SKRequests.get(
+      '/students/${SKUser.current.student.id}/classes/$id/speculate',
+      null,
+    );
   }
 
   //--------------//

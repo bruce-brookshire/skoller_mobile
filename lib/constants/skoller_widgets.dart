@@ -697,3 +697,182 @@ class SKAlertDialog extends StatelessWidget {
     );
   }
 }
+
+class GradeScaleModalView extends StatefulWidget {
+  final StudentClass studentClass;
+
+  GradeScaleModalView(this.studentClass);
+
+  @override
+  State createState() => _GradeScaleModalViewState();
+}
+
+class _GradeScaleModalViewState extends State<GradeScaleModalView> {
+  int selectedIndex = 0;
+
+  final scaleMapper = (List<String> scale, bool isSelected) => Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: scale
+            .map((elem) => Text(
+                  elem,
+                  style: TextStyle(
+                      color: isSelected ? Colors.white : SKColors.dark_gray),
+                ))
+            .toList(),
+      );
+
+  @override
+  Widget build(BuildContext context) {
+    final scales = [
+      [
+        ['A', 'B', 'C', 'D'],
+        ['90', '80', '70', '60']
+      ],
+      [
+        ['A+', 'A', 'B+', 'B', 'B-', 'C+', 'C', 'C-', 'D'],
+        ['93', '90', '87', '83', '80', '77', '73', '70', '60'],
+      ],
+      [
+        ['A+', 'A', 'B+', 'B', 'B-', 'C+', 'C', 'C-', 'D+', 'D', 'D-'],
+        ['93', '90', '87', '83', '80', '77', '73', '70', '67', '63', '60'],
+      ],
+    ];
+
+    int curIndex = 0;
+    List<Widget> containers = [];
+
+    for (final scale in scales) {
+      int curTemp = curIndex.toInt();
+
+      containers.add(
+        Expanded(
+          child: GestureDetector(
+            onTapUp: (details) {
+              if (selectedIndex != curTemp) {
+                setState(() {
+                  selectedIndex = curTemp;
+                });
+              }
+            },
+            child: Container(
+              height: 220,
+              padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+              margin: EdgeInsets.symmetric(horizontal: 8),
+              decoration: BoxDecoration(
+                border: Border.all(color: SKColors.border_gray),
+                borderRadius: BorderRadius.circular(5),
+                boxShadow: [UIAssets.boxShadow],
+                color: selectedIndex == curTemp
+                    ? SKColors.skoller_blue
+                    : Colors.white,
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: scale
+                    .map((elem) => scaleMapper(elem, selectedIndex == curTemp))
+                    .toList(),
+              ),
+            ),
+          ),
+        ),
+      );
+
+      curIndex += 1;
+    }
+
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Container(
+            padding: EdgeInsets.fromLTRB(8, 12, 8, 8),
+            alignment: Alignment.center,
+            decoration: BoxDecoration(
+              color: SKColors.skoller_blue,
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(10),
+                topRight: Radius.circular(10),
+              ),
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: <Widget>[
+                Text(
+                  'Select grade scale',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 16,
+                  ),
+                ),
+                Text(
+                  'for entire class',
+                  style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 13,
+                      fontWeight: FontWeight.normal),
+                ),
+              ],
+            ),
+          ),
+          Container(
+            margin: EdgeInsets.symmetric(vertical: 8),
+            child: Text(
+              'Select the grade scale for this class',
+              textAlign: TextAlign.center,
+              style: TextStyle(fontSize: 14),
+            ),
+          ),
+          Container(
+            margin: EdgeInsets.fromLTRB(8, 8, 8, 16),
+            child: Row(
+              mainAxisSize: MainAxisSize.max,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.baseline,
+              textBaseline: TextBaseline.alphabetic,
+              children: containers,
+            ),
+          ),
+          GestureDetector(
+            onTapUp: (details) {
+              if (selectedIndex == -1) {
+                return;
+              }
+              final scale = Map.fromIterables(
+                  scales[selectedIndex][0], scales[selectedIndex][1]);
+              widget.studentClass.addGradeScale(scale).then((response) {
+                if (response.wasSuccessful()) {
+                  Navigator.pop<bool>(
+                      context, true);
+                }
+              });
+            },
+            child: Container(
+              alignment: Alignment.center,
+              padding: EdgeInsets.symmetric(vertical: 8),
+              margin: EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(5),
+                color: selectedIndex == -1
+                    ? SKColors.inactive_gray
+                    : SKColors.skoller_blue,
+                boxShadow: [UIAssets.boxShadow],
+              ),
+              child: Text(
+                'Select',
+                style: TextStyle(
+                  color: Colors.white,
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}

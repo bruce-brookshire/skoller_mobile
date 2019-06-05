@@ -3,6 +3,7 @@ library constants;
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:intl/intl.dart';
+import '../requests/requests_core.dart';
 
 part 'skoller_widgets.dart';
 part 'utilities.dart';
@@ -22,7 +23,6 @@ class SKColors {
   static final alert_orange = Color(0xFFFF6D00);
   static final warning_red = Color(0xFFFF4159);
 }
-//     ERASERPINK: '#FDBA22',
 
 class UIAssets {
   static BoxShadow boxShadow = BoxShadow(

@@ -4,8 +4,9 @@ class School {
   int id;
   List<Period> periods;
   String timezone;
+  String name;
 
-  School(this.id, this.timezone, this.periods);
+  School(this.id, this.timezone, this.periods, this.name);
 
   static Map<int, School> currentSchools = {};
 
@@ -28,6 +29,7 @@ class School {
       content['id'],
       content['timezone'],
       period_list,
+      content['name'],
     );
   }
 }

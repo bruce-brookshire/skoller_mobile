@@ -25,11 +25,16 @@ class RequestResponse<T> {
     dynamic context, {
     _DecodableConstructor<T> constructor,
   }) {
-    if (context != null && status == 200 && constructor != null) {
-      if (context is List) {
-        this.obj = JsonListMaker.convert<T>(constructor, context);
-      } else {
-        this.obj = constructor(context);
+    if (status == 200 && context != null) {
+      if (constructor != null) {
+        if (context is List) {
+          this.obj = JsonListMaker.convert<T>(constructor, context);
+        } else {
+          this.obj = constructor(context);
+        }
+      }
+      else {
+        this.obj = context;
       }
     } else {
       this.obj = null;
@@ -128,7 +133,9 @@ class SKRequests {
     _DecodableConstructor<T> constructor,
   ) {
     int statusCode = request.statusCode;
-    var content = statusCode == 200 && request.body != null ? json.decode(request.body) : null;
+    var content = statusCode == 200 && request.body != null
+        ? json.decode(request.body)
+        : null;
     return RequestResponse<T>(
       statusCode,
       content,
