@@ -127,6 +127,25 @@ class _ClassInfoViewState extends State<ClassInfoView> {
     }
   }
 
+  void tappedDropClass(TapUpDetails details) async {
+    final bool result = await showDialog(
+      context: context,
+      builder: (context) => SKAlertDialog(
+            title: 'Drop class',
+            subTitle: 'Are you sure?',
+            confirmText: 'Confirm',
+            cancelText: 'Cancel',
+          ),
+    );
+    if (result != null && result) {
+      final bool successfullyDropped =
+          await StudentClass.currentClasses[widget.classId].dropClass();
+      if (successfullyDropped) {
+        Navigator.popUntil(context, (route) => route.isFirst);
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final studentClass = StudentClass.currentClasses[widget.classId];
@@ -157,10 +176,35 @@ class _ClassInfoViewState extends State<ClassInfoView> {
                   children: <Widget>[
                     Text(
                       'Class info',
-                      style: TextStyle(fontSize: 16),
+                      style: TextStyle(fontSize: 17),
                     ),
                   ],
                 ),
+              ),
+              Container(
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    Text(
+                      'School name',
+                      style: TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.normal,
+                        color: SKColors.light_gray,
+                      ),
+                    ),
+                    Text(
+                      'School Period',
+                      style: TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.normal,
+                        color: SKColors.light_gray,
+                      ),
+                    ),
+                  ],
+                ),
+                margin: EdgeInsets.symmetric(horizontal: 8),
+                padding: EdgeInsets.only(top: 8, bottom: 2),
               ),
               Container(
                 decoration: BoxDecoration(
@@ -171,64 +215,103 @@ class _ClassInfoViewState extends State<ClassInfoView> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[
-                    Text(studentClass.classPeriod.getSchool()?.name ?? 'N/A'),
+                    Expanded(
+                      child: Text(
+                          studentClass.classPeriod.getSchool()?.name ?? 'N/A'),
+                    ),
                     Text(
-                      'Spring 2019',
-                      style: TextStyle(
-                          fontWeight: FontWeight.normal, fontSize: 14),
+                      studentClass.classPeriod.name,
+                      style: TextStyle(fontSize: 14),
                     )
                   ],
                 ),
-                margin: EdgeInsets.all(8),
-                padding: EdgeInsets.only(top: 4),
+                margin: EdgeInsets.symmetric(horizontal: 8),
+                padding: EdgeInsets.only(bottom: 8),
               ),
               Container(
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[
                     Text(
-                      studentClass.name,
+                      'Course number',
                       style: TextStyle(
-                          fontWeight: FontWeight.normal, fontSize: 15),
+                        fontSize: 12,
+                        fontWeight: FontWeight.normal,
+                        color: SKColors.light_gray,
+                      ),
+                    ),
+                    Text(
+                      'Meet time',
+                      style: TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.normal,
+                        color: SKColors.light_gray,
+                      ),
+                    ),
+                  ],
+                ),
+                margin: EdgeInsets.symmetric(horizontal: 8),
+                padding: EdgeInsets.only(top: 8, bottom: 2),
+              ),
+              Container(
+                decoration: BoxDecoration(
+                  border: Border(
+                    bottom: BorderSide(color: SKColors.selected_gray),
+                  ),
+                ),
+                margin: EdgeInsets.symmetric(horizontal: 8),
+                padding: EdgeInsets.only(bottom: 8),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    Text(
+                      studentClass.subject +
+                          ' ' +
+                          studentClass.code +
+                          '.' +
+                          studentClass.section,
+                      style: TextStyle(fontSize: 14),
                     ),
                     Text(
                       (studentClass.meetDays ?? '') +
-                          (studentClass.meetDays == null ? '' : ' ') +
+                          (studentClass.meetDays == null ||
+                                  studentClass.meetTime == null
+                              ? ''
+                              : ' @ ') +
                           (studentClass.meetTime == null
                               ? ''
                               : studentClass.meetTime.format(context)),
-                      style: TextStyle(
-                          fontWeight: FontWeight.normal, fontSize: 14),
+                      style: TextStyle(fontSize: 14),
                     )
                   ],
                 ),
-                margin: EdgeInsets.symmetric(horizontal: 8),
               ),
               Container(
-                decoration: BoxDecoration(
-                  border: Border(
-                    bottom: BorderSide(color: SKColors.selected_gray),
-                  ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    Text(
+                      'Professor name',
+                      style: TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.normal,
+                        color: SKColors.light_gray,
+                      ),
+                    ),
+                  ],
                 ),
+                margin: EdgeInsets.symmetric(horizontal: 8),
+                padding: EdgeInsets.only(top: 8, bottom: 2),
+              ),
+              Container(
                 alignment: Alignment.centerLeft,
                 child: Text(
-                  studentClass.subject +
-                      ' ' +
-                      studentClass.code +
-                      '.' +
-                      studentClass.section,
-                  style: TextStyle(fontWeight: FontWeight.normal, fontSize: 14),
+                  (studentClass.professor.first_name ?? '') +
+                      (studentClass.professor.first_name == null ? '' : ' ') +
+                      (studentClass.professor.last_name ?? ''),
                 ),
                 margin: EdgeInsets.symmetric(horizontal: 8),
-                padding: EdgeInsets.only(bottom: 12, top: 4),
-              ),
-              Container(
-                alignment: Alignment.centerLeft,
-                child: Text(studentClass.professor.first_name ??
-                    '' + studentClass.professor.last_name ??
-                    ''),
-                margin: EdgeInsets.symmetric(horizontal: 8),
-                padding: EdgeInsets.only(bottom: 12, top: 4),
+                padding: EdgeInsets.only(bottom: 12),
               ),
             ],
           ),
@@ -242,7 +325,6 @@ class _ClassInfoViewState extends State<ClassInfoView> {
             margin: EdgeInsets.symmetric(horizontal: 16, vertical: 4),
             decoration: BoxDecoration(
               color: studentClass.getColor(),
-              border: Border.all(color: SKColors.border_gray),
               borderRadius: BorderRadius.circular(5),
               boxShadow: [UIAssets.boxShadow],
             ),
@@ -276,7 +358,7 @@ class _ClassInfoViewState extends State<ClassInfoView> {
                     alignment: Alignment.center,
                     height: 40,
                     padding: EdgeInsets.symmetric(horizontal: 32),
-                    margin: EdgeInsets.only(right: 8),
+                    margin: EdgeInsets.only(right: 6),
                     decoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(5),
@@ -296,8 +378,8 @@ class _ClassInfoViewState extends State<ClassInfoView> {
                   child: Container(
                     height: 40,
                     alignment: Alignment.center,
-                    padding: EdgeInsets.symmetric(horizontal: 32),
-                    margin: EdgeInsets.only(left: 8),
+                    // padding: EdgeInsets.symmetric(horizontal: 32),
+                    margin: EdgeInsets.only(left: 6),
                     decoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(5),
@@ -308,13 +390,15 @@ class _ClassInfoViewState extends State<ClassInfoView> {
                       ),
                       boxShadow: [UIAssets.boxShadow],
                     ),
-                    child: Text(
-                      'Grade Scale',
-                      style: TextStyle(
-                          color: studentClass.gradeScale == null
-                              ? SKColors.warning_red
-                              : SKColors.skoller_blue),
-                    ),
+                    child: studentClass.gradeScale == null
+                        ? Text(
+                            'Add Grade Scale',
+                            style: TextStyle(color: SKColors.warning_red),
+                          )
+                        : Text(
+                            'Grade Scale',
+                            style: TextStyle(color: SKColors.skoller_blue),
+                          ),
                   ),
                 ),
               ),
@@ -325,23 +409,20 @@ class _ClassInfoViewState extends State<ClassInfoView> {
           flex: 1,
         ),
         GestureDetector(
-          onTapUp: (details) {
-            //Change color
-          },
+          onTapUp: tappedDropClass,
           child: Container(
-            height: 40,
+            height: 34,
             margin: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
             decoration: BoxDecoration(
-              color: null,
-              border: Border.all(color: Colors.red),
-              borderRadius: BorderRadius.circular(5),
-            ),
+                color: SKColors.warning_red,
+                borderRadius: BorderRadius.circular(5),
+                boxShadow: [UIAssets.boxShadow]),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
                 Text(
                   'Drop class',
-                  style: TextStyle(color: Colors.red),
+                  style: TextStyle(color: Colors.white),
                 ),
               ],
             ),

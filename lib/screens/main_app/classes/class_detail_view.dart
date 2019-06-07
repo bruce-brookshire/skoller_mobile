@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:skoller/screens/main_app/classes/class_link_sharing_modal.dart';
 import 'package:skoller/screens/main_app/classes/classmates_view.dart';
+import 'package:skoller/screens/main_app/classes/weights_info_view.dart';
 import '../../../constants/constants.dart';
 import '../../../requests/requests_core.dart';
 import 'assignment_info_view.dart';
@@ -244,21 +245,24 @@ class _ClassDetailViewState extends State<ClassDetailView> {
                               ),
                             ),
                           ),
-                          Container(
-                            width: 80,
-                            alignment: Alignment.center,
-                            padding: EdgeInsets.symmetric(vertical: 8),
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(5),
-                              boxShadow: [UIAssets.boxShadow],
-                              color: studentClass.getColor(),
-                            ),
-                            child: Text(
-                              '${grade}',
-                              style: TextStyle(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.normal,
-                                  fontSize: 18),
+                          SKColorPicker(
+                            callback: (newColor) {},
+                            child: Container(
+                              width: 80,
+                              alignment: Alignment.center,
+                              padding: EdgeInsets.symmetric(vertical: 8),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(5),
+                                boxShadow: [UIAssets.boxShadow],
+                                color: studentClass.getColor(),
+                              ),
+                              child: Text(
+                                '${grade}',
+                                style: TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.normal,
+                                    fontSize: 18),
+                              ),
                             ),
                           ),
                           Expanded(
@@ -267,6 +271,15 @@ class _ClassDetailViewState extends State<ClassDetailView> {
                               height: 44,
                               alignment: Alignment.center,
                               child: GestureDetector(
+                                onTapUp: (details) {
+                                  Navigator.push(
+                                    context,
+                                    CupertinoPageRoute(
+                                      builder: (context) =>
+                                          WeightsInfoView(studentClass.id),
+                                    ),
+                                  );
+                                },
                                 child: Row(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: <Widget>[

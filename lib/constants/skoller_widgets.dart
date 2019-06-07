@@ -593,7 +593,7 @@ class SKAlertDialog extends StatelessWidget {
   SKAlertDialog({
     @required this.title,
     this.subTitle,
-    @required this.child,
+    this.child,
     this.confirmText,
     this.cancelText,
   });
@@ -624,21 +624,19 @@ class SKAlertDialog extends StatelessWidget {
         ),
       );
     }
-    children.add(
-      Container(
-        child: null,
-        margin: EdgeInsets.fromLTRB(
-          16,
-          4,
-          16,
-          12,
-        ),
-        height: 1.25,
-        color: SKColors.border_gray,
-      ),
-    );
 
-    children.add(child);
+    if (child != null) {
+      children.add(
+        Container(
+          child: null,
+          margin: EdgeInsets.fromLTRB(16, 4, 16, 12),
+          height: 1.25,
+          color: SKColors.border_gray,
+        ),
+      );
+
+      children.add(child);
+    }
 
     children.add(
       Row(
@@ -847,8 +845,7 @@ class _GradeScaleModalViewState extends State<GradeScaleModalView> {
                   scales[selectedIndex][0], scales[selectedIndex][1]);
               widget.studentClass.addGradeScale(scale).then((response) {
                 if (response.wasSuccessful()) {
-                  Navigator.pop<bool>(
-                      context, true);
+                  Navigator.pop<bool>(context, true);
                 }
               });
             },
@@ -872,6 +869,95 @@ class _GradeScaleModalViewState extends State<GradeScaleModalView> {
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+typedef void StringCallback(String color);
+
+class SKColorPicker extends StatefulWidget {
+  final StringCallback callback;
+  final Widget child;
+  final List<Color> colors = [
+    Color(0xFF9B55E5),
+    Color(0xFFFF71A8),
+    Color(0xFF57B9E4),
+    Color(0xFF4CD8BD),
+    Color(0xFF4CCC58),
+    Color(0xFFF7D300),
+    Color(0xFFFFAE42),
+    Color(0xFFDD4A63),
+  ];
+
+  SKColorPicker({this.callback, this.child});
+
+  @override
+  State createState() => _SKColorPickerState();
+}
+
+class _SKColorPickerState extends State<SKColorPicker> {
+  OverlayEntry _overlayEntry;
+
+  void _tappedColorPicker(TapUpDetails details) async {
+    if (this._overlayEntry == null) {
+      this._overlayEntry = _createOverlayEntry();
+      Overlay.of(context).insert(this._overlayEntry);
+    }
+  }
+
+  OverlayEntry _createOverlayEntry() {
+    RenderBox renderBox = context.findRenderObject();
+    var size = renderBox.size;
+    var offset = renderBox.localToGlobal(Offset.zero);
+    
+    return OverlayEntry(
+      builder: (context) => GestureDetector(
+            onTapUp: (details) {
+              this._overlayEntry.remove();
+              this._overlayEntry = null;
+            },
+            child: Stack(
+              children: <Widget>[
+                Align(
+                  alignment: Alignment.center,
+                  child: Scaffold(
+                    backgroundColor: Colors.black.withOpacity(0.3),
+                  ),
+                ),
+                Positioned(
+                  top: offset.dy + size.height + 5.0,
+                  left: ((offset.dx + size.width)/2) - 144,
+                  child: Container(
+                    padding: EdgeInsets.all(4),
+                    decoration: BoxDecoration(
+                      color: SKColors.dark_gray,
+                      borderRadius: BorderRadius.circular(5),
+                    ),
+                    child: Row(
+                      children: widget.colors.map(_createColorCard).toList(),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+    );
+  }
+
+  Widget _createColorCard(Color color) => Container(
+        width: 36,
+        height: 36,
+        child: null,
+        color: color,
+      );
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTapUp: _tappedColorPicker,
+      child: Container(
+        child: widget.child,
       ),
     );
   }

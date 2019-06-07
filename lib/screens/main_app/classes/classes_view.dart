@@ -78,19 +78,29 @@ class _ClassesViewState extends State<ClassesView> {
   }
 
   @override
-  Widget build(BuildContext build) => SKNavView(
-        title: 'Classes',
-        isBack: false,
-        children: <Widget>[
-          Expanded(
-            child: ListView.builder(
-              padding: EdgeInsets.only(top: 4),
-              itemCount: classes.length,
-              itemBuilder: createClassCard,
-            ),
-          )
-        ],
-      );
+  Widget build(BuildContext build) {
+    // List <int> classesToRemove() {
+
+    // }
+    // for (final studentClass in classes) {
+    //   if (StudentClass.currentClasses[studentClass.id] == null) {
+    //     setState(() {});
+    //   }
+    // }
+    return SKNavView(
+      title: 'Classes',
+      isBack: false,
+      children: <Widget>[
+        Expanded(
+          child: ListView.builder(
+            padding: EdgeInsets.only(top: 4),
+            itemCount: classes.length,
+            itemBuilder: createClassCard,
+          ),
+        )
+      ],
+    );
+  }
 
   Widget createClassCard(BuildContext context, int index) {
     final studentClass = classes[index];
@@ -118,6 +128,7 @@ class _ClassesViewState extends State<ClassesView> {
         Navigator.push(
             context,
             CupertinoPageRoute(
+                title: 'class_detail',
                 builder: (context) =>
                     ClassDetailView(classId: studentClass.id)));
       },
@@ -273,14 +284,22 @@ class _ClassesViewState extends State<ClassesView> {
                     padding: EdgeInsets.only(bottom: 1),
                     child: Text(
                       studentClass.name,
-                      style: TextStyle(fontSize: 17, color: needsAssignments ? studentClass.getColor() : SKColors.dark_gray),
+                      style: TextStyle(
+                          fontSize: 17,
+                          color: needsAssignments
+                              ? studentClass.getColor()
+                              : SKColors.dark_gray),
                     ),
                   ),
                   Text(
                     needsAssignments
                         ? 'Add your first assignment'
                         : 'Set up this class',
-                    style: TextStyle(color: needsAssignments ? SKColors.dark_gray : SKColors.skoller_blue, fontSize: 14),
+                    style: TextStyle(
+                        color: needsAssignments
+                            ? SKColors.dark_gray
+                            : SKColors.skoller_blue,
+                        fontSize: 14),
                   )
                 ],
               ),
@@ -352,7 +371,8 @@ class _ClassesViewState extends State<ClassesView> {
                   ),
                   Text(
                     'DIY required',
-                    style: TextStyle(color: SKColors.alert_orange, fontSize: 14),
+                    style:
+                        TextStyle(color: SKColors.alert_orange, fontSize: 14),
                   )
                 ],
               ),
@@ -409,7 +429,8 @@ class _ClassesViewState extends State<ClassesView> {
               padding: EdgeInsets.only(left: 8, right: 8, bottom: 1),
               decoration: BoxDecoration(
                   border: Border(
-                      left: BorderSide(color: SKColors.text_light_gray, width: 2))),
+                      left: BorderSide(
+                          color: SKColors.text_light_gray, width: 2))),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 crossAxisAlignment: CrossAxisAlignment.start,

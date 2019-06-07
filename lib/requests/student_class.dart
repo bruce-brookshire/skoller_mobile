@@ -4,6 +4,8 @@ class StudentClass {
   int id;
   int enrollment;
 
+  bool isPoints;
+
   double grade;
   double completion;
 
@@ -64,6 +66,7 @@ class StudentClass {
     this.students,
     this.enrollmentLink,
     this.gradeScale,
+    this.isPoints,
   );
 
   School getSchool() => School.currentSchools[classPeriod.schoolId];
@@ -201,7 +204,8 @@ class StudentClass {
       null,
     ).then((response) {
       if (response.wasSuccessful()) {
-        StudentClass.currentClasses[id].gradeScale = response.obj['grade_scale'];
+        StudentClass.currentClasses[id].gradeScale =
+            response.obj['grade_scale'];
       }
       return response;
     });
@@ -212,6 +216,19 @@ class StudentClass {
       '/students/${SKUser.current.student.id}/classes/$id/speculate',
       null,
     );
+  }
+
+  Future<bool> dropClass() {
+    return SKRequests.delete(
+      '/students/${SKUser.current.student.id}/classes/$id',
+      null,
+    ).then((response) {
+      bool success = [200, 204].contains(response);
+      if (success) {
+        StudentClass.currentClasses.remove(id);
+      }
+      return success;
+    });
   }
 
   //--------------//
@@ -275,6 +292,7 @@ class StudentClass {
       ),
       content['enrollment_link'],
       content['grade_scale'],
+      content['is_points'],
     );
 
     StudentClass.currentClasses[studentClass.id] = studentClass;

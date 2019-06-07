@@ -55,9 +55,9 @@ class Period {
     return Period(
       content['id'],
       content['school_id'],
-      content['end_date'],
-      content['start_date'],
       content['name'],
+      content['start_date'],
+      content['end_date'],
     );
   }
 }

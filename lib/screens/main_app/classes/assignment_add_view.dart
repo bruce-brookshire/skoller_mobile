@@ -158,9 +158,7 @@ class _AssignmentAddViewState extends State<AssignmentAddView> {
                 )
                     .then((response) {
                   if (response.wasSuccessful()) {
-                    Navigator.popUntil(context, (route) {
-                      return route.settings.isInitialRoute;
-                    });
+                    Navigator.pop(context);
                   }
                 });
               }
