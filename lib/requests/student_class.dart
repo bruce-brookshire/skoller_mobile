@@ -102,10 +102,27 @@ class StudentClass {
         newColor = colorMap.keys.toList()[loc];
       }
 
-      _update({'color': newColor});
+      _update({'color': newColor}).then((response) {
+        if (response.wasSuccessful()) {
+          this.refetchSelf();
+        }
+      });
 
       return colorizer(newColor);
     }
+  }
+
+  Future<RequestResponse> setColor(Color color) {
+    this._color = color.value.toRadixString(16).substring(2) + 'ff';
+    StudentClass.currentClasses[id]._color = this._color;
+
+    return _update({'color': this._color}).then((response) {
+      if (response.wasSuccessful()) {
+        return this.refetchSelf();
+      } else {
+        return response;
+      }
+    });
   }
 
   Weight getWeightForId(weight_id) {
@@ -129,7 +146,7 @@ class StudentClass {
 
   Future<RequestResponse> _update(Map params) {
     return SKRequests.put(
-      '/students/${SKUser.current.student.id}/classes/',
+      '/students/${SKUser.current.student.id}/classes/${id}',
       params,
       StudentClass._fromJsonObj,
     );

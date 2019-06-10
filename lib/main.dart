@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:skoller/screens/main_app/main_view.dart';
 import 'screens/auth/auth_home.dart';
 import 'constants/constants.dart';
 import 'screens/main_app/tab_bar.dart';
@@ -77,7 +78,7 @@ class _SkollerAppState extends State<SkollerApp> {
         currentWidget = AuthHome(changeAppState);
         break;
       case AppState.mainApp:
-        currentWidget = MyHomePage(changeAppState);
+        currentWidget = MainView(changeAppState);
         break;
     }
 

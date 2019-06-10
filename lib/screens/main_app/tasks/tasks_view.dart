@@ -1,3 +1,4 @@
+import 'package:dart_notification_center/dart_notification_center.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
@@ -195,7 +196,9 @@ class _TasksViewState extends State<TasksView> {
   Widget build(BuildContext context) {
     return SKNavView(
       title: 'Tasks',
-      isBack: false,
+      callbackBack: () {
+        DartNotificationCenter.post(channel: NotificationChannels.toggleMenu);
+      },
       rightBtnImage: ImageNames.rightNavImages.plus,
       callbackRight: () {
         tappedAdd(context);

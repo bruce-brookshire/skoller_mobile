@@ -62,13 +62,13 @@ class _UpdateInfoViewState extends State<UpdateInfoView> {
         return '\'s weight category has been changed to ${(mod.data as Weight).name}';
         break;
       case ModType.due:
-        return '\'s due date has been changed to ${DateFormat('EEE. MMM dd, yyyy').format((mod.data as DateTime))}.';
+        return '\'s due date has been changed to ${DateFormat('EEEE MMMM d').format((mod.data as DateTime))}.';
         break;
       case ModType.newAssignment:
-        return ' has been added to the assignments for this class. It is due on ${DateFormat('EEE. MMM dd, yyyy').format((mod.data as Assignment).due)}.';
+        return ' has been added to the assignments for this class. It is due on ${DateFormat('EEEE MMMM d').format((mod.data as Assignment).due)}.';
         break;
       case ModType.delete:
-        return '\'s ';
+        return ' has been removed from the assignments for this class.';
         break;
     }
 
@@ -128,33 +128,25 @@ class _UpdateInfoViewState extends State<UpdateInfoView> {
                     Expanded(
                       child: GestureDetector(
                         onTapUp: (details) {
-                          // mod.acceptMod();
-                        },
-                        child: Container(
-                          padding: EdgeInsets.symmetric(vertical: 5),
-                          margin: EdgeInsets.only(left: 2, right: 5),
-                          alignment: Alignment.center,
-                          decoration: BoxDecoration(
-                            color: SKColors.skoller_blue,
-                            borderRadius: BorderRadius.circular(5),
-                          ),
-                          child: Text(
-                            'Accept change',
-                            style: TextStyle(fontSize: 13, color: Colors.white),
-                          ),
-                        ),
-                      ),
-                    ),
-                    Expanded(
-                      child: GestureDetector(
-                        onTapUp: (details) {
                           if (mod.isAccepted == null) {
-                            // mod.declineMod();
+                            mod.declineMod().then((response) {
+                              if (!response.wasSuccessful()) {
+                                //TODO show error message
+                                setState(() {
+                                  mod.isAccepted = null;
+                                });
+                              } else {
+                                //TODO alert assignment changed
+                              }
+                            });
+                            setState(() {
+                              mod.isAccepted = false;
+                            });
                           }
                         },
                         child: Container(
                           padding: EdgeInsets.symmetric(vertical: 5),
-                          margin: EdgeInsets.only(right: 2, left: 5),
+                          margin: EdgeInsets.only(left: 2, right: 5),
                           alignment: Alignment.center,
                           decoration: BoxDecoration(
                             color: mod.isAccepted == false
@@ -174,7 +166,39 @@ class _UpdateInfoViewState extends State<UpdateInfoView> {
                           ),
                         ),
                       ),
-                    )
+                    ),
+                    Expanded(
+                      child: GestureDetector(
+                        onTapUp: (details) {
+                          mod.acceptMod().then((response) {
+                            if (!response.wasSuccessful()) {
+                              //TODO show error message
+                              setState(() {
+                                mod.isAccepted = null;
+                              });
+                            } else {
+                              //TODO alert assignment changed
+                            }
+                          });
+                          setState(() {
+                            mod.isAccepted = true;
+                          });
+                        },
+                        child: Container(
+                          padding: EdgeInsets.symmetric(vertical: 5),
+                          margin: EdgeInsets.only(right: 2, left: 5),
+                          alignment: Alignment.center,
+                          decoration: BoxDecoration(
+                            color: SKColors.skoller_blue,
+                            borderRadius: BorderRadius.circular(5),
+                          ),
+                          child: Text(
+                            'Accept change',
+                            style: TextStyle(fontSize: 13, color: Colors.white),
+                          ),
+                        ),
+                      ),
+                    ),
                   ],
                 )
               : Container(

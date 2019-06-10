@@ -316,9 +316,10 @@ class _ClassInfoViewState extends State<ClassInfoView> {
             ],
           ),
         ),
-        GestureDetector(
-          onTapUp: (details) {
-            //Change color
+        SKColorPicker(
+          callback: (newColor) {
+            studentClass.setColor(newColor);
+            setState(() {});
           },
           child: Container(
             height: 40,

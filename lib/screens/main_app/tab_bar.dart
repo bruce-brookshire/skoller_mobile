@@ -7,16 +7,12 @@ import 'classes/classes_view.dart';
 import 'calendar/calendar.dart';
 import 'activity/activity_view.dart';
 
-class MyHomePage extends StatefulWidget {
-  final AppStateCallback appStateCallback;
-
-  MyHomePage(this.appStateCallback, {Key key}) : super(key: key);
-
+class SKTabBar extends StatefulWidget {
   @override
-  _MyHomePageState createState() => _MyHomePageState();
+  _SKTabBarState createState() => _SKTabBarState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
+class _SKTabBarState extends State<SKTabBar> {
   int _selectedIndex = 0;
   final _widgetOptions = [
     TasksView(),
@@ -35,57 +31,59 @@ class _MyHomePageState extends State<MyHomePage> {
   ];
 
   @override
-  Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: () async {
-        _navigatorKeys[_selectedIndex].currentState.maybePop();
-        return false;
-      },
-      child: CupertinoTabScaffold(
-        tabBuilder: (context, index) {
-          return CupertinoTabView(
-              navigatorKey: _navigatorKeys[index],
-              builder: (context) {
-                return CupertinoPageScaffold(child: _widgetOptions[index]);
-              });
+  Widget build(BuildContext context) => WillPopScope(
+        onWillPop: () async {
+          _navigatorKeys[_selectedIndex].currentState.maybePop();
+          return false;
         },
-        tabBar: CupertinoTabBar(
-          backgroundColor: Colors.white,
-          items: <BottomNavigationBarItem>[
-            BottomNavigationBarItem(
-              icon: _selectedIndex == 0
-                  ? Image.asset("image_assets/tab_bar_assets/tasks_blue.png")
-                  : Image.asset("image_assets/tab_bar_assets/tasks_gray.png"),
-            ),
-            BottomNavigationBarItem(
-              icon: _selectedIndex == 1
-                  ? Image.asset("image_assets/tab_bar_assets/calendar_blue.png")
-                  : Image.asset(
-                      "image_assets/tab_bar_assets/calendar_gray.png"),
-            ),
-            BottomNavigationBarItem(
-              icon: _selectedIndex == 2
-                  ? Image.asset("image_assets/tab_bar_assets/chat_blue.png")
-                  : Image.asset("image_assets/tab_bar_assets/chat_gray.png"),
-            ),
-            BottomNavigationBarItem(
-              icon: _selectedIndex == 3
-                  ? Image.asset("image_assets/tab_bar_assets/classes_blue.png")
-                  : Image.asset("image_assets/tab_bar_assets/classes_gray.png"),
-            ),
-            BottomNavigationBarItem(
-              icon: _selectedIndex == 4
-                  ? Image.asset("image_assets/tab_bar_assets/activity_blue.png")
-                  : Image.asset(
-                      "image_assets/tab_bar_assets/activity_gray.png"),
-            ),
-          ],
-          currentIndex: _selectedIndex,
-          onTap: _onItemTapped,
+        child: CupertinoTabScaffold(
+          tabBuilder: (context, index) {
+            return CupertinoTabView(
+                navigatorKey: _navigatorKeys[index],
+                builder: (context) {
+                  return CupertinoPageScaffold(child: _widgetOptions[index]);
+                });
+          },
+          tabBar: CupertinoTabBar(
+            backgroundColor: Colors.white,
+            items: <BottomNavigationBarItem>[
+              BottomNavigationBarItem(
+                icon: _selectedIndex == 0
+                    ? Image.asset("image_assets/tab_bar_assets/tasks_blue.png")
+                    : Image.asset("image_assets/tab_bar_assets/tasks_gray.png"),
+              ),
+              BottomNavigationBarItem(
+                icon: _selectedIndex == 1
+                    ? Image.asset(
+                        "image_assets/tab_bar_assets/calendar_blue.png")
+                    : Image.asset(
+                        "image_assets/tab_bar_assets/calendar_gray.png"),
+              ),
+              BottomNavigationBarItem(
+                icon: _selectedIndex == 2
+                    ? Image.asset("image_assets/tab_bar_assets/chat_blue.png")
+                    : Image.asset("image_assets/tab_bar_assets/chat_gray.png"),
+              ),
+              BottomNavigationBarItem(
+                icon: _selectedIndex == 3
+                    ? Image.asset(
+                        "image_assets/tab_bar_assets/classes_blue.png")
+                    : Image.asset(
+                        "image_assets/tab_bar_assets/classes_gray.png"),
+              ),
+              BottomNavigationBarItem(
+                icon: _selectedIndex == 4
+                    ? Image.asset(
+                        "image_assets/tab_bar_assets/activity_blue.png")
+                    : Image.asset(
+                        "image_assets/tab_bar_assets/activity_gray.png"),
+              ),
+            ],
+            currentIndex: _selectedIndex,
+            onTap: _onItemTapped,
+          ),
         ),
-      ),
-    );
-  }
+      );
   //Icon(Icons.school)
 
   void _onItemTapped(int index) {

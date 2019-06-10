@@ -1462,7 +1462,7 @@ class _AssignmentEditModalState extends State<_AssignmentEditModal> {
                 isPrivate,
                 selectedDate,
               ),
-              'mod_type': 'delete',
+              'mod_type': 'due_date',
             });
           }
           if (selectedWeight.id != assignment.weight_id) {
@@ -1471,7 +1471,7 @@ class _AssignmentEditModalState extends State<_AssignmentEditModal> {
                 isPrivate,
                 selectedWeight,
               ),
-              'mod_type': 'delete',
+              'mod_type': 'weight',
             });
           }
         }

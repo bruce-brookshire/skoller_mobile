@@ -1,8 +1,5 @@
 part of 'constants.dart';
 
-typedef ContextCallback(BuildContext context);
-typedef void DateCallback(DateTime date);
-
 class SKTextField extends StatelessWidget {
   final String fillText;
   final EdgeInsets margins;
@@ -118,7 +115,9 @@ class SKNavBar extends StatelessWidget {
             GestureDetector(
               behavior: HitTestBehavior.opaque,
               onTapUp: (details) {
-                if (_isBack || _isDown) Navigator.pop(context);
+                if (_callback_back != null)
+                  _callback_back();
+                else if (_isBack || _isDown) Navigator.pop(context);
               },
               child: Container(
                 padding: EdgeInsets.only(left: 4),
@@ -205,6 +204,7 @@ class SKNavView extends StatelessWidget {
       rightBtnImage: rightBtnImage,
       titleColor: titleColor,
       right_btn_callback: callbackRight,
+      back_btn_callback: callbackBack,
     );
     return Scaffold(
       backgroundColor: Colors.white,
@@ -874,10 +874,8 @@ class _GradeScaleModalViewState extends State<GradeScaleModalView> {
   }
 }
 
-typedef void StringCallback(String color);
-
 class SKColorPicker extends StatefulWidget {
-  final StringCallback callback;
+  final ColorCallback callback;
   final Widget child;
   final List<Color> colors = [
     Color(0xFF9B55E5),
@@ -910,7 +908,7 @@ class _SKColorPickerState extends State<SKColorPicker> {
     RenderBox renderBox = context.findRenderObject();
     var size = renderBox.size;
     var offset = renderBox.localToGlobal(Offset.zero);
-    
+
     return OverlayEntry(
       builder: (context) => GestureDetector(
             onTapUp: (details) {
@@ -926,15 +924,28 @@ class _SKColorPickerState extends State<SKColorPicker> {
                   ),
                 ),
                 Positioned(
-                  top: offset.dy + size.height + 5.0,
-                  left: ((offset.dx + size.width)/2) - 144,
+                  top: offset.dy + size.height - 0.5,
+                  left: (offset.dx + (size.width / 2)) - 9,
+                  child: CustomPaint(
+                    painter: _CustomArrowPainter(SKColors.dark_gray),
+                    child: Container(
+                      width: 18,
+                      height: 14,
+                    ),
+                  ),
+                ),
+                Positioned(
+                  top: offset.dy + size.height + 13.5,
+                  left: (offset.dx + (size.width / 2)) - 148,
                   child: Container(
                     padding: EdgeInsets.all(4),
                     decoration: BoxDecoration(
                       color: SKColors.dark_gray,
                       borderRadius: BorderRadius.circular(5),
+                      boxShadow: [UIAssets.boxShadow],
                     ),
                     child: Row(
+                      mainAxisSize: MainAxisSize.min,
                       children: widget.colors.map(_createColorCard).toList(),
                     ),
                   ),
@@ -945,11 +956,18 @@ class _SKColorPickerState extends State<SKColorPicker> {
     );
   }
 
-  Widget _createColorCard(Color color) => Container(
-        width: 36,
-        height: 36,
-        child: null,
-        color: color,
+  Widget _createColorCard(Color color) => GestureDetector(
+        onTapUp: (details) {
+          widget.callback(color);
+          this._overlayEntry.remove();
+          this._overlayEntry = null;
+        },
+        child: Container(
+          width: 36,
+          height: 36,
+          child: null,
+          color: color,
+        ),
       );
 
   @override
@@ -961,4 +979,38 @@ class _SKColorPickerState extends State<SKColorPicker> {
       ),
     );
   }
+}
+
+class _CustomArrowPainter extends CustomPainter {
+  final Color color;
+
+  _CustomArrowPainter(this.color);
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()
+      ..color = color
+      ..style = PaintingStyle.fill
+      ..isAntiAlias = true;
+
+    final x_vals = [0.0, size.width / 2, size.width];
+    final y_vals = [size.height, 0.0, size.height];
+
+    final point_radius = 4.0;
+
+    var path = Path();
+    path.moveTo(x_vals[0], y_vals[0]);
+    path.lineTo(x_vals[1] - point_radius, y_vals[1] + point_radius);
+    path.arcToPoint(
+      Offset(x_vals[1] + point_radius, y_vals[1] + point_radius),
+      radius: Radius.circular(point_radius + 0.5),
+    );
+    path.lineTo(x_vals[2], y_vals[2]);
+    path.close();
+
+    canvas.drawPath(path, paint);
+  }
+
+  @override
+  bool shouldRepaint(CustomPainter oldDelegate) => false;
 }

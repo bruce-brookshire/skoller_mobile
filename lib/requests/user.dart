@@ -20,14 +20,28 @@ class SKUser {
 
 class Student {
   int id;
+  int points;
+
+  bool isVerified;
+
   String nameFirst;
   String nameLast;
   String phone;
   String primaryOrganization;
-  bool isVerified;
-  int points;
   String gradYear;
+  String bio;
+  String organizations;
+  
   List<School> schools;
+
+  String get formattedPhone {
+    if (phone != null && phone.length == 10) {
+      return '(${phone.substring(0,3)}) ${phone.substring(3,6)}-${phone.substring(6,10)}';
+    }
+    else {
+      return phone;
+    }
+  }
 
   Student._fromJson(Map content) {
     final school_list =
@@ -47,6 +61,8 @@ class Student {
     points = content['points'];
     gradYear = content['grad_year'];
     schools = school_list;
+    bio = content['bio'];
+    organizations = content['organization'];
   }
 }
 

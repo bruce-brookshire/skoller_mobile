@@ -2,8 +2,6 @@ part of 'constants.dart';
 
 enum AppState { loading, failedLoading, authScreen, mainApp }
 
-typedef void AppStateCallback(AppState newValue);
-
 class DateUtilities {
   static String getFutureRelativeString(DateTime date) {
     if (date == null) {

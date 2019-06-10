@@ -246,7 +246,10 @@ class _ClassDetailViewState extends State<ClassDetailView> {
                             ),
                           ),
                           SKColorPicker(
-                            callback: (newColor) {},
+                            callback: (newColor) {
+                              studentClass.setColor(newColor);
+                              setState(() {});
+                            },
                             child: Container(
                               width: 80,
                               alignment: Alignment.center,

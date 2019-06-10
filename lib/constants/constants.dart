@@ -9,6 +9,7 @@ import '../requests/requests_core.dart';
 
 part 'skoller_widgets.dart';
 part 'utilities.dart';
+part 'typedefs.dart';
 
 class SKColors {
   static final dark_gray = Color(0xFF4A4A4A);
@@ -141,4 +142,9 @@ class _StatusImages {
 
   final diy = '${_base}/diy.png';
   final clock = '${_base}/clock.png';
+}
+
+class NotificationChannels {
+  static final toggleMenu = 'toggle-menu';
+  static final presentViewOverTabBar = 'present-view-over-tab-bar';
 }

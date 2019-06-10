@@ -8,7 +8,7 @@ class AuthHome extends StatelessWidget {
   final AppStateCallback appStateCallback;
 
   AuthHome(this.appStateCallback) {
-    Auth.logIn('bruce@skoller1.co', 'password1').then((success) {
+    Auth.logIn('bruce@skoller.co', 'password1').then((success) {
       if (success) {
         return StudentClass.getStudentClasses();
       } else {
@@ -33,7 +33,7 @@ class AuthHome extends StatelessWidget {
     //   context,
     //   MaterialPageRoute(builder: (context) => SignUp()),
     // );
-    Auth.logIn('bruce@skoller1.co', 'password1').then((onValue) {
+    Auth.logIn('bruce@skoller.co', 'password1').then((onValue) {
       if (onValue) {
         appStateCallback(AppState.mainApp);
       }
