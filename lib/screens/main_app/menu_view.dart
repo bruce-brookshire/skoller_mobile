@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:dart_notification_center/dart_notification_center.dart';
 import 'package:skoller/constants/constants.dart';
 import 'package:skoller/requests/requests_core.dart';
+import 'package:skoller/screens/main_app/menu/my_points_view.dart';
 import 'package:skoller/screens/main_app/menu/profile_link_sharing_view.dart';
 import 'package:skoller/screens/main_app/menu/profile_view.dart';
 
@@ -10,7 +11,7 @@ class MenuView extends StatelessWidget {
   final List<Widget> menuOptions = [
     {'name': 'Profile', 'view': ProfileView()},
     {'name': 'Share Skoller', 'view': ProfileLinkSharingView()},
-    {'name': 'My Points', 'view': ProfileView()},
+    {'name': 'My Points', 'view': MyPointsView()},
     {'name': 'Reminders', 'view': ProfileView()},
     {'name': 'Drop/add classes', 'view': ProfileView()},
     {'name': 'SkollerJobs', 'view': ProfileView()},
@@ -45,7 +46,7 @@ class MenuView extends StatelessWidget {
           borderRadius: BorderRadius.all(Radius.circular(20))),
       child: Container(
         decoration: BoxDecoration(
-          color: SKColors.menu_blue,
+          color: SKColors.background_gray,
           borderRadius: BorderRadius.only(
             bottomLeft: Radius.circular(20),
             bottomRight: Radius.circular(20),
