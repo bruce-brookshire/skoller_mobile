@@ -10,3 +10,5 @@ typedef void DateCallback(DateTime date);
 typedef void ColorCallback(Color color);
 
 typedef void AppStateCallback(AppState newValue);
+
+typedef void IntCallback(int index);

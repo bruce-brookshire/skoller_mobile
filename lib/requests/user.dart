@@ -31,6 +31,7 @@ class Student {
   String gradYear;
   String bio;
   String organizations;
+  String enrollmentLink;
   
   List<School> schools;
 
@@ -63,6 +64,7 @@ class Student {
     schools = school_list;
     bio = content['bio'];
     organizations = content['organization'];
+    enrollmentLink = content['enrollment_link'];
   }
 }
 

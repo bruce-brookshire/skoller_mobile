@@ -133,9 +133,7 @@ class _CalendarViewState extends State<CalendarView> {
                       ),
                     ),
                 itemExtent: 32,
-                onSelectedItemChanged: (index) {
-                  selectedIndex = index;
-                },
+                onSelectedItemChanged: (index) => selectedIndex = index,
               ),
             ),
             actions: <Widget>[

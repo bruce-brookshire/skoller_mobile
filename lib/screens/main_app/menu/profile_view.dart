@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:skoller/constants/constants.dart';
 import 'package:skoller/requests/requests_core.dart';
+import 'package:skoller/screens/main_app/menu/edit_profile_view.dart';
 
 class ProfileView extends StatefulWidget {
   @override
@@ -30,7 +31,12 @@ class _ProfileViewState extends State<ProfileView> {
                     ),
                   ),
                   GestureDetector(
-                    onTapUp: (details) => Navigator.pop(context),
+                    onTapUp: (details) => Navigator.push(
+                          context,
+                          CupertinoPageRoute(
+                            builder: (context) => EditProfileView(),
+                          ),
+                        ),
                     child: Container(
                       height: 32,
                       width: 32,
@@ -269,7 +275,8 @@ class _ProfileViewState extends State<ProfileView> {
                                       borderRadius: BorderRadius.circular(7),
                                     ),
                                     child: Text(
-                                      SKUser.current.student.formattedPhone ?? 'N/A...',
+                                      SKUser.current.student.formattedPhone ??
+                                          'N/A...',
                                       style: TextStyle(
                                           fontWeight: FontWeight.normal,
                                           fontSize: 14),

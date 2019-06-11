@@ -1014,3 +1014,118 @@ class _CustomArrowPainter extends CustomPainter {
   @override
   bool shouldRepaint(CustomPainter oldDelegate) => false;
 }
+
+class SKPickerModal extends StatefulWidget {
+  final String title;
+  final String subtitle;
+  final List<String> items;
+  final IntCallback onSelect;
+
+  SKPickerModal({
+    @required this.title,
+    this.subtitle,
+    @required this.items,
+    @required this.onSelect,
+  });
+
+  @override
+  State createState() => _SKPickerModalState();
+}
+
+class _SKPickerModalState extends State<SKPickerModal> {
+  int _selectedIndex = 0;
+
+  @override
+  Widget build(BuildContext context) {
+    List<Widget> children = [Text(widget.title)];
+
+    if (widget.subtitle != null) {
+      children.add(
+        Padding(
+          padding: EdgeInsets.fromLTRB(24, 8, 24, 0),
+          child: Text(
+            widget.subtitle,
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.normal,
+            ),
+          ),
+        ),
+      );
+    }
+
+    return Dialog(
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: Container(
+        padding: EdgeInsets.only(top: 12),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          border: Border.all(color: SKColors.border_gray),
+          borderRadius: BorderRadius.circular(10),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ...children,
+            Container(
+              height: 180,
+              margin: EdgeInsets.symmetric(horizontal: 24),
+              child: CupertinoPicker.builder(
+                backgroundColor: Colors.white,
+                childCount: widget.items.length,
+                itemBuilder: (context, index) => Container(
+                      alignment: Alignment.center,
+                      child: Text(
+                        widget.items[index],
+                        style:
+                            TextStyle(fontSize: 15, color: SKColors.dark_gray),
+                      ),
+                    ),
+                itemExtent: 32,
+                onSelectedItemChanged: (index) => this._selectedIndex = index,
+              ),
+            ),
+            Row(
+              children: <Widget>[
+                Expanded(
+                  child: GestureDetector(
+                    onTapUp: (details) => Navigator.pop(context),
+                    child: Container(
+                      alignment: Alignment.center,
+                      padding: EdgeInsets.symmetric(vertical: 12),
+                      child: Text(
+                        'Cancel',
+                        style: TextStyle(
+                            color: SKColors.skoller_blue,
+                            fontWeight: FontWeight.normal),
+                      ),
+                    ),
+                  ),
+                ),
+                Expanded(
+                  child: GestureDetector(
+                    onTapUp: (details) {
+                      Navigator.pop(context);
+                      widget.onSelect(_selectedIndex);
+                    },
+                    child: Container(
+                      alignment: Alignment.center,
+                      padding: EdgeInsets.symmetric(vertical: 12),
+                      child: Text(
+                        'Select',
+                        style: TextStyle(color: SKColors.skoller_blue),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            )
+          ],
+        ),
+      ),
+    );
+  }
+}
