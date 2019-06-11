@@ -1,3 +1,4 @@
+import 'package:dart_notification_center/dart_notification_center.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:skoller/requests/requests_core.dart';
@@ -17,10 +18,36 @@ class _EditProfileViewState extends State<EditProfileView> {
   final organizationsController =
       TextEditingController(text: SKUser.current.student.organizations);
 
+  void tappedSave(TapUpDetails details) async {
+    final firstName = firstNameController.text.trim();
+    final lastName = lastNameController.text.trim();
+    final bio = bioController.text.trim();
+    final organizations = organizationsController.text.trim();
+
+    if (firstName.length > 0 && lastName.length > 0) {
+      SKUser.current
+          .update(
+        firstName: firstName,
+        lastName: lastName,
+        bio: bio,
+        organizations: organizations,
+      )
+          .then((success) {
+        if (success) {
+          DartNotificationCenter.post(
+              channel: NotificationChannels.userChanged);
+        }
+      });
+    } else {
+      //TODO error, need to have a first and last name
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return SKNavView(
       title: 'Edit Profile',
+      //TODO save button
       children: <Widget>[
         Padding(
           padding: EdgeInsets.symmetric(vertical: 16, horizontal: 16),
@@ -58,7 +85,7 @@ class _EditProfileViewState extends State<EditProfileView> {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: <Widget>[
                   Container(
-                    margin: EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+                    margin: EdgeInsets.fromLTRB(16, 4, 0, 8),
                     padding: EdgeInsets.symmetric(vertical: 4, horizontal: 8),
                     decoration: BoxDecoration(
                       color: Colors.white,
@@ -79,6 +106,7 @@ class _EditProfileViewState extends State<EditProfileView> {
                         ),
                         CupertinoTextField(
                           padding: EdgeInsets.all(0),
+                          placeholder: 'Who are you?',
                           style: TextStyle(fontSize: 15),
                           decoration: BoxDecoration(border: null),
                           controller: firstNameController,
@@ -87,7 +115,7 @@ class _EditProfileViewState extends State<EditProfileView> {
                     ),
                   ),
                   Container(
-                    margin: EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+                    margin: EdgeInsets.fromLTRB(16, 4, 0, 4),
                     padding: EdgeInsets.symmetric(vertical: 4, horizontal: 8),
                     decoration: BoxDecoration(
                       color: Colors.white,
@@ -108,6 +136,7 @@ class _EditProfileViewState extends State<EditProfileView> {
                         ),
                         CupertinoTextField(
                           padding: EdgeInsets.all(0),
+                          placeholder: 'Who are you?',
                           style: TextStyle(fontSize: 15),
                           decoration: BoxDecoration(border: null),
                           controller: lastNameController,
@@ -144,6 +173,7 @@ class _EditProfileViewState extends State<EditProfileView> {
                 padding: EdgeInsets.all(0),
                 minLines: 4,
                 maxLines: 4,
+                placeholder: 'Tell your classmates a bit about yourself!',
                 style: TextStyle(fontSize: 15),
                 decoration: BoxDecoration(border: null),
                 controller: bioController,
@@ -175,6 +205,7 @@ class _EditProfileViewState extends State<EditProfileView> {
                 padding: EdgeInsets.all(0),
                 minLines: 4,
                 maxLines: 4,
+                placeholder: 'What organizations are you involved with?',
                 style: TextStyle(fontSize: 15),
                 decoration: BoxDecoration(border: null),
                 controller: organizationsController,
@@ -186,7 +217,46 @@ class _EditProfileViewState extends State<EditProfileView> {
         SafeArea(
           top: false,
           child: GestureDetector(
-            onTapUp: (details) => print('delete me'),
+            onTapUp: (details) {
+              showCupertinoDialog(
+                context: context,
+                builder: (context) => CupertinoActionSheet(
+                      title: Text(
+                        'Delete Account',
+                        style: TextStyle(
+                            color: SKColors.dark_gray,
+                            fontSize: 15,
+                            fontWeight: FontWeight.bold),
+                      ),
+                      message: Text(
+                        'DANGER ZONE: This action is irreversible. IF YOU DELETE YOUR ACCOUNT, YOUR DATA IS GONE FOREVER. WE CAN\'T HELP. Are you sure you want to proceed?',
+                        style: TextStyle(color: SKColors.dark_gray),
+                      ),
+                      actions: <Widget>[
+                        CupertinoActionSheetAction(
+                          isDestructiveAction: true,
+                          child: Text(
+                            'I\m sure. Delete me.',
+                            style: TextStyle(fontSize: 16),
+                          ),
+                          onPressed: () => print('hi'),
+                          //TODO delete user and local data and back to log in/sign up
+                        ),
+                        CupertinoActionSheetAction(
+                          child: Text(
+                            'Take me to safety!',
+                            style: TextStyle(
+                                fontSize: 16, color: SKColors.success),
+                          ),
+                          onPressed: () {
+                            print('safe');
+                            Navigator.pop(context);
+                          },
+                        )
+                      ],
+                    ),
+              );
+            },
             child: Text(
               'Delete account',
               style: TextStyle(

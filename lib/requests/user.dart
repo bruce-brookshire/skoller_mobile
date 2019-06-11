@@ -16,6 +16,44 @@ class SKUser {
 
     SKUser.current = this;
   }
+
+  Future<bool> delete() {
+    return SKRequests.delete('/api/v1/users/$id', null)
+        .then((response) => [200, 204].contains(response));
+  }
+
+  Future<bool> update({
+    String firstName,
+    String lastName,
+    String bio,
+    String organizations,
+  }) {
+    Map<String, String> params = {};
+
+    if (firstName != null && firstName != this.student.nameFirst)
+      params['name_first'] = firstName;
+
+    if (lastName != null && lastName != this.student.nameLast)
+      params['name_last'] = firstName;
+
+    if (bio != null && bio != this.student.bio) params['bio'] = firstName;
+
+    if (organizations != null && organizations != this.student.organizations)
+      params['organizations'] = organizations;
+
+    if (params.length == 0) {
+      return Future.value(false);
+    }
+
+    return SKRequests.put('/api/v1/users/$id', {'student': params}, null)
+        .then((response) {
+      if (response.wasSuccessful()) {
+        return Auth.logIn('bruce@skoller.co', 'password1');
+      } else {
+        return false;
+      }
+    });
+  }
 }
 
 class Student {
@@ -32,14 +70,13 @@ class Student {
   String bio;
   String organizations;
   String enrollmentLink;
-  
+
   List<School> schools;
 
   String get formattedPhone {
     if (phone != null && phone.length == 10) {
-      return '(${phone.substring(0,3)}) ${phone.substring(3,6)}-${phone.substring(6,10)}';
-    }
-    else {
+      return '(${phone.substring(0, 3)}) ${phone.substring(3, 6)}-${phone.substring(6, 10)}';
+    } else {
       return phone;
     }
   }

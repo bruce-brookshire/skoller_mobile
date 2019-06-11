@@ -147,4 +147,7 @@ class _StatusImages {
 class NotificationChannels {
   static final toggleMenu = 'toggle-menu';
   static final presentViewOverTabBar = 'present-view-over-tab-bar';
+  static final userChanged = 'user-changed';
+  static final classChanged = 'class-changed';
+  static final assignmentChanged = 'assignment-changed';
 }

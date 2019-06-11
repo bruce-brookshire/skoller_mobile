@@ -6,13 +6,14 @@ import 'package:skoller/requests/requests_core.dart';
 import 'package:skoller/screens/main_app/menu/my_points_view.dart';
 import 'package:skoller/screens/main_app/menu/profile_link_sharing_view.dart';
 import 'package:skoller/screens/main_app/menu/profile_view.dart';
+import 'package:skoller/screens/main_app/menu/reminders_view.dart';
 
 class MenuView extends StatelessWidget {
   final List<Widget> menuOptions = [
     {'name': 'Profile', 'view': ProfileView()},
     {'name': 'Share Skoller', 'view': ProfileLinkSharingView()},
     {'name': 'My Points', 'view': MyPointsView()},
-    {'name': 'Reminders', 'view': ProfileView()},
+    {'name': 'Reminders', 'view': RemindersView()},
     {'name': 'Drop/add classes', 'view': ProfileView()},
     {'name': 'SkollerJobs', 'view': ProfileView()},
     {'name': 'Send us feedback', 'view': ProfileView()},
@@ -61,13 +62,46 @@ class MenuView extends StatelessWidget {
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  Padding(
-                    padding: EdgeInsets.only(bottom: 24),
-                    child: Text(
-                      '${SKUser.current.student.nameFirst} ${SKUser.current.student.nameLast}',
-                      style: TextStyle(fontSize: 18),
-                      textAlign: TextAlign.center,
-                    ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: <Widget>[
+                      Container(
+                        alignment: Alignment.center,
+                        decoration: BoxDecoration(
+                          color: SKColors.light_gray,
+                          shape: BoxShape.circle,
+                          image: SKUser.current.avatarUrl == null
+                              ? null
+                              : DecorationImage(
+                                  fit: BoxFit.fill,
+                                  image: NetworkImage(SKUser.current.avatarUrl),
+                                ),
+                        ),
+                        margin: EdgeInsets.only(left: 12),
+                        height: 44,
+                        width: 44,
+                        child: SKUser.current.avatarUrl == null
+                            ? Text(
+                                SKUser.current.student.nameFirst[0] +
+                                    SKUser.current.student.nameLast[0],
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 22,
+                                  letterSpacing: 1,
+                                ),
+                              )
+                            : null,
+                      ),
+                      Expanded(
+                        child: Padding(
+                          padding: EdgeInsets.symmetric(vertical: 24, horizontal: 8),
+                          child: Text(
+                            '${SKUser.current.student.nameFirst} ${SKUser.current.student.nameLast}',
+                            style: TextStyle(fontSize: 18),
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                   ...menuOptions,
                   Spacer(),
