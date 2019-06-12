@@ -178,9 +178,9 @@ class _CalendarViewState extends State<CalendarView> {
   @override
   Widget build(BuildContext context) {
     return SKNavView(
-      isBack: false,
+      isPop: false,
       title: 'Calendar',
-      rightBtnImage: ImageNames.rightNavImages.plus,
+      rightBtn: Image.asset(ImageNames.rightNavImages.plus),
       callbackRight: () {
         tappedAdd(context);
       },

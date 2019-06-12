@@ -72,33 +72,27 @@ class SKButton extends StatelessWidget {
 }
 
 class SKNavBar extends StatelessWidget {
-  final String _title;
-  final Color _titleColor;
-  final bool _isBack;
-  final bool _isDown;
-  final String _rightBtnImage;
-  final VoidCallback _callback_right;
-  final VoidCallback _callback_back;
+  final bool leftIsPop;
+
+  final String title;
+
+  final Color titleColor;
+
+  final Widget leftBtn;
+  final Widget rightBtn;
+
+  final VoidCallback callbackRight;
+  final VoidCallback callbackLeft;
 
   SKNavBar(
-    String title, {
-    Key key,
-    bool backBtnEnabled,
-    bool downBtnEnabled,
-    String rightBtnImage,
-    Color titleColor,
-    VoidCallback right_btn_callback,
-    VoidCallback back_btn_callback,
-  })  : _title = title,
-        _isBack = backBtnEnabled ?? false,
-        _isDown = downBtnEnabled ?? false,
-        _rightBtnImage = rightBtnImage,
-        _titleColor = titleColor ?? SKColors.dark_gray,
-        _callback_right = right_btn_callback,
-        _callback_back = back_btn_callback,
-        super(key: key) {
-    assert(_isBack != _isDown || !_isBack);
-  }
+    this.title, {
+    this.leftIsPop = true,
+    this.rightBtn,
+    this.leftBtn,
+    this.titleColor,
+    this.callbackRight,
+    this.callbackLeft,
+  });
 
   Widget build(BuildContext context) => Container(
         height: 44,
@@ -115,49 +109,32 @@ class SKNavBar extends StatelessWidget {
             GestureDetector(
               behavior: HitTestBehavior.opaque,
               onTapUp: (details) {
-                if (_callback_back != null)
-                  _callback_back();
-                else if (_isBack || _isDown) Navigator.pop(context);
+                if (callbackLeft != null)
+                  callbackLeft();
+                else if (leftIsPop) Navigator.pop(context);
               },
               child: Container(
                 padding: EdgeInsets.only(left: 4),
-                child: (_isBack || _isDown)
-                    ? Center(
-                        child: _isBack
-                            ? Image(
-                                image:
-                                    AssetImage(ImageNames.navArrowImages.left),
-                              )
-                            : Image.asset(ImageNames.navArrowImages.down),
-                      )
-                    : null,
+                child: leftBtn != null ? Center(child: leftBtn) : null,
                 width: 44,
                 height: 44,
               ),
             ),
             Text(
-              _title,
+              title,
               style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  color: _titleColor),
+                  fontSize: 18, fontWeight: FontWeight.bold, color: titleColor),
             ),
             GestureDetector(
               behavior: HitTestBehavior.opaque,
               onTapUp: (details) {
-                if (_rightBtnImage != null && _callback_right != null) {
-                  _callback_right();
+                if (callbackRight != null) {
+                  callbackRight();
                 }
               },
               child: Container(
                 padding: EdgeInsets.only(right: 4),
-                child: (_rightBtnImage == null)
-                    ? null
-                    : Center(
-                        child: Image(
-                          image: AssetImage(_rightBtnImage),
-                        ),
-                      ),
+                child: rightBtn != null ? Center(child: rightBtn) : null,
                 width: 44,
                 height: 44,
               ),
@@ -168,14 +145,15 @@ class SKNavBar extends StatelessWidget {
 }
 
 class SKNavView extends StatelessWidget {
-  final bool isBack;
-  final bool isDown;
+  final bool isPop;
 
-  final String rightBtnImage;
   final String title;
+  
+  final Widget rightBtn;
+  final Widget leftBtn;
 
   final VoidCallback callbackRight;
-  final VoidCallback callbackBack;
+  final VoidCallback callbackLeft;
 
   final List<Widget> children;
 
@@ -183,28 +161,26 @@ class SKNavView extends StatelessWidget {
   final Color backgroundColor;
 
   SKNavView({
-    Key key,
     @required this.children,
     @required this.title,
     this.titleColor,
-    this.isBack = true,
-    this.isDown = false,
-    this.rightBtnImage,
+    this.rightBtn,
+    this.isPop = true,
+    this.leftBtn,
     this.callbackRight,
-    this.callbackBack,
-    bool downBtnEnabled,
+    this.callbackLeft,
     this.backgroundColor,
-  }) : super(key: key);
+  });
 
   Widget build(BuildContext context) {
     final navBar = SKNavBar(
       title,
-      backBtnEnabled: isBack,
-      downBtnEnabled: isDown,
-      rightBtnImage: rightBtnImage,
+      rightBtn: rightBtn,
+      leftBtn: leftBtn ?? (isPop ? Image.asset(ImageNames.navArrowImages.left) : null),
+      leftIsPop: isPop,
       titleColor: titleColor,
-      right_btn_callback: callbackRight,
-      back_btn_callback: callbackBack,
+      callbackRight: callbackRight,
+      callbackLeft: callbackLeft,
     );
     return Scaffold(
       backgroundColor: Colors.white,
@@ -924,18 +900,7 @@ class _SKColorPickerState extends State<SKColorPicker> {
                   ),
                 ),
                 Positioned(
-                  top: offset.dy + size.height - 0.5,
-                  left: (offset.dx + (size.width / 2)) - 9,
-                  child: CustomPaint(
-                    painter: _CustomArrowPainter(SKColors.dark_gray),
-                    child: Container(
-                      width: 18,
-                      height: 14,
-                    ),
-                  ),
-                ),
-                Positioned(
-                  top: offset.dy + size.height + 13.5,
+                  top: offset.dy + size.height + 13,
                   left: (offset.dx + (size.width / 2)) - 148,
                   child: Container(
                     padding: EdgeInsets.all(4),
@@ -947,6 +912,17 @@ class _SKColorPickerState extends State<SKColorPicker> {
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: widget.colors.map(_createColorCard).toList(),
+                    ),
+                  ),
+                ),
+                Positioned(
+                  top: offset.dy + size.height - 0.5,
+                  left: (offset.dx + (size.width / 2)) - 9,
+                  child: CustomPaint(
+                    painter: _CustomArrowPainter(SKColors.dark_gray),
+                    child: Container(
+                      width: 18,
+                      height: 14,
                     ),
                   ),
                 ),

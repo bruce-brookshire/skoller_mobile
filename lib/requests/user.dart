@@ -18,7 +18,7 @@ class SKUser {
   }
 
   Future<bool> delete() {
-    return SKRequests.delete('/api/v1/users/$id', null)
+    return SKRequests.delete('/users/$id', null)
         .then((response) => [200, 204].contains(response));
   }
 
@@ -28,24 +28,24 @@ class SKUser {
     String bio,
     String organizations,
   }) {
-    Map<String, String> params = {};
+    Map<String, dynamic> params = {'id': this.student.id};
 
     if (firstName != null && firstName != this.student.nameFirst)
       params['name_first'] = firstName;
 
     if (lastName != null && lastName != this.student.nameLast)
-      params['name_last'] = firstName;
+      params['name_last'] = lastName;
 
-    if (bio != null && bio != this.student.bio) params['bio'] = firstName;
+    if (bio != null && bio != this.student.bio) params['bio'] = bio;
 
     if (organizations != null && organizations != this.student.organizations)
-      params['organizations'] = organizations;
+      params['organization'] = organizations;
 
-    if (params.length == 0) {
-      return Future.value(false);
+    if (params.length == 1) {
+      return Future.value(true);
     }
 
-    return SKRequests.put('/api/v1/users/$id', {'student': params}, null)
+    return SKRequests.put('/users/$id', {'student': params}, null)
         .then((response) {
       if (response.wasSuccessful()) {
         return Auth.logIn('bruce@skoller.co', 'password1');

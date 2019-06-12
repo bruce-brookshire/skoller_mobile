@@ -18,7 +18,7 @@ class _EditProfileViewState extends State<EditProfileView> {
   final organizationsController =
       TextEditingController(text: SKUser.current.student.organizations);
 
-  void tappedSave(TapUpDetails details) async {
+  void tappedSave() async {
     final firstName = firstNameController.text.trim();
     final lastName = lastNameController.text.trim();
     final bio = bioController.text.trim();
@@ -34,8 +34,7 @@ class _EditProfileViewState extends State<EditProfileView> {
       )
           .then((success) {
         if (success) {
-          DartNotificationCenter.post(
-              channel: NotificationChannels.userChanged);
+          Navigator.pop(context);
         }
       });
     } else {
@@ -47,7 +46,12 @@ class _EditProfileViewState extends State<EditProfileView> {
   Widget build(BuildContext context) {
     return SKNavView(
       title: 'Edit Profile',
-      //TODO save button
+      rightBtn: Text(
+        'Save',
+        style: TextStyle(
+            color: SKColors.skoller_blue, fontWeight: FontWeight.normal),
+      ),
+      callbackRight: tappedSave,
       children: <Widget>[
         Padding(
           padding: EdgeInsets.symmetric(vertical: 16, horizontal: 16),

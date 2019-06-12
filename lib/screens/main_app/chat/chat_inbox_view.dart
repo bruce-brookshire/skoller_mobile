@@ -18,8 +18,7 @@ class _ChatInboxViewState extends State<ChatInboxView> {
         .toList();
     return SKNavView(
       title: 'Inbox',
-      isDown: true,
-      isBack: false,
+      leftBtn: Image.asset(ImageNames.navArrowImages.down),
       children: <Widget>[
         Expanded(
           child: ListView(

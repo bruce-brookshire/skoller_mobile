@@ -196,10 +196,10 @@ class _TasksViewState extends State<TasksView> {
   Widget build(BuildContext context) {
     return SKNavView(
       title: 'Tasks',
-      callbackBack: () {
+      callbackLeft: () {
         DartNotificationCenter.post(channel: NotificationChannels.toggleMenu);
       },
-      rightBtnImage: ImageNames.rightNavImages.plus,
+      rightBtn: Image.asset(ImageNames.rightNavImages.plus),
       callbackRight: () {
         tappedAdd(context);
       },

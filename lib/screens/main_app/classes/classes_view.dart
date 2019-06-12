@@ -89,7 +89,7 @@ class _ClassesViewState extends State<ClassesView> {
     // }
     return SKNavView(
       title: 'Classes',
-      isBack: false,
+      isPop: false,
       children: <Widget>[
         Expanded(
           child: ListView.builder(

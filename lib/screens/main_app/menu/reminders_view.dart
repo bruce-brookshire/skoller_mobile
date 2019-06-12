@@ -13,8 +13,7 @@ class _RemindersViewState extends State<RemindersView> {
   Widget build(BuildContext context) {
     return SKNavView(
       title: 'Notifications',
-      isDown: true,
-      isBack: false,
+      leftBtn: Image.asset(ImageNames.navArrowImages.down),
       children: <Widget>[
         Expanded(
           child: ListView(

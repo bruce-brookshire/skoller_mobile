@@ -221,8 +221,7 @@ class MyPointsView extends StatelessWidget {
   Widget build(BuildContext context) {
     return SKNavView(
       title: 'Skoller Points',
-      isDown: true,
-      isBack: false,
+      isPop: false,
       children: <Widget>[
         Container(
           decoration: BoxDecoration(

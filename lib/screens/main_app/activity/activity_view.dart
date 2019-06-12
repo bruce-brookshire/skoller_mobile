@@ -85,7 +85,7 @@ class _ActivityViewState extends State<ActivityView> {
   Widget build(BuildContext context) {
     return SKNavView(
       title: 'Activity',
-      isBack: false,
+      isPop: false,
       children: <Widget>[
         Expanded(
           child: ListView.builder(
