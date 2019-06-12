@@ -1,3 +1,4 @@
+import 'package:dart_notification_center/dart_notification_center.dart';
 import 'package:flutter/material.dart';
 import 'package:skoller/constants/constants.dart';
 import 'package:skoller/requests/requests_core.dart';
@@ -83,6 +84,8 @@ class _AssignmentBatchAddViewState extends State<AssignmentBatchAddView> {
     final response = await studentClass.releaseDIYLock();
 
     if (response.wasSuccessful()) {
+      DartNotificationCenter.post(
+          channel: NotificationChannels.assignmentChanged);
       Navigator.pop(context);
     } else {
       //TODO: Error message

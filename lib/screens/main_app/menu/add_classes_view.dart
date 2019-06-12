@@ -180,7 +180,7 @@ class _AddClassesViewState extends State<AddClassesView> {
             Align(
               alignment: Alignment.center,
               child: Container(
-                margin: EdgeInsets.only(top: 116),
+                margin: EdgeInsets.only(top: 128),
                 color: SKColors.background_gray,
                 child: Center(
                   child: Column(
@@ -265,7 +265,8 @@ class _AddClassesViewState extends State<AddClassesView> {
     final classCount = StudentClass.currentClasses.length;
 
     return Container(
-      height: 116,
+      height: 128,
+      padding: EdgeInsets.only(top: 12),
       decoration: BoxDecoration(
         boxShadow: [
           BoxShadow(

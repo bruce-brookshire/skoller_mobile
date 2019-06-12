@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'chat/chat_list_view.dart';
 import 'tasks/tasks_view.dart';
-import '../../constants/constants.dart';
 import 'classes/classes_view.dart';
 import 'calendar/calendar.dart';
 import 'activity/activity_view.dart';

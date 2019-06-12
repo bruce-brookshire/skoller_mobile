@@ -12,7 +12,7 @@ class AuthHome extends StatelessWidget {
       if (success) {
         return StudentClass.getStudentClasses();
       } else {
-        print('FAILURE');
+        throw 'FAILURE';
       }
     }).then((response) {
       if (response.wasSuccessful()) {

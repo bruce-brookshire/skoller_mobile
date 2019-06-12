@@ -9,6 +9,193 @@ class RemindersView extends StatefulWidget {
 }
 
 class _RemindersViewState extends State<RemindersView> {
+  void tappedTimeOnDue(TapUpDetails details) async {
+    final result = await presentTimePicker(
+        SKUser.current.student.notificationTime ??
+            TimeOfDay(hour: 9, minute: 0),
+        false);
+    //TODO save
+  }
+
+  void tappedTimeBeforeDue(TapUpDetails details) async {
+    final result = await presentTimePicker(
+        SKUser.current.student.futureNotificationTime ??
+            TimeOfDay(hour: 9, minute: 0),
+        true);
+    //TODO save
+  }
+
+  void presentTimePicker(TimeOfDay previousVal, bool upcoming) async {
+    final now = DateTime.now();
+
+    DateTime selectedDate = DateTime(
+        now.year, now.month, now.day, previousVal.hour, previousVal.minute);
+
+    return await showDialog(
+      context: context,
+      builder: (context) => Dialog(
+            backgroundColor: Colors.white,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
+              side: BorderSide(color: SKColors.border_gray),
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Padding(
+                  padding: EdgeInsets.only(top: 12, bottom: 2),
+                  child: Text(
+                    'Notification time',
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 12),
+                  child: Text(
+                    'Select the time you would like to be notified ${upcoming ? 'about upcoming assignments.' : 'of assignments on their due date.'}',
+                    textAlign: TextAlign.center,
+                    style:
+                        TextStyle(fontWeight: FontWeight.normal, fontSize: 12),
+                  ),
+                ),
+                Container(
+                  height: 180,
+                  child: CupertinoDatePicker(
+                    initialDateTime: selectedDate,
+                    onDateTimeChanged: (date) => selectedDate = date,
+                    mode: CupertinoDatePickerMode.time,
+                  ),
+                ),
+                Row(
+                  children: [
+                    Expanded(
+                      child: GestureDetector(
+                        onTapUp: (details) => Navigator.pop(context),
+                        behavior: HitTestBehavior.opaque,
+                        child: Container(
+                          alignment: Alignment.center,
+                          padding: EdgeInsets.symmetric(vertical: 12),
+                          child: Text(
+                            'Dismiss',
+                            style: TextStyle(
+                                color: SKColors.skoller_blue,
+                                fontWeight: FontWeight.normal),
+                          ),
+                        ),
+                      ),
+                    ),
+                    Expanded(
+                      child: GestureDetector(
+                        onTapUp: (details) =>
+                            Navigator.pop(context, selectedDate),
+                        behavior: HitTestBehavior.opaque,
+                        child: Container(
+                          alignment: Alignment.center,
+                          padding: EdgeInsets.symmetric(vertical: 12),
+                          child: Text(
+                            'Select',
+                            style: TextStyle(color: SKColors.skoller_blue),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                )
+              ],
+            ),
+          ),
+    );
+  }
+
+  void tappedSelectDaysOut(TapUpDetails details) async {
+    int selectedIndex = SKUser.current.student.notificationDays ?? 0;
+
+    final results = await showDialog(
+      context: context,
+      builder: (context) => Dialog(
+            backgroundColor: Colors.white,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
+              side: BorderSide(color: SKColors.border_gray),
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Padding(
+                  padding: EdgeInsets.only(top: 12, bottom: 2),
+                  child: Text(
+                    'Notification time',
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 12),
+                  child: Text(
+                    'How many days before a due date would you like to start getting reminders?',
+                    textAlign: TextAlign.center,
+                    style:
+                        TextStyle(fontWeight: FontWeight.normal, fontSize: 12),
+                  ),
+                ),
+                Container(
+                  height: 180,
+                  child: CupertinoPicker.builder(
+                    backgroundColor: Colors.white,
+                    onSelectedItemChanged: (index) => selectedIndex = index,
+                    itemExtent: 32,
+                    childCount: 7,
+                    itemBuilder: (context, index) => Container(
+                          alignment: Alignment.center,
+                          child: Text(
+                            '${index + 1} day${index == 0 ? '' : 's'} before',
+                            style: TextStyle(
+                                color: SKColors.dark_gray, fontSize: 18),
+                          ),
+                        ),
+                  ),
+                ),
+                Row(
+                  children: [
+                    Expanded(
+                      child: GestureDetector(
+                        onTapUp: (details) => Navigator.pop(context, false),
+                        behavior: HitTestBehavior.opaque,
+                        child: Container(
+                          alignment: Alignment.center,
+                          padding: EdgeInsets.symmetric(vertical: 12),
+                          child: Text(
+                            'Dismiss',
+                            style: TextStyle(
+                                color: SKColors.skoller_blue,
+                                fontWeight: FontWeight.normal),
+                          ),
+                        ),
+                      ),
+                    ),
+                    Expanded(
+                      child: GestureDetector(
+                        onTapUp: (details) => Navigator.pop(context, true),
+                        behavior: HitTestBehavior.opaque,
+                        child: Container(
+                          alignment: Alignment.center,
+                          padding: EdgeInsets.symmetric(vertical: 12),
+                          child: Text(
+                            'Select',
+                            style: TextStyle(color: SKColors.skoller_blue),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                )
+              ],
+            ),
+          ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return SKNavView(
@@ -77,11 +264,16 @@ class _RemindersViewState extends State<RemindersView> {
                                       fontWeight: FontWeight.normal,
                                       fontSize: 14),
                                 ),
-                                Text(
-                                  '9:00 AM',
-                                  style: TextStyle(
-                                      fontSize: 14,
-                                      color: SKColors.skoller_blue),
+                                GestureDetector(
+                                  onTapUp: tappedTimeOnDue,
+                                  child: Text(
+                                    (SKUser.current.student.notificationTime ??
+                                            TimeOfDay(hour: 9, minute: 0))
+                                        .format(context),
+                                    style: TextStyle(
+                                        fontSize: 14,
+                                        color: SKColors.skoller_blue),
+                                  ),
                                 )
                               ],
                             ),
@@ -101,12 +293,15 @@ class _RemindersViewState extends State<RemindersView> {
                                       fontWeight: FontWeight.normal,
                                       fontSize: 14),
                                 ),
-                                Text(
-                                  '3 days out',
-                                  style: TextStyle(
-                                      fontSize: 14,
-                                      color: SKColors.skoller_blue),
-                                )
+                                GestureDetector(
+                                  onTapUp: tappedSelectDaysOut,
+                                  child: Text(
+                                    '${SKUser.current.student.notificationDays ?? 1} day${(SKUser.current.student.notificationDays ?? 1) == 1 ? '' : 's'} out',
+                                    style: TextStyle(
+                                        fontSize: 14,
+                                        color: SKColors.skoller_blue),
+                                  ),
+                                ),
                               ],
                             ),
                           ),
@@ -121,12 +316,18 @@ class _RemindersViewState extends State<RemindersView> {
                                       fontWeight: FontWeight.normal,
                                       fontSize: 14),
                                 ),
-                                Text(
-                                  '9:00 AM',
-                                  style: TextStyle(
-                                      fontSize: 14,
-                                      color: SKColors.skoller_blue),
-                                )
+                                GestureDetector(
+                                  onTapUp: tappedTimeBeforeDue,
+                                  child: Text(
+                                    (SKUser.current.student
+                                                .futureNotificationTime ??
+                                            TimeOfDay(hour: 9, minute: 0))
+                                        .format(context),
+                                    style: TextStyle(
+                                        fontSize: 14,
+                                        color: SKColors.skoller_blue),
+                                  ),
+                                ),
                               ],
                             ),
                           ),

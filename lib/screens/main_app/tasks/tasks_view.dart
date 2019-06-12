@@ -13,7 +13,7 @@ class TasksView extends StatefulWidget {
 }
 
 class _TasksViewState extends State<TasksView> {
-  List<_TaskLikeItem> _taskItems;
+  List<_TaskLikeItem> _taskItems = [];
   int _tappedIndex;
 
   SlidableController controller = SlidableController();
@@ -32,11 +32,25 @@ class _TasksViewState extends State<TasksView> {
           .toList();
     }
     _fetchTasks();
+    DartNotificationCenter.subscribe(
+        observer: this,
+        channel: NotificationChannels.assignmentChanged,
+        onNotification: _fetchTasks);
+
+    DartNotificationCenter.subscribe(
+        observer: this,
+        channel: NotificationChannels.classChanged,
+        onNotification: _fetchTasks);
+
+    DartNotificationCenter.subscribe(
+        observer: this,
+        channel: NotificationChannels.modsChanged,
+        onNotification: _fetchTasks);
   }
 
-  void _fetchTasks() async {
-    _taskItems = [];
-
+  void _fetchTasks([dynamic options]) async {
+    print('wasNotified!!');
+    
     Future<RequestResponse> assignmentsRequest = Assignment.getTasks();
     Future<RequestResponse> modsRequest = Mod.fetchNewAssignmentMods();
 
@@ -196,6 +210,7 @@ class _TasksViewState extends State<TasksView> {
   Widget build(BuildContext context) {
     return SKNavView(
       title: 'Tasks',
+      leftBtn: SKHeaderProfilePhoto(),
       callbackLeft: () {
         DartNotificationCenter.post(channel: NotificationChannels.toggleMenu);
       },

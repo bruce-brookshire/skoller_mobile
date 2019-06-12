@@ -1,3 +1,5 @@
+import 'package:dart_notification_center/dart_notification_center.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:skoller/screens/main_app/menu/add_classes_view.dart';
@@ -20,8 +22,10 @@ class _ClassesViewState extends State<ClassesView> {
   @override
   void initState() {
     super.initState();
+    
+    sortClasses();
+    fetchClasses();
 
-    classes = sortClasses();
     cardConstructors = {
       ClassStatuses.needs_setup: this.needsSetup,
       ClassStatuses.syllabus_submitted: this.processingSyllabus,
@@ -29,20 +33,22 @@ class _ClassesViewState extends State<ClassesView> {
       ClassStatuses.class_setup: this.createCompleteCard,
       ClassStatuses.class_issue: this.createCompleteCard,
     };
+
+    DartNotificationCenter.subscribe(
+        observer: this,
+        channel: NotificationChannels.classChanged,
+        onNotification: sortClasses);
   }
 
   fetchClasses() {
     StudentClass.getStudentClasses().then((response) {
       if (response.wasSuccessful()) {
-        final classes = sortClasses();
-        setState(() {
-          this.classes = classes;
-        });
+        sortClasses();
       }
     });
   }
 
-  List<StudentClass> sortClasses() {
+  void sortClasses([dynamic options]) {
     List<StudentClass> classes = StudentClass.currentClasses.values.toList();
 
     final categorizer = (int status) {
@@ -75,14 +81,18 @@ class _ClassesViewState extends State<ClassesView> {
       }
     });
 
-    return classes;
+    setState(() {
+      this.classes = classes;
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     return SKNavView(
       title: 'Classes',
-      isPop: false,
+      leftBtn: SKHeaderProfilePhoto(),
+      callbackLeft: () =>
+          DartNotificationCenter.post(channel: NotificationChannels.toggleMenu),
       rightBtn: Image.asset(ImageNames.rightNavImages.add_class),
       callbackRight: () {
         Navigator.push(

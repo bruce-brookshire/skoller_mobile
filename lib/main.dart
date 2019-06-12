@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:skoller/screens/main_app/main_view.dart';
 import 'screens/auth/auth_home.dart';
 import 'constants/constants.dart';
-import 'screens/main_app/tab_bar.dart';
 import 'constants/timezone_manager.dart';
 
 void main() {

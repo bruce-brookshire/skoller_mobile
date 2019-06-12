@@ -1,7 +1,5 @@
 library constants;
 
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:intl/intl.dart';
@@ -163,4 +161,5 @@ class NotificationChannels {
   static final userChanged = 'user-changed';
   static final classChanged = 'class-changed';
   static final assignmentChanged = 'assignment-changed';
+  static final modsChanged = 'mods-changed';
 }

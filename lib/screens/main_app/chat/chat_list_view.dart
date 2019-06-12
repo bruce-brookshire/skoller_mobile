@@ -1,3 +1,4 @@
+import 'package:dart_notification_center/dart_notification_center.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:skoller/screens/main_app/chat/chat_inbox_view.dart';
@@ -310,7 +311,12 @@ class _ChatListViewState extends State<ChatListView> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[
                     Container(
-                      width: 92,
+                      margin: EdgeInsets.only(right: 52, left: 8),
+                      child: GestureDetector(
+                        onTapUp: (details) => DartNotificationCenter.post(
+                            channel: NotificationChannels.toggleMenu),
+                        child: SKHeaderProfilePhoto(),
+                      ),
                     ),
                     Expanded(
                       child: Container(

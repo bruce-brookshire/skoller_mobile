@@ -148,7 +148,7 @@ class SKNavView extends StatelessWidget {
   final bool isPop;
 
   final String title;
-  
+
   final Widget rightBtn;
   final Widget leftBtn;
 
@@ -176,7 +176,8 @@ class SKNavView extends StatelessWidget {
     final navBar = SKNavBar(
       title,
       rightBtn: rightBtn,
-      leftBtn: leftBtn ?? (isPop ? Image.asset(ImageNames.navArrowImages.left) : null),
+      leftBtn: leftBtn ??
+          (isPop ? Image.asset(ImageNames.navArrowImages.left) : null),
       leftIsPop: isPop,
       titleColor: titleColor,
       callbackRight: callbackRight,
@@ -1104,4 +1105,34 @@ class _SKPickerModalState extends State<SKPickerModal> {
       ),
     );
   }
+}
+
+class SKHeaderProfilePhoto extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) => Container(
+        alignment: Alignment.center,
+        decoration: BoxDecoration(
+          color: SKColors.light_gray,
+          shape: BoxShape.circle,
+          image: SKUser.current.avatarUrl == null
+              ? null
+              : DecorationImage(
+                  fit: BoxFit.fill,
+                  image: NetworkImage(SKUser.current.avatarUrl),
+                ),
+        ),
+        height: 32,
+        width: 32,
+        child: SKUser.current.avatarUrl == null
+            ? Text(
+                SKUser.current.student.nameFirst[0] +
+                    SKUser.current.student.nameLast[0],
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 22,
+                  letterSpacing: 1,
+                ),
+              )
+            : null,
+      );
 }

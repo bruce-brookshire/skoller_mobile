@@ -1,3 +1,4 @@
+import 'package:dart_notification_center/dart_notification_center.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:skoller/screens/main_app/activity/update_info_view.dart';
@@ -85,7 +86,9 @@ class _ActivityViewState extends State<ActivityView> {
   Widget build(BuildContext context) {
     return SKNavView(
       title: 'Activity',
-      isPop: false,
+      leftBtn: SKHeaderProfilePhoto(),
+      callbackLeft: () =>
+          DartNotificationCenter.post(channel: NotificationChannels.toggleMenu),
       children: <Widget>[
         Expanded(
           child: ListView.builder(

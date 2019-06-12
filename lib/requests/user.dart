@@ -59,6 +59,7 @@ class SKUser {
 class Student {
   int id;
   int points;
+  int notificationDays;
 
   bool isVerified;
 
@@ -72,6 +73,11 @@ class Student {
   String enrollmentLink;
 
   List<School> schools;
+
+  School primarySchool;
+
+  TimeOfDay notificationTime;
+  TimeOfDay futureNotificationTime;
 
   String get formattedPhone {
     if (phone != null && phone.length == 10) {
@@ -102,6 +108,29 @@ class Student {
     bio = content['bio'];
     organizations = content['organization'];
     enrollmentLink = content['enrollment_link'];
+    primarySchool = content['primarySchool'] != null
+        ? School._fromJsonObject(content['primarySchool'])
+        : null;
+
+    List tempTime = content['notification_time']
+        ?.split(':')
+        ?.map((item) => int.parse(item))
+        ?.toList();
+
+    notificationTime = tempTime != null
+        ? TimeOfDay(hour: tempTime[0], minute: tempTime[1])
+        : null;
+
+    tempTime = content['future_reminder_notification_time']
+        ?.split(':')
+        ?.map((item) => int.parse(item))
+        ?.toList();
+
+    futureNotificationTime = tempTime != null
+        ? TimeOfDay(hour: tempTime[0], minute: tempTime[1])
+        : null;
+
+    notificationDays = content['notification_days_notice'];
   }
 }
 

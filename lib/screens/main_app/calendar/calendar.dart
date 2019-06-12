@@ -1,3 +1,4 @@
+import 'package:dart_notification_center/dart_notification_center.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/rendering.dart';
@@ -178,7 +179,9 @@ class _CalendarViewState extends State<CalendarView> {
   @override
   Widget build(BuildContext context) {
     return SKNavView(
-      isPop: false,
+      leftBtn: SKHeaderProfilePhoto(),
+      callbackLeft: () =>
+          DartNotificationCenter.post(channel: NotificationChannels.toggleMenu),
       title: 'Calendar',
       rightBtn: Image.asset(ImageNames.rightNavImages.plus),
       callbackRight: () {

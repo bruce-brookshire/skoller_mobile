@@ -1,5 +1,6 @@
 import 'dart:collection';
 
+import 'package:dart_notification_center/dart_notification_center.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/widgets.dart';
@@ -224,10 +225,14 @@ class _AssignmentInfoViewState extends State<AssignmentInfoView> {
         if (modAction['mod_type'] == 'delete') {
           final result = await modAction['request'];
           if (result != null && result) {
+            DartNotificationCenter.post(
+                channel: NotificationChannels.assignmentChanged);
             Navigator.pop(context);
             return;
           }
         }
+        DartNotificationCenter.post(
+            channel: NotificationChannels.assignmentChanged);
       }
     }
 

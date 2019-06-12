@@ -36,8 +36,8 @@ class _ClassDetailViewState extends State<ClassDetailView> {
     });
   }
 
-  void tappedLink(TapUpDetails details) async {
-    final results = await showDialog(
+  void tappedLink(TapUpDetails details) {
+    showDialog(
         context: context,
         builder: (context) => ClassLinkSharingModal(widget.classId));
   }

@@ -3,7 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:dart_notification_center/dart_notification_center.dart';
 import 'package:skoller/constants/constants.dart';
 import 'package:skoller/requests/requests_core.dart';
-import 'package:skoller/screens/main_app/menu/add_classes_view.dart';
+import 'package:skoller/screens/main_app/menu/manage_classes_view.dart';
 import 'package:skoller/screens/main_app/menu/my_points_view.dart';
 import 'package:skoller/screens/main_app/menu/profile_link_sharing_view.dart';
 import 'package:skoller/screens/main_app/menu/profile_view.dart';
@@ -15,7 +15,7 @@ class MenuView extends StatelessWidget {
     {'name': 'Share Skoller', 'view': ProfileLinkSharingView()},
     {'name': 'My Points', 'view': MyPointsView()},
     {'name': 'Reminders', 'view': RemindersView()},
-    {'name': 'Drop/add classes', 'view': AddClassesView()},
+    {'name': 'Drop/add classes', 'view': ManageClassesView()},
     {'name': 'SkollerJobs', 'view': ProfileView()},
     {'name': 'Send us feedback', 'view': ProfileView()},
     {'name': 'Tutorial', 'view': ProfileView()},

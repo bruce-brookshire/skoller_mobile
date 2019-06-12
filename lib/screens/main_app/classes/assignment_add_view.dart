@@ -1,3 +1,4 @@
+import 'package:dart_notification_center/dart_notification_center.dart';
 import 'package:flutter/material.dart';
 import '../../../requests/requests_core.dart';
 import '../../../constants/constants.dart';
@@ -158,6 +159,8 @@ class _AssignmentAddViewState extends State<AssignmentAddView> {
                 )
                     .then((response) {
                   if (response.wasSuccessful()) {
+                    DartNotificationCenter.post(
+                        channel: NotificationChannels.assignmentChanged);
                     Navigator.pop(context);
                   }
                 });

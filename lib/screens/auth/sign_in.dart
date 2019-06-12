@@ -12,13 +12,12 @@ class SignIn extends StatefulWidget {
 }
 
 class _SignInState extends State<SignIn> {
-  tappedLogIn(BuildContext context) {
+  void tappedLogIn(BuildContext context) {
     Auth.logIn('bruce@skoller.co', 'password1').then((success) {
-      if (success) {
-        return StudentClass.getStudentClasses();
-      } else {
-        print('FAILURE');
+      if (!success) {
+        throw 'hm..';
       }
+      return StudentClass.getStudentClasses();
     }).then((response) {
       if (response.wasSuccessful()) {
         Navigator.pop(context);
