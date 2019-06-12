@@ -335,6 +335,94 @@ class StudentClass {
   }
 }
 
+class SchoolClass {
+  int id;
+  int enrollment;
+
+  String name;
+  String meetDays;
+  String subject;
+  String code;
+  String section;
+
+  TimeOfDay meetTime;
+
+  Professor professor;
+  Period classPeriod;
+
+  //----------------//
+  //Member functions//
+  //----------------//
+
+  SchoolClass(
+    this.id,
+    this.name,
+    this.enrollment,
+    this.meetDays,
+    this.meetTime,
+    this.subject,
+    this.code,
+    this.section,
+    this.professor,
+    this.classPeriod,
+  );
+
+  static SchoolClass _fromJsonObj(Map content) {
+    if (content == null) {
+      return null;
+    }
+
+    final String startString = content['meet_start_time'];
+    final startComponents = startString == null
+        ? null
+        : startString
+            .split(':')
+            .map((component) => int.parse(component))
+            .toList();
+    final startTime = (startString == null || startComponents.length < 2)
+        ? null
+        : TimeOfDay(hour: startComponents[0], minute: startComponents[1]);
+
+    SchoolClass schoolClass = SchoolClass(
+      content['id'],
+      content['name'],
+      content['enrollment'],
+      content['meet_days'],
+      startTime,
+      content['subject'],
+      content['code'],
+      content['section'],
+      Professor._fromJsonObj(content['professor']),
+      Period._fromJsonObj(content['class_period']),
+    );
+
+    return schoolClass;
+  }
+
+  static Future<http.Response> _activeClassSearch;
+
+  static void invalidateCurrentClassSearch() {
+    _activeClassSearch?.timeout(Duration.zero);
+  }
+
+  static Future<RequestResponse> searchSchoolClasses(
+    String searchText,
+    Period period,
+  ) async {
+    if (_activeClassSearch != null) {
+      _activeClassSearch.timeout(Duration.zero);
+      _activeClassSearch = null;
+    }
+
+    _activeClassSearch = SKRequests.rawGetRequest(
+        '/periods/${period.id}/classes?class_name=$searchText');
+
+    final request = await _activeClassSearch;
+
+    return SKRequests.futureProcessor(request, _fromJsonObj);
+  }
+}
+
 class Weight {
   int id;
   double weight;

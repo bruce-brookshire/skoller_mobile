@@ -221,7 +221,7 @@ class MyPointsView extends StatelessWidget {
   Widget build(BuildContext context) {
     return SKNavView(
       title: 'Skoller Points',
-      isPop: false,
+      leftBtn: Image.asset(ImageNames.navArrowImages.down),
       children: <Widget>[
         Container(
           decoration: BoxDecoration(
@@ -245,7 +245,7 @@ class MyPointsView extends StatelessWidget {
                   ),
                 ),
                 child: Text(
-                  'You have ${100} points',
+                  'You have ${SKUser.current.student.points} points',
                   textAlign: TextAlign.center,
                 ),
               ),
@@ -266,7 +266,7 @@ class MyPointsView extends StatelessWidget {
                       TextSpan(
                           text: ' or ',
                           style: TextStyle(fontWeight: FontWeight.normal)),
-                      TextSpan(text: ' join your classes '),
+                      TextSpan(text: 'join your classes'),
                       TextSpan(text: ' using your personal link below! '),
                     ],
                   ),

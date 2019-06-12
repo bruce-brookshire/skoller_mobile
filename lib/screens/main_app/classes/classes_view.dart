@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:skoller/screens/main_app/menu/add_classes_view.dart';
 import '../../../constants/constants.dart';
 import '../../../requests/requests_core.dart';
 import 'class_detail_view.dart';
@@ -78,18 +79,20 @@ class _ClassesViewState extends State<ClassesView> {
   }
 
   @override
-  Widget build(BuildContext build) {
-    // List <int> classesToRemove() {
-
-    // }
-    // for (final studentClass in classes) {
-    //   if (StudentClass.currentClasses[studentClass.id] == null) {
-    //     setState(() {});
-    //   }
-    // }
+  Widget build(BuildContext context) {
     return SKNavView(
       title: 'Classes',
       isPop: false,
+      rightBtn: Image.asset(ImageNames.rightNavImages.add_class),
+      callbackRight: () {
+        Navigator.push(
+          context,
+          CupertinoPageRoute(
+            builder: (context) => AddClassesView(),
+            fullscreenDialog: true,
+          ),
+        );
+      },
       children: <Widget>[
         Expanded(
           child: ListView.builder(

@@ -32,8 +32,7 @@ class RequestResponse<T> {
         } else {
           this.obj = constructor(context);
         }
-      }
-      else {
+      } else {
         this.obj = context;
       }
     } else {
@@ -80,6 +79,14 @@ class SKRequests {
 
     // Handle request and return future
     return futureProcessor<T>(request, construct);
+  }
+
+  static Future<http.Response> rawGetRequest<T>(String url) {
+    // Construct and start request
+    return http.get(
+      _baseUrl + url,
+      headers: _headers,
+    );
   }
 
   static Future<RequestResponse> post<T>(

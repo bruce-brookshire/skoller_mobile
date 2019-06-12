@@ -54,6 +54,7 @@ class ImageNames {
   static final statusImages = _StatusImages();
   static final activityImages = _ActivityImages();
   static final chatImages = _ChatImages();
+  static final sammiImages = _SammiImages();
 }
 
 class _ChatImages {
@@ -105,12 +106,24 @@ class _NavigationArrowImages {
   final right = '${_base}/right.png';
 }
 
+class _SammiImages {
+  static final _base = 'image_assets/sammi_personality_assets';
+
+  final cool = '${_base}/cool_sammi.png';
+  final shocked = '${_base}/shocked_sammi.png';
+  final wow = '${_base}/wow_sammi.png';
+  final smile = '${_base}/smile_sammi.png';
+}
+
 class _RightNavImages {
   static final _base = 'image_assets/right_button_assets';
 
   final plus = '${_base}/plus.png';
   final info = '${_base}/info.png';
   final link = '${_base}/link.png';
+  final magnifying_glass = '${_base}/magnifying_glass.png';
+  final filter_bars = '${_base}/filter_bars.png';
+  final add_class = '${_base}/add_class.png';
 }
 
 class _AssignmentInfoImages {
