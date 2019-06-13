@@ -1,3 +1,4 @@
+import 'package:dart_notification_center/dart_notification_center.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:auto_size_text/auto_size_text.dart';
@@ -27,6 +28,26 @@ class _ClassDetailViewState extends State<ClassDetailView> {
   void initState() {
     super.initState();
     studentClass = StudentClass.currentClasses[widget.classId];
+
+    fetchClass();
+
+    DartNotificationCenter.subscribe(
+        observer: this,
+        channel: NotificationChannels.assignmentChanged,
+        onNotification: fetchClass);
+
+    DartNotificationCenter.subscribe(
+        observer: this,
+        channel: NotificationChannels.modsChanged,
+        onNotification: fetchClass);
+
+    DartNotificationCenter.subscribe(
+        observer: this,
+        channel: NotificationChannels.classChanged,
+        onNotification: fetchClass);
+  }
+
+  void fetchClass([dynamic options]) {
     studentClass.refetchSelf().then((response) {
       if (response.wasSuccessful()) {
         setState(() {
@@ -61,11 +82,11 @@ class _ClassDetailViewState extends State<ClassDetailView> {
     return showDialog(
       context: context,
       builder: (context) => Dialog(
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(10),
-            ),
-            child: GradeScaleModalView(studentClass),
-          ),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10),
+        ),
+        child: GradeScaleModalView(studentClass),
+      ),
     );
   }
 
@@ -90,13 +111,13 @@ class _ClassDetailViewState extends State<ClassDetailView> {
     final result = await showDialog(
       context: context,
       builder: (context) => Dialog(
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.all(Radius.circular(10)),
-            ),
-            child: _SpeculateModalView(
-              speculate,
-            ),
-          ),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.all(Radius.circular(10)),
+        ),
+        child: _SpeculateModalView(
+          speculate,
+        ),
+      ),
     );
   }
 
@@ -550,16 +571,16 @@ class _SpeculateModalViewState extends State<_SpeculateModalView> {
               backgroundColor: Colors.white,
               childCount: widget.speculate.length,
               itemBuilder: (context, index) => Container(
-                    alignment: Alignment.center,
-                    child: Text(
-                      '${widget.speculate[index]['grade']}',
-                      style: TextStyle(
-                        color: SKColors.dark_gray,
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
+                alignment: Alignment.center,
+                child: Text(
+                  '${widget.speculate[index]['grade']}',
+                  style: TextStyle(
+                    color: SKColors.dark_gray,
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
                   ),
+                ),
+              ),
               itemExtent: 32,
               onSelectedItemChanged: (index) {
                 setState(() {

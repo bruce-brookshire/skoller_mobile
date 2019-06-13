@@ -27,6 +27,10 @@ class SKUser {
     String lastName,
     String bio,
     String organizations,
+    DateTime notificationTime,
+    DateTime futureNotificationTime,
+    int notificationDays,
+    bool isAssignmentPostNotifications,
   }) {
     Map<String, dynamic> params = {'id': this.student.id};
 
@@ -40,6 +44,27 @@ class SKUser {
 
     if (organizations != null && organizations != this.student.organizations)
       params['organization'] = organizations;
+
+    if (notificationTime != null) {
+      final formattedNotificationTime =
+          DateFormat('HH:mm:ss').format(notificationTime);
+      params['notification_time'] = formattedNotificationTime;
+    }
+
+    if (futureNotificationTime != null) {
+      final formattedFutureNotificationTime =
+          DateFormat('HH:mm:ss').format(futureNotificationTime);
+      params['future_reminder_notification_time'] =
+          formattedFutureNotificationTime;
+    }
+
+    if (notificationDays != null &&
+        notificationDays != this.student.notificationDays)
+      params['notification_days_notice'] = notificationDays;
+
+    if (isAssignmentPostNotifications != null &&
+        isAssignmentPostNotifications != this.student.isAssignPostNotifications)
+      params['is_assign_post_notifications'] = isAssignmentPostNotifications;
 
     if (params.length == 1) {
       return Future.value(true);
@@ -60,6 +85,7 @@ class Student {
   int id;
   int points;
   int notificationDays;
+  bool isAssignPostNotifications;
 
   bool isVerified;
 
@@ -108,8 +134,8 @@ class Student {
     bio = content['bio'];
     organizations = content['organization'];
     enrollmentLink = content['enrollment_link'];
-    primarySchool = content['primarySchool'] != null
-        ? School._fromJsonObject(content['primarySchool'])
+    primarySchool = content['primary_school'] != null
+        ? School._fromJsonObject(content['primary_school'])
         : null;
 
     List tempTime = content['notification_time']
@@ -131,6 +157,7 @@ class Student {
         : null;
 
     notificationDays = content['notification_days_notice'];
+    isAssignPostNotifications = content['is_assign_post_notifications'];
   }
 }
 

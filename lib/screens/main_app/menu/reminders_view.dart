@@ -14,7 +14,12 @@ class _RemindersViewState extends State<RemindersView> {
         SKUser.current.student.notificationTime ??
             TimeOfDay(hour: 9, minute: 0),
         false);
-    //TODO save
+
+    if (result != null) {
+      SKUser.current
+          .update(notificationTime: result)
+          .then((response) => setState(() {}));
+    }
   }
 
   void tappedTimeBeforeDue(TapUpDetails details) async {
@@ -22,10 +27,16 @@ class _RemindersViewState extends State<RemindersView> {
         SKUser.current.student.futureNotificationTime ??
             TimeOfDay(hour: 9, minute: 0),
         true);
-    //TODO save
+
+    if (result != null) {
+      SKUser.current
+          .update(futureNotificationTime: result)
+          .then((response) => setState(() {}));
+    }
   }
 
-  void presentTimePicker(TimeOfDay previousVal, bool upcoming) async {
+  Future<DateTime> presentTimePicker(
+      TimeOfDay previousVal, bool upcoming) async {
     final now = DateTime.now();
 
     DateTime selectedDate = DateTime(
@@ -34,166 +45,170 @@ class _RemindersViewState extends State<RemindersView> {
     return await showDialog(
       context: context,
       builder: (context) => Dialog(
-            backgroundColor: Colors.white,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(10),
-              side: BorderSide(color: SKColors.border_gray),
+        backgroundColor: Colors.white,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10),
+          side: BorderSide(color: SKColors.border_gray),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Padding(
+              padding: EdgeInsets.only(top: 12, bottom: 2),
+              child: Text(
+                'Notification time',
+                textAlign: TextAlign.center,
+              ),
             ),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.stretch,
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 12),
+              child: Text(
+                'Select the time you would like to be notified ${upcoming ? 'about upcoming assignments.' : 'of assignments on their due date.'}',
+                textAlign: TextAlign.center,
+                style: TextStyle(fontWeight: FontWeight.normal, fontSize: 12),
+              ),
+            ),
+            Container(
+              height: 180,
+              child: CupertinoDatePicker(
+                initialDateTime: selectedDate,
+                onDateTimeChanged: (date) => selectedDate = date,
+                mode: CupertinoDatePickerMode.time,
+              ),
+            ),
+            Row(
               children: [
-                Padding(
-                  padding: EdgeInsets.only(top: 12, bottom: 2),
-                  child: Text(
-                    'Notification time',
-                    textAlign: TextAlign.center,
-                  ),
-                ),
-                Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 12),
-                  child: Text(
-                    'Select the time you would like to be notified ${upcoming ? 'about upcoming assignments.' : 'of assignments on their due date.'}',
-                    textAlign: TextAlign.center,
-                    style:
-                        TextStyle(fontWeight: FontWeight.normal, fontSize: 12),
-                  ),
-                ),
-                Container(
-                  height: 180,
-                  child: CupertinoDatePicker(
-                    initialDateTime: selectedDate,
-                    onDateTimeChanged: (date) => selectedDate = date,
-                    mode: CupertinoDatePickerMode.time,
-                  ),
-                ),
-                Row(
-                  children: [
-                    Expanded(
-                      child: GestureDetector(
-                        onTapUp: (details) => Navigator.pop(context),
-                        behavior: HitTestBehavior.opaque,
-                        child: Container(
-                          alignment: Alignment.center,
-                          padding: EdgeInsets.symmetric(vertical: 12),
-                          child: Text(
-                            'Dismiss',
-                            style: TextStyle(
-                                color: SKColors.skoller_blue,
-                                fontWeight: FontWeight.normal),
-                          ),
-                        ),
+                Expanded(
+                  child: GestureDetector(
+                    onTapUp: (details) => Navigator.pop(context),
+                    behavior: HitTestBehavior.opaque,
+                    child: Container(
+                      alignment: Alignment.center,
+                      padding: EdgeInsets.symmetric(vertical: 12),
+                      child: Text(
+                        'Dismiss',
+                        style: TextStyle(
+                            color: SKColors.skoller_blue,
+                            fontWeight: FontWeight.normal),
                       ),
                     ),
-                    Expanded(
-                      child: GestureDetector(
-                        onTapUp: (details) =>
-                            Navigator.pop(context, selectedDate),
-                        behavior: HitTestBehavior.opaque,
-                        child: Container(
-                          alignment: Alignment.center,
-                          padding: EdgeInsets.symmetric(vertical: 12),
-                          child: Text(
-                            'Select',
-                            style: TextStyle(color: SKColors.skoller_blue),
-                          ),
-                        ),
+                  ),
+                ),
+                Expanded(
+                  child: GestureDetector(
+                    onTapUp: (details) => Navigator.pop(context, selectedDate),
+                    behavior: HitTestBehavior.opaque,
+                    child: Container(
+                      alignment: Alignment.center,
+                      padding: EdgeInsets.symmetric(vertical: 12),
+                      child: Text(
+                        'Select',
+                        style: TextStyle(color: SKColors.skoller_blue),
                       ),
                     ),
-                  ],
-                )
+                  ),
+                ),
               ],
-            ),
-          ),
+            )
+          ],
+        ),
+      ),
     );
   }
 
   void tappedSelectDaysOut(TapUpDetails details) async {
     int selectedIndex = SKUser.current.student.notificationDays ?? 0;
 
-    final results = await showDialog(
+    final result = await showDialog(
       context: context,
       builder: (context) => Dialog(
-            backgroundColor: Colors.white,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(10),
-              side: BorderSide(color: SKColors.border_gray),
+        backgroundColor: Colors.white,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10),
+          side: BorderSide(color: SKColors.border_gray),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Padding(
+              padding: EdgeInsets.only(top: 12, bottom: 2),
+              child: Text(
+                'Notification time',
+                textAlign: TextAlign.center,
+              ),
             ),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.stretch,
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 12),
+              child: Text(
+                'How many days before a due date would you like to start getting reminders?',
+                textAlign: TextAlign.center,
+                style: TextStyle(fontWeight: FontWeight.normal, fontSize: 12),
+              ),
+            ),
+            Container(
+              height: 180,
+              child: CupertinoPicker.builder(
+                backgroundColor: Colors.white,
+                onSelectedItemChanged: (index) => selectedIndex = index,
+                itemExtent: 32,
+                childCount: 8,
+                itemBuilder: (context, index) => Container(
+                  alignment: Alignment.center,
+                  child: Text(
+                    index == 0
+                        ? 'Day of only'
+                        : '${index} day${index == 1 ? '' : 's'} before',
+                    style: TextStyle(color: SKColors.dark_gray, fontSize: 18),
+                  ),
+                ),
+              ),
+            ),
+            Row(
               children: [
-                Padding(
-                  padding: EdgeInsets.only(top: 12, bottom: 2),
-                  child: Text(
-                    'Notification time',
-                    textAlign: TextAlign.center,
-                  ),
-                ),
-                Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 12),
-                  child: Text(
-                    'How many days before a due date would you like to start getting reminders?',
-                    textAlign: TextAlign.center,
-                    style:
-                        TextStyle(fontWeight: FontWeight.normal, fontSize: 12),
-                  ),
-                ),
-                Container(
-                  height: 180,
-                  child: CupertinoPicker.builder(
-                    backgroundColor: Colors.white,
-                    onSelectedItemChanged: (index) => selectedIndex = index,
-                    itemExtent: 32,
-                    childCount: 7,
-                    itemBuilder: (context, index) => Container(
-                          alignment: Alignment.center,
-                          child: Text(
-                            '${index + 1} day${index == 0 ? '' : 's'} before',
-                            style: TextStyle(
-                                color: SKColors.dark_gray, fontSize: 18),
-                          ),
-                        ),
-                  ),
-                ),
-                Row(
-                  children: [
-                    Expanded(
-                      child: GestureDetector(
-                        onTapUp: (details) => Navigator.pop(context, false),
-                        behavior: HitTestBehavior.opaque,
-                        child: Container(
-                          alignment: Alignment.center,
-                          padding: EdgeInsets.symmetric(vertical: 12),
-                          child: Text(
-                            'Dismiss',
-                            style: TextStyle(
-                                color: SKColors.skoller_blue,
-                                fontWeight: FontWeight.normal),
-                          ),
-                        ),
+                Expanded(
+                  child: GestureDetector(
+                    onTapUp: (details) => Navigator.pop(context, false),
+                    behavior: HitTestBehavior.opaque,
+                    child: Container(
+                      alignment: Alignment.center,
+                      padding: EdgeInsets.symmetric(vertical: 12),
+                      child: Text(
+                        'Dismiss',
+                        style: TextStyle(
+                            color: SKColors.skoller_blue,
+                            fontWeight: FontWeight.normal),
                       ),
                     ),
-                    Expanded(
-                      child: GestureDetector(
-                        onTapUp: (details) => Navigator.pop(context, true),
-                        behavior: HitTestBehavior.opaque,
-                        child: Container(
-                          alignment: Alignment.center,
-                          padding: EdgeInsets.symmetric(vertical: 12),
-                          child: Text(
-                            'Select',
-                            style: TextStyle(color: SKColors.skoller_blue),
-                          ),
-                        ),
+                  ),
+                ),
+                Expanded(
+                  child: GestureDetector(
+                    onTapUp: (details) => Navigator.pop(context, true),
+                    behavior: HitTestBehavior.opaque,
+                    child: Container(
+                      alignment: Alignment.center,
+                      padding: EdgeInsets.symmetric(vertical: 12),
+                      child: Text(
+                        'Select',
+                        style: TextStyle(color: SKColors.skoller_blue),
                       ),
                     ),
-                  ],
-                )
+                  ),
+                ),
               ],
-            ),
-          ),
+            )
+          ],
+        ),
+      ),
     );
+
+    if (result != null && result is bool) {
+      SKUser.current
+          .update(notificationDays: selectedIndex)
+          .then((response) => setState(() {}));
+    }
   }
 
   @override
@@ -204,6 +219,7 @@ class _RemindersViewState extends State<RemindersView> {
       children: <Widget>[
         Expanded(
           child: ListView(
+            padding: EdgeInsets.only(bottom: 16),
             children: [
               Container(
                 decoration: BoxDecoration(
@@ -388,10 +404,17 @@ class _RemindersViewState extends State<RemindersView> {
                                 fontWeight: FontWeight.normal, fontSize: 14),
                           ),
                           CupertinoSwitch(
-                            value: true,
+                            value: SKUser
+                                .current.student.isAssignPostNotifications,
                             activeColor: SKColors.skoller_blue,
                             onChanged: (newVal) {
-                              //TODO save new state
+                              SKUser.current
+                                  .update(isAssignmentPostNotifications: newVal)
+                                  .then((response) => setState(() {}));
+                              setState(() {
+                                SKUser.current.student
+                                    .isAssignPostNotifications = newVal;
+                              });
                             },
                           )
                         ],
@@ -442,28 +465,40 @@ class _RemindersViewState extends State<RemindersView> {
                     ...StudentClass.currentClasses.values
                         .map(
                           (studentClass) => Padding(
-                                padding: EdgeInsets.symmetric(
-                                    horizontal: 12, vertical: 6),
-                                child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Text(
-                                      studentClass.name,
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.normal,
-                                          fontSize: 14),
-                                    ),
-                                    CupertinoSwitch(
-                                      value: true,
-                                      activeColor: SKColors.skoller_blue,
-                                      onChanged: (newVal) {
-                                        //TODO save new state
-                                      },
-                                    )
-                                  ],
+                            padding: EdgeInsets.symmetric(
+                                horizontal: 12, vertical: 6),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  studentClass.name,
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.normal,
+                                      fontSize: 14),
                                 ),
-                              ),
+                                CupertinoSwitch(
+                                  value: studentClass.isNotifications,
+                                  activeColor: SKColors.skoller_blue,
+                                  onChanged: (newVal) {
+                                    studentClass
+                                        .toggleIsNotifications()
+                                        .then((success) {
+                                      if (!success)
+                                        setState(
+                                          () =>
+                                              StudentClass
+                                                      .currentClasses[
+                                                          studentClass.id]
+                                                      .isNotifications =
+                                                  !studentClass.isNotifications,
+                                        );
+                                    });
+                                    setState(() {});
+                                  },
+                                )
+                              ],
+                            ),
+                          ),
                         )
                         .toList()
                   ],

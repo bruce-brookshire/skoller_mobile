@@ -220,7 +220,8 @@ class _TasksViewState extends State<TasksView> {
       },
       children: <Widget>[
         Expanded(
-          child: ListView.builder(
+          child: 
+          ListView.builder(
             padding: EdgeInsets.only(top: 4),
             itemBuilder: (context, index) => _taskItems[index].isMod
                 ? buildModCell(context, index)
@@ -314,7 +315,7 @@ class _TasksViewState extends State<TasksView> {
                 Text(
                   task.weight_id == null
                       ? 'Not graded'
-                      : NumberUtilities.formatWeightAsPercent(task.weight),
+                      : task.weight == null ? '' : NumberUtilities.formatWeightAsPercent(task.weight),
                   style: TextStyle(fontSize: 14, fontWeight: FontWeight.normal),
                 ),
               ],
@@ -322,30 +323,6 @@ class _TasksViewState extends State<TasksView> {
           ],
         ),
       ),
-      //   secondaryActions: <Widget>[
-      //     SlideAction(
-      //       onTap: () {
-      //         task.toggleComplete();
-      //       },
-      //       child: Container(
-      //         color: SKColors.skoller_blue,
-      //         child: Center(
-      //           child:
-      //               Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
-      //             Container(
-      //               padding: EdgeInsets.only(bottom: 4),
-      //               child: Text('Done',
-      //                   style: TextStyle(
-      //                     color: Colors.white,
-      //                   )),
-      //             ),
-      //             Image.asset(ImageNames.activityImages.add_white),
-      //           ]),
-      //         ),
-      //       ),
-      //     ),
-      //   ],
-      // ),
     );
   }
 

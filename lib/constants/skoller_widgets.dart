@@ -888,48 +888,48 @@ class _SKColorPickerState extends State<SKColorPicker> {
 
     return OverlayEntry(
       builder: (context) => GestureDetector(
-            onTapUp: (details) {
-              this._overlayEntry.remove();
-              this._overlayEntry = null;
-            },
-            child: Stack(
-              children: <Widget>[
-                Align(
-                  alignment: Alignment.center,
-                  child: Scaffold(
-                    backgroundColor: Colors.black.withOpacity(0.3),
-                  ),
-                ),
-                Positioned(
-                  top: offset.dy + size.height + 13,
-                  left: (offset.dx + (size.width / 2)) - 148,
-                  child: Container(
-                    padding: EdgeInsets.all(4),
-                    decoration: BoxDecoration(
-                      color: SKColors.dark_gray,
-                      borderRadius: BorderRadius.circular(5),
-                      boxShadow: [UIAssets.boxShadow],
-                    ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: widget.colors.map(_createColorCard).toList(),
-                    ),
-                  ),
-                ),
-                Positioned(
-                  top: offset.dy + size.height - 0.5,
-                  left: (offset.dx + (size.width / 2)) - 9,
-                  child: CustomPaint(
-                    painter: _CustomArrowPainter(SKColors.dark_gray),
-                    child: Container(
-                      width: 18,
-                      height: 14,
-                    ),
-                  ),
-                ),
-              ],
+        onTapUp: (details) {
+          this._overlayEntry.remove();
+          this._overlayEntry = null;
+        },
+        child: Stack(
+          children: <Widget>[
+            Align(
+              alignment: Alignment.center,
+              child: Scaffold(
+                backgroundColor: Colors.black.withOpacity(0.3),
+              ),
             ),
-          ),
+            Positioned(
+              top: offset.dy + size.height + 13,
+              left: (offset.dx + (size.width / 2)) - 148,
+              child: Container(
+                padding: EdgeInsets.all(4),
+                decoration: BoxDecoration(
+                  color: SKColors.dark_gray,
+                  borderRadius: BorderRadius.circular(5),
+                  boxShadow: [UIAssets.boxShadow],
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: widget.colors.map(_createColorCard).toList(),
+                ),
+              ),
+            ),
+            Positioned(
+              top: offset.dy + size.height - 0.5,
+              left: (offset.dx + (size.width / 2)) - 9,
+              child: CustomPaint(
+                painter: _CustomArrowPainter(SKColors.dark_gray),
+                child: Container(
+                  width: 18,
+                  height: 14,
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 
@@ -1054,13 +1054,12 @@ class _SKPickerModalState extends State<SKPickerModal> {
                 backgroundColor: Colors.white,
                 childCount: widget.items.length,
                 itemBuilder: (context, index) => Container(
-                      alignment: Alignment.center,
-                      child: Text(
-                        widget.items[index],
-                        style:
-                            TextStyle(fontSize: 15, color: SKColors.dark_gray),
-                      ),
-                    ),
+                  alignment: Alignment.center,
+                  child: Text(
+                    widget.items[index],
+                    style: TextStyle(fontSize: 15, color: SKColors.dark_gray),
+                  ),
+                ),
                 itemExtent: 32,
                 onSelectedItemChanged: (index) => this._selectedIndex = index,
               ),
@@ -1121,18 +1120,141 @@ class SKHeaderProfilePhoto extends StatelessWidget {
                   image: NetworkImage(SKUser.current.avatarUrl),
                 ),
         ),
-        height: 32,
-        width: 32,
+        height: 30,
+        width: 30,
         child: SKUser.current.avatarUrl == null
             ? Text(
                 SKUser.current.student.nameFirst[0] +
                     SKUser.current.student.nameLast[0],
                 style: TextStyle(
                   color: Colors.white,
-                  fontSize: 22,
-                  letterSpacing: 1,
+                  fontSize: 16,
+                  fontWeight: FontWeight.normal,
+                  letterSpacing: -0.25,
                 ),
               )
             : null,
       );
+}
+
+enum SammiPersonality { cool, smile, wow, ooo }
+
+class SammiSpeechBubble extends StatelessWidget {
+  final SammiPersonality sammiPersonality;
+  final Widget speechBubbleContents;
+
+  SammiSpeechBubble(
+      {@required this.sammiPersonality, @required this.speechBubbleContents});
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: 16),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: <Widget>[
+          _sammiImageBuilder(),
+          Expanded(
+            child: Padding(
+              padding: EdgeInsets.only(left: 2, top: 6),
+              child: Stack(
+                alignment: Alignment.centerLeft,
+                children: <Widget>[
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: Container(
+                      margin: EdgeInsets.only(left: 13),
+                      padding: EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(10),
+                        border: Border.all(color: SKColors.border_gray),
+                        boxShadow: [UIAssets.boxShadow],
+                      ),
+                      child: Row(
+                        children: <Widget>[
+                          Expanded(child: speechBubbleContents)
+                        ],
+                      ),
+                    ),
+                  ),
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: CustomPaint(
+                      painter: _SammiArrowPainter(),
+                      child: Container(
+                        width: 14,
+                        height: 16,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Image _sammiImageBuilder() {
+    switch (sammiPersonality) {
+      case SammiPersonality.cool:
+        return Image.asset(ImageNames.sammiImages.cool);
+      case SammiPersonality.smile:
+        return Image.asset(ImageNames.sammiImages.smile);
+      case SammiPersonality.wow:
+        return Image.asset(ImageNames.sammiImages.wow);
+      case SammiPersonality.ooo:
+        return Image.asset(ImageNames.sammiImages.shocked);
+    }
+  }
+}
+
+class _SammiArrowPainter extends CustomPainter {
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()
+      ..color = Colors.white
+      ..style = PaintingStyle.fill
+      ..isAntiAlias = true;
+
+    final paint2 = Paint()
+      ..color = SKColors.border_gray
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 1
+      ..isAntiAlias = true;
+
+    final x_vals = [size.width, 0.0, size.width];
+    final y_vals = [0.0, size.height / 2, size.height];
+
+    final point_radius = 2.0;
+
+    var path = Path();
+    path.moveTo(x_vals[0], y_vals[0]);
+    path.lineTo(x_vals[1] + point_radius, y_vals[1] - point_radius);
+    path.arcToPoint(
+      Offset(x_vals[1] + point_radius, y_vals[1] + point_radius),
+      radius: Radius.circular(point_radius + 0.5),
+      clockwise: false,
+    );
+    path.lineTo(x_vals[2], y_vals[2]);
+    path.close();
+
+    var outline = Path();
+    outline.moveTo(x_vals[0], y_vals[0]);
+    outline.lineTo(x_vals[1] + point_radius, y_vals[1] - point_radius);
+    outline.arcToPoint(
+      Offset(x_vals[1] + point_radius, y_vals[1] + point_radius),
+      radius: Radius.circular(point_radius + 0.5),
+      clockwise: false,
+    );
+    outline.lineTo(x_vals[2], y_vals[2]);
+
+    canvas.drawPath(path, paint);
+    canvas.drawPath(outline, paint2);
+  }
+
+  @override
+  bool shouldRepaint(CustomPainter oldDelegate) => false;
 }

@@ -182,7 +182,7 @@ class _ProfileLinkSharingViewState extends State<ProfileLinkSharingView> {
                 ],
               ),
               Padding(
-                padding: EdgeInsets.symmetric(vertical: 24),
+                padding: EdgeInsets.symmetric(vertical: 12),
                 child: Text(
                   'Grow YOUR community',
                   style: TextStyle(fontSize: 18),

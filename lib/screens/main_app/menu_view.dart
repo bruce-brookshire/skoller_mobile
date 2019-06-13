@@ -87,8 +87,8 @@ class MenuView extends StatelessWidget {
                                     SKUser.current.student.nameLast[0],
                                 style: TextStyle(
                                   color: Colors.white,
-                                  fontSize: 22,
-                                  letterSpacing: 1,
+                                  fontSize: 21,
+                                  letterSpacing: -0.25,
                                 ),
                               )
                             : null,

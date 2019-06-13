@@ -5,6 +5,7 @@ class StudentClass {
   int enrollment;
 
   bool isPoints;
+  bool isNotifications;
 
   double grade;
   double completion;
@@ -67,6 +68,7 @@ class StudentClass {
     this.enrollmentLink,
     this.gradeScale,
     this.isPoints,
+    this.isNotifications,
   );
 
   School getSchool() => School.currentSchools[classPeriod.schoolId];
@@ -149,7 +151,13 @@ class StudentClass {
       '/students/${SKUser.current.student.id}/classes/${id}',
       params,
       StudentClass._fromJsonObj,
-    );
+    ).then((response) {
+      if (response.wasSuccessful()) {
+        return refetchSelf();
+      } else {
+        return response;
+      }
+    });
   }
 
   /**
@@ -248,6 +256,13 @@ class StudentClass {
     });
   }
 
+  Future<bool> toggleIsNotifications() {
+    this.isNotifications = !this.isNotifications;
+
+    return _update({'is_notifications': this.isNotifications})
+        .then((response) => response.wasSuccessful());
+  }
+
   //--------------//
   //Static Members//
   //--------------//
@@ -310,6 +325,7 @@ class StudentClass {
       content['enrollment_link'],
       content['grade_scale'],
       content['is_points'],
+      content['is_notifications'],
     );
 
     StudentClass.currentClasses[studentClass.id] = studentClass;

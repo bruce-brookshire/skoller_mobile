@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:skoller/requests/requests_core.dart';
 import 'package:skoller/constants/constants.dart';
+import 'package:skoller/screens/main_app/menu/create_class_modal.dart';
 
 class AddClassesView extends StatefulWidget {
   @override
@@ -12,7 +13,35 @@ class AddClassesView extends StatefulWidget {
 
 class _AddClassesViewState extends State<AddClassesView> {
   List<SchoolClass> searchedClasses = [];
+
   Timer _currentTimer;
+
+  Period activePeriod;
+
+  @override
+  void initState() {
+    super.initState();
+
+    List<Period> periods = ((SKUser.current.student.primarySchool.periods ?? [])
+      ..sort((p1, p2) {
+        if (p1.startDate == null && p2.startDate == null) {
+          return p1.name.compareTo(p2.name);
+        } else if (p1.startDate == null) {
+          return 1;
+        } else if (p2.startDate == null) {
+          return -1;
+        } else {
+          return p1.startDate.compareTo(p2.startDate);
+        }
+      }));
+
+    for (final Period period in periods) {
+      if (period.periodStatusId == 200 && period.isMainPeriod) {
+        activePeriod = period;
+        break;
+      }
+    }
+  }
 
   void didTypeInSearch(String searchText) {
     if (_currentTimer != null) {
@@ -36,7 +65,7 @@ class _AddClassesViewState extends State<AddClassesView> {
       () {
         SchoolClass.searchSchoolClasses(
           searchText,
-          Period.currentPeriods.values.first,
+          activePeriod,
         ).then((response) {
           _currentTimer = null;
 
@@ -59,114 +88,114 @@ class _AddClassesViewState extends State<AddClassesView> {
     await showDialog(
       context: context,
       builder: (context) => Dialog(
-            backgroundColor: Colors.white,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(10),
-              side: BorderSide(color: SKColors.border_gray),
-            ),
-            child: Padding(
-              padding: EdgeInsets.all(12),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
+        backgroundColor: Colors.white,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10),
+          side: BorderSide(color: SKColors.border_gray),
+        ),
+        child: Padding(
+          padding: EdgeInsets.all(12),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Padding(
+                padding: EdgeInsets.only(bottom: 2),
+                child: Text(
+                  schoolClass.name,
+                  style: TextStyle(fontSize: 16),
+                ),
+              ),
+              Row(
                 mainAxisSize: MainAxisSize.min,
-                children: [
+                children: <Widget>[
+                  Expanded(
+                    child: Text(
+                      '${schoolClass.subject} ${schoolClass.code}.${schoolClass.section}',
+                      style: TextStyle(
+                          fontWeight: FontWeight.normal, fontSize: 14),
+                    ),
+                  ),
                   Padding(
-                    padding: EdgeInsets.only(bottom: 2),
+                    padding: EdgeInsets.symmetric(horizontal: 2),
                     child: Text(
-                      schoolClass.name,
-                      style: TextStyle(fontSize: 16),
+                      '${schoolClass.enrollment ?? 0}',
+                      style: TextStyle(
+                          fontSize: 14, fontWeight: FontWeight.normal),
                     ),
                   ),
-                  Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: <Widget>[
-                      Expanded(
-                        child: Text(
-                          '${schoolClass.subject} ${schoolClass.code}.${schoolClass.section}',
-                          style: TextStyle(
-                              fontWeight: FontWeight.normal, fontSize: 14),
-                        ),
-                      ),
-                      Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 2),
-                        child: Text(
-                          '${schoolClass.enrollment ?? 0}',
-                          style: TextStyle(
-                              fontSize: 14, fontWeight: FontWeight.normal),
-                        ),
-                      ),
-                      Image.asset(ImageNames.peopleImages.person_dark_gray),
-                    ],
-                  ),
-                  Container(
-                    color: SKColors.dark_gray,
-                    height: 2,
-                    margin: EdgeInsets.only(top: 4, bottom: 12),
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        'Meeting times',
-                        style: TextStyle(
-                          color: SKColors.light_gray,
-                          fontSize: 14,
-                          fontWeight: FontWeight.normal,
-                        ),
-                      ),
-                      Text(
-                        'Professor',
-                        style: TextStyle(
-                          color: SKColors.light_gray,
-                          fontSize: 14,
-                          fontWeight: FontWeight.normal,
-                        ),
-                      ),
-                    ],
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        '${schoolClass.meetDays ?? ''} ${schoolClass.meetTime?.format(context) ?? ''}',
-                        style: TextStyle(
-                          fontSize: 15,
-                          fontWeight: FontWeight.normal,
-                        ),
-                      ),
-                      Text(
-                        '${schoolClass.professor?.first_name ?? ''} ${schoolClass.professor?.last_name ?? ''}',
-                        style: TextStyle(
-                          fontSize: 15,
-                          fontWeight: FontWeight.normal,
-                        ),
-                      ),
-                    ],
-                  ),
-                  Container(
-                    margin: EdgeInsets.only(top: 16),
-                    alignment: Alignment.center,
-                    padding: EdgeInsets.symmetric(vertical: 8),
-                    decoration: BoxDecoration(
-                      color: isEnrolled
-                          ? SKColors.warning_red
-                          : SKColors.skoller_blue,
-                      borderRadius: BorderRadius.circular(5),
+                  Image.asset(ImageNames.peopleImages.person_dark_gray),
+                ],
+              ),
+              Container(
+                color: SKColors.dark_gray,
+                height: 2,
+                margin: EdgeInsets.only(top: 4, bottom: 12),
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    'Meeting times',
+                    style: TextStyle(
+                      color: SKColors.light_gray,
+                      fontSize: 14,
+                      fontWeight: FontWeight.normal,
                     ),
-                    child: Text(
-                      isEnrolled ? 'Drop this class' : 'Join this class',
-                      style: TextStyle(color: Colors.white),
+                  ),
+                  Text(
+                    'Professor',
+                    style: TextStyle(
+                      color: SKColors.light_gray,
+                      fontSize: 14,
+                      fontWeight: FontWeight.normal,
                     ),
                   ),
                 ],
               ),
-            ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    '${schoolClass.meetDays ?? ''} ${schoolClass.meetTime?.format(context) ?? ''}',
+                    style: TextStyle(
+                      fontSize: 15,
+                      fontWeight: FontWeight.normal,
+                    ),
+                  ),
+                  Text(
+                    '${schoolClass.professor?.first_name ?? ''} ${schoolClass.professor?.last_name ?? ''}',
+                    style: TextStyle(
+                      fontSize: 15,
+                      fontWeight: FontWeight.normal,
+                    ),
+                  ),
+                ],
+              ),
+              Container(
+                margin: EdgeInsets.only(top: 16),
+                alignment: Alignment.center,
+                padding: EdgeInsets.symmetric(vertical: 8),
+                decoration: BoxDecoration(
+                  color:
+                      isEnrolled ? SKColors.warning_red : SKColors.skoller_blue,
+                  borderRadius: BorderRadius.circular(5),
+                ),
+                child: Text(
+                  isEnrolled ? 'Drop this class' : 'Join this class',
+                  style: TextStyle(color: Colors.white),
+                ),
+              ),
+            ],
           ),
+        ),
+      ),
     );
   }
 
   void didTapAddClassCard() async {
-    print('add');
+    final result = await showDialog(
+        context: context, builder: (context) => SKCreateClassModal());
   }
 
   @override
@@ -188,7 +217,9 @@ class _AddClassesViewState extends State<AddClassesView> {
                       Expanded(
                         child: ListView.builder(
                           padding: EdgeInsets.fromLTRB(8, 6, 8, 12),
-                          itemCount: searchedClasses.length == 0 ? 0 : searchedClasses.length + 1,
+                          itemCount: searchedClasses.length == 0
+                              ? 0
+                              : searchedClasses.length + 1,
                           itemBuilder: (context, index) {
                             Widget contents;
 
@@ -201,7 +232,8 @@ class _AddClassesViewState extends State<AddClassesView> {
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
                                   Padding(
-                                    padding: EdgeInsets.only(right: 8),
+                                    padding: EdgeInsets.only(
+                                        right: 8, top: 2, bottom: 2),
                                     child: Image.asset(
                                         ImageNames.sammiImages.shocked),
                                   ),
@@ -232,7 +264,7 @@ class _AddClassesViewState extends State<AddClassesView> {
                                 },
                                 child: Container(
                                   padding: EdgeInsets.symmetric(
-                                      horizontal: 4, vertical: 3),
+                                      horizontal: 4, vertical: 2),
                                   margin: EdgeInsets.symmetric(vertical: 4),
                                   decoration: BoxDecoration(
                                     color: Colors.white,
@@ -304,13 +336,13 @@ class _AddClassesViewState extends State<AddClassesView> {
                   mainAxisSize: MainAxisSize.min,
                   children: <Widget>[
                     Text(
-                      'Vanderbilt University',
+                      SKUser.current.student.primarySchool.name,
                       style: TextStyle(fontSize: 18),
                     ),
                     Padding(
                       padding: EdgeInsets.only(top: 1, bottom: 4),
                       child: Text(
-                        'Summer 2019',
+                        activePeriod?.name ?? 'Something went wrong',
                         style: TextStyle(
                             fontWeight: FontWeight.normal, fontSize: 15),
                       ),

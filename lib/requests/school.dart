@@ -37,11 +37,23 @@ class School {
 class Period {
   int id;
   int schoolId;
-  String name;
-  String startDate;
-  String endDate;
+  int periodStatusId;
 
-  Period(this.id, this.schoolId, this.name, this.startDate, this.endDate);
+  bool isMainPeriod;
+
+  String name;
+  DateTime startDate;
+  DateTime endDate;
+
+  Period(
+    this.id,
+    this.schoolId,
+    this.name,
+    this.startDate,
+    this.endDate,
+    this.isMainPeriod,
+    this.periodStatusId,
+  );
 
   School getSchool() => School.currentSchools[schoolId];
 
@@ -56,8 +68,12 @@ class Period {
       content['id'],
       content['school_id'],
       content['name'],
-      content['start_date'],
-      content['end_date'],
+      content['start_date'] != null
+          ? DateTime.parse(content['start_date'])
+          : null,
+      content['end_date'] != null ? DateTime.parse(content['end_date']) : null,
+      content['is_main_period'] ?? false,
+      content['class_period_status']['id'],
     );
   }
 }
