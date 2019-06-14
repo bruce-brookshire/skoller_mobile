@@ -1111,88 +1111,108 @@ class SKHeaderProfilePhoto extends StatelessWidget {
   Widget build(BuildContext context) => Container(
         alignment: Alignment.center,
         decoration: BoxDecoration(
-          color: SKColors.light_gray,
+          color: Colors.white,
           shape: BoxShape.circle,
-          image: SKUser.current.avatarUrl == null
-              ? null
-              : DecorationImage(
-                  fit: BoxFit.fill,
-                  image: NetworkImage(SKUser.current.avatarUrl),
-                ),
+          image: DecorationImage(
+            fit: BoxFit.fill,
+            image: SKUser.current.avatarUrl == null
+                ? AssetImage(ImageNames.peopleImages.static_profile)
+                : NetworkImage(SKUser.current.avatarUrl),
+          ),
         ),
         height: 30,
         width: 30,
-        child: SKUser.current.avatarUrl == null
-            ? Text(
-                SKUser.current.student.nameFirst[0] +
-                    SKUser.current.student.nameLast[0],
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 16,
-                  fontWeight: FontWeight.normal,
-                  letterSpacing: -0.25,
-                ),
-              )
-            : null,
       );
 }
 
 enum SammiPersonality { cool, smile, wow, ooo }
+enum SammiSide { left, right }
 
 class SammiSpeechBubble extends StatelessWidget {
   final SammiPersonality sammiPersonality;
   final Widget speechBubbleContents;
+  final SammiSide sammiSide;
 
-  SammiSpeechBubble(
-      {@required this.sammiPersonality, @required this.speechBubbleContents});
+  SammiSpeechBubble({
+    @required this.sammiPersonality,
+    @required this.speechBubbleContents,
+    this.sammiSide = SammiSide.left,
+  });
 
   @override
   Widget build(BuildContext context) {
+    final leftArrow = sammiSide == SammiSide.left;
+    final image = _sammiImageBuilder();
+
+    final contents = Align(
+      alignment: leftArrow ? Alignment.centerLeft : Alignment.centerRight,
+      child: Container(
+          margin: leftArrow
+              ? EdgeInsets.only(left: 13)
+              : EdgeInsets.only(right: 13),
+          padding: EdgeInsets.all(8),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(10),
+            border: Border.all(color: SKColors.border_gray),
+            boxShadow: [UIAssets.boxShadow],
+          ),
+          child: speechBubbleContents),
+    );
+
+    final arrow = Align(
+      alignment: leftArrow ? Alignment.centerLeft : Alignment.centerRight,
+      child: CustomPaint(
+        painter: _SammiArrowPainter(this.sammiSide),
+        child: Container(
+          width: 14,
+          height: 16,
+        ),
+      ),
+    );
+
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 16),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
-        children: <Widget>[
-          _sammiImageBuilder(),
-          Expanded(
-            child: Padding(
-              padding: EdgeInsets.only(left: 2, top: 6),
-              child: Stack(
-                alignment: Alignment.centerLeft,
-                children: <Widget>[
-                  Align(
-                    alignment: Alignment.centerLeft,
-                    child: Container(
-                      margin: EdgeInsets.only(left: 13),
-                      padding: EdgeInsets.all(8),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(10),
-                        border: Border.all(color: SKColors.border_gray),
-                        boxShadow: [UIAssets.boxShadow],
-                      ),
-                      child: Row(
-                        children: <Widget>[
-                          Expanded(child: speechBubbleContents)
-                        ],
-                      ),
+        mainAxisAlignment:
+            leftArrow ? MainAxisAlignment.start : MainAxisAlignment.end,
+        mainAxisSize: MainAxisSize.min,
+        children: leftArrow
+            ? [
+                image,
+                Flexible(
+                  flex: 1,
+                  fit: FlexFit.tight,
+                  child: Padding(
+                    padding: EdgeInsets.only(left: 2, top: 6),
+                    child: Stack(
+                      alignment: Alignment.centerLeft,
+                      children: <Widget>[
+                        contents,
+                        arrow,
+                      ],
                     ),
                   ),
-                  Align(
-                    alignment: Alignment.centerLeft,
-                    child: CustomPaint(
-                      painter: _SammiArrowPainter(),
-                      child: Container(
-                        width: 14,
-                        height: 16,
-                      ),
+                ),
+              ]
+            : [
+                Flexible(
+                  flex: 1,
+                  fit: FlexFit.tight,
+                  child: Padding(
+                    padding: EdgeInsets.only(left: 2, top: 6),
+                    child: Stack(
+                      alignment: Alignment.centerRight,
+                      children: <Widget>[
+                        contents,
+                        arrow,
+                      ],
                     ),
                   ),
-                ],
-              ),
-            ),
-          ),
-        ],
+                ),
+                image,
+              ],
       ),
     );
   }
@@ -1212,6 +1232,11 @@ class SammiSpeechBubble extends StatelessWidget {
 }
 
 class _SammiArrowPainter extends CustomPainter {
+  final SammiSide side;
+  final point_radius = 2.0;
+
+  _SammiArrowPainter(this.side);
+
   @override
   void paint(Canvas canvas, Size size) {
     final paint = Paint()
@@ -1225,31 +1250,34 @@ class _SammiArrowPainter extends CustomPainter {
       ..strokeWidth = 1
       ..isAntiAlias = true;
 
-    final x_vals = [size.width, 0.0, size.width];
-    final y_vals = [0.0, size.height / 2, size.height];
-
-    final point_radius = 2.0;
+    final x_vals = createXPath(size);
+    final y_vals = [
+      0.0,
+      size.height / 2 - point_radius,
+      size.height / 2 + point_radius,
+      size.height,
+    ];
 
     var path = Path();
     path.moveTo(x_vals[0], y_vals[0]);
-    path.lineTo(x_vals[1] + point_radius, y_vals[1] - point_radius);
+    path.lineTo(x_vals[1], y_vals[1]);
     path.arcToPoint(
-      Offset(x_vals[1] + point_radius, y_vals[1] + point_radius),
+      Offset(x_vals[2], y_vals[2]),
       radius: Radius.circular(point_radius + 0.5),
-      clockwise: false,
+      clockwise: side != SammiSide.left,
     );
-    path.lineTo(x_vals[2], y_vals[2]);
+    path.lineTo(x_vals[3], y_vals[3]);
     path.close();
 
     var outline = Path();
     outline.moveTo(x_vals[0], y_vals[0]);
-    outline.lineTo(x_vals[1] + point_radius, y_vals[1] - point_radius);
+    outline.lineTo(x_vals[1], y_vals[1]);
     outline.arcToPoint(
-      Offset(x_vals[1] + point_radius, y_vals[1] + point_radius),
+      Offset(x_vals[2], y_vals[2]),
       radius: Radius.circular(point_radius + 0.5),
-      clockwise: false,
+      clockwise: side != SammiSide.left,
     );
-    outline.lineTo(x_vals[2], y_vals[2]);
+    outline.lineTo(x_vals[3], y_vals[3]);
 
     canvas.drawPath(path, paint);
     canvas.drawPath(outline, paint2);
@@ -1257,4 +1285,20 @@ class _SammiArrowPainter extends CustomPainter {
 
   @override
   bool shouldRepaint(CustomPainter oldDelegate) => false;
+
+  List<double> createXPath(Size size) {
+    return side == SammiSide.left
+        ? [
+            size.width,
+            0.0 + point_radius,
+            0.0 + point_radius,
+            size.width,
+          ]
+        : [
+            0,
+            size.width - point_radius,
+            size.width - point_radius,
+            0,
+          ];
+  }
 }

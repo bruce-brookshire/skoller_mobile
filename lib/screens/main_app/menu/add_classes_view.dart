@@ -18,28 +18,39 @@ class _AddClassesViewState extends State<AddClassesView> {
 
   Period activePeriod;
 
+  final searchController = TextEditingController();
+
   @override
   void initState() {
     super.initState();
 
-    List<Period> periods = ((SKUser.current.student.primarySchool.periods ?? [])
-      ..sort((p1, p2) {
-        if (p1.startDate == null && p2.startDate == null) {
-          return p1.name.compareTo(p2.name);
-        } else if (p1.startDate == null) {
-          return 1;
-        } else if (p2.startDate == null) {
-          return -1;
-        } else {
-          return p1.startDate.compareTo(p2.startDate);
-        }
-      }));
+    List<Period> periods = (SKUser.current.student.primarySchool.periods ?? [])
+      ..sort(
+        (p1, p2) {
+          if (p1.startDate == null && p2.startDate == null) {
+            return p1.name.compareTo(p2.name);
+          } else if (p1.startDate == null) {
+            return 1;
+          } else if (p2.startDate == null) {
+            return -1;
+          } else {
+            return p1.startDate.compareTo(p2.startDate);
+          }
+        },
+      );
 
-    for (final Period period in periods) {
-      if (period.periodStatusId == 200 && period.isMainPeriod) {
-        activePeriod = period;
-        break;
+    final findSemester = (int status) {
+      for (final Period period in periods) {
+        if (period.periodStatusId == status && period.isMainPeriod) {
+          return period;
+        }
       }
+    };
+
+    activePeriod = findSemester(200);
+
+    if (activePeriod == null) {
+      activePeriod = findSemester(400);
     }
   }
 
@@ -217,7 +228,8 @@ class _AddClassesViewState extends State<AddClassesView> {
                       Expanded(
                         child: ListView.builder(
                           padding: EdgeInsets.fromLTRB(8, 6, 8, 12),
-                          itemCount: searchedClasses.length == 0
+                          itemCount: searchedClasses.length == 0 &&
+                                  searchController.text.trim() == ''
                               ? 0
                               : searchedClasses.length + 1,
                           itemBuilder: (context, index) {
@@ -382,6 +394,7 @@ class _AddClassesViewState extends State<AddClassesView> {
                 Expanded(
                   child: CupertinoTextField(
                     onChanged: didTypeInSearch,
+                    controller: searchController,
                     clearButtonMode: OverlayVisibilityMode.editing,
                     cursorColor: SKColors.skoller_blue,
                     decoration: BoxDecoration(border: null),
