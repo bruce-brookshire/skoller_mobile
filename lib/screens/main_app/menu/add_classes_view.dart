@@ -20,6 +20,8 @@ class _AddClassesViewState extends State<AddClassesView> {
 
   final searchController = TextEditingController();
 
+  bool isSearching = false;
+
   @override
   void initState() {
     super.initState();
@@ -63,12 +65,24 @@ class _AddClassesViewState extends State<AddClassesView> {
     searchText = searchText.trim();
 
     if (searchText == '') {
+      if (isSearching) {
+        setState(() {
+          isSearching = false;
+        });
+      }
+
       SchoolClass.invalidateCurrentClassSearch();
 
       setState(() {
         searchedClasses = [];
       });
       return;
+    }
+
+    if (!isSearching) {
+      setState(() {
+        isSearching = true;
+      });
     }
 
     _currentTimer = Timer(
@@ -83,6 +97,7 @@ class _AddClassesViewState extends State<AddClassesView> {
           if (response.wasSuccessful()) {
             setState(() {
               searchedClasses = response.obj;
+              isSearching = false;
             });
           }
         });
@@ -405,8 +420,13 @@ class _AddClassesViewState extends State<AddClassesView> {
                 ),
                 Padding(
                   padding: EdgeInsets.only(right: 8),
-                  child:
-                      Image.asset(ImageNames.rightNavImages.magnifying_glass),
+                  child: isSearching
+                      ? Container(
+                          width: 16,
+                          height: 16,
+                          child: CircularProgressIndicator(strokeWidth: 2),
+                        )
+                      : Image.asset(ImageNames.rightNavImages.magnifying_glass),
                 )
               ],
             ),

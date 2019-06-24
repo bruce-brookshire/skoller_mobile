@@ -1,3 +1,4 @@
+import 'package:dart_notification_center/dart_notification_center.dart';
 import 'package:flutter/material.dart';
 import '../../constants/constants.dart';
 import 'sign_in.dart';
@@ -5,26 +6,12 @@ import 'sign_up.dart';
 import '../../requests/requests_core.dart';
 
 class AuthHome extends StatelessWidget {
-  final AppStateCallback appStateCallback;
-
-  AuthHome(this.appStateCallback) {
-    Auth.logIn('bruce@skoller.co', 'password1').then((success) {
-      if (success) {
-        return StudentClass.getStudentClasses();
-      } else {
-        throw 'FAILURE';
-      }
-    }).then((response) {
-      if (response.wasSuccessful()) {
-        appStateCallback(AppState.mainApp);
-      }
-    });
-  }
+  AuthHome() {}
 
   tappedLogIn(BuildContext context) {
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => SignIn(appStateCallback)),
+      MaterialPageRoute(builder: (context) => SignIn()),
     );
   }
 
@@ -35,7 +22,10 @@ class AuthHome extends StatelessWidget {
     // );
     Auth.logIn('bruce@skoller.co', 'password1').then((onValue) {
       if (onValue) {
-        appStateCallback(AppState.mainApp);
+        DartNotificationCenter.post(
+          channel: NotificationChannels.appStateChanged,
+          options: AppState.mainApp,
+        );
       }
     });
   }

@@ -6,10 +6,6 @@ import 'package:skoller/screens/main_app/menu_view.dart';
 import 'tab_bar.dart';
 
 class MainView extends StatefulWidget {
-  final AppStateCallback appStateCallback;
-
-  MainView(this.appStateCallback);
-
   @override
   State createState() => _MainViewState();
 }

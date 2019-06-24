@@ -1,34 +1,41 @@
+import 'package:dart_notification_center/dart_notification_center.dart';
 import 'package:flutter/material.dart';
+import 'package:skoller/screens/auth/phone_verification_view.dart';
 import '../../requests/requests_core.dart';
 import '../../constants/constants.dart';
 
 class SignIn extends StatefulWidget {
-  final AppStateCallback appStateCallback;
-
-  SignIn(this.appStateCallback, {Key key}) : super(key: key);
-
   @override
   _SignInState createState() => _SignInState();
 }
 
 class _SignInState extends State<SignIn> {
+  final phoneNumberController = TextEditingController();
+
   void tappedLogIn(BuildContext context) {
-    Auth.logIn('bruce@skoller.co', 'password1').then((success) {
-      if (!success) {
-        throw 'hm..';
-      }
-      return StudentClass.getStudentClasses();
-    }).then((response) {
-      if (response.wasSuccessful()) {
-        Navigator.pop(context);
-        widget.appStateCallback(AppState.mainApp);
+    Auth.requestLogin("9032452355").then((success) async {
+      if (success) {
+        final bool result = await showDialog(
+            context: context, builder: (context) => PhoneVerificationView());
+        print(result);
+        if (result is bool) {
+          if (result) {
+            Navigator.popUntil(context, (route) => route.isFirst);
+
+            DartNotificationCenter.post(
+              channel: NotificationChannels.appStateChanged,
+              options: AppState.mainApp,
+            );
+          } else {
+            throw 'Verification was unsuccessful. Try again';
+          }
+        }
       }
     });
   }
 
   @override
   Widget build(BuildContext context) => Scaffold(
-        resizeToAvoidBottomInset: true,
         body: Container(
           child: SafeArea(
             child: Container(

@@ -161,10 +161,38 @@ class Auth {
     return user;
   }
 
-  static Future<bool> logIn(String username, String password) {
+  static Future<bool> verifyToken() {
+    String token = "";
+
+    SKRequests._headers['Authorization'] = 'Bearer $token';
+
     return SKRequests.post(
-      '/users/login',
-      {"email": username, "password": password},
+      '/users/token-login',
+      null,
+      null,
+    ).then((onValue) {
+      final result = onValue.wasSuccessful();
+      if (!result) {
+        SKRequests._headers.remove('Authorization');
+      }
+      return result;
+    });
+  }
+
+  static Future<bool> requestLogin(String phone) {
+    return SKRequests.post(
+      '/students/login',
+      {"phone": phone},
+      null,
+    ).then((onValue) {
+      return onValue.wasSuccessful();
+    });
+  }
+
+  static Future<bool> logIn(String phone, String code) {
+    return SKRequests.post(
+      '/students/login',
+      {"phone": phone, "verification_code": code},
       _fromJson,
     ).then((onValue) {
       return onValue.wasSuccessful();

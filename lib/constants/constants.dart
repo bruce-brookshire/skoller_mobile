@@ -94,6 +94,7 @@ class _SignUpImages {
   static final _base = 'image_assets/sign_up_assets';
 
   final happy_classmates = '${_base}/happy_classmates.png';
+  final text_verify = '${_base}/text_verify.png';
   final logo_wide_blue = '${_base}/logo_wide_blue.png';
 }
 
@@ -163,4 +164,5 @@ class NotificationChannels {
   static final classChanged = 'class-changed';
   static final assignmentChanged = 'assignment-changed';
   static final modsChanged = 'mods-changed';
+  static final appStateChanged = 'app-state-changed';
 }

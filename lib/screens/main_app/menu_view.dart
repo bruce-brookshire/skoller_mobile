@@ -13,9 +13,9 @@ class MenuView extends StatelessWidget {
   final List<Widget> menuOptions = [
     {'name': 'Profile', 'view': ProfileView()},
     {'name': 'Share Skoller', 'view': ProfileLinkSharingView()},
-    {'name': 'My Points', 'view': MyPointsView()},
+    {'name': 'My points', 'view': MyPointsView()},
     {'name': 'Reminders', 'view': RemindersView()},
-    {'name': 'Drop/add classes', 'view': ManageClassesView()},
+    {'name': 'Manage classes', 'view': ManageClassesView()},
     {'name': 'SkollerJobs', 'view': ProfileView()},
     {'name': 'Send us feedback', 'view': ProfileView()},
     {'name': 'Tutorial', 'view': ProfileView()},

@@ -1,3 +1,4 @@
+import 'package:dart_notification_center/dart_notification_center.dart';
 import 'package:flutter/material.dart';
 import 'package:skoller/screens/main_app/main_view.dart';
 import 'screens/auth/auth_home.dart';
@@ -19,10 +20,33 @@ class _SkollerAppState extends State<SkollerApp> {
   bool _darkTheme = false;
   AppState currentState = AppState.loading;
 
-  void changeAppState(AppState newState) {
-    setState(() {
-      currentState = newState;
-    });
+  void changeAppState(dynamic newState) {
+    if (newState is AppState ) {
+      setState(() {
+        currentState = newState;
+      });
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+
+    DartNotificationCenter.subscribe(
+      channel: NotificationChannels.appStateChanged,
+      observer: this,
+      onNotification: changeAppState,
+    );
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+
+    DartNotificationCenter.unsubscribe(
+      channel: NotificationChannels.appStateChanged,
+      observer: this,
+    );
   }
 
   @override
@@ -68,16 +92,16 @@ class _SkollerAppState extends State<SkollerApp> {
 
     switch (currentState) {
       case AppState.loading:
-        currentWidget = AuthHome(changeAppState);
+        currentWidget = AuthHome();
         break;
       case AppState.failedLoading:
-        currentWidget = AuthHome(changeAppState);
+        currentWidget = AuthHome();
         break;
       case AppState.authScreen:
-        currentWidget = AuthHome(changeAppState);
+        currentWidget = AuthHome();
         break;
       case AppState.mainApp:
-        currentWidget = MainView(changeAppState);
+        currentWidget = MainView();
         break;
     }
 
