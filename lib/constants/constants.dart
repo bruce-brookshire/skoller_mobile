@@ -2,6 +2,7 @@ library constants;
 
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:intl/intl.dart';
 import '../requests/requests_core.dart';
@@ -95,7 +96,10 @@ class _SignUpImages {
 
   final happy_classmates = '${_base}/happy_classmates.png';
   final text_verify = '${_base}/text_verify.png';
+  final syllabus_activity = '${_base}/syllabus_activity.png';
+  final activities = '${_base}/activities.png';
   final logo_wide_blue = '${_base}/logo_wide_blue.png';
+
 }
 
 class _NavigationArrowImages {

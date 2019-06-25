@@ -1,5 +1,6 @@
 import 'package:dart_notification_center/dart_notification_center.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
 import '../../constants/constants.dart';
 import 'sign_in.dart';
 import 'sign_up.dart';
@@ -8,26 +9,18 @@ import '../../requests/requests_core.dart';
 class AuthHome extends StatelessWidget {
   AuthHome() {}
 
-  tappedLogIn(BuildContext context) {
+  void tappedLogIn(BuildContext context) {
     Navigator.push(
       context,
       MaterialPageRoute(builder: (context) => SignIn()),
     );
   }
 
-  tappedSignUp(BuildContext context) {
-    // Navigator.push(
-    //   context,
-    //   MaterialPageRoute(builder: (context) => SignUp()),
-    // );
-    Auth.logIn('bruce@skoller.co', 'password1').then((onValue) {
-      if (onValue) {
-        DartNotificationCenter.post(
-          channel: NotificationChannels.appStateChanged,
-          options: AppState.mainApp,
-        );
-      }
-    });
+  void tappedSignUp(BuildContext context) {
+    Navigator.push(
+      context,
+      CupertinoPageRoute(builder: (context) => SignUp()),
+    );
   }
 
   @override
@@ -45,12 +38,15 @@ class AuthHome extends StatelessWidget {
                 Container(
                   margin: EdgeInsets.symmetric(vertical: 16),
                   child: Text(
-                    'Keep up with classes, together!',
+                    'One syllabus, endless opportunity',
                     style: Theme.of(context).textTheme.body1,
                   ),
                 ),
-                Image(
-                  image: AssetImage(ImageNames.signUpImages.happy_classmates),
+                Padding(
+                  padding: EdgeInsets.symmetric(vertical: 8),
+                  child: Image(
+                      image: AssetImage(
+                          ImageNames.signUpImages.syllabus_activity)),
                 ),
                 SKButton(
                   margin: EdgeInsets.only(top: 16, bottom: 8),
@@ -63,8 +59,7 @@ class AuthHome extends StatelessWidget {
                   width: 180,
                   callback: tappedLogIn,
                   buttonText: 'Log in',
-                ),
-                CircularProgressIndicator()
+                )
               ],
             ),
           ),

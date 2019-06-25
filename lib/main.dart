@@ -1,5 +1,6 @@
 import 'package:dart_notification_center/dart_notification_center.dart';
 import 'package:flutter/material.dart';
+import 'package:skoller/loading_view.dart';
 import 'package:skoller/screens/main_app/main_view.dart';
 import 'screens/auth/auth_home.dart';
 import 'constants/constants.dart';
@@ -21,7 +22,7 @@ class _SkollerAppState extends State<SkollerApp> {
   AppState currentState = AppState.loading;
 
   void changeAppState(dynamic newState) {
-    if (newState is AppState ) {
+    if (newState is AppState) {
       setState(() {
         currentState = newState;
       });
@@ -92,15 +93,15 @@ class _SkollerAppState extends State<SkollerApp> {
 
     switch (currentState) {
       case AppState.loading:
+        currentWidget = LoadingView();
+        break;
+      case AppState.main:
+        currentWidget = MainView();
+        break;
+      case AppState.auth:
         currentWidget = AuthHome();
         break;
-      case AppState.failedLoading:
-        currentWidget = AuthHome();
-        break;
-      case AppState.authScreen:
-        currentWidget = AuthHome();
-        break;
-      case AppState.mainApp:
+      case AppState.veri:
         currentWidget = MainView();
         break;
     }

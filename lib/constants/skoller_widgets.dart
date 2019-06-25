@@ -1,33 +1,32 @@
 part of 'constants.dart';
 
-class SKTextField extends StatelessWidget {
-  final String fillText;
-  final EdgeInsets margins;
+// class SKTextField extends StatelessWidget {
+//   final String fillText;
+//   final EdgeInsets margin;
+//   final double width;
 
-  SKTextField({Key key, String labelText, EdgeInsets margin})
-      : fillText = labelText,
-        margins = margin,
-        super(key: key);
+//   SKTextField({this.fillText, this.margin, this.width, });
 
-  @override
-  Widget build(BuildContext context) => Container(
-        margin: margins,
-        child: Material(
-          type: MaterialType.card,
-          elevation: 3,
-          borderRadius: BorderRadius.circular(5),
-          child: Container(
-            margin: EdgeInsets.all(4),
-            padding: EdgeInsets.symmetric(horizontal: 4, vertical: 6),
-            child: TextField(
-              obscureText: true,
-              decoration: InputDecoration.collapsed(hintText: fillText),
-              style: TextStyle(fontSize: 14),
-            ),
-          ),
-        ),
-      );
-}
+//   @override
+//   Widget build(BuildContext context) => Container(
+//         margin: margin,
+//         width: width,
+//         child: Material(
+//           type: MaterialType.card,
+//           elevation: 3,
+//           borderRadius: BorderRadius.circular(5),
+//           child: Container(
+//             margin: EdgeInsets.all(4),
+//             padding: EdgeInsets.symmetric(horizontal: 4, vertical: 6),
+//             child: TextField(
+//               obscureText: true,
+//               decoration: InputDecoration.collapsed(hintText: fillText),
+//               style: TextStyle(fontSize: 14),
+//             ),
+//           ),
+//         ),
+//       );
+// }
 
 class SKButton extends StatelessWidget {
   final String buttonText;

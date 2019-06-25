@@ -5,6 +5,7 @@ import 'package:time_machine/time_machine.dart';
 import '../constants/timezone_manager.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:collection';
 import 'dart:convert';
 import 'dart:math';
@@ -26,24 +27,22 @@ class RequestResponse<T> {
     dynamic context, {
     _DecodableConstructor<T> constructor,
   }) {
-    if (status == 200 && context != null) {
-      if (constructor != null) {
+    if (status == 200 || status == 204) {
+      if (constructor != null && context != null) {
         if (context is List) {
           this.obj = JsonListMaker.convert<T>(constructor, context);
         } else {
           this.obj = constructor(context);
         }
-      } else {
-        this.obj = context;
       }
     } else {
-      this.obj = null;
+      this.obj = context;
     }
 
     this.status = status;
   }
 
-  RequestResponse._fromError(this._errorMsg);
+  RequestResponse._fromError(this._errorMsg, this.status);
 
   bool wasSuccessful() {
     return [200, 204].contains(status) && _errorMsg == null;
@@ -141,9 +140,13 @@ class SKRequests {
     _DecodableConstructor<T> constructor,
   ) {
     int statusCode = request.statusCode;
-    var content = statusCode == 200 && request.body != null
-        ? json.decode(request.body)
-        : null;
+    var content;
+    try {
+      content = request.body != null ? json.decode(request.body) : null;
+    } catch (e) {
+      content = request.body;
+    }
+
     return RequestResponse<T>(
       statusCode,
       content,
@@ -152,31 +155,64 @@ class SKRequests {
   }
 }
 
-class Auth {
-  static SKUser user;
+enum LogInResponse { success, needsVerification, failed, internetError }
 
-  static SKUser _fromJson(Map context) {
-    user = SKUser._fromJson(context['user']);
-    SKRequests._headers['Authorization'] = 'Bearer ' + context['token'];
+class Auth {
+  // static SKUser user;
+
+  static final _kSharedToken = 'STUDENT_TOKEN';
+  static final _kStudentPhone = 'STUDENT_PHONE';
+
+  static SKUser _fromJsonAuth(Map context) {
+    final user = SKUser._fromJson(context['user']);
+
+    String token = context['token'];
+    SharedPreferences.getInstance()
+        .then((inst) => inst.setString(_kSharedToken, token));
+    SKRequests._headers['Authorization'] = 'Bearer $token';
+
     return user;
   }
 
-  static Future<bool> verifyToken() {
-    String token = "";
+  static SKUser _fromJsonNoAuth(Map context) {
+    return SKUser._fromJson(context['user']);
+  }
 
-    SKRequests._headers['Authorization'] = 'Bearer $token';
+  static Future<LogInResponse> attemptLogin() async {
+    final inst = await SharedPreferences.getInstance();
+    final token = inst.getString(_kSharedToken);
+    final userPhone = inst.getString(_kStudentPhone);
 
-    return SKRequests.post(
-      '/users/token-login',
-      null,
-      null,
-    ).then((onValue) {
-      final result = onValue.wasSuccessful();
-      if (!result) {
-        SKRequests._headers.remove('Authorization');
+    if (token != null) {
+      SKRequests._headers['Authorization'] = 'Bearer $token';
+
+      //Check if we can use the previously stored token
+      final validToken = await tokenLogin();
+
+      //If token login didnt work, we need to remove the bad token
+      if (!validToken) SKRequests._headers.remove('Authorization');
+
+      //Token is valid
+      if (validToken)
+        return LogInResponse.success;
+      //Token is invalid, do we have the phone number?
+      else if (userPhone != null) {
+        //We do. Request the user to sign in again
+        final successfullyRequested = await requestLogin(userPhone);
+        //Did the request complete correctly?
+        if (successfullyRequested)
+          return LogInResponse.needsVerification;
+        //Request failed, just have the user sign in again
+        else
+          return LogInResponse.internetError;
       }
-      return result;
-    });
+      //We have no valid token nor phone number. Have the user sign in again
+      else
+        return LogInResponse.failed;
+    }
+    //We have no token, so
+    else
+      return LogInResponse.failed;
   }
 
   static Future<bool> requestLogin(String phone) {
@@ -189,13 +225,32 @@ class Auth {
     });
   }
 
-  static Future<bool> logIn(String phone, String code) {
+  static Future<RequestResponse> logIn(String phone, String code) {
     return SKRequests.post(
       '/students/login',
       {"phone": phone, "verification_code": code},
-      _fromJson,
-    ).then((onValue) {
-      return onValue.wasSuccessful();
+      _fromJsonAuth,
+    ).then((response) {
+      if (response.wasSuccessful()) {
+        SharedPreferences.getInstance()
+            .then((inst) => inst.setString(_kStudentPhone, phone));
+      }
+      return response;
     });
+  }
+
+  static Future<bool> tokenLogin() {
+    return SKRequests.post(
+      '/users/token-login',
+      null,
+      _fromJsonNoAuth,
+    ).then((onValue) => onValue.wasSuccessful());
+  }
+  
+  static Future<bool> logOut() async {
+    final inst = await SharedPreferences.getInstance();
+    inst.clear();
+    SKRequests._headers.remove('Authorization');
+    return true;
   }
 }

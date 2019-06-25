@@ -49,8 +49,6 @@ class _TasksViewState extends State<TasksView> {
   }
 
   void _fetchTasks([dynamic options]) async {
-    print('wasNotified!!');
-    
     Future<RequestResponse> assignmentsRequest = Assignment.getTasks();
     Future<RequestResponse> modsRequest = Mod.fetchNewAssignmentMods();
 
@@ -62,10 +60,10 @@ class _TasksViewState extends State<TasksView> {
       tasks.addAll((assignmentResponse.obj as List<Assignment>)
           .map(
             (task) => _TaskLikeItem(
-                  task.id,
-                  false,
-                  task.due,
-                ),
+              task.id,
+              false,
+              task.due,
+            ),
           )
           .toList());
     }
@@ -76,10 +74,10 @@ class _TasksViewState extends State<TasksView> {
       List<_TaskLikeItem> temp = (modResponse.obj as List<Mod>)
           .map(
             (mod) => _TaskLikeItem(
-                  mod.id,
-                  true,
-                  mod.data.due,
-                ),
+              mod.id,
+              true,
+              mod.data.due,
+            ),
           )
           .toList();
 
@@ -155,12 +153,12 @@ class _TasksViewState extends State<TasksView> {
                 backgroundColor: Colors.white,
                 childCount: classes.length,
                 itemBuilder: (context, index) => Container(
-                      alignment: Alignment.center,
-                      child: Text(
-                        classes[index].name,
-                        style: TextStyle(fontSize: 15),
-                      ),
-                    ),
+                  alignment: Alignment.center,
+                  child: Text(
+                    classes[index].name,
+                    style: TextStyle(fontSize: 15),
+                  ),
+                ),
                 itemExtent: 32,
                 onSelectedItemChanged: (index) {
                   selectedIndex = index;
@@ -220,8 +218,7 @@ class _TasksViewState extends State<TasksView> {
       },
       children: <Widget>[
         Expanded(
-          child: 
-          ListView.builder(
+          child: ListView.builder(
             padding: EdgeInsets.only(top: 4),
             itemBuilder: (context, index) => _taskItems[index].isMod
                 ? buildModCell(context, index)
@@ -283,7 +280,6 @@ class _TasksViewState extends State<TasksView> {
               : Theme.of(context).cardColor,
         ),
         child: Column(
-          // mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
             Container(
               padding: EdgeInsets.only(bottom: 4),
@@ -315,7 +311,9 @@ class _TasksViewState extends State<TasksView> {
                 Text(
                   task.weight_id == null
                       ? 'Not graded'
-                      : task.weight == null ? '' : NumberUtilities.formatWeightAsPercent(task.weight),
+                      : task.weight == null
+                          ? ''
+                          : NumberUtilities.formatWeightAsPercent(task.weight),
                   style: TextStyle(fontSize: 14, fontWeight: FontWeight.normal),
                 ),
               ],

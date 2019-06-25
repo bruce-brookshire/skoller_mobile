@@ -22,22 +22,22 @@ class MenuView extends StatelessWidget {
   ]
       .map(
         (row) => GestureDetector(
-              onTapUp: (details) {
-                DartNotificationCenter.post(
-                  channel: NotificationChannels.presentViewOverTabBar,
-                  options: row['view'],
-                );
-              },
-              child: Container(
-                padding: EdgeInsets.all(8),
-                margin: EdgeInsets.symmetric(vertical: 4, horizontal: 8),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(5),
-                ),
-                child: Text(row['name']),
-              ),
+          onTapUp: (details) {
+            DartNotificationCenter.post(
+              channel: NotificationChannels.presentViewOverTabBar,
+              options: row['view'],
+            );
+          },
+          child: Container(
+            padding: EdgeInsets.all(8),
+            margin: EdgeInsets.symmetric(vertical: 4, horizontal: 8),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(5),
             ),
+            child: Text(row['name']),
+          ),
+        ),
       )
       .toList();
 
@@ -95,7 +95,8 @@ class MenuView extends StatelessWidget {
                       ),
                       Expanded(
                         child: Padding(
-                          padding: EdgeInsets.symmetric(vertical: 24, horizontal: 8),
+                          padding:
+                              EdgeInsets.symmetric(vertical: 24, horizontal: 8),
                           child: Text(
                             '${SKUser.current.student.nameFirst} ${SKUser.current.student.nameLast}',
                             style: TextStyle(fontSize: 18),
@@ -107,13 +108,17 @@ class MenuView extends StatelessWidget {
                   ...menuOptions,
                   Spacer(),
                   GestureDetector(
-                    onTapUp: (details) => DartNotificationCenter.post(
-                        channel: NotificationChannels.toggleMenu),
+                    onTapUp: (details) {
+                      Auth.logOut();
+                      DartNotificationCenter.post(
+                          channel: NotificationChannels.appStateChanged,
+                          options: AppState.auth);
+                    },
                     child: Padding(
                       padding:
                           EdgeInsets.symmetric(vertical: 12, horizontal: 12),
                       child: Text(
-                        'Dismiss',
+                        'Logout',
                         textAlign: TextAlign.center,
                         style: TextStyle(color: SKColors.skoller_blue),
                       ),

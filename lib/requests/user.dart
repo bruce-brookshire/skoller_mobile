@@ -73,7 +73,7 @@ class SKUser {
     return SKRequests.put('/users/$id', {'student': params}, null)
         .then((response) {
       if (response.wasSuccessful()) {
-        return Auth.logIn('bruce@skoller.co', 'password1');
+        return Auth.tokenLogin();
       } else {
         return false;
       }

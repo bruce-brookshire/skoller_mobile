@@ -1,6 +1,6 @@
 part of 'constants.dart';
 
-enum AppState { loading, failedLoading, authScreen, mainApp }
+enum AppState { loading, auth, main, veri }
 
 class DateUtilities {
   static String getFutureRelativeString(DateTime date) {
@@ -55,7 +55,7 @@ class DateUtilities {
     final date_ms = date.millisecondsSinceEpoch;
 
     final diff = ((now_ms - date_ms) / 1000).truncate();
-    
+
     if (diff < 5) {
       return 'Now';
     } else if (diff < 60) {
@@ -81,5 +81,45 @@ class NumberUtilities {
 
   static String formatGradeAsPercent(double grade) {
     return '${grade.round()}%';
+  }
+}
+
+/// Format incoming numeric text to fit the format of (###) ###-#### ##...
+class USNumberTextInputFormatter extends TextInputFormatter {
+  @override
+  TextEditingValue formatEditUpdate(
+    TextEditingValue oldValue,
+    TextEditingValue newValue,
+  ) {
+    final int newTextLength = newValue.text.length;
+    int selectionIndex = newValue.selection.end;
+    int usedSubstringIndex = 0;
+    final StringBuffer newText = StringBuffer();
+
+    if (newTextLength < oldValue.text.length) {
+      return newValue;
+    }
+
+    if (newTextLength == 1) {
+      newText.write('(');
+      selectionIndex++;
+    }
+    if (newTextLength == 4) {
+      newText.write(newValue.text.substring(0, usedSubstringIndex = 4) + ') ');
+      selectionIndex += 2;
+    }
+    if (newTextLength == 9) {
+      newText.write(newValue.text.substring(0, usedSubstringIndex = 9) + '-');
+      selectionIndex++;
+    }
+
+    // Dump the rest.
+    if (newTextLength >= usedSubstringIndex)
+      newText.write(newValue.text.substring(usedSubstringIndex));
+
+    return TextEditingValue(
+      text: newText.toString(),
+      selection: TextSelection.collapsed(offset: selectionIndex),
+    );
   }
 }

@@ -4,6 +4,9 @@ import 'package:skoller/constants/constants.dart';
 import 'package:skoller/requests/requests_core.dart';
 
 class PhoneVerificationView extends StatefulWidget {
+  final String phoneNumber;
+
+  PhoneVerificationView(this.phoneNumber);
   @override
   State createState() => _PhoneVerificationViewState();
 }
@@ -26,6 +29,7 @@ class _PhoneVerificationViewState extends State<PhoneVerificationView> {
   ];
 
   int currentIndex = 0;
+  String errorMsg;
 
   @override
   void dispose() {
@@ -70,14 +74,13 @@ class _PhoneVerificationViewState extends State<PhoneVerificationView> {
         code += digit;
       }
     }
-    Auth.logIn("9032452355", code).then((success) {
-      if (!success) {
-        throw 'Invalid code';
-      }
+    final trimStr = widget.phoneNumber.replaceAll(RegExp(r'[\(\) \-]+'), '');
+
+    Auth.logIn(trimStr, code).then((success) {
       return StudentClass.getStudentClasses();
     }).then((response) {
       Navigator.pop(context, response.wasSuccessful());
-    }).catchError((onError) => Navigator.pop(context, false));
+    }).catchError((onError) => setState(() => errorMsg = onError));
 
     resetPinFields();
   }
@@ -125,18 +128,22 @@ class _PhoneVerificationViewState extends State<PhoneVerificationView> {
             padding: EdgeInsets.symmetric(horizontal: 24, vertical: 24),
             child: Row(children: List.generate(5, createPinField)),
           ),
-          // Container(
-          //   margin: EdgeInsets.all(16),
-          //   alignment: Alignment.center,
-          //   padding: EdgeInsets.symmetric(vertical: 8),
-          //   decoration: BoxDecoration(
-          //     color: Colors.white,
-          //     border: Border.all(color: SKColors.border_gray),
-          //     borderRadius: BorderRadius.circular(5),
-          //     boxShadow: [UIAssets.boxShadow],
-          //   ),
-          //   child: Text('Submit'),
-          // ),
+          ...errorMsg != null
+              ? [
+                  Padding(
+                    padding: EdgeInsets.only(bottom: 8),
+                    child: Text(
+                      errorMsg,
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        color: SKColors.warning_red,
+                        fontSize: 13,
+                        fontWeight: FontWeight.normal,
+                      ),
+                    ),
+                  ),
+                ]
+              : []
         ],
       ),
     );
