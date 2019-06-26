@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
-import '../../requests/requests_core.dart';
-import '../../constants/constants.dart';
+import 'package:skoller/requests/requests_core.dart';
+import 'package:skoller/constants/constants.dart';
+import 'package:skoller/screens/auth/phone_verification_view.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:dart_notification_center/dart_notification_center.dart';
+import 'sign_in.dart';
 
 class SignUp extends StatefulWidget {
   SignUp({Key key}) : super(key: key);
@@ -12,6 +15,65 @@ class SignUp extends StatefulWidget {
 }
 
 class _SignUpState extends State<SignUp> {
+  final firstNameController = TextEditingController();
+  final lastNameController = TextEditingController();
+  final emailController = TextEditingController();
+  final phoneController = TextEditingController();
+
+  bool validState = false;
+
+  void verifyState(String _) {
+    final firstName = firstNameController.text.trim();
+    final lastName = lastNameController.text.trim();
+    final email = emailController.text.trim();
+    final phone = phoneController.text.trim();
+
+    final isValid = firstName.length > 0 &&
+        lastName.length > 0 &&
+        email.contains(RegExp(r'(.+?)@(.+?)\.(.+?)')) &&
+        phone.length == 14;
+
+    if (isValid != validState) {
+      setState(() => validState = isValid);
+    }
+  }
+
+  void tappedSignUp(TapUpDetails details) {
+    final firstName = firstNameController.text.trim();
+    final lastName = lastNameController.text.trim();
+    final email = emailController.text.trim();
+    final phone = phoneController.text.trim();
+
+    Auth.createUser(
+      nameFirst: firstName,
+      nameLast: lastName,
+      phone: phone.replaceAll(RegExp(r'[\(\) \-]+'), ''),
+      email: email,
+    ).then((response) async {
+      if (response.wasSuccessful()) {
+        final result = await showDialog(
+          context: context,
+          builder: (context) => PhoneVerificationView(phone),
+        );
+
+        if (result == null) {
+          Navigator.pushReplacement(
+            context,
+            CupertinoPageRoute(builder: (context) => SignIn()),
+          );
+        } else if (result is bool && result) {
+          Navigator.popUntil(context, (route) => route.isFirst);
+          DartNotificationCenter.post(
+            channel: NotificationChannels.appStateChanged,
+            options: AppState.main,
+          );
+        } else {
+          //TODO error
+        }
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) => Scaffold(
         resizeToAvoidBottomInset: true,
@@ -20,8 +82,11 @@ class _SignUpState extends State<SignUp> {
             child: Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: <Widget>[
-                  Spacer(flex: 2,),
+                  Spacer(
+                    flex: 2,
+                  ),
                   Padding(
                     padding: EdgeInsets.symmetric(horizontal: 24),
                     child: Row(
@@ -75,10 +140,11 @@ class _SignUpState extends State<SignUp> {
                               ),
                               CupertinoTextField(
                                 padding: EdgeInsets.all(1),
+                                controller: firstNameController,
                                 style: TextStyle(
                                     fontSize: 15, color: SKColors.dark_gray),
                                 decoration: BoxDecoration(border: null),
-                                // controller: firstNameController,
+                                onChanged: verifyState,
                               ),
                             ],
                           ),
@@ -109,10 +175,11 @@ class _SignUpState extends State<SignUp> {
                               ),
                               CupertinoTextField(
                                 padding: EdgeInsets.all(1),
+                                controller: lastNameController,
                                 style: TextStyle(
                                     fontSize: 15, color: SKColors.dark_gray),
                                 decoration: BoxDecoration(border: null),
-                                // controller: firstNameController,
+                                onChanged: verifyState,
                               ),
                             ],
                           ),
@@ -142,13 +209,14 @@ class _SignUpState extends State<SignUp> {
                         ),
                         CupertinoTextField(
                           padding: EdgeInsets.all(1),
+                          controller: emailController,
                           style: TextStyle(
                               fontSize: 15, color: SKColors.dark_gray),
                           placeholder: 'School email recommended',
                           placeholderStyle: TextStyle(
                               fontSize: 14, color: SKColors.text_light_gray),
                           decoration: BoxDecoration(border: null),
-                          // controller: firstNameController,
+                          onChanged: verifyState,
                         ),
                       ],
                     ),
@@ -175,11 +243,12 @@ class _SignUpState extends State<SignUp> {
                         ),
                         CupertinoTextField(
                           padding: EdgeInsets.all(1),
+                          controller: phoneController,
                           inputFormatters: [USNumberTextInputFormatter()],
                           style: TextStyle(
                               fontSize: 15, color: SKColors.dark_gray),
                           decoration: BoxDecoration(border: null),
-                          // controller: firstNameController,
+                          onChanged: verifyState,
                         ),
                       ],
                     ),
@@ -207,29 +276,56 @@ class _SignUpState extends State<SignUp> {
                                 style: TextStyle(color: SKColors.skoller_blue))
                           ],
                         ),
+                        textAlign: TextAlign.center,
                       ),
                     ),
                   ),
-                  Spacer(flex: 3,),
-                  Container(
-                    decoration: BoxDecoration(color: Colors.white),
-                    padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        Text(
-                          'Already have an account?',
-                          style: TextStyle(color: SKColors.dark_gray),
-                        ),
-                        Text(
-                          ' Log In',
-                          style: TextStyle(
-                              color: SKColors.skoller_blue,
-                              fontWeight: FontWeight.bold),
-                        ),
-                      ],
-                    ),
+                  Spacer(
+                    flex: 3,
                   ),
+                  validState
+                      ? GestureDetector(
+                          onTapUp: tappedSignUp,
+                          child: Container(
+                            alignment: Alignment.center,
+                            color: SKColors.skoller_blue,
+                            padding: EdgeInsets.symmetric(vertical: 12),
+                            child: Text(
+                              'Sign up',
+                              style: TextStyle(color: Colors.white),
+                            ),
+                          ),
+                        )
+                      : Container(
+                          decoration: BoxDecoration(color: Colors.white),
+                          padding: EdgeInsets.symmetric(
+                              horizontal: 16, vertical: 12),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: <Widget>[
+                              Text(
+                                'Already have an account?',
+                                style: TextStyle(color: SKColors.dark_gray),
+                              ),
+                              GestureDetector(
+                                onTapUp: (details) {
+                                  Navigator.pushReplacement(
+                                    context,
+                                    CupertinoPageRoute(
+                                      builder: (context) => SignIn(),
+                                    ),
+                                  );
+                                },
+                                child: Text(
+                                  ' Log In',
+                                  style: TextStyle(
+                                      color: SKColors.skoller_blue,
+                                      fontWeight: FontWeight.bold),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
                 ],
               ),
             ),

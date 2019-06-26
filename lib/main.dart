@@ -101,9 +101,6 @@ class _SkollerAppState extends State<SkollerApp> {
       case AppState.auth:
         currentWidget = AuthHome();
         break;
-      case AppState.veri:
-        currentWidget = MainView();
-        break;
     }
 
     return MaterialApp(

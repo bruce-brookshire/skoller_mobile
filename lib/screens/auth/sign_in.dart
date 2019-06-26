@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:skoller/screens/auth/phone_verification_view.dart';
 import 'package:flutter/services.dart';
+import 'package:skoller/screens/auth/sign_up.dart';
 import '../../requests/requests_core.dart';
 import '../../constants/constants.dart';
 
@@ -100,11 +101,19 @@ class _SignInState extends State<SignIn> {
                             'Don\'t have an account yet?',
                             style: TextStyle(color: SKColors.dark_gray),
                           ),
-                          Text(
-                            ' Sign Up',
-                            style: TextStyle(
-                                color: SKColors.skoller_blue,
-                                fontWeight: FontWeight.bold),
+                          GestureDetector(
+                            onTapUp: (details) => Navigator.pushReplacement(
+                              context,
+                              CupertinoPageRoute(
+                                builder: (context) => SignUp(),
+                              ),
+                            ),
+                            child: Text(
+                              ' Sign Up',
+                              style: TextStyle(
+                                  color: SKColors.skoller_blue,
+                                  fontWeight: FontWeight.bold),
+                            ),
                           ),
                         ],
                       ),

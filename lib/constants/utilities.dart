@@ -1,6 +1,6 @@
 part of 'constants.dart';
 
-enum AppState { loading, auth, main, veri }
+enum AppState { loading, auth, main }
 
 class DateUtilities {
   static String getFutureRelativeString(DateTime date) {

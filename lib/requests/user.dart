@@ -8,13 +8,17 @@ class SKUser {
   String avatarUrl;
   Student student;
 
-  SKUser._fromJson(Map content) {
-    id = content['id'];
-    student = Student._fromJson(content['student']);
-    email = content['email'];
-    avatarUrl = content['avatar'];
+  SKUser(this.id, this.email, this.avatarUrl, this.student);
 
-    SKUser.current = this;
+  static SKUser _fromJson(Map content) {
+    SKUser.current = SKUser(
+      content['id'],
+      content['email'],
+      content['avatar'],
+      Student._fromJson(content['student']),
+    );
+
+    return SKUser.current;
   }
 
   Future<bool> delete() {

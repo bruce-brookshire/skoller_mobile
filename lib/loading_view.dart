@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:skoller/constants/constants.dart';
 import 'package:skoller/requests/requests_core.dart';
 import 'package:dart_notification_center/dart_notification_center.dart';
+import 'package:skoller/screens/auth/phone_verification_view.dart';
 
 class LoadingView extends StatefulWidget {
   @override
@@ -34,7 +35,16 @@ class _LoadingViewState extends State<LoadingView> {
           nextState = AppState.main;
           break;
         case LogInResponse.needsVerification:
-          nextState = AppState.veri;
+          final success = await showDialog(
+            context: context,
+            builder: (context) => PhoneVerificationView(Auth.userPhone),
+          );
+
+          if (success is bool && success)
+            nextState = AppState.main;
+          else
+            nextState = AppState.auth;
+            
           break;
         case LogInResponse.failed:
           nextState = AppState.auth;

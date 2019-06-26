@@ -163,6 +163,8 @@ class Auth {
   static final _kSharedToken = 'STUDENT_TOKEN';
   static final _kStudentPhone = 'STUDENT_PHONE';
 
+  static String userPhone;
+
   static SKUser _fromJsonAuth(Map context) {
     final user = SKUser._fromJson(context['user']);
 
@@ -181,7 +183,7 @@ class Auth {
   static Future<LogInResponse> attemptLogin() async {
     final inst = await SharedPreferences.getInstance();
     final token = inst.getString(_kSharedToken);
-    final userPhone = inst.getString(_kStudentPhone);
+    userPhone = inst.getString(_kStudentPhone);
 
     if (token != null) {
       SKRequests._headers['Authorization'] = 'Bearer $token';
@@ -234,6 +236,8 @@ class Auth {
       if (response.wasSuccessful()) {
         SharedPreferences.getInstance()
             .then((inst) => inst.setString(_kStudentPhone, phone));
+
+        userPhone = phone;
       }
       return response;
     });
@@ -246,11 +250,55 @@ class Auth {
       _fromJsonNoAuth,
     ).then((onValue) => onValue.wasSuccessful());
   }
-  
+
   static Future<bool> logOut() async {
     final inst = await SharedPreferences.getInstance();
     inst.clear();
     SKRequests._headers.remove('Authorization');
+
+    Assignment.currentAssignments = {};
+    Assignment.currentTasks = [];
+    StudentClass.currentClasses = {};
+    Chat.currentChats = {};
+    InboxNotification.currentInbox = [];
+    Mod.currentMods = {};
+    School.currentSchools = {};
+    Period.currentPeriods = {};
+    SKUser.current = null;
+
     return true;
+  }
+
+  static Future<RequestResponse> createUser({
+    @required String nameFirst,
+    @required String nameLast,
+    @required String email,
+    @required String phone,
+  }) {
+    final offset = DateTime.now().timeZoneOffset.inHours;
+    final utc_hour = 9 - offset;
+
+    String notificationTime;
+
+    if (utc_hour >= 10)
+      notificationTime = '$utc_hour:00:00.000';
+    else
+      notificationTime = '0$utc_hour:00:00.000';
+
+    print(notificationTime);
+
+    return SKRequests.post(
+        '/users',
+        {
+          'email': email,
+          'student': {
+            'name_first': nameFirst,
+            'name_last': nameLast,
+            'phone': phone,
+            'notification_time': notificationTime,
+            'future_reminder_notification_time': notificationTime,
+          },
+        },
+        SKUser._fromJson);
   }
 }
