@@ -33,7 +33,7 @@ class UIAssets {
     offset: Offset(0, 1.75),
     blurRadius: 3.5,
   );
-  static CupertinoTabBar tabBar;
+  static String versionNumber;
 }
 
 class ClassStatuses {
@@ -55,6 +55,15 @@ class ImageNames {
   static final activityImages = _ActivityImages();
   static final chatImages = _ChatImages();
   static final sammiImages = _SammiImages();
+  static final menuImages = _MenuImages();
+}
+
+class _MenuImages {
+  static final _base = 'image_assets/menu_assets';
+
+  final briefcase = '${_base}/briefcase.png';
+  final points = '${_base}/points.png';
+  final reminders = '${_base}/reminders.png';
 }
 
 class _ChatImages {
@@ -99,7 +108,6 @@ class _SignUpImages {
   final syllabus_activity = '${_base}/syllabus_activity.png';
   final activities = '${_base}/activities.png';
   final logo_wide_blue = '${_base}/logo_wide_blue.png';
-
 }
 
 class _NavigationArrowImages {

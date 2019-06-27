@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:dart_notification_center/dart_notification_center.dart';
 import 'package:skoller/constants/constants.dart';
 import 'package:skoller/requests/requests_core.dart';
@@ -11,34 +12,144 @@ import 'package:skoller/screens/main_app/menu/reminders_view.dart';
 
 class MenuView extends StatelessWidget {
   final List<Widget> menuOptions = [
-    {'name': 'Profile', 'view': ProfileView()},
-    {'name': 'Share Skoller', 'view': ProfileLinkSharingView()},
-    {'name': 'My points', 'view': MyPointsView()},
-    {'name': 'Reminders', 'view': RemindersView()},
-    {'name': 'Manage classes', 'view': ManageClassesView()},
-    {'name': 'SkollerJobs', 'view': ProfileView()},
-    {'name': 'Send us feedback', 'view': ProfileView()},
-    {'name': 'Tutorial', 'view': ProfileView()},
-  ]
-      .map(
-        (row) => GestureDetector(
-          onTapUp: (details) {
-            DartNotificationCenter.post(
-              channel: NotificationChannels.presentViewOverTabBar,
-              options: row['view'],
-            );
-          },
-          child: Container(
-            padding: EdgeInsets.all(8),
-            margin: EdgeInsets.symmetric(vertical: 4, horizontal: 8),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(5),
-            ),
-            child: Text(row['name']),
+    [
+      {
+        'name': Text(
+          'Profile',
+          style: TextStyle(fontWeight: FontWeight.normal, fontSize: 16),
+        ),
+        'view': ProfileView(),
+        'image': Image.asset(ImageNames.peopleImages.person_blue)
+      }
+    ],
+    [
+      {
+        'name': Text(
+          'Share Skoller',
+          style: TextStyle(fontWeight: FontWeight.normal, fontSize: 16),
+        ),
+        'view': ProfileLinkSharingView(),
+        'image': Image.asset(ImageNames.peopleImages.people_blue)
+      },
+      {
+        'name': Text(
+          'My points',
+          style: TextStyle(fontWeight: FontWeight.normal, fontSize: 16),
+        ),
+        'view': MyPointsView(),
+        'image': Image.asset(ImageNames.menuImages.points)
+      },
+    ],
+    [
+      {
+        'name': Text(
+          'Reminders',
+          style: TextStyle(fontWeight: FontWeight.normal, fontSize: 16),
+        ),
+        'view': RemindersView(),
+        'image': Image.asset(ImageNames.menuImages.reminders)
+      },
+      {
+        'name': Text(
+          'Manage classes',
+          style: TextStyle(fontWeight: FontWeight.normal, fontSize: 16),
+        ),
+        'view': ManageClassesView()
+      },
+    ],
+    [
+      {
+        'name': Text.rich(
+          TextSpan(
+            text: 'Skoller',
+            children: [
+              TextSpan(
+                text: 'Jobs',
+                style: TextStyle(
+                    fontWeight: FontWeight.normal, fontStyle: FontStyle.italic),
+              ),
+            ],
+            style: TextStyle(fontSize: 16),
           ),
         ),
-      )
+        'action': () async {
+          print('hi');
+          final url = 'mailto:smith@example.org?subject=News&body=New%20plugin';
+
+          // if (await canLaunch(url)) {
+            await launch(url);
+          // }
+        },
+        'image': Image.asset(ImageNames.menuImages.briefcase)
+      },
+    ],
+    [
+      {
+        'name': Text(
+          'Send us feedback',
+          style: TextStyle(fontWeight: FontWeight.normal, fontSize: 16),
+        ),
+        'view': ProfileView()
+      },
+      {
+        'name': Text(
+          'Tutorial',
+          style: TextStyle(fontWeight: FontWeight.normal, fontSize: 16),
+        ),
+        'view': ProfileView()
+      },
+    ]
+  ]
+      .map((group) => Container(
+            decoration: BoxDecoration(
+              color: Colors.white,
+              border: Border(bottom: BorderSide(color: SKColors.border_gray)),
+            ),
+            margin: EdgeInsets.symmetric(vertical: 8),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: group
+                  .map(
+                    (row) => Container(
+                      height: 44,
+                      decoration: BoxDecoration(
+                          border: Border(
+                              top: BorderSide(color: SKColors.border_gray))),
+                      padding: EdgeInsets.symmetric(horizontal: 12),
+                      child: GestureDetector(
+                        onTapUp: (details) {
+                          if (row.containsKey('view'))
+                            DartNotificationCenter.post(
+                              channel:
+                                  NotificationChannels.presentViewOverTabBar,
+                              options: row['view'],
+                            );
+                          else if (row.containsKey('action'))
+                            (row['action'] as VoidCallback)();
+                        },
+                        child: Row(
+                          children: [
+                            ...row.containsKey('image')
+                                ? [
+                                    Padding(
+                                      padding:
+                                          EdgeInsets.only(right: 8, bottom: 1),
+                                      child: SizedBox(
+                                          width: 20,
+                                          height: 20,
+                                          child: row['image']),
+                                    ),
+                                  ]
+                                : [],
+                            Expanded(child: row['name']),
+                          ],
+                        ),
+                      ),
+                    ),
+                  )
+                  .toList(),
+            ),
+          ))
       .toList();
 
   @override
@@ -49,10 +160,6 @@ class MenuView extends StatelessWidget {
       child: Container(
         decoration: BoxDecoration(
           color: SKColors.background_gray,
-          borderRadius: BorderRadius.only(
-            bottomLeft: Radius.circular(20),
-            bottomRight: Radius.circular(20),
-          ),
           boxShadow: [UIAssets.boxShadow],
         ),
         child: SafeArea(
@@ -107,20 +214,40 @@ class MenuView extends StatelessWidget {
                   ),
                   ...menuOptions,
                   Spacer(),
-                  GestureDetector(
-                    onTapUp: (details) {
-                      Auth.logOut();
-                      DartNotificationCenter.post(
-                          channel: NotificationChannels.appStateChanged,
-                          options: AppState.auth);
-                    },
-                    child: Padding(
-                      padding:
-                          EdgeInsets.symmetric(vertical: 12, horizontal: 12),
-                      child: Text(
-                        'Logout',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(color: SKColors.skoller_blue),
+                  Text(
+                    'v${UIAssets.versionNumber ?? '-'}',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                        color: SKColors.light_gray,
+                        fontWeight: FontWeight.normal,
+                        fontSize: 13),
+                  ),
+                  Text(
+                    '© 2019 Skoller, Inc.',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                        color: SKColors.light_gray,
+                        fontWeight: FontWeight.normal,
+                        fontSize: 13),
+                  ),
+                  SafeArea(
+                    top: false,
+                    child: GestureDetector(
+                      onTapUp: (details) {
+                        Auth.logOut();
+                        DartNotificationCenter.post(
+                            channel: NotificationChannels.appStateChanged,
+                            options: AppState.auth);
+                      },
+                      child: Container(
+                        color: SKColors.skoller_blue,
+                        padding:
+                            EdgeInsets.symmetric(vertical: 12, horizontal: 12),
+                        child: Text(
+                          'Logout',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(color: Colors.white),
+                        ),
                       ),
                     ),
                   )

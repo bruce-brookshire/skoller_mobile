@@ -39,7 +39,7 @@ class _ManageClassesViewState extends State<ManageClassesView> {
   Widget build(BuildContext context) {
     return SKNavView(
       leftBtn: Image.asset(ImageNames.navArrowImages.down),
-      title: 'Classes',
+      title: 'My Classes',
       rightBtn: Image.asset(ImageNames.rightNavImages.add_class),
       callbackRight: () => Navigator.push(
             context,

@@ -14,14 +14,13 @@ class _MainViewState extends State<MainView> {
   bool menuShowing = false;
   bool constraintsSetup = false;
 
-  double deviceHeight;
   double deviceWidth;
 
-  double menuTop;
-  double menuHeight;
+  double menuLeft;
+  double menuWidth;
 
-  double backgroundTop;
-  double backgroundHeight;
+  double backgroundLeft;
+  double backgroundWidth;
 
   @override
   void initState() {
@@ -49,11 +48,11 @@ class _MainViewState extends State<MainView> {
       menuShowing = !menuShowing;
 
       if (menuShowing) {
-        menuTop = 0;
-        backgroundTop = menuHeight - 15;
+        menuLeft = 0;
+        backgroundLeft = menuWidth - 15;
       } else {
-        menuTop = -menuHeight - 5;
-        backgroundTop = -backgroundHeight - 5;
+        menuLeft = -menuWidth - 5;
+        backgroundLeft = -backgroundWidth - 5;
       }
     });
   }
@@ -77,23 +76,22 @@ class _MainViewState extends State<MainView> {
 
       Size size = MediaQuery.of(context).size;
       deviceWidth = size.width;
-      deviceHeight = size.height;
 
-      menuHeight = deviceHeight * 0.7;
-      menuTop = -menuHeight - 5;
+      menuWidth = deviceWidth * 0.7;
+      menuLeft = -menuWidth - 5;
 
-      backgroundHeight = (deviceHeight - menuHeight) + 15;
-      backgroundTop = -backgroundHeight - 5;
+      backgroundWidth = (deviceWidth - menuWidth) + 15;
+      backgroundLeft = -backgroundWidth - 5;
     }
 
     return Stack(
       children: <Widget>[
         SKTabBar(),
         AnimatedPositioned(
-          top: backgroundTop,
-          height: backgroundHeight,
-          left: 0,
-          width: deviceWidth,
+          left: backgroundLeft,
+          width: backgroundWidth,
+          top: 0,
+          bottom: 0,
           child: GestureDetector(
             behavior: HitTestBehavior.opaque,
             onTapUp: toggleMenu,
@@ -105,10 +103,10 @@ class _MainViewState extends State<MainView> {
           curve: Curves.decelerate,
         ),
         AnimatedPositioned(
-          top: menuTop,
-          height: menuHeight,
-          left: 0,
-          width: deviceWidth,
+          left: menuLeft,
+          width: menuWidth,
+          top: 0,
+          bottom: 0,
           child: MenuView(),
           duration: Duration(milliseconds: 300),
           curve: Curves.decelerate,

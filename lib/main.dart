@@ -1,4 +1,5 @@
 import 'package:dart_notification_center/dart_notification_center.dart';
+import 'package:package_info/package_info.dart';
 import 'package:flutter/material.dart';
 import 'package:skoller/loading_view.dart';
 import 'package:skoller/screens/main_app/main_view.dart';
@@ -10,6 +11,9 @@ void main() {
   runApp(SkollerApp());
   //Allow currentTZ to cache through heuristic exploration before we need it
   TimeZoneManager.verifyTzDbActive();
+
+  PackageInfo.fromPlatform().then((info) => UIAssets.versionNumber =
+      (info.version.split('.')..removeAt(1)).join('.'));
 }
 
 class SkollerApp extends StatefulWidget {

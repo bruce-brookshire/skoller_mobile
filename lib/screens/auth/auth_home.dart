@@ -12,7 +12,7 @@ class AuthHome extends StatelessWidget {
   void tappedLogIn(BuildContext context) {
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => SignIn()),
+      CupertinoPageRoute(builder: (context) => SignIn()),
     );
   }
 
