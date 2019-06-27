@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:skoller/screens/main_app/menu/skoller_jobs_view.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:dart_notification_center/dart_notification_center.dart';
 import 'package:skoller/constants/constants.dart';
@@ -72,14 +73,7 @@ class MenuView extends StatelessWidget {
             style: TextStyle(fontSize: 16),
           ),
         ),
-        'action': () async {
-          print('hi');
-          final url = 'mailto:smith@example.org?subject=News&body=New%20plugin';
-
-          // if (await canLaunch(url)) {
-            await launch(url);
-          // }
-        },
+        'view': SkollerJobsView(),
         'image': Image.asset(ImageNames.menuImages.briefcase)
       },
     ],
@@ -89,7 +83,13 @@ class MenuView extends StatelessWidget {
           'Send us feedback',
           style: TextStyle(fontWeight: FontWeight.normal, fontSize: 16),
         ),
-        'view': ProfileView()
+        'action': () async {
+          final url = 'mailto:support@skoller.co?subject=Feedback';
+
+          if (await canLaunch(url)) {
+            await launch(url);
+          }
+        },
       },
       {
         'name': Text(
