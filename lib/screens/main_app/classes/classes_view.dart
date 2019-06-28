@@ -483,22 +483,102 @@ class _ClassesViewState extends State<ClassesView> {
 
   void tappedSammiExplanation(_SammiExplanationType type) async {
     showDialog(
-        context: context,
-        builder: (context) => Column(
+      context: context,
+      builder: (context) => Column(
+        children: [
+          Spacer(flex: 1),
+          Material(
+            color: Colors.white.withAlpha(0),
+            child: Padding(
+              padding: EdgeInsets.symmetric(horizontal: 24),
+              child: SammiSpeechBubble(
+                sammiPersonality: SammiPersonality.smile,
+                speechBubbleContents: Text.rich(
+                  TextSpan(
+                    text: 'I received the syllabus but ',
+                    children: [
+                      TextSpan(
+                          text: 'there wasn\'t enough info ',
+                          style: TextStyle(fontWeight: FontWeight.bold)),
+                      TextSpan(
+                          text:
+                              'on it to set up the class. Knock it out in a few minutes!'),
+                    ],
+                  ),
+                  style: TextStyle(fontWeight: FontWeight.normal, fontSize: 14),
+                ),
+              ),
+            ),
+          ),
+          Dialog(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
+              side: BorderSide(color: SKColors.border_gray),
+            ),
+            backgroundColor: Colors.white,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              mainAxisSize: MainAxisSize.min,
               children: <Widget>[
                 Container(
-                  color: SKColors.warning_red,
-                  child: Text('hi'),
+                  padding: EdgeInsets.fromLTRB(12, 12, 12, 8),
+                  margin: EdgeInsets.only(bottom: 8),
+                  decoration: BoxDecoration(
+                    color: SKColors.selected_gray,
+                    borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(10),
+                      topRight: Radius.circular(10),
+                    ),
+                  ),
+                  child: Row(children: [
+                    Padding(
+                      padding: EdgeInsets.only(right: 8),
+                      child: Image.asset(ImageNames.peopleImages.people_gray),
+                    ),
+                    Text(
+                      'Set up this class',
+                      style: TextStyle(fontSize: 17),
+                    ),
+                  ]),
+                ),
+                Padding(
+                  padding: EdgeInsets.symmetric(vertical: 4),
+                  child: Text(
+                    'Instant setup',
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+                Padding(
+                  padding: EdgeInsets.only(bottom: 4),
+                  child: Text(
+                    'Do it yourself!',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                        color: SKColors.light_gray,
+                        fontSize: 14,
+                        fontWeight: FontWeight.normal),
+                  ),
                 ),
                 Container(
-                  color: SKColors.warning_red,
-                  child: Text('hi'),
-                ),
-                Container(
-                  color: SKColors.warning_red,
-                  child: Text('hi'),
+                  alignment: Alignment.center,
+                  padding: EdgeInsets.symmetric(vertical: 8),
+                  margin: EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+                  decoration: BoxDecoration(
+                    color: SKColors.skoller_blue,
+                    borderRadius: BorderRadius.circular(5),
+                    boxShadow: [UIAssets.boxShadow],
+                  ),
+                  child: Text(
+                    'Start',
+                    style: TextStyle(color: Colors.white),
+                  ),
                 )
               ],
-            ));
+            ),
+          ),
+          Spacer(flex: 2)
+        ],
+      ),
+    );
   }
 }
