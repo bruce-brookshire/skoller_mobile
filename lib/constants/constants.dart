@@ -56,6 +56,7 @@ class ImageNames {
   static final chatImages = _ChatImages();
   static final sammiImages = _SammiImages();
   static final menuImages = _MenuImages();
+  static final tutorialImages = _TutorialImages();
 }
 
 class _MenuImages {
@@ -64,6 +65,12 @@ class _MenuImages {
   final briefcase = '${_base}/briefcase.png';
   final points = '${_base}/points.png';
   final reminders = '${_base}/reminders.png';
+}
+
+class _TutorialImages {
+  static final _base = 'image_assets/tutorial_assets';
+
+  final syllabus = '${_base}/syllabus.png';
 }
 
 class _ChatImages {

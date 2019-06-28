@@ -165,7 +165,7 @@ class _ClassesViewState extends State<ClassesView> {
               color: SKColors.border_gray,
             ),
             boxShadow: [UIAssets.boxShadow]),
-        margin: EdgeInsets.symmetric(horizontal: 6, vertical: 4),
+        margin: EdgeInsets.symmetric(horizontal: 7, vertical: 4),
         child: Row(
           children: <Widget>[
             Container(
@@ -259,11 +259,7 @@ class _ClassesViewState extends State<ClassesView> {
         setState(() {
           selectedIndex = null;
         });
-        // Navigator.push(
-        //     context,
-        //     CupertinoPageRoute(
-        //         builder: (context) =>
-        //             ClassDetailView(classId: studentClass.id)));
+        tappedSammiExplanation(_SammiExplanationType.needsSetup);
       },
       child: Container(
         decoration: BoxDecoration(
@@ -274,7 +270,7 @@ class _ClassesViewState extends State<ClassesView> {
               color: SKColors.border_gray,
             ),
             boxShadow: [UIAssets.boxShadow]),
-        margin: EdgeInsets.symmetric(horizontal: 6, vertical: 4),
+        margin: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
         child: Row(
           children: <Widget>[
             Container(
@@ -350,11 +346,7 @@ class _ClassesViewState extends State<ClassesView> {
         setState(() {
           selectedIndex = null;
         });
-        // Navigator.push(
-        //     context,
-        //     CupertinoPageRoute(
-        //         builder: (context) =>
-        //             ClassDetailView(classId: studentClass.id)));
+        tappedSammiExplanation(_SammiExplanationType.diy);
       },
       child: Container(
         decoration: BoxDecoration(
@@ -365,7 +357,7 @@ class _ClassesViewState extends State<ClassesView> {
               color: SKColors.border_gray,
             ),
             boxShadow: [UIAssets.boxShadow]),
-        margin: EdgeInsets.symmetric(horizontal: 6, vertical: 4),
+        margin: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
         child: Row(
           children: <Widget>[
             Container(
@@ -425,11 +417,6 @@ class _ClassesViewState extends State<ClassesView> {
         });
 
         tappedSammiExplanation(_SammiExplanationType.inReview);
-        // Navigator.push(
-        //     context,
-        //     CupertinoPageRoute(
-        //         builder: (context) =>
-        //             ClassDetailView(classId: studentClass.id)));
       },
       child: Container(
         decoration: BoxDecoration(
@@ -440,7 +427,7 @@ class _ClassesViewState extends State<ClassesView> {
               color: SKColors.border_gray,
             ),
             boxShadow: [UIAssets.boxShadow]),
-        margin: EdgeInsets.symmetric(horizontal: 6, vertical: 4),
+        margin: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
         child: Row(
           children: <Widget>[
             Container(
@@ -482,6 +469,289 @@ class _ClassesViewState extends State<ClassesView> {
   }
 
   void tappedSammiExplanation(_SammiExplanationType type) async {
+    Text sammiText;
+    Widget body = Text('todo');
+
+    switch (type) {
+      case _SammiExplanationType.diy:
+        sammiText = Text.rich(
+          TextSpan(
+            text: 'I received the syllabus but ',
+            children: [
+              TextSpan(
+                  text: 'there wasn\'t enough info ',
+                  style: TextStyle(fontWeight: FontWeight.bold)),
+              TextSpan(
+                  text:
+                      'on it to set up the class. Knock it out in a few minutes!'),
+            ],
+          ),
+          style: TextStyle(fontWeight: FontWeight.normal, fontSize: 14),
+        );
+
+        body = Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            Container(
+              padding: EdgeInsets.fromLTRB(12, 12, 12, 8),
+              margin: EdgeInsets.only(bottom: 8),
+              decoration: BoxDecoration(
+                color: SKColors.selected_gray,
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(10),
+                  topRight: Radius.circular(10),
+                ),
+              ),
+              child: Row(children: [
+                Padding(
+                  padding: EdgeInsets.only(right: 8),
+                  child: Image.asset(ImageNames.peopleImages.people_gray),
+                ),
+                Text(
+                  'Set up this class',
+                  style: TextStyle(fontSize: 17),
+                ),
+              ]),
+            ),
+            Padding(
+              padding: EdgeInsets.symmetric(vertical: 4),
+              child: Text(
+                'Instant setup',
+                textAlign: TextAlign.center,
+              ),
+            ),
+            Padding(
+              padding: EdgeInsets.only(bottom: 4),
+              child: Text(
+                'Do it yourself!',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                    color: SKColors.light_gray,
+                    fontSize: 14,
+                    fontWeight: FontWeight.normal),
+              ),
+            ),
+            Container(
+              alignment: Alignment.center,
+              padding: EdgeInsets.symmetric(vertical: 8),
+              margin: EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+              decoration: BoxDecoration(
+                color: SKColors.skoller_blue,
+                borderRadius: BorderRadius.circular(5),
+                boxShadow: [UIAssets.boxShadow],
+              ),
+              child: Text(
+                'Start',
+                style: TextStyle(color: Colors.white),
+              ),
+            )
+          ],
+        );
+        break;
+      case _SammiExplanationType.inReview:
+        sammiText = Text.rich(
+          TextSpan(
+            text: 'I\'ve got the syllabus... ',
+            children: [
+              TextSpan(
+                  text: 'You will get a notification ',
+                  style: TextStyle(fontWeight: FontWeight.bold)),
+              TextSpan(text: 'when I\'m done setting up the class!'),
+            ],
+          ),
+          style: TextStyle(fontWeight: FontWeight.normal, fontSize: 14),
+        );
+
+        body = Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            Container(
+              padding: EdgeInsets.fromLTRB(12, 12, 12, 8),
+              margin: EdgeInsets.only(bottom: 8),
+              decoration: BoxDecoration(
+                color: SKColors.selected_gray,
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(10),
+                  topRight: Radius.circular(10),
+                ),
+              ),
+              child: Row(children: [
+                Padding(
+                  padding: EdgeInsets.only(right: 8),
+                  child: Image.asset(ImageNames.peopleImages.people_gray),
+                ),
+                Text(
+                  'Set up this class',
+                  style: TextStyle(fontSize: 17),
+                ),
+              ]),
+            ),
+            Padding(
+              padding: EdgeInsets.symmetric(vertical: 4),
+              child: Text(
+                'The syllabus is in review 👍',
+                textAlign: TextAlign.center,
+              ),
+            ),
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 24, vertical: 8),
+              child: Row(
+                children: <Widget>[
+                  Expanded(
+                      child: Container(color: SKColors.light_gray, height: 1)),
+                  Padding(
+                    padding: EdgeInsets.symmetric(vertical: 4, horizontal: 4),
+                    child: Text(
+                      'Don\'t want to wait?',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                          color: SKColors.light_gray,
+                          fontWeight: FontWeight.normal,
+                          fontStyle: FontStyle.italic),
+                    ),
+                  ),
+                  Expanded(
+                      child: Container(color: SKColors.light_gray, height: 1)),
+                ],
+              ),
+            ),
+            Padding(
+              padding: EdgeInsets.symmetric(vertical: 4),
+              child: Text(
+                'Instant setup',
+                textAlign: TextAlign.center,
+              ),
+            ),
+            Padding(
+              padding: EdgeInsets.only(bottom: 4),
+              child: Text(
+                'Do it yourself! ',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                    color: SKColors.light_gray,
+                    fontSize: 14,
+                    fontWeight: FontWeight.normal),
+              ),
+            ),
+            Container(
+              alignment: Alignment.center,
+              padding: EdgeInsets.symmetric(vertical: 8),
+              margin: EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+              decoration: BoxDecoration(
+                color: SKColors.skoller_blue,
+                borderRadius: BorderRadius.circular(5),
+                boxShadow: [UIAssets.boxShadow],
+              ),
+              child: Text(
+                'Start',
+                style: TextStyle(color: Colors.white),
+              ),
+            )
+          ],
+        );
+        break;
+      case _SammiExplanationType.needsSetup:
+        sammiText = Text.rich(
+          TextSpan(
+            text: 'It\'s time to ',
+            children: [
+              TextSpan(
+                  text: 'locate your syllabus',
+                  style: TextStyle(fontWeight: FontWeight.bold)),
+            ],
+          ),
+          style: TextStyle(fontWeight: FontWeight.normal, fontSize: 15),
+        );
+
+        body = Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            Row(
+              children: <Widget>[
+                Container(
+                  height: 100,
+                  padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                  child: Image.asset(ImageNames.tutorialImages.syllabus),
+                ),
+                Expanded(
+                  child: Text('Set up your class in two ways',style: TextStyle(fontSize: 19),),
+                )
+              ],
+            ),
+            Padding(
+              padding: EdgeInsets.symmetric(vertical: 4),
+              child: Text(
+                'Send your syllabus',
+                textAlign: TextAlign.center,
+              ),
+            ),
+            Container(
+              padding: EdgeInsets.symmetric(vertical: 8),
+              margin: EdgeInsets.symmetric(vertical: 16),
+              alignment: Alignment.center,
+              width: 136,
+              decoration: BoxDecoration(
+                color: SKColors.skoller_blue,
+                borderRadius: BorderRadius.circular(5),
+                boxShadow: [UIAssets.boxShadow],
+              ),
+              child: Text(
+                'Learn how',
+                style: TextStyle(color: Colors.white),
+              ),
+            ),
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 24, vertical: 8),
+              child: Row(
+                children: <Widget>[
+                  Expanded(
+                      child: Container(color: SKColors.light_gray, height: 1)),
+                  Padding(
+                    padding: EdgeInsets.symmetric(vertical: 4, horizontal: 4),
+                    child: Text(
+                      'OR',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                          color: SKColors.light_gray,
+                          fontWeight: FontWeight.normal,
+                          fontStyle: FontStyle.italic),
+                    ),
+                  ),
+                  Expanded(
+                      child: Container(color: SKColors.light_gray, height: 1)),
+                ],
+              ),
+            ),
+            Padding(
+              padding: EdgeInsets.symmetric(vertical: 4),
+              child: Text(
+                'Instant class setup',
+                textAlign: TextAlign.center,
+              ),
+            ),
+            Container(
+              alignment: Alignment.center,
+              padding: EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+              margin: EdgeInsets.symmetric(vertical: 16),
+              width: 136,
+              decoration: BoxDecoration(
+                color: SKColors.skoller_blue,
+                borderRadius: BorderRadius.circular(5),
+                boxShadow: [UIAssets.boxShadow],
+              ),
+              child: Text(
+                'Get started',
+                style: TextStyle(color: Colors.white),
+              ),
+            ),
+          ],
+        );
+        break;
+    }
+
     showDialog(
       context: context,
       builder: (context) => Column(
@@ -492,22 +762,8 @@ class _ClassesViewState extends State<ClassesView> {
             child: Padding(
               padding: EdgeInsets.symmetric(horizontal: 24),
               child: SammiSpeechBubble(
-                sammiPersonality: SammiPersonality.smile,
-                speechBubbleContents: Text.rich(
-                  TextSpan(
-                    text: 'I received the syllabus but ',
-                    children: [
-                      TextSpan(
-                          text: 'there wasn\'t enough info ',
-                          style: TextStyle(fontWeight: FontWeight.bold)),
-                      TextSpan(
-                          text:
-                              'on it to set up the class. Knock it out in a few minutes!'),
-                    ],
-                  ),
-                  style: TextStyle(fontWeight: FontWeight.normal, fontSize: 14),
-                ),
-              ),
+                  sammiPersonality: SammiPersonality.smile,
+                  speechBubbleContents: sammiText),
             ),
           ),
           Dialog(
@@ -516,65 +772,7 @@ class _ClassesViewState extends State<ClassesView> {
               side: BorderSide(color: SKColors.border_gray),
             ),
             backgroundColor: Colors.white,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              mainAxisSize: MainAxisSize.min,
-              children: <Widget>[
-                Container(
-                  padding: EdgeInsets.fromLTRB(12, 12, 12, 8),
-                  margin: EdgeInsets.only(bottom: 8),
-                  decoration: BoxDecoration(
-                    color: SKColors.selected_gray,
-                    borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(10),
-                      topRight: Radius.circular(10),
-                    ),
-                  ),
-                  child: Row(children: [
-                    Padding(
-                      padding: EdgeInsets.only(right: 8),
-                      child: Image.asset(ImageNames.peopleImages.people_gray),
-                    ),
-                    Text(
-                      'Set up this class',
-                      style: TextStyle(fontSize: 17),
-                    ),
-                  ]),
-                ),
-                Padding(
-                  padding: EdgeInsets.symmetric(vertical: 4),
-                  child: Text(
-                    'Instant setup',
-                    textAlign: TextAlign.center,
-                  ),
-                ),
-                Padding(
-                  padding: EdgeInsets.only(bottom: 4),
-                  child: Text(
-                    'Do it yourself!',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                        color: SKColors.light_gray,
-                        fontSize: 14,
-                        fontWeight: FontWeight.normal),
-                  ),
-                ),
-                Container(
-                  alignment: Alignment.center,
-                  padding: EdgeInsets.symmetric(vertical: 8),
-                  margin: EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-                  decoration: BoxDecoration(
-                    color: SKColors.skoller_blue,
-                    borderRadius: BorderRadius.circular(5),
-                    boxShadow: [UIAssets.boxShadow],
-                  ),
-                  child: Text(
-                    'Start',
-                    style: TextStyle(color: Colors.white),
-                  ),
-                )
-              ],
-            ),
+            child: body,
           ),
           Spacer(flex: 2)
         ],

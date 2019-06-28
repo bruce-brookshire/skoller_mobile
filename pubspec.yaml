@@ -65,6 +65,7 @@ flutter:
    - image_assets/chat_assets/
    - image_assets/sammi_personality_assets/
    - image_assets/menu_assets/
+   - image_assets/tutorial_assets/
    - packages/time_machine/data/cultures/cultures.bin
    - packages/time_machine/data/tzdb/tzdb.bin
 
