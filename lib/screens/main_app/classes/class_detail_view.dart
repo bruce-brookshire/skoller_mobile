@@ -23,6 +23,7 @@ class ClassDetailView extends StatefulWidget {
 class _ClassDetailViewState extends State<ClassDetailView> {
   StudentClass studentClass;
   int _selectedIndex;
+  final _refreshIndicatorKey = GlobalKey<RefreshIndicatorState>();
 
   @override
   void initState() {
@@ -47,14 +48,17 @@ class _ClassDetailViewState extends State<ClassDetailView> {
         onNotification: fetchClass);
   }
 
-  void fetchClass([dynamic options]) {
-    studentClass.refetchSelf().then((response) {
-      if (response.wasSuccessful()) {
-        setState(() {
-          studentClass = response.obj;
-        });
-      }
-    });
+  @override
+  void dispose() {
+    super.dispose();
+    DartNotificationCenter.unsubscribe(observer: this);
+  }
+
+  Future fetchClass([dynamic options]) async {
+    final response = await studentClass.refetchSelf();
+    if (response.wasSuccessful()) {
+      setState(() => studentClass = response.obj);
+    }
   }
 
   void tappedLink(TapUpDetails details) {
@@ -139,10 +143,14 @@ class _ClassDetailViewState extends State<ClassDetailView> {
               child: Container(
                 margin: EdgeInsets.only(top: 96),
                 color: SKColors.background_gray,
-                child: ListView.builder(
-                  padding: EdgeInsets.only(top: 6, bottom: 64),
-                  itemCount: studentClass.assignments.length,
-                  itemBuilder: assignmentCellBuilder,
+                child: RefreshIndicator(
+                  key: _refreshIndicatorKey,
+                  onRefresh: fetchClass,
+                  child: ListView.builder(
+                    padding: EdgeInsets.only(top: 6, bottom: 64),
+                    itemCount: studentClass.assignments.length,
+                    itemBuilder: assignmentCellBuilder,
+                  ),
                 ),
               ),
             ),

@@ -1,10 +1,8 @@
-import 'package:dart_notification_center/dart_notification_center.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import '../../constants/constants.dart';
 import 'sign_in.dart';
 import 'sign_up.dart';
-import '../../requests/requests_core.dart';
 
 class AuthHome extends StatelessWidget {
   AuthHome() {}

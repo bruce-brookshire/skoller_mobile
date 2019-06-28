@@ -12,16 +12,18 @@ class ClassesView extends StatefulWidget {
 }
 
 typedef Widget _CardConstruct(StudentClass studentClass, int index);
+enum _SammiExplanationType { needsSetup, diy, inReview }
 
 class _ClassesViewState extends State<ClassesView> {
   List<StudentClass> classes = [];
   int selectedIndex;
   Map<int, _CardConstruct> cardConstructors;
+  final _refreshIndicatorKey = GlobalKey<RefreshIndicatorState>();
 
   @override
   void initState() {
     super.initState();
-    
+
     sortClasses();
     fetchClasses();
 
@@ -39,12 +41,18 @@ class _ClassesViewState extends State<ClassesView> {
         onNotification: sortClasses);
   }
 
-  fetchClasses() {
-    StudentClass.getStudentClasses().then((response) {
-      if (response.wasSuccessful()) {
-        sortClasses();
-      }
-    });
+  @override
+  void dispose() {
+    super.dispose();
+    DartNotificationCenter.unsubscribe(observer: this);
+  }
+
+  Future fetchClasses() async {
+    final response = await StudentClass.getStudentClasses();
+
+    if (response.wasSuccessful()) {
+      sortClasses();
+    }
   }
 
   void sortClasses([dynamic options]) {
@@ -104,12 +112,16 @@ class _ClassesViewState extends State<ClassesView> {
       },
       children: <Widget>[
         Expanded(
-          child: ListView.builder(
-            padding: EdgeInsets.only(top: 4),
-            itemCount: classes.length,
-            itemBuilder: createClassCard,
+          child: RefreshIndicator(
+            key: _refreshIndicatorKey,
+            onRefresh: fetchClasses,
+            child: ListView.builder(
+              padding: EdgeInsets.only(top: 4),
+              itemCount: classes.length,
+              itemBuilder: createClassCard,
+            ),
           ),
-        )
+        ),
       ],
     );
   }
@@ -411,6 +423,8 @@ class _ClassesViewState extends State<ClassesView> {
         setState(() {
           selectedIndex = null;
         });
+
+        tappedSammiExplanation(_SammiExplanationType.inReview);
         // Navigator.push(
         //     context,
         //     CupertinoPageRoute(
@@ -465,5 +479,26 @@ class _ClassesViewState extends State<ClassesView> {
         ),
       ),
     );
+  }
+
+  void tappedSammiExplanation(_SammiExplanationType type) async {
+    showDialog(
+        context: context,
+        builder: (context) => Column(
+              children: <Widget>[
+                Container(
+                  color: SKColors.warning_red,
+                  child: Text('hi'),
+                ),
+                Container(
+                  color: SKColors.warning_red,
+                  child: Text('hi'),
+                ),
+                Container(
+                  color: SKColors.warning_red,
+                  child: Text('hi'),
+                )
+              ],
+            ));
   }
 }

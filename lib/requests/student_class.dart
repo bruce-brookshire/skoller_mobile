@@ -415,6 +415,14 @@ class SchoolClass {
     return schoolClass;
   }
 
+  Future<RequestResponse> enrollInClass() {
+    return SKRequests.post(
+      '/students/${SKUser.current.student.id}/classes/$id',
+      null,
+      StudentClass._fromJsonObj,
+    );
+  }
+
   static Future<http.Response> _activeClassSearch;
 
   static void invalidateCurrentClassSearch() {

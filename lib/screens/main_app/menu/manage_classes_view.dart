@@ -26,6 +26,12 @@ class _ManageClassesViewState extends State<ManageClassesView> {
         onNotification: updateClasses);
   }
 
+  @override
+  void dispose() {
+    super.dispose();
+    DartNotificationCenter.unsubscribe(observer: this);
+  }
+
   void updateClasses([dynamic options]) async {
     final newClasses = StudentClass.currentClasses.values.toList()
       ..sort((class1, class2) => class1.name.compareTo(class2.name));

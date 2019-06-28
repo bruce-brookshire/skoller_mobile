@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:skoller/constants/constants.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class SkollerJobsView extends StatelessWidget {
   @override
@@ -81,6 +82,13 @@ class SkollerJobsView extends StatelessWidget {
                 style: TextStyle(fontWeight: FontWeight.normal),
               ),
               GestureDetector(
+                onTapUp: (details) async {
+                  final url = 'https://airtable.com/shrciIOPyDKX39DV1';
+
+                  if (await canLaunch(url)) {
+                    launch(url);
+                  }
+                },
                 child: Container(
                   decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(5),

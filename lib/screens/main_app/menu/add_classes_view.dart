@@ -1,5 +1,5 @@
 import 'dart:async';
-
+import 'package:dart_notification_center/dart_notification_center.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:skoller/requests/requests_core.dart';
@@ -54,6 +54,17 @@ class _AddClassesViewState extends State<AddClassesView> {
     if (activePeriod == null) {
       activePeriod = findSemester(400);
     }
+
+    DartNotificationCenter.subscribe(
+        observer: this,
+        channel: NotificationChannels.classChanged,
+        onNotification: (options) => setState(() {}));
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    DartNotificationCenter.unsubscribe(observer: this);
   }
 
   void didTypeInSearch(String searchText) {
@@ -198,18 +209,44 @@ class _AddClassesViewState extends State<AddClassesView> {
                   ),
                 ],
               ),
-              Container(
-                margin: EdgeInsets.only(top: 16),
-                alignment: Alignment.center,
-                padding: EdgeInsets.symmetric(vertical: 8),
-                decoration: BoxDecoration(
-                  color:
-                      isEnrolled ? SKColors.warning_red : SKColors.skoller_blue,
-                  borderRadius: BorderRadius.circular(5),
-                ),
-                child: Text(
-                  isEnrolled ? 'Drop this class' : 'Join this class',
-                  style: TextStyle(color: Colors.white),
+              GestureDetector(
+                onTapUp: (details) {
+                  final func = isEnrolled
+                      ? StudentClass.currentClasses[schoolClass.id].dropClass
+                      : schoolClass.enrollInClass;
+
+                  func().then((response) {
+                    if (response is bool) {
+                      return response;
+                    } else if (response is RequestResponse) {
+                      return response.wasSuccessful();
+                    } else {
+                      return false;
+                    }
+                  }).then((success) async {
+                    Navigator.pop(context);
+
+                    if (success) {
+                      await StudentClass.getStudentClasses();
+                      DartNotificationCenter.post(
+                          channel: NotificationChannels.classChanged);
+                    }
+                  });
+                },
+                child: Container(
+                  margin: EdgeInsets.only(top: 16),
+                  alignment: Alignment.center,
+                  padding: EdgeInsets.symmetric(vertical: 8),
+                  decoration: BoxDecoration(
+                    color: isEnrolled
+                        ? SKColors.warning_red
+                        : SKColors.skoller_blue,
+                    borderRadius: BorderRadius.circular(5),
+                  ),
+                  child: Text(
+                    isEnrolled ? 'Drop this class' : 'Join this class',
+                    style: TextStyle(color: Colors.white),
+                  ),
                 ),
               ),
             ],

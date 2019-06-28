@@ -106,9 +106,10 @@ class _ProfileViewState extends State<ProfileView> {
                                 borderRadius: BorderRadius.circular(5),
                               ),
                               child: Text(
-                                SKUser.current.student.bio ?? 'no bio here...',
+                                SKUser.current.student.bio ?? 'nothing to see here...',
                                 style: TextStyle(
                                     fontWeight: FontWeight.normal,
+                                    color:SKUser.current.student.bio == null ? SKColors.light_gray : SKColors.dark_gray,
                                     fontSize: 14),
                               ),
                             ),
@@ -152,9 +153,10 @@ class _ProfileViewState extends State<ProfileView> {
                               ),
                               child: Text(
                                 SKUser.current.student.organizations ??
-                                    'no orgs here...',
+                                    'nothing to see here...',
                                 style: TextStyle(
                                     fontWeight: FontWeight.normal,
+                                    color:SKUser.current.student.organizations == null ? SKColors.light_gray : SKColors.dark_gray,
                                     fontSize: 14),
                               ),
                             ),

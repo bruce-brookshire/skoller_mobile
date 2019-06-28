@@ -15,6 +15,7 @@ class TasksView extends StatefulWidget {
 class _TasksViewState extends State<TasksView> {
   List<_TaskLikeItem> _taskItems = [];
   int _tappedIndex;
+  final _refreshIndicatorKey = GlobalKey<RefreshIndicatorState>();
 
   SlidableController controller = SlidableController();
 
@@ -32,6 +33,7 @@ class _TasksViewState extends State<TasksView> {
           .toList();
     }
     _fetchTasks();
+
     DartNotificationCenter.subscribe(
         observer: this,
         channel: NotificationChannels.assignmentChanged,
@@ -48,7 +50,14 @@ class _TasksViewState extends State<TasksView> {
         onNotification: _fetchTasks);
   }
 
-  void _fetchTasks([dynamic options]) async {
+
+  @override
+  void dispose() {
+    super.dispose();
+    DartNotificationCenter.unsubscribe(observer: this);
+  }
+
+  Future _fetchTasks([dynamic options]) async {
     Future<RequestResponse> assignmentsRequest = Assignment.getTasks();
     Future<RequestResponse> modsRequest = Mod.fetchNewAssignmentMods();
 
@@ -218,14 +227,17 @@ class _TasksViewState extends State<TasksView> {
       },
       children: <Widget>[
         Expanded(
-          child: ListView.builder(
+          child: RefreshIndicator(
+            key: _refreshIndicatorKey,
+            onRefresh: _fetchTasks,
+            child: ListView.builder(
             padding: EdgeInsets.only(top: 4),
             itemBuilder: (context, index) => _taskItems[index].isMod
                 ? buildModCell(context, index)
                 : buildTaskCell(context, index),
             itemCount: _taskItems.length,
           ),
-        ),
+        ),),
       ],
     );
   }

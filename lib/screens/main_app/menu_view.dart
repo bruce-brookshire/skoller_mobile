@@ -87,7 +87,7 @@ class MenuView extends StatelessWidget {
           final url = 'mailto:support@skoller.co?subject=Feedback';
 
           if (await canLaunch(url)) {
-            await launch(url);
+            launch(url);
           }
         },
       },
