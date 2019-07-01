@@ -1,6 +1,7 @@
 import 'package:dart_notification_center/dart_notification_center.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:skoller/screens/main_app/classes/weight_extraction_view.dart';
 import 'package:skoller/screens/main_app/menu/add_classes_view.dart';
 import 'package:skoller/constants/constants.dart';
 import 'package:skoller/requests/requests_core.dart';
@@ -259,7 +260,8 @@ class _ClassesViewState extends State<ClassesView> {
         setState(() {
           selectedIndex = null;
         });
-        tappedSammiExplanation(_SammiExplanationType.needsSetup);
+        tappedSammiExplanation(
+            _SammiExplanationType.needsSetup, studentClass.id);
       },
       child: Container(
         decoration: BoxDecoration(
@@ -346,7 +348,7 @@ class _ClassesViewState extends State<ClassesView> {
         setState(() {
           selectedIndex = null;
         });
-        tappedSammiExplanation(_SammiExplanationType.diy);
+        tappedSammiExplanation(_SammiExplanationType.diy, studentClass.id);
       },
       child: Container(
         decoration: BoxDecoration(
@@ -416,7 +418,7 @@ class _ClassesViewState extends State<ClassesView> {
           selectedIndex = null;
         });
 
-        tappedSammiExplanation(_SammiExplanationType.inReview);
+        tappedSammiExplanation(_SammiExplanationType.inReview, studentClass.id);
       },
       child: Container(
         decoration: BoxDecoration(
@@ -468,7 +470,14 @@ class _ClassesViewState extends State<ClassesView> {
     );
   }
 
-  void tappedSammiExplanation(_SammiExplanationType type) async {
+  void tappedSammiExplanation(_SammiExplanationType type, int classId) async {
+    showDialog(
+        context: context,
+        builder: (context) => generateSyllabusDialog(type, classId, context));
+  }
+
+  Widget generateSyllabusDialog(
+      _SammiExplanationType type, int classId, BuildContext context) {
     Text sammiText;
     Widget body = Text('todo');
 
@@ -677,7 +686,10 @@ class _ClassesViewState extends State<ClassesView> {
                   child: Image.asset(ImageNames.tutorialImages.syllabus),
                 ),
                 Expanded(
-                  child: Text('Set up your class in two ways',style: TextStyle(fontSize: 19),),
+                  child: Text(
+                    'Set up your class in two ways',
+                    style: TextStyle(fontSize: 19),
+                  ),
                 )
               ],
             ),
@@ -732,51 +744,54 @@ class _ClassesViewState extends State<ClassesView> {
                 textAlign: TextAlign.center,
               ),
             ),
-            Container(
-              alignment: Alignment.center,
-              padding: EdgeInsets.symmetric(vertical: 8, horizontal: 12),
-              margin: EdgeInsets.symmetric(vertical: 16),
-              width: 136,
-              decoration: BoxDecoration(
-                color: SKColors.skoller_blue,
-                borderRadius: BorderRadius.circular(5),
-                boxShadow: [UIAssets.boxShadow],
+            GestureDetector(
+              onTapUp: (details) => Navigator.pushReplacement(
+                context,
+                CupertinoPageRoute(
+                    builder: (context) => WeightExtractionView(classId)),
               ),
-              child: Text(
-                'Get started',
-                style: TextStyle(color: Colors.white),
+              child: Container(
+                alignment: Alignment.center,
+                padding: EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+                margin: EdgeInsets.symmetric(vertical: 16),
+                width: 136,
+                decoration: BoxDecoration(
+                  color: SKColors.skoller_blue,
+                  borderRadius: BorderRadius.circular(5),
+                  boxShadow: [UIAssets.boxShadow],
+                ),
+                child: Text(
+                  'Get started',
+                  style: TextStyle(color: Colors.white),
+                ),
               ),
             ),
           ],
         );
         break;
     }
-
-    showDialog(
-      context: context,
-      builder: (context) => Column(
-        children: [
-          Spacer(flex: 1),
-          Material(
-            color: Colors.white.withAlpha(0),
-            child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: 24),
-              child: SammiSpeechBubble(
-                  sammiPersonality: SammiPersonality.smile,
-                  speechBubbleContents: sammiText),
-            ),
+    return Column(
+      children: [
+        Spacer(flex: 1),
+        Material(
+          color: Colors.white.withAlpha(0),
+          child: Padding(
+            padding: EdgeInsets.symmetric(horizontal: 24),
+            child: SammiSpeechBubble(
+                sammiPersonality: SammiPersonality.smile,
+                speechBubbleContents: sammiText),
           ),
-          Dialog(
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(10),
-              side: BorderSide(color: SKColors.border_gray),
-            ),
-            backgroundColor: Colors.white,
-            child: body,
+        ),
+        Dialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+            side: BorderSide(color: SKColors.border_gray),
           ),
-          Spacer(flex: 2)
-        ],
-      ),
+          backgroundColor: Colors.white,
+          child: body,
+        ),
+        Spacer(flex: 2)
+      ],
     );
   }
 }
