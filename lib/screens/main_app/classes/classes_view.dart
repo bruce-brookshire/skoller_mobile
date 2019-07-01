@@ -541,20 +541,27 @@ class _ClassesViewState extends State<ClassesView> {
                     fontWeight: FontWeight.normal),
               ),
             ),
-            Container(
-              alignment: Alignment.center,
-              padding: EdgeInsets.symmetric(vertical: 8),
-              margin: EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-              decoration: BoxDecoration(
-                color: SKColors.skoller_blue,
-                borderRadius: BorderRadius.circular(5),
-                boxShadow: [UIAssets.boxShadow],
+            GestureDetector(
+              onTapUp: (details) => Navigator.pushReplacement(
+                context,
+                CupertinoPageRoute(
+                    builder: (context) => WeightExtractionView(classId)),
               ),
-              child: Text(
-                'Start',
-                style: TextStyle(color: Colors.white),
+              child: Container(
+                alignment: Alignment.center,
+                padding: EdgeInsets.symmetric(vertical: 8),
+                margin: EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+                decoration: BoxDecoration(
+                  color: SKColors.skoller_blue,
+                  borderRadius: BorderRadius.circular(5),
+                  boxShadow: [UIAssets.boxShadow],
+                ),
+                child: Text(
+                  'Start',
+                  style: TextStyle(color: Colors.white),
+                ),
               ),
-            )
+            ),
           ],
         );
         break;
@@ -644,20 +651,27 @@ class _ClassesViewState extends State<ClassesView> {
                     fontWeight: FontWeight.normal),
               ),
             ),
-            Container(
-              alignment: Alignment.center,
-              padding: EdgeInsets.symmetric(vertical: 8),
-              margin: EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-              decoration: BoxDecoration(
-                color: SKColors.skoller_blue,
-                borderRadius: BorderRadius.circular(5),
-                boxShadow: [UIAssets.boxShadow],
+            GestureDetector(
+              onTapUp: (details) => Navigator.pushReplacement(
+                context,
+                CupertinoPageRoute(
+                    builder: (context) => WeightExtractionView(classId)),
               ),
-              child: Text(
-                'Start',
-                style: TextStyle(color: Colors.white),
+              child: Container(
+                alignment: Alignment.center,
+                padding: EdgeInsets.symmetric(vertical: 8),
+                margin: EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+                decoration: BoxDecoration(
+                  color: SKColors.skoller_blue,
+                  borderRadius: BorderRadius.circular(5),
+                  boxShadow: [UIAssets.boxShadow],
+                ),
+                child: Text(
+                  'Start',
+                  style: TextStyle(color: Colors.white),
+                ),
               ),
-            )
+            ),
           ],
         );
         break;

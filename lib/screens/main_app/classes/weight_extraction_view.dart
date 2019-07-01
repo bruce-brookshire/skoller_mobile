@@ -1,10 +1,16 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:skoller/constants/constants.dart';
 import 'package:skoller/requests/requests_core.dart';
 
 import 'dart:collection';
+
+class _StateKeeper {
+  bool isPoints = false;
+  int numPoints = 100;
+
+  List<Map<String, dynamic>> weights = [];
+}
 
 class WeightExtractionView extends StatefulWidget {
   final int classId;
@@ -16,13 +22,31 @@ class WeightExtractionView extends StatefulWidget {
 }
 
 class _WeightExtractionViewState extends State<WeightExtractionView> {
+  final pageController = PageController(initialPage: 0);
+
   StudentClass studentClass;
-  int currentState = 0;
+
+  int currentView = 0;
+  _StateKeeper state;
 
   @override
   void initState() {
     studentClass = StudentClass.currentClasses[widget.classId];
+    state = _StateKeeper();
     super.initState();
+  }
+
+  void forwardState() {
+    if (currentView < 2) {
+      final newView = currentView + 1;
+      pageController
+          .animateToPage(
+            newView,
+            duration: Duration(milliseconds: 300),
+            curve: Curves.decelerate,
+          )
+          .then((val) => setState(() => currentView = newView));
+    }
   }
 
   @override
@@ -31,45 +55,74 @@ class _WeightExtractionViewState extends State<WeightExtractionView> {
       title: studentClass.name,
       titleColor: studentClass.getColor(),
       children: <Widget>[
-        SammiSpeechBubble(
-          sammiPersonality: SammiPersonality.smile,
-          speechBubbleContents: currentState < 2
-              ? Text.rich(
-                  TextSpan(
-                    text: 'Instant setup involves 2 easy steps. ',
-                    style: TextStyle(fontWeight: FontWeight.normal),
-                    children: [
-                      TextSpan(
-                        text: 'First, setup weights!',
-                        style: TextStyle(fontWeight: FontWeight.bold),
-                      ),
-                    ],
-                  ),
-                )
-              : TextSpan(
-                  text: 'Add these weights for the entire class.',
-                  style: TextStyle(fontWeight: FontWeight.normal),
-                  children: [
-                    TextSpan(
-                      text: 'Accuracy is key!',
-                      style: TextStyle(fontWeight: FontWeight.bold),
+        Padding(
+          padding: EdgeInsets.symmetric(vertical: 12),
+          child: SammiSpeechBubble(
+            sammiPersonality: SammiPersonality.smile,
+            speechBubbleContents: Text.rich(
+              currentView < 2
+                  ? TextSpan(
+                      text: 'Instant setup involves 2 easy steps. ',
+                      style: TextStyle(fontWeight: FontWeight.normal),
+                      children: [
+                        TextSpan(
+                          text: 'First, setup weights!',
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                      ],
+                    )
+                  : TextSpan(
+                      text: 'Add these weights for the entire class. ',
+                      style: TextStyle(fontWeight: FontWeight.normal),
+                      children: [
+                        TextSpan(
+                          text: 'Accuracy is key!',
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                      ],
                     ),
-                  ],
-                ),
+            ),
+          ),
         ),
         Expanded(
-          child: Container(
-            margin: EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              border: Border.all(color: SKColors.border_gray),
-              borderRadius: BorderRadius.circular(10),
-            ),
-            child: PageView(
-              children: <Widget>[
-                _SubviewOne(),
-                _SubviewTwo(),
-                _SubviewThree(),
-              ],
+          child: SafeArea(
+            top: false,
+            child: Container(
+              margin: EdgeInsets.fromLTRB(16, 4, 16, 0),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                border: Border.all(color: SKColors.border_gray),
+                borderRadius: BorderRadius.circular(10),
+                boxShadow: [UIAssets.boxShadow],
+              ),
+              child: Column(children: [
+                Container(
+                  alignment: Alignment.centerLeft,
+                  padding: EdgeInsets.fromLTRB(12, 12, 12, 8),
+                  decoration: BoxDecoration(
+                    color: SKColors.selected_gray,
+                    borderRadius: BorderRadius.only(
+                      topRight: Radius.circular(10),
+                      topLeft: Radius.circular(10),
+                    ),
+                  ),
+                  child: Text(
+                    'Step 1: Set up weights',
+                    style: TextStyle(fontSize: 17),
+                  ),
+                ),
+                Expanded(
+                  child: PageView(
+                    physics: NeverScrollableScrollPhysics(),
+                    controller: pageController,
+                    children: <Widget>[
+                      _SubviewOne(this),
+                      _SubviewTwo(this),
+                      _SubviewThree(this),
+                    ],
+                  ),
+                ),
+              ]),
             ),
           ),
         )
@@ -79,6 +132,10 @@ class _WeightExtractionViewState extends State<WeightExtractionView> {
 }
 
 class _SubviewOne extends StatefulWidget {
+  final _WeightExtractionViewState subviewParent;
+
+  _SubviewOne(this.subviewParent);
+
   @override
   State createState() => _SubviewOneState();
 }
@@ -87,36 +144,414 @@ class _SubviewOneState extends State<_SubviewOne> {
   @override
   Widget build(BuildContext context) => Column(
         children: <Widget>[
-          CupertinoSegmentedControl(
-            children: LinkedHashMap.fromIterables(
-              [0, 1],
-              [
-                Text('Points', style: TextStyle(fontSize: 14)),
-                Text('Percentage', style: TextStyle(fontSize: 14))
-              ],
+          Spacer(),
+          Text(
+            'For example, Exams are worth 60% of your grade.',
+            style: TextStyle(
+                color: SKColors.text_light_gray, fontWeight: FontWeight.normal),
+            textAlign: TextAlign.center,
+          ),
+          GestureDetector(
+            onTapUp: (details) => widget.subviewParent.forwardState(),
+            child: Container(
+              alignment: Alignment.center,
+              width: 160,
+              height: 36,
+              margin: EdgeInsets.symmetric(vertical: 24),
+              decoration: BoxDecoration(
+                color: SKColors.skoller_blue,
+                borderRadius: BorderRadius.circular(5),
+                boxShadow: [UIAssets.boxShadow],
+              ),
+              child: Text(
+                'Start',
+                style: TextStyle(color: Colors.white),
+              ),
             ),
-            onValueChanged: print,
+          ),
+          Spacer(),
+          Padding(
+            padding: EdgeInsets.symmetric(vertical: 16, horizontal: 24),
+            child: Text(
+              'This class does not have weighted assignments.',
+              style: TextStyle(
+                  color: SKColors.skoller_blue, fontWeight: FontWeight.normal),
+              textAlign: TextAlign.center,
+            ),
           )
         ],
       );
 }
 
 class _SubviewTwo extends StatefulWidget {
+  final _WeightExtractionViewState subviewParent;
+
+  _SubviewTwo(this.subviewParent);
   @override
   State createState() => _SubviewTwoState();
 }
 
 class _SubviewTwoState extends State<_SubviewTwo> {
+  int selectedSegment = 0;
+  bool get isPoints => selectedSegment == 1;
+
+  void updateType(int index) {
+    widget.subviewParent.state.isPoints = index == 1;
+    setState(() => selectedSegment = index);
+  }
+
+  void updatePointsVal(String pointsStr) {
+    final pointsVal = int.parse(pointsStr);
+    widget.subviewParent.state.numPoints = pointsVal;
+  }
+
   @override
-  Widget build(BuildContext context) => Container();
+  Widget build(BuildContext context) => Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: <Widget>[
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+            child: Text(
+              'Is this class based on percentages or points?',
+              textAlign: TextAlign.center,
+              style: TextStyle(fontWeight: FontWeight.normal),
+            ),
+          ),
+          CupertinoSegmentedControl(
+            children: LinkedHashMap.fromIterables(
+              [0, 1],
+              [
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 16),
+                  child: Text('Percentage', style: TextStyle(fontSize: 14)),
+                ),
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 16),
+                  child: Text('Points', style: TextStyle(fontSize: 14)),
+                ),
+              ],
+            ),
+            onValueChanged: updateType,
+            selectedColor: SKColors.skoller_blue,
+            unselectedColor: Colors.white,
+            borderColor: SKColors.skoller_blue,
+            pressedColor: SKColors.skoller_blue.withOpacity(0.2),
+            padding: EdgeInsets.symmetric(vertical: 16),
+            groupValue: selectedSegment,
+          ),
+          ...isPoints
+              ? [
+                  Text(
+                    'Total points available',
+                    style: TextStyle(fontWeight: FontWeight.normal),
+                  ),
+                  Container(
+                    margin: EdgeInsets.symmetric(vertical: 6),
+                    width: 140,
+                    height: 36,
+                    child: CupertinoTextField(
+                      keyboardType: TextInputType.number,
+                      onChanged: updatePointsVal,
+                      placeholder: 'e.g. 50',
+                      textAlign: TextAlign.center,
+                      decoration: BoxDecoration(
+                        border: Border.all(color: SKColors.border_gray),
+                        borderRadius: BorderRadius.circular(5),
+                      ),
+                    ),
+                  ),
+                ]
+              : [],
+          GestureDetector(
+            onTapUp: (details) => widget.subviewParent.forwardState(),
+            child: Container(
+              alignment: Alignment.center,
+              margin: EdgeInsets.symmetric(vertical: 16),
+              width: 120,
+              height: 36,
+              decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(5),
+                  color: SKColors.skoller_blue,
+                  boxShadow: [UIAssets.boxShadow]),
+              child: Text(
+                'Next',
+                style: TextStyle(color: Colors.white),
+              ),
+            ),
+          ),
+        ],
+      );
 }
 
 class _SubviewThree extends StatefulWidget {
+  final _WeightExtractionViewState subviewParent;
+
+  _SubviewThree(this.subviewParent);
   @override
   State createState() => _SubviewThreeState();
 }
 
 class _SubviewThreeState extends State<_SubviewThree> {
+  int selectedSegment = 0;
+  int numPoints = 0;
+  bool get isPoints => selectedSegment == 1;
+
   @override
-  Widget build(BuildContext context) => Container();
+  void initState() {
+    super.initState();
+
+    selectedSegment = widget.subviewParent.state.isPoints ? 1 : 0;
+    numPoints = isPoints ? widget.subviewParent.state.numPoints : 100;
+  }
+
+  void addWeight(TapUpDetails details) async {
+    final nameController = TextEditingController();
+    final valueController = TextEditingController();
+
+    final results = await showDialog(
+      context: context,
+      builder: (context) => Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          Dialog(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
+              side: BorderSide(color: SKColors.border_gray),
+            ),
+            child: Padding(
+              padding: EdgeInsets.all(12),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: <Widget>[
+                  Text(
+                    'Create weight',
+                    style: TextStyle(fontSize: 16),
+                    textAlign: TextAlign.center,
+                  ),
+                  Padding(
+                    padding: EdgeInsets.only(top: 16),
+                    child: Text('Name'),
+                  ),
+                  CupertinoTextField(
+                    placeholder: 'Exams',
+                    controller: nameController,
+                    padding: EdgeInsets.fromLTRB(6, 8, 6, 4),
+                    cursorColor: SKColors.skoller_blue,
+                    placeholderStyle: TextStyle(
+                        fontSize: 14, color: SKColors.text_light_gray),
+                    style: TextStyle(color: SKColors.dark_gray, fontSize: 15),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.only(top: 12),
+                    child: Text('Value'),
+                  ),
+                  Row(
+                    children: <Widget>[
+                      SizedBox(
+                          width: 60,
+                          child: CupertinoTextField(
+                            controller: valueController,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(5),
+                              border: Border.all(color: SKColors.border_gray),
+                            ),
+                            padding: EdgeInsets.fromLTRB(6, 8, 6, 4),
+                            cursorColor: SKColors.skoller_blue,
+                            placeholder: '25',
+                            placeholderStyle: TextStyle(
+                                fontSize: 14, color: SKColors.text_light_gray),
+                            style: TextStyle(
+                                color: SKColors.dark_gray, fontSize: 15),
+                          )),
+                      Padding(
+                        padding: EdgeInsets.only(left: 8),
+                        child: Text('${isPoints ? 'pts.' : '%'}'),
+                      ),
+                      Spacer(),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ),
+          Material(
+            color: Colors.white.withAlpha(0),
+            child: GestureDetector(
+              onTapUp: (details) => Navigator.pop(context, true),
+              child: Container(
+                decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(5),
+                    boxShadow: [UIAssets.boxShadow]),
+                padding: EdgeInsets.symmetric(vertical: 12, horizontal: 56),
+                child: Text(
+                  'Done',
+                  style: TextStyle(color: SKColors.skoller_blue),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+
+    if (results != null && results is bool && results) {
+      final name = nameController.text.trim();
+      final value = valueController.text.trim();
+
+      if (name != '' &&
+          value != '' &&
+          int.parse(value, onError: (str) => null) != null) {
+        setState(
+          () => widget.subviewParent.state.weights.add(
+            {
+              'name': name,
+              'value': int.parse(value),
+            },
+          ),
+        );
+      }
+    }
+  }
+
+  void updateType(int index) {
+    widget.subviewParent.state.isPoints = index == 1;
+    setState(() => selectedSegment = index);
+  }
+
+  void updatePointsVal(String pointsStr) {
+    final pointsVal = int.parse(pointsStr);
+    widget.subviewParent.state.numPoints = pointsVal;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final state = widget.subviewParent.state;
+
+    final currTotal = state.weights.fold(0, (val, item) => item['value'] + val);
+
+    return Column(
+      children: <Widget>[
+        CupertinoSegmentedControl(
+          children: LinkedHashMap.fromIterables(
+            [0, 1],
+            [
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 16),
+                child: Text('Percentage', style: TextStyle(fontSize: 14)),
+              ),
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 16),
+                child: Text('Points', style: TextStyle(fontSize: 14)),
+              ),
+            ],
+          ),
+          onValueChanged: updateType,
+          selectedColor: SKColors.skoller_blue,
+          unselectedColor: Colors.white,
+          borderColor: SKColors.skoller_blue,
+          pressedColor: SKColors.skoller_blue.withOpacity(0.2),
+          padding: EdgeInsets.symmetric(vertical: 16),
+          groupValue: selectedSegment,
+        ),
+        Expanded(
+          child: Container(
+            margin: EdgeInsets.symmetric(horizontal: 16),
+            decoration: BoxDecoration(
+                border: Border.all(color: SKColors.border_gray),
+                borderRadius: BorderRadius.circular(5)),
+            child: ListView.builder(
+              itemCount: state.weights.length,
+              itemBuilder: (context, index) => Container(
+                padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    Text(state.weights[index]['name']),
+                    Text('${state.weights[index]['value']}'),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ),
+        GestureDetector(
+          onTapUp: addWeight,
+          child: Container(
+            alignment: Alignment.center,
+            margin: EdgeInsets.symmetric(vertical: 12),
+            width: 160,
+            height: 36,
+            decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(5),
+                color: SKColors.skoller_blue),
+            child: Text(
+              'Add weight',
+              style: TextStyle(color: Colors.white),
+            ),
+          ),
+        ),
+        Padding(
+          padding: EdgeInsets.symmetric(horizontal: 16),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: <Widget>[
+              Text(
+                'Total',
+                style: TextStyle(fontSize: 20),
+              ),
+              Text(
+                '$currTotal / $numPoints${isPoints ? '' : '%'}',
+                style: TextStyle(
+                    fontSize: 20,
+                    color: (isPoints ? numPoints : 100) == currTotal
+                        ? SKColors.success
+                        : SKColors.dark_gray),
+              )
+            ],
+          ),
+        ),
+        Padding(
+          padding: EdgeInsets.symmetric(horizontal: 18),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Text(
+                '${isPoints ? 'points' : 'percentage'}',
+                style: TextStyle(fontSize: 15, fontWeight: FontWeight.normal),
+              ),
+              Text(
+                'Weights must sum to ${isPoints ? '$numPoints' : '100'}',
+                style: TextStyle(fontSize: 13, fontWeight: FontWeight.normal),
+              ),
+            ],
+          ),
+        ),
+        Padding(
+          padding: EdgeInsets.symmetric(vertical: 18, horizontal: 16),
+          child: Row(
+            children: <Widget>[
+              Expanded(
+                child: Container(
+                  alignment: Alignment.center,
+                  padding: EdgeInsets.symmetric(vertical: 8),
+                  decoration: BoxDecoration(
+                      color: SKColors.inactive_gray,
+                      borderRadius: BorderRadius.circular(5),
+                      boxShadow: [UIAssets.boxShadow]),
+                  child: Text(
+                    'Submit weights',
+                    style: TextStyle(color: SKColors.light_gray),
+                  ),
+                ),
+              )
+            ],
+          ),
+        ),
+      ],
+    );
+  }
 }
