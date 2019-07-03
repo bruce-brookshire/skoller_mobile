@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>596122259226-okeisvrn1rg808km5qfuoo8sncbf18m7.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.596122259226-okeisvrn1rg808km5qfuoo8sncbf18m7</string>
+	<key>ANDROID_CLIENT_ID</key>
+	<string>596122259226-i5eag16n057u8eshv0vj6uq83elsjvu1.apps.googleusercontent.com</string>
+	<key>API_KEY</key>
+	<string>AIzaSyAk2P7G9Z7TbIXNOyFs358zvxxIKNsP13g</string>
+	<key>GCM_SENDER_ID</key>
+	<string>596122259226</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>co.skoller.skoller</string>
+	<key>PROJECT_ID</key>
+	<string>classnavapp-e8c9b</string>
+	<key>STORAGE_BUCKET</key>
+	<string>classnavapp-e8c9b.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false/>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<true/>
+	<key>IS_APPINVITE_ENABLED</key>
+	<false/>
+	<key>IS_GCM_ENABLED</key>
+	<true/>
+	<key>IS_SIGNIN_ENABLED</key>
+	<false/>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:596122259226:ios:6265422a3e9884b1</string>
+	<key>DATABASE_URL</key>
+	<string>https://classnavapp-e8c9b.firebaseio.com</string>
+</dict>
+</plist>

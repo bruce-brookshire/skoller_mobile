@@ -279,7 +279,7 @@ class StudentClass {
     Color(0xFF9B55E5), //purple
   ];
 
-  static StudentClass _fromJsonObj(Map content) {
+  static StudentClass _fromJsonObj(Map content, {bool shouldPersistAssignments = true }) {
     if (content == null) {
       return null;
     }
@@ -299,7 +299,7 @@ class StudentClass {
       content['id'],
       content['name'],
       JsonListMaker.convert(
-        Assignment._fromJsonObj,
+        (content) => Assignment._fromJsonObj(content, shouldPersist: shouldPersistAssignments),
         content['assignments'] ?? [],
       ),
       content['color'],
@@ -339,7 +339,7 @@ class StudentClass {
   static Future<RequestResponse> getStudentClasses() {
     return SKRequests.get(
       '/students/${SKUser.current.student.id}/classes',
-      _fromJsonObj,
+      (content) => _fromJsonObj(content, shouldPersistAssignments: false),
     );
   }
 

@@ -51,13 +51,13 @@ class SKUser {
 
     if (notificationTime != null) {
       final formattedNotificationTime =
-          DateFormat('HH:mm:ss').format(notificationTime);
+          DateFormat('HH:mm:ss').format(notificationTime.toUtc());
       params['notification_time'] = formattedNotificationTime;
     }
 
     if (futureNotificationTime != null) {
       final formattedFutureNotificationTime =
-          DateFormat('HH:mm:ss').format(futureNotificationTime);
+          DateFormat('HH:mm:ss').format(futureNotificationTime.toUtc());
       params['future_reminder_notification_time'] =
           formattedFutureNotificationTime;
     }
@@ -106,8 +106,8 @@ class Student {
 
   School primarySchool;
 
-  TimeOfDay notificationTime;
-  TimeOfDay futureNotificationTime;
+  DateTime notificationTime;
+  DateTime futureNotificationTime;
 
   String get formattedPhone {
     if (phone != null && phone.length == 10) {
@@ -142,22 +142,36 @@ class Student {
         ? School._fromJsonObject(content['primary_school'])
         : null;
 
-    List tempTime = content['notification_time']
+    final utcNow = DateTime.now().toUtc();
+
+    List listTime = content['notification_time']
         ?.split(':')
         ?.map((item) => int.parse(item))
         ?.toList();
 
-    notificationTime = tempTime != null
-        ? TimeOfDay(hour: tempTime[0], minute: tempTime[1])
+    notificationTime = listTime != null
+        ? DateTime.utc(
+            utcNow.year,
+            utcNow.month,
+            utcNow.day,
+            listTime[0],
+            listTime[1],
+          ).toLocal()
         : null;
 
-    tempTime = content['future_reminder_notification_time']
+    listTime = content['future_reminder_notification_time']
         ?.split(':')
         ?.map((item) => int.parse(item))
         ?.toList();
 
-    futureNotificationTime = tempTime != null
-        ? TimeOfDay(hour: tempTime[0], minute: tempTime[1])
+    futureNotificationTime = listTime != null
+        ? DateTime.utc(
+            utcNow.year,
+            utcNow.month,
+            utcNow.day,
+            listTime[0],
+            listTime[1],
+          ).toLocal()
         : null;
 
     notificationDays = content['notification_days_notice'];

@@ -30,6 +30,7 @@ class _PhoneVerificationViewState extends State<PhoneVerificationView> {
 
   int currentIndex = 0;
   String errorMsg;
+  bool loading = false;
 
   @override
   void dispose() {
@@ -74,13 +75,24 @@ class _PhoneVerificationViewState extends State<PhoneVerificationView> {
         code += digit;
       }
     }
+
+    setState(() {
+      loading = true;
+    });
+
     final trimStr = widget.phoneNumber.replaceAll(RegExp(r'[\(\) \-]+'), '');
 
     Auth.logIn(trimStr, code).then((success) {
       return StudentClass.getStudentClasses();
     }).then((response) {
+      setState(() => loading = false);
       Navigator.pop(context, response.wasSuccessful());
-    }).catchError((onError) => setState(() => errorMsg = onError));
+    }).catchError(
+      (onError) => setState(() {
+        if (errorMsg != null && errorMsg is String) errorMsg = onError;
+        loading = false;
+      }),
+    );
 
     resetPinFields();
   }
@@ -113,7 +125,7 @@ class _PhoneVerificationViewState extends State<PhoneVerificationView> {
             ),
           ),
           Padding(
-            padding: EdgeInsets.symmetric(vertical: 4),
+            padding: EdgeInsets.symmetric(vertical: 4, horizontal: 16),
             child: Text(
               'Check your texts for a verification code',
               textAlign: TextAlign.center,
@@ -124,10 +136,18 @@ class _PhoneVerificationViewState extends State<PhoneVerificationView> {
             padding: EdgeInsets.fromLTRB(48, 8, 48, 8),
             child: Image.asset(ImageNames.signUpImages.text_verify),
           ),
-          Padding(
-            padding: EdgeInsets.symmetric(horizontal: 24, vertical: 24),
-            child: Row(children: List.generate(5, createPinField)),
-          ),
+          loading
+              ? Container(
+                  padding: EdgeInsets.symmetric(vertical: 28),
+                  alignment: Alignment.center,
+                  child: SizedBox(
+                      width: 24,
+                      height: 24,
+                      child: CircularProgressIndicator()))
+              : Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 24, vertical: 24),
+                  child: Row(children: List.generate(5, createPinField)),
+                ),
           ...errorMsg != null
               ? [
                   Padding(

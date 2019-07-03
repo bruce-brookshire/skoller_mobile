@@ -211,11 +211,11 @@ class _AddClassesViewState extends State<AddClassesView> {
               ),
               GestureDetector(
                 onTapUp: (details) {
-                  final func = isEnrolled
+                  final requestFunc = isEnrolled
                       ? StudentClass.currentClasses[schoolClass.id].dropClass
                       : schoolClass.enrollInClass;
 
-                  func().then((response) {
+                  requestFunc().then((response) {
                     if (response is bool) {
                       return response;
                     } else if (response is RequestResponse) {
@@ -256,9 +256,103 @@ class _AddClassesViewState extends State<AddClassesView> {
     );
   }
 
-  void didTapAddClassCard() async {
-    final result = await showDialog(
-        context: context, builder: (context) => SKCreateClassModal());
+  void tappedSettings(TapUpDetails details) {
+    showDialog(
+      context: context,
+      builder: (context) => Dialog(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10),
+          side: BorderSide(color: SKColors.border_gray),
+        ),
+        child: Padding(
+          padding: EdgeInsets.all(12),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: <Widget>[
+              Text(
+                'Class search settings',
+                style: TextStyle(fontSize: 18),
+                textAlign: TextAlign.center,
+              ),
+              Padding(
+                padding: EdgeInsets.only(top: 16, left: 8),
+                child: Text(
+                  'School',
+                  style: TextStyle(
+                      color: SKColors.light_gray,
+                      fontWeight: FontWeight.normal,
+                      fontSize: 13),
+                ),
+              ),
+              Container(
+                padding: EdgeInsets.symmetric(horizontal: 8, vertical: 12),
+                decoration: BoxDecoration(
+                  color: SKColors.background_gray,
+                  borderRadius: BorderRadius.circular(5),
+                ),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Text('Vanderbilt University'),
+                    ),
+                    Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 4),
+                      child: Image.asset(ImageNames.navArrowImages.down),
+                    )
+                  ],
+                ),
+              ),
+              Padding(
+                padding: EdgeInsets.only(top: 16, left: 8),
+                child: Text(
+                  'Semester',
+                  style: TextStyle(
+                      color: SKColors.light_gray,
+                      fontWeight: FontWeight.normal,
+                      fontSize: 13),
+                ),
+              ),
+              Container(
+                padding: EdgeInsets.symmetric(horizontal: 8, vertical: 12),
+                decoration: BoxDecoration(
+                  color: SKColors.background_gray,
+                  borderRadius: BorderRadius.circular(5),
+                ),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Text('Spring 2019'),
+                    ),
+                    Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 4),
+                      child: Image.asset(ImageNames.navArrowImages.down),
+                    )
+                  ],
+                ),
+              ),
+              GestureDetector(
+                onTapUp: (details) {
+                  Navigator.pop(context);
+                },
+                child: Padding(
+                  padding: EdgeInsets.only(top: 16, bottom: 4),
+                  child: Text(
+                    'Done',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(color: SKColors.skoller_blue),
+                  ),
+                ),
+              )
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  void tappedAddClass() {
+    showDialog(context: context, builder: (context) => SKCreateClassModal());
   }
 
   @override
@@ -283,7 +377,7 @@ class _AddClassesViewState extends State<AddClassesView> {
                           itemCount: searchedClasses.length == 0 &&
                                   searchController.text.trim() == ''
                               ? 0
-                              : searchedClasses.length + 1,
+                              : searchedClasses.length + (isSearching ? 0 : 1),
                           itemBuilder: (context, index) {
                             Widget contents;
 
@@ -323,7 +417,7 @@ class _AddClassesViewState extends State<AddClassesView> {
                             return GestureDetector(
                                 onTapUp: (details) {
                                   index == searchedClasses.length
-                                      ? didTapAddClassCard()
+                                      ? tappedAddClass()
                                       : didTapClassCard(index);
                                 },
                                 child: Container(
@@ -421,11 +515,7 @@ class _AddClassesViewState extends State<AddClassesView> {
               ),
               GestureDetector(
                 behavior: HitTestBehavior.opaque,
-                onTapUp: (details) {
-                  // if (callbackRight != null) {
-                  //   callbackRight();
-                  // }
-                },
+                onTapUp: tappedSettings,
                 child: Container(
                   padding: EdgeInsets.only(right: 4),
                   child: Image.asset(ImageNames.rightNavImages.filter_bars),

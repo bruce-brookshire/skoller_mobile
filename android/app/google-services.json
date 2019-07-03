@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "596122259226",
+    "firebase_url": "https://classnavapp-e8c9b.firebaseio.com",
+    "project_id": "classnavapp-e8c9b",
+    "storage_bucket": "classnavapp-e8c9b.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:596122259226:android:92e0836509daa49d",
+        "android_client_info": {
+          "package_name": "com.skoller"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "596122259226-i5eag16n057u8eshv0vj6uq83elsjvu1.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.skoller",
+            "certificate_hash": "25424e9b69944bb0f667f4d625e251fab6fb5dad"
+          }
+        },
+        {
+          "client_id": "596122259226-28vst2hvtns5q8fginlmqic1thjvitqv.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCLpkj1gmx1mBwDn4ZThLYXCmyEM5FSPjk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "596122259226-a0h5hkotuvpl6ipirqdcq5jo3unkpc1o.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "596122259226-02rtosk4ic8gl8pmut13t5lhtavshan0.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.classnavapp.ios"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

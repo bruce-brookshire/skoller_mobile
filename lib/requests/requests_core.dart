@@ -1,5 +1,6 @@
 library requests_core;
 
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:intl/intl.dart';
 import 'package:time_machine/time_machine.dart';
 import '../constants/timezone_manager.dart';
@@ -9,6 +10,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:collection';
 import 'dart:convert';
 import 'dart:math';
+import 'dart:io';
 
 part 'student_class.dart';
 part 'assignment.dart';
@@ -192,7 +194,10 @@ class Auth {
       final validToken = await tokenLogin();
 
       //If token login didnt work, we need to remove the bad token
-      if (!validToken) SKRequests._headers.remove('Authorization');
+      if (!validToken) {
+        SKRequests._headers.remove('Authorization');
+        _setupNotifications();
+      }
 
       //Token is valid
       if (validToken)
@@ -234,6 +239,7 @@ class Auth {
       _fromJsonAuth,
     ).then((response) {
       if (response.wasSuccessful()) {
+        _setupNotifications();
         SharedPreferences.getInstance()
             .then((inst) => inst.setString(_kStudentPhone, phone));
 
@@ -300,5 +306,47 @@ class Auth {
           },
         },
         SKUser._fromJson);
+  }
+
+  static void saveNotificationToken(String token) {
+    assert(SKUser.current != null && token != null);
+    SKRequests.post(
+      '/users/${SKUser.current.id}/register',
+      {
+        'udid': token,
+        "type": Platform.isIOS ? 'ios' : 'android',
+      },
+      null,
+    );
+  }
+
+  static void _setupNotifications() {
+    final _firebaseMessaging = FirebaseMessaging();
+
+    if (Platform.isIOS) {
+      _firebaseMessaging.requestNotificationPermissions(
+          IosNotificationSettings(sound: true, badge: true, alert: true));
+      _firebaseMessaging.onIosSettingsRegistered
+          .listen((IosNotificationSettings settings) {
+        print("Settings registered: $settings");
+      });
+    }
+
+    _firebaseMessaging.getToken().then((token) {
+      print('notification $token');
+      saveNotificationToken(token);
+    }).catchError(print);
+
+    _firebaseMessaging.configure(
+      onMessage: (Map<String, dynamic> message) async {
+        print('on message $message');
+      },
+      onResume: (Map<String, dynamic> message) async {
+        print('on resume $message');
+      },
+      onLaunch: (Map<String, dynamic> message) async {
+        print('on launch $message');
+      },
+    );
   }
 }

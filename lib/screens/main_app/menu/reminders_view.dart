@@ -9,11 +9,19 @@ class RemindersView extends StatefulWidget {
 }
 
 class _RemindersViewState extends State<RemindersView> {
+  DateTime defaultTime;
+
+  @override
+  void initState() {
+    final now = DateTime.now();
+    defaultTime = DateTime(now.year, now.month, now.day, 9);
+
+    super.initState();
+  }
+
   void tappedTimeOnDue(TapUpDetails details) async {
     final result = await presentTimePicker(
-        SKUser.current.student.notificationTime ??
-            TimeOfDay(hour: 9, minute: 0),
-        false);
+        SKUser.current.student.notificationTime ?? defaultTime, false);
 
     if (result != null) {
       SKUser.current
@@ -24,9 +32,7 @@ class _RemindersViewState extends State<RemindersView> {
 
   void tappedTimeBeforeDue(TapUpDetails details) async {
     final result = await presentTimePicker(
-        SKUser.current.student.futureNotificationTime ??
-            TimeOfDay(hour: 9, minute: 0),
-        true);
+        SKUser.current.student.futureNotificationTime ?? defaultTime, true);
 
     if (result != null) {
       SKUser.current
@@ -36,11 +42,8 @@ class _RemindersViewState extends State<RemindersView> {
   }
 
   Future<DateTime> presentTimePicker(
-      TimeOfDay previousVal, bool upcoming) async {
-    final now = DateTime.now();
-
-    DateTime selectedDate = DateTime(
-        now.year, now.month, now.day, previousVal.hour, previousVal.minute);
+      DateTime previousVal, bool upcoming) async {
+    DateTime selectedDate = previousVal;
 
     return await showDialog(
       context: context,
@@ -72,7 +75,9 @@ class _RemindersViewState extends State<RemindersView> {
             Container(
               height: 180,
               child: CupertinoDatePicker(
-                initialDateTime: selectedDate,
+                initialDateTime:
+                    selectedDate.minute % 5 != 0 ? defaultTime : selectedDate,
+                minuteInterval: 5,
                 onDateTimeChanged: (date) => selectedDate = date,
                 mode: CupertinoDatePickerMode.time,
               ),
@@ -283,8 +288,9 @@ class _RemindersViewState extends State<RemindersView> {
                                 GestureDetector(
                                   onTapUp: tappedTimeOnDue,
                                   child: Text(
-                                    (SKUser.current.student.notificationTime ??
-                                            TimeOfDay(hour: 9, minute: 0))
+                                    TimeOfDay.fromDateTime(SKUser.current
+                                                .student.notificationTime ??
+                                            defaultTime)
                                         .format(context),
                                     style: TextStyle(
                                         fontSize: 14,
@@ -335,9 +341,11 @@ class _RemindersViewState extends State<RemindersView> {
                                 GestureDetector(
                                   onTapUp: tappedTimeBeforeDue,
                                   child: Text(
-                                    (SKUser.current.student
+                                    TimeOfDay.fromDateTime(SKUser
+                                                .current
+                                                .student
                                                 .futureNotificationTime ??
-                                            TimeOfDay(hour: 9, minute: 0))
+                                            defaultTime)
                                         .format(context),
                                     style: TextStyle(
                                         fontSize: 14,
