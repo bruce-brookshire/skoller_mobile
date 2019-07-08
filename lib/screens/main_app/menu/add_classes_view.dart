@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:dart_notification_center/dart_notification_center.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:skoller/tools.dart';
 import 'package:skoller/screens/main_app/menu/create_class_modal.dart';
 import 'package:skoller/screens/main_app/menu/class_search_settings_modal.dart';
@@ -47,6 +48,7 @@ class _AddClassesViewState extends State<AddClassesView> {
           return period;
         }
       }
+      return null;
     };
 
     activePeriod = findSemester(200);
@@ -256,8 +258,17 @@ class _AddClassesViewState extends State<AddClassesView> {
     );
   }
 
-  void tappedSettings(TapUpDetails details) {
-    showDialog(context: context, builder: (context) => ClassSearchSettingsModal());
+  void tappedSettings(TapUpDetails details) async {
+    final results = await showDialog(
+      context: context,
+      builder: (context) => ClassSearchSettingsModal(activePeriod.id),
+    );
+
+    if (results is Map && results['period'] is Period) {
+      setState(() {
+        activePeriod = results['period'];
+      });
+    }
   }
 
   void tappedAddClass() {
@@ -451,7 +462,8 @@ class _AddClassesViewState extends State<AddClassesView> {
                     decoration: BoxDecoration(border: null),
                     padding: EdgeInsets.symmetric(horizontal: 8, vertical: 12),
                     placeholder: 'Search a class name',
-                    style: TextStyle(fontSize: 15),
+                    style: TextStyle(fontSize: 15, color: SKColors.dark_gray),
+                    textCapitalization: TextCapitalization.words,
                   ),
                 ),
                 Padding(

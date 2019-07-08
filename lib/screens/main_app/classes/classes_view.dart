@@ -1,6 +1,7 @@
 import 'package:dart_notification_center/dart_notification_center.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:skoller/screens/main_app/classes/assignment_weight_view.dart';
 import 'package:skoller/screens/main_app/classes/weight_extraction_view.dart';
 import 'package:skoller/screens/main_app/menu/add_classes_view.dart';
 import 'package:skoller/tools.dart';
@@ -259,8 +260,10 @@ class _ClassesViewState extends State<ClassesView> {
         setState(() {
           selectedIndex = null;
         });
-        tappedSammiExplanation(
-            _SammiExplanationType.needsSetup, studentClass.id);
+        needsAssignments
+            ? tappedAddAssignment(studentClass.id)
+            : tappedSammiExplanation(
+                _SammiExplanationType.needsSetup, studentClass.id);
       },
       child: Container(
         decoration: BoxDecoration(
@@ -465,6 +468,15 @@ class _ClassesViewState extends State<ClassesView> {
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  void tappedAddAssignment(int classId) {
+    Navigator.push(
+      context,
+      CupertinoPageRoute(
+        builder: (context) => AssignmentWeightView(classId),
       ),
     );
   }

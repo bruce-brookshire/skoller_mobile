@@ -1,5 +1,6 @@
 library requests_core;
 
+import 'package:dart_notification_center/dart_notification_center.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:intl/intl.dart';
 import 'package:time_machine/time_machine.dart';

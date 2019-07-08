@@ -5,8 +5,19 @@ class School {
   List<Period> periods;
   String timezone;
   String name;
+  String adrRegion;
+  String adrLocality;
+  Color color;
 
-  School(this.id, this.timezone, this.periods, this.name);
+  School(
+    this.id,
+    this.timezone,
+    this.periods,
+    this.name,
+    this.adrRegion,
+    this.adrLocality,
+    this.color,
+  );
 
   static Map<int, School> currentSchools = {};
 
@@ -25,11 +36,20 @@ class School {
       Period.currentPeriods[period.id] = period;
     }
 
+    String color = content['color'];
+
+    if (color != null) {
+      color = 'ff' + color.substring(1);
+    }
+
     return School(
       content['id'],
       content['timezone'],
       period_list,
       content['name'],
+      content['adr_region'],
+      content['adr_locality'],
+      color != null ? Color(int.parse(color, radix: 16)) : null,
     );
   }
 

@@ -208,7 +208,7 @@ class _RemindersViewState extends State<RemindersView> {
       ),
     );
 
-    if (result != null && result is bool) {
+    if (result is bool && result) {
       SKUser.current
           .update(notificationDays: selectedIndex)
           .then((response) => setState(() {}));

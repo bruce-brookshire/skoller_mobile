@@ -76,7 +76,7 @@ class _WeightExtractionViewState extends State<WeightExtractionView> {
       ),
     );
 
-    if (result != null && result is bool && result) {
+    if (result is bool && result) {
       studentClass.releaseDIYLock(isCompleted: false);
       Navigator.pop(context);
     }

@@ -1,9 +1,14 @@
+import 'package:dart_notification_center/dart_notification_center.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:skoller/screens/main_app/menu/school_search_view.dart';
 import 'package:skoller/tools.dart';
 
 class ClassSearchSettingsModal extends StatefulWidget {
+  final int initialPeriodId;
+
+  ClassSearchSettingsModal(this.initialPeriodId) : super();
+
   @override
   State<StatefulWidget> createState() => _ClassSearchSettingsModalState();
 }
@@ -16,7 +21,31 @@ class _ClassSearchSettingsModalState extends State<ClassSearchSettingsModal> {
   void initState() {
     school = SKUser.current.student.primarySchool;
 
+    if (widget.initialPeriodId != null) {
+      period = Period.currentPeriods[widget.initialPeriodId];
+    }
+
+    DartNotificationCenter.subscribe(
+        channel: NotificationChannels.userChanged,
+        observer: this,
+        onNotification: updateSettings);
+
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    DartNotificationCenter.unsubscribe(observer: this);
+    super.dispose();
+  }
+
+  void updateSettings([dynamic options]) {
+    if (options is School) {
+      school = options;
+      period = null;
+      if (mounted) setState(() {});
+      tappedPeriod(null);
+    }
   }
 
   void tappedPeriod(TapUpDetails details) async {
@@ -122,7 +151,7 @@ class _ClassSearchSettingsModalState extends State<ClassSearchSettingsModal> {
               ),
               GestureDetector(
                 onTapUp: (details) {
-                  Navigator.pop(context);
+                  Navigator.pop(context, {'school': school, 'period': period});
                 },
                 child: Padding(
                   padding: EdgeInsets.only(top: 16, bottom: 4),
