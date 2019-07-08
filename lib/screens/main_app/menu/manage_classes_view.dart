@@ -110,7 +110,7 @@ class _ManageClassesViewState extends State<ManageClassesView> {
               Padding(
                 padding: EdgeInsets.symmetric(vertical: 2),
                 child: Text(
-                  '${studentClass.professor?.first_name ?? ''} ${studentClass.professor?.last_name ?? ''}',
+                  '${studentClass.professor?.firstName ?? ''} ${studentClass.professor?.lastName ?? ''}',
                   style: TextStyle(
                     fontWeight: FontWeight.normal,
                   ),

@@ -203,7 +203,7 @@ class _AddClassesViewState extends State<AddClassesView> {
                     ),
                   ),
                   Text(
-                    '${schoolClass.professor?.first_name ?? ''} ${schoolClass.professor?.last_name ?? ''}',
+                    '${schoolClass.professor?.firstName ?? ''} ${schoolClass.professor?.lastName ?? ''}',
                     style: TextStyle(
                       fontSize: 15,
                       fontWeight: FontWeight.normal,
@@ -272,7 +272,7 @@ class _AddClassesViewState extends State<AddClassesView> {
   }
 
   void tappedAddClass() {
-    showDialog(context: context, builder: (context) => CreateClassModal());
+    showDialog(context: context, builder: (context) => CreateClassModal(activePeriod, searchController.text.trim()));
   }
 
   @override
@@ -509,7 +509,7 @@ class _AddClassesViewState extends State<AddClassesView> {
               Padding(
                 padding: EdgeInsets.symmetric(vertical: 2),
                 child: Text(
-                  '${schoolClass.professor?.first_name ?? ''} ${schoolClass.professor?.last_name ?? ''}',
+                  '${schoolClass.professor?.firstName ?? ''} ${schoolClass.professor?.lastName ?? ''}',
                   style: TextStyle(
                     fontWeight: FontWeight.normal,
                   ),

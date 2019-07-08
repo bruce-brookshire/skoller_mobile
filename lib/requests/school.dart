@@ -19,6 +19,36 @@ class School {
     this.color,
   );
 
+  Future<http.Response> _activeProfessorSearch;
+
+  void invalidateCurrentProfessorSearch() {
+    _activeProfessorSearch?.timeout(Duration.zero);
+  }
+
+  Future<RequestResponse> searchProfessors(String searchText) async {
+    if (_activeProfessorSearch != null) {
+      _activeProfessorSearch.timeout(Duration.zero);
+      _activeProfessorSearch = null;
+    }
+
+    _activeProfessorSearch = SKRequests.rawGetRequest(
+        '/schools/$id/professors?professor_name=$searchText');
+
+    final request = await _activeProfessorSearch;
+
+    return SKRequests.futureProcessor(request, Professor._fromJsonObj);
+  }
+
+  Future<RequestResponse> createProfessor({
+    String nameFirst,
+    String nameLast,
+  }) {
+    return SKRequests.post(
+        '/schools/$id/professors',
+        {'name_first': nameFirst, 'name_last': nameLast},
+        Professor._fromJsonObj);
+  }
+
   static Map<int, School> currentSchools = {};
 
   static School _fromJsonObj(Map content) {
@@ -96,6 +126,34 @@ class Period {
   );
 
   School getSchool() => School.currentSchools[schoolId];
+
+  Future<RequestResponse> createClass({
+    @required String className,
+    @required String subject,
+    @required String code,
+    @required String section,
+    @required int professorId,
+    bool isOnline,
+    String meetDays,
+    TimeOfDay meetTime,
+  }) {
+    Map body = {"name" : className,
+            "professor_id" : professorId,
+            "subject" : subject,
+            "section" : section,
+            "code" : code,
+            "created_on" : "mobile"};
+
+    if (isOnline) {
+      body['meet_days'] = 'online';
+    } else {
+      body['meet_days'] = meetDays;
+      body['meet_start_time'] = '${meetTime.hour < 10 ? '0' : ''}${meetTime.hour}:${meetTime.minute < 10 ? '0' : ''}${meetTime.minute}:00';
+      print(body['meet_start_time']);
+    }
+
+    return SKRequests.post('/periods/$id/classes/', body, SchoolClass._fromJsonObj);
+  }
 
   static Map<int, Period> currentPeriods = {};
 

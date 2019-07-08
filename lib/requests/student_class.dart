@@ -525,17 +525,21 @@ class Status {
 
 class Professor {
   int id;
-  String first_name;
-  String last_name;
+  String firstName;
+  String lastName;
   String email;
   String phone_number;
   String availability;
   String office_location;
 
+  String get fullName {
+    return (firstName ?? '') + (firstName == null || lastName == null ? '' : ' ') + (lastName ?? '');
+  }
+
   Professor(
     this.id,
-    this.first_name,
-    this.last_name,
+    this.firstName,
+    this.lastName,
     this.email,
     this.phone_number,
     this.availability,

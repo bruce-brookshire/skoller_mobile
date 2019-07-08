@@ -79,7 +79,7 @@ class _SchoolSearchViewState extends State<SchoolSearchView> {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: <Widget>[
-              Text(searchedSchools[index].name,
+              Text(school.name,
                   style: TextStyle(
                     fontSize: 18,
                     color: school.color ?? SKColors.dark_gray,

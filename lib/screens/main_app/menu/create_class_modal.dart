@@ -1,8 +1,17 @@
+import 'dart:collection';
+
+import 'package:dart_notification_center/dart_notification_center.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:skoller/screens/main_app/menu/professor_search_view.dart';
 import 'package:skoller/tools.dart';
 
 class CreateClassModal extends StatefulWidget {
+  final Period period;
+  final String initName;
+
+  CreateClassModal(this.period, this.initName);
+
   @override
   State createState() => _CreateClassModalState();
 }
@@ -10,22 +19,19 @@ class CreateClassModal extends StatefulWidget {
 class _CreateClassModalState extends State<CreateClassModal> {
   final pageController = PageController(initialPage: 0);
 
-
-  final classNameController = TextEditingController();
+  TextEditingController classNameController;
   final subjectController = TextEditingController();
   final codeController = TextEditingController();
   final sectionController = TextEditingController();
 
-  Map<String, bool> selectedDays = {
-    'Sun': false,
-    'Mon': false,
-    'Tue': false,
-    'Wed': false,
-    'Thu': false,
-    'Fri': false,
-    'Sat': false,
-  };
+  Map<String, bool> selectedDays = LinkedHashMap.fromIterables(
+    ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
+    List.generate(7, (index) => false),
+  );
+
   bool isOnline = false;
+
+  Professor professor;
 
   DateTime time;
 
@@ -33,6 +39,8 @@ class _CreateClassModalState extends State<CreateClassModal> {
   void initState() {
     final now = DateTime.now();
     time = DateTime(now.year, now.month, now.day, 9, 30);
+
+    classNameController = TextEditingController(text: widget.initName);
 
     super.initState();
   }
@@ -42,6 +50,52 @@ class _CreateClassModalState extends State<CreateClassModal> {
     if (page < 2) {
       pageController.animateToPage(page + 1,
           duration: Duration(milliseconds: 300), curve: Curves.decelerate);
+    }
+  }
+
+  void selectPage(int index) {
+    pageController.animateToPage(index,
+        duration: Duration(milliseconds: 300), curve: Curves.decelerate);
+  }
+
+  void manageClassCreation() async {
+    final interpreter = (String day) {
+      if (day == 'Sun')
+        return 'U';
+      else if (day == 'Thu')
+        return 'R';
+      else
+        return day[0];
+    };
+
+    final days = selectedDays.keys.fold(
+      '',
+      (r, k) => selectedDays[k] ? r + interpreter(k) : r,
+    );
+
+    final response = await widget.period.createClass(
+      className: classNameController.text.trim(),
+      subject: subjectController.text.trim(),
+      code: codeController.text.trim(),
+      section: sectionController.text.trim(),
+      professorId: professor.id,
+      isOnline: isOnline,
+      meetDays: days,
+      meetTime: TimeOfDay.fromDateTime(time),
+    );
+
+    if (response.wasSuccessful() && response.obj is SchoolClass) {
+      final response2 = await (response.obj as SchoolClass).enrollInClass();
+      if (response2.wasSuccessful()) {
+        DartNotificationCenter.post(channel: NotificationChannels.classChanged);
+        Navigator.pop(context);
+      } else {
+        //TODO error
+        print('hmm');
+      }
+    } else {
+      //TODO error
+      print('other hmm');
     }
   }
 
@@ -80,10 +134,15 @@ class _CreateClassScreenOne extends StatefulWidget {
 }
 
 class _CreateClassScreenOneState extends State<_CreateClassScreenOne> {
-
   bool isValid = false;
 
-  void checkValid(String _str) {
+  @override
+  void initState() {
+    checkValid();
+    super.initState();
+  }
+
+  void checkValid([String _str]) {
     final parent = widget.subviewParent;
 
     final className = parent.classNameController.text.trim();
@@ -101,187 +160,188 @@ class _CreateClassScreenOneState extends State<_CreateClassScreenOne> {
   }
 
   @override
-  Widget build(BuildContext context) { 
+  Widget build(BuildContext context) {
     final parent = widget.subviewParent;
     return Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        mainAxisSize: MainAxisSize.min,
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Padding(
-            padding: EdgeInsets.only(bottom: 16),
-            child: SammiSpeechBubble(
-              sammiPersonality: SammiPersonality.smile,
-              speechBubbleContents: Text.rich(
-                TextSpan(text: 'Create your class ', children: [
-                  TextSpan(
-                      text: 'with 3 easy steps',
-                      style: TextStyle(fontWeight: FontWeight.normal)),
-                ]),
-              ),
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      mainAxisSize: MainAxisSize.min,
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Padding(
+          padding: EdgeInsets.only(bottom: 16),
+          child: SammiSpeechBubble(
+            sammiPersonality: SammiPersonality.smile,
+            speechBubbleContents: Text.rich(
+              TextSpan(text: 'Create your class ', children: [
+                TextSpan(
+                    text: 'with 3 easy steps',
+                    style: TextStyle(fontWeight: FontWeight.normal)),
+              ]),
             ),
           ),
-          Container(
-            margin: EdgeInsets.symmetric(vertical: 6, horizontal: 12),
-            // margin: EdgeInsets.fromLTRB(12, 4, 12, 4),
-            padding: EdgeInsets.symmetric(vertical: 4, horizontal: 8),
+        ),
+        Container(
+          margin: EdgeInsets.symmetric(vertical: 6, horizontal: 12),
+          // margin: EdgeInsets.fromLTRB(12, 4, 12, 4),
+          padding: EdgeInsets.symmetric(vertical: 4, horizontal: 8),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(5),
+            border: Border.all(color: SKColors.border_gray),
+            boxShadow: [UIAssets.boxShadow],
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              Text(
+                'Class name',
+                style: TextStyle(
+                    color: SKColors.skoller_blue,
+                    fontSize: 14,
+                    fontWeight: FontWeight.normal),
+              ),
+              CupertinoTextField(
+                cursorColor: SKColors.skoller_blue,
+                padding: EdgeInsets.only(top: 1),
+                placeholder: 'Intro to Calculus',
+                style: TextStyle(fontSize: 15),
+                decoration: BoxDecoration(border: null),
+                controller: parent.classNameController,
+                onChanged: checkValid,
+                autofocus: true,
+              ),
+            ],
+          ),
+        ),
+        Row(
+          children: <Widget>[
+            Expanded(
+              child: Container(
+                margin: EdgeInsets.fromLTRB(12, 4, 4, 4),
+                padding: EdgeInsets.symmetric(vertical: 4, horizontal: 4),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(5),
+                  border: Border.all(color: SKColors.border_gray),
+                  boxShadow: [UIAssets.boxShadow],
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    Text(
+                      'Subject',
+                      style: TextStyle(
+                          color: SKColors.skoller_blue,
+                          fontSize: 13,
+                          fontWeight: FontWeight.normal),
+                    ),
+                    CupertinoTextField(
+                      cursorColor: SKColors.skoller_blue,
+                      padding: EdgeInsets.only(top: 1),
+                      placeholder: 'MATH',
+                      style: TextStyle(fontSize: 15),
+                      decoration: BoxDecoration(border: null),
+                      controller: parent.subjectController,
+                      onChanged: checkValid,
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            Expanded(
+              child: Container(
+                margin: EdgeInsets.fromLTRB(4, 4, 4, 4),
+                padding: EdgeInsets.symmetric(vertical: 4, horizontal: 4),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(5),
+                  border: Border.all(color: SKColors.border_gray),
+                  boxShadow: [UIAssets.boxShadow],
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    Text(
+                      'Code',
+                      style: TextStyle(
+                          color: SKColors.skoller_blue,
+                          fontSize: 13,
+                          fontWeight: FontWeight.normal),
+                    ),
+                    CupertinoTextField(
+                      cursorColor: SKColors.skoller_blue,
+                      padding: EdgeInsets.only(top: 1),
+                      placeholder: '1300',
+                      style: TextStyle(fontSize: 15),
+                      decoration: BoxDecoration(border: null),
+                      controller: parent.codeController,
+                      onChanged: checkValid,
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            Expanded(
+              child: Container(
+                margin: EdgeInsets.fromLTRB(4, 4, 12, 4),
+                padding: EdgeInsets.symmetric(vertical: 4, horizontal: 4),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(5),
+                  border: Border.all(color: SKColors.border_gray),
+                  boxShadow: [UIAssets.boxShadow],
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    Text(
+                      'Section',
+                      style: TextStyle(
+                          color: SKColors.skoller_blue,
+                          fontSize: 13,
+                          fontWeight: FontWeight.normal),
+                    ),
+                    CupertinoTextField(
+                      cursorColor: SKColors.skoller_blue,
+                      padding: EdgeInsets.only(top: 1),
+                      placeholder: '2',
+                      style: TextStyle(fontSize: 15),
+                      decoration: BoxDecoration(border: null),
+                      controller: parent.sectionController,
+                      onChanged: checkValid,
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
+        GestureDetector(
+          onTapUp: (details) =>
+              isValid ? widget.subviewParent.advanceController() : null,
+          child: Container(
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: isValid ? SKColors.skoller_blue : SKColors.inactive_gray,
               borderRadius: BorderRadius.circular(5),
               border: Border.all(color: SKColors.border_gray),
               boxShadow: [UIAssets.boxShadow],
             ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
-              children: <Widget>[
-                Text(
-                  'Class name',
-                  style: TextStyle(
-                      color: SKColors.skoller_blue,
-                      fontSize: 14,
-                      fontWeight: FontWeight.normal),
-                ),
-                CupertinoTextField(
-                  cursorColor: SKColors.skoller_blue,
-                  padding: EdgeInsets.only(top: 1),
-                  placeholder: 'Intro to Calculus',
-                  style: TextStyle(fontSize: 15),
-                  decoration: BoxDecoration(border: null),
-                  controller: parent.classNameController,
-                  onChanged: checkValid,
-                  autofocus: true,
-                ),
-              ],
+            padding: EdgeInsets.symmetric(vertical: 6),
+            margin: EdgeInsets.symmetric(horizontal: 12, vertical: 24),
+            alignment: Alignment.center,
+            child: Text(
+              'Next 👉',
+              style:
+                  TextStyle(color: isValid ? Colors.white : SKColors.dark_gray),
             ),
           ),
-          Row(
-            children: <Widget>[
-              Expanded(
-                child: Container(
-                  margin: EdgeInsets.fromLTRB(12, 4, 4, 4),
-                  padding: EdgeInsets.symmetric(vertical: 4, horizontal: 4),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(5),
-                    border: Border.all(color: SKColors.border_gray),
-                    boxShadow: [UIAssets.boxShadow],
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisSize: MainAxisSize.min,
-                    children: <Widget>[
-                      Text(
-                        'Subject',
-                        style: TextStyle(
-                            color: SKColors.skoller_blue,
-                            fontSize: 13,
-                            fontWeight: FontWeight.normal),
-                      ),
-                      CupertinoTextField(
-                        cursorColor: SKColors.skoller_blue,
-                        padding: EdgeInsets.only(top: 1),
-                        placeholder: 'MATH',
-                        style: TextStyle(fontSize: 15),
-                        decoration: BoxDecoration(border: null),
-                        controller: parent.subjectController,
-                        onChanged: checkValid,
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-              Expanded(
-                child: Container(
-                  margin: EdgeInsets.fromLTRB(4, 4, 4, 4),
-                  padding: EdgeInsets.symmetric(vertical: 4, horizontal: 4),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(5),
-                    border: Border.all(color: SKColors.border_gray),
-                    boxShadow: [UIAssets.boxShadow],
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisSize: MainAxisSize.min,
-                    children: <Widget>[
-                      Text(
-                        'Code',
-                        style: TextStyle(
-                            color: SKColors.skoller_blue,
-                            fontSize: 13,
-                            fontWeight: FontWeight.normal),
-                      ),
-                      CupertinoTextField(
-                        cursorColor: SKColors.skoller_blue,
-                        padding: EdgeInsets.only(top: 1),
-                        placeholder: '1300',
-                        style: TextStyle(fontSize: 15),
-                        decoration: BoxDecoration(border: null),
-                        controller: parent.codeController,
-                        onChanged: checkValid,
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-              Expanded(
-                child: Container(
-                  margin: EdgeInsets.fromLTRB(4, 4, 12, 4),
-                  padding: EdgeInsets.symmetric(vertical: 4, horizontal: 4),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(5),
-                    border: Border.all(color: SKColors.border_gray),
-                    boxShadow: [UIAssets.boxShadow],
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisSize: MainAxisSize.min,
-                    children: <Widget>[
-                      Text(
-                        'Section',
-                        style: TextStyle(
-                            color: SKColors.skoller_blue,
-                            fontSize: 13,
-                            fontWeight: FontWeight.normal),
-                      ),
-                      CupertinoTextField(
-                        cursorColor: SKColors.skoller_blue,
-                        padding: EdgeInsets.only(top: 1),
-                        placeholder: '2',
-                        style: TextStyle(fontSize: 15),
-                        decoration: BoxDecoration(border: null),
-                        controller: parent.sectionController,
-                        onChanged: checkValid,
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ],
-          ),
-          GestureDetector(
-            onTapUp: (details) =>
-                isValid ? widget.subviewParent.advanceController() : null,
-            child: Container(
-              decoration: BoxDecoration(
-                color: isValid ? SKColors.skoller_blue : SKColors.inactive_gray,
-                borderRadius: BorderRadius.circular(5),
-                boxShadow: [UIAssets.boxShadow],
-              ),
-              padding: EdgeInsets.symmetric(vertical: 4),
-              margin: EdgeInsets.symmetric(horizontal: 12, vertical: 24),
-              alignment: Alignment.center,
-              child: Text(
-                'Next 👉',
-                style: TextStyle(
-                    color: isValid ? Colors.white : SKColors.dark_gray),
-              ),
-            ),
-          ),
-        ],
-      );
+        ),
+      ],
+    );
   }
 }
 
@@ -296,7 +356,7 @@ class _CreateClassScreenTwo extends StatefulWidget {
 
 class _CreateClassScreenTwoState extends State<_CreateClassScreenTwo> {
   bool isValid = false;
-  
+
   @override
   void initState() {
     validState();
@@ -306,8 +366,8 @@ class _CreateClassScreenTwoState extends State<_CreateClassScreenTwo> {
   void validState() {
     final parent = widget.subviewParent;
 
-    final newIsValid =
-        parent.isOnline || parent.selectedDays.containsValue(true);
+    final newIsValid = parent.professor != null &&
+        (parent.isOnline || parent.selectedDays.containsValue(true));
 
     if (newIsValid != isValid) {
       setState(() {
@@ -419,35 +479,64 @@ class _CreateClassScreenTwoState extends State<_CreateClassScreenTwo> {
             speechBubbleContents: Text('You are halfway there!'),
           ),
         ),
-        Container(
-          margin: EdgeInsets.symmetric(vertical: 4, horizontal: 8),
-          padding: EdgeInsets.symmetric(vertical: 4, horizontal: 8),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(5),
-            border: Border.all(color: SKColors.border_gray),
-            boxShadow: [UIAssets.boxShadow],
+        GestureDetector(
+          onTapUp: (details) => Navigator.push(
+            context,
+            SKNavOverlayRoute(
+              builder: (context) => ProfessorSearchView((professor) {
+                setState(() {
+                  parent.professor = professor;
+                });
+                validState();
+              }),
+            ),
           ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-              Text(
-                'Professor',
-                style: TextStyle(
-                    color: SKColors.skoller_blue,
-                    fontSize: 12,
-                    fontWeight: FontWeight.normal),
-              ),
-              CupertinoTextField(
-                padding: EdgeInsets.only(top: 1),
-                placeholder: 'Search your professor...',
-                cursorColor: SKColors.skoller_blue,
-                style: TextStyle(fontSize: 15),
-                decoration: BoxDecoration(border: null),
-                // controller: lastNameController,
-              ),
-            ],
+          child: Container(
+            margin: EdgeInsets.fromLTRB(8, 0, 8, 4),
+            padding: EdgeInsets.symmetric(vertical: 4, horizontal: 8),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(5),
+              border: Border.all(color: SKColors.border_gray),
+              boxShadow: [UIAssets.boxShadow],
+            ),
+            child: Row(
+              children: <Widget>[
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    mainAxisSize: MainAxisSize.min,
+                    children: <Widget>[
+                      Text(
+                        'Professor',
+                        style: TextStyle(
+                            color: SKColors.skoller_blue,
+                            fontSize: 12,
+                            fontWeight: FontWeight.normal),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.only(top: 1),
+                        child: Text(
+                          parent.professor?.fullName ??
+                              'Search your professor...',
+                          style: TextStyle(
+                              fontSize: 15,
+                              fontWeight: FontWeight.normal,
+                              color: parent.professor == null
+                                  ? SKColors.light_gray
+                                  : SKColors.dark_gray),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 4),
+                  child:
+                      Image.asset(ImageNames.rightNavImages.magnifying_glass),
+                )
+              ],
+            ),
           ),
         ),
         Container(
@@ -545,7 +634,7 @@ class _CreateClassScreenTwoState extends State<_CreateClassScreenTwo> {
               boxShadow: [UIAssets.boxShadow],
             ),
             alignment: Alignment.center,
-            padding: EdgeInsets.symmetric(vertical: 6),
+            padding: EdgeInsets.symmetric(vertical: 8),
             child: Text(
               'Next',
               style:
@@ -564,9 +653,7 @@ class _CreateClassScreenTwoState extends State<_CreateClassScreenTwo> {
       child: GestureDetector(
         onTapUp: (details) {
           if (parent.isOnline) return;
-          setState(() {
-            parent.selectedDays[day] = !parent.selectedDays[day];
-          });
+          setState(() => parent.selectedDays[day] = !parent.selectedDays[day]);
           validState();
         },
         child: Container(
@@ -614,39 +701,60 @@ class _CreateClassScreenThree extends StatefulWidget {
 
 class _CreateClassScreenThreeState extends State<_CreateClassScreenThree> {
   @override
-  Widget build(BuildContext context) => Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        mainAxisAlignment: MainAxisAlignment.center,
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Padding(
-            padding: EdgeInsets.only(bottom: 12),
-            child: SammiSpeechBubble(
-              sammiPersonality: SammiPersonality.cool,
-              speechBubbleContents: Text.rich(
-                TextSpan(
-                  text: 'Review ',
-                  children: [
-                    TextSpan(
-                        text: 'your info! 🧐',
-                        style: TextStyle(fontWeight: FontWeight.normal)),
-                  ],
-                ),
+  Widget build(BuildContext context) {
+    final parent = widget.subviewParent;
+
+    final interpreter = (String day) {
+      if (day == 'Sun')
+        return 'U';
+      else if (day == 'Thu')
+        return 'R';
+      else
+        return day[0];
+    };
+
+    final days = parent.selectedDays.keys.fold(
+      '',
+      (r, k) => parent.selectedDays[k] ? r + interpreter(k) : r,
+    );
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      mainAxisAlignment: MainAxisAlignment.center,
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Spacer(),
+        Padding(
+          padding: EdgeInsets.symmetric(vertical: 12),
+          child: SammiSpeechBubble(
+            sammiPersonality: SammiPersonality.cool,
+            speechBubbleContents: Text.rich(
+              TextSpan(
+                text: 'Review ',
+                children: [
+                  TextSpan(
+                      text: 'your info! 🧐',
+                      style: TextStyle(fontWeight: FontWeight.normal)),
+                ],
               ),
             ),
           ),
-          Container(
-            margin: EdgeInsets.symmetric(horizontal: 16),
-            padding: EdgeInsets.all(8),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(5),
-              boxShadow: [UIAssets.boxShadow],
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: <Widget>[
-                Container(
+        ),
+        Spacer(),
+        Container(
+          margin: EdgeInsets.symmetric(horizontal: 16),
+          padding: EdgeInsets.all(8),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(5),
+            boxShadow: [UIAssets.boxShadow],
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: <Widget>[
+              GestureDetector(
+                onTapUp: (details) => widget.subviewParent.selectPage(0),
+                child: Container(
                   margin: EdgeInsets.only(bottom: 8),
                   decoration: BoxDecoration(
                     color: SKColors.selected_gray,
@@ -666,7 +774,7 @@ class _CreateClassScreenThreeState extends State<_CreateClassScreenThree> {
                         ),
                       ),
                       Text(
-                        'Microeconomics',
+                        parent.classNameController.text.trim(),
                         textAlign: TextAlign.left,
                         style: TextStyle(
                           fontWeight: FontWeight.normal,
@@ -676,9 +784,12 @@ class _CreateClassScreenThreeState extends State<_CreateClassScreenThree> {
                     ],
                   ),
                 ),
-                Row(
-                  children: <Widget>[
-                    Expanded(
+              ),
+              Row(
+                children: <Widget>[
+                  Expanded(
+                    child: GestureDetector(
+                      onTapUp: (details) => widget.subviewParent.selectPage(0),
                       child: Container(
                         decoration: BoxDecoration(
                           color: SKColors.selected_gray,
@@ -699,7 +810,7 @@ class _CreateClassScreenThreeState extends State<_CreateClassScreenThree> {
                               ),
                             ),
                             Text(
-                              'ECONL',
+                              parent.subjectController.text.trim(),
                               textAlign: TextAlign.left,
                               style: TextStyle(
                                 fontWeight: FontWeight.normal,
@@ -710,10 +821,13 @@ class _CreateClassScreenThreeState extends State<_CreateClassScreenThree> {
                         ),
                       ),
                     ),
-                    Container(
-                      width: 8,
-                    ),
-                    Expanded(
+                  ),
+                  Container(
+                    width: 8,
+                  ),
+                  Expanded(
+                    child: GestureDetector(
+                      onTapUp: (details) => widget.subviewParent.selectPage(0),
                       child: Container(
                         decoration: BoxDecoration(
                           color: SKColors.selected_gray,
@@ -734,7 +848,7 @@ class _CreateClassScreenThreeState extends State<_CreateClassScreenThree> {
                               ),
                             ),
                             Text(
-                              '52896',
+                              parent.codeController.text.trim(),
                               textAlign: TextAlign.left,
                               style: TextStyle(
                                 fontWeight: FontWeight.normal,
@@ -745,10 +859,13 @@ class _CreateClassScreenThreeState extends State<_CreateClassScreenThree> {
                         ),
                       ),
                     ),
-                    Container(
-                      width: 8,
-                    ),
-                    Expanded(
+                  ),
+                  Container(
+                    width: 8,
+                  ),
+                  Expanded(
+                    child: GestureDetector(
+                      onTapUp: (details) => widget.subviewParent.selectPage(0),
                       child: Container(
                         decoration: BoxDecoration(
                           color: SKColors.selected_gray,
@@ -769,7 +886,7 @@ class _CreateClassScreenThreeState extends State<_CreateClassScreenThree> {
                               ),
                             ),
                             Text(
-                              '2',
+                              parent.sectionController.text.trim(),
                               textAlign: TextAlign.left,
                               style: TextStyle(
                                 fontWeight: FontWeight.normal,
@@ -780,9 +897,12 @@ class _CreateClassScreenThreeState extends State<_CreateClassScreenThree> {
                         ),
                       ),
                     ),
-                  ],
-                ),
-                Container(
+                  ),
+                ],
+              ),
+              GestureDetector(
+                onTapUp: (details) => widget.subviewParent.selectPage(1),
+                child: Container(
                   margin: EdgeInsets.only(top: 8),
                   decoration: BoxDecoration(
                     color: SKColors.selected_gray,
@@ -802,7 +922,9 @@ class _CreateClassScreenThreeState extends State<_CreateClassScreenThree> {
                         ),
                       ),
                       Text(
-                        'Microeconomics',
+                        parent.isOnline
+                            ? 'Online'
+                            : '$days @ ${TimeOfDay.fromDateTime(parent.time).format(context)}',
                         textAlign: TextAlign.left,
                         style: TextStyle(
                           fontWeight: FontWeight.normal,
@@ -812,7 +934,10 @@ class _CreateClassScreenThreeState extends State<_CreateClassScreenThree> {
                     ],
                   ),
                 ),
-                Container(
+              ),
+              GestureDetector(
+                onTapUp: (details) => widget.subviewParent.selectPage(1),
+                child: Container(
                   margin: EdgeInsets.only(top: 8),
                   decoration: BoxDecoration(
                     color: SKColors.selected_gray,
@@ -832,7 +957,7 @@ class _CreateClassScreenThreeState extends State<_CreateClassScreenThree> {
                         ),
                       ),
                       Text(
-                        'Microeconomics',
+                        parent.professor?.fullName ?? 'Create a professor',
                         textAlign: TextAlign.left,
                         style: TextStyle(
                           fontWeight: FontWeight.normal,
@@ -842,13 +967,17 @@ class _CreateClassScreenThreeState extends State<_CreateClassScreenThree> {
                     ],
                   ),
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
-          Container(
+        ),
+        Spacer(),
+        GestureDetector(
+          onTapUp: (details) => widget.subviewParent.manageClassCreation(),
+          child: Container(
             alignment: Alignment.center,
-            margin: EdgeInsets.fromLTRB(16, 12, 16, 0),
-            padding: EdgeInsets.symmetric(vertical: 4),
+            margin: EdgeInsets.fromLTRB(16, 12, 16, 12),
+            padding: EdgeInsets.symmetric(vertical: 5),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(5),
               color: SKColors.success,
@@ -858,7 +987,9 @@ class _CreateClassScreenThreeState extends State<_CreateClassScreenThree> {
               'Done! 🎉',
               style: TextStyle(color: Colors.white),
             ),
-          )
-        ],
-      );
+          ),
+        )
+      ],
+    );
+  }
 }
