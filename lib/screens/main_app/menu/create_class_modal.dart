@@ -1,14 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:skoller/constants/constants.dart';
-import 'package:skoller/requests/requests_core.dart';
+import 'package:skoller/tools.dart';
 
-class SKCreateClassModal extends StatefulWidget {
+class CreateClassModal extends StatefulWidget {
   @override
-  State createState() => _SKCreateClassModalState();
+  State createState() => _CreateClassModalState();
 }
 
-class _SKCreateClassModalState extends State<SKCreateClassModal> {
+class _CreateClassModalState extends State<CreateClassModal> {
   final controller = PageController(initialPage: 0);
 
   Map<String, bool> selectedDays = {

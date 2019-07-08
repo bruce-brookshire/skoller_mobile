@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:skoller/requests/requests_core.dart';
-import 'package:skoller/constants/constants.dart';
+import 'package:skoller/tools.dart';
 import 'package:skoller/screens/auth/phone_verification_view.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:dart_notification_center/dart_notification_center.dart';

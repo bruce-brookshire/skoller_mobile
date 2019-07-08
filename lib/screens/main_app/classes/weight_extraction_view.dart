@@ -1,9 +1,11 @@
+import 'package:dart_notification_center/dart_notification_center.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:skoller/constants/constants.dart';
-import 'package:skoller/requests/requests_core.dart';
+import 'package:skoller/tools.dart';
 
 import 'dart:collection';
+
+import 'package:skoller/screens/main_app/classes/assignment_weight_view.dart';
 
 class _StateKeeper {
   bool isPoints = false;
@@ -33,6 +35,7 @@ class _WeightExtractionViewState extends State<WeightExtractionView> {
   void initState() {
     studentClass = StudentClass.currentClasses[widget.classId];
     state = _StateKeeper();
+    studentClass.acquireWeightLock();
     super.initState();
   }
 
@@ -49,11 +52,42 @@ class _WeightExtractionViewState extends State<WeightExtractionView> {
     }
   }
 
+  void backwardState() {
+    if (currentView > 0) {
+      final newView = currentView - 1;
+      pageController
+          .animateToPage(
+            newView,
+            duration: Duration(milliseconds: 300),
+            curve: Curves.decelerate,
+          )
+          .then((val) => setState(() => currentView = newView));
+    }
+  }
+
+  void popUnsuccessfully() async {
+    final result = await showDialog(
+      context: context,
+      builder: (context) => SKAlertDialog(
+        title: 'Lose progress',
+        subTitle: 'Are you sure you want to abandon progress?',
+        confirmText: 'Confirm',
+        cancelText: 'Cancel',
+      ),
+    );
+
+    if (result != null && result is bool && result) {
+      studentClass.releaseDIYLock(isCompleted: false);
+      Navigator.pop(context);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return SKNavView(
       title: studentClass.name,
       titleColor: studentClass.getColor(),
+      callbackLeft: popUnsuccessfully,
       children: <Widget>[
         Padding(
           padding: EdgeInsets.symmetric(vertical: 12),
@@ -304,11 +338,63 @@ class _SubviewThreeState extends State<_SubviewThree> {
     numPoints = isPoints ? widget.subviewParent.state.numPoints : 100;
   }
 
+  void editWeight(int weightIndex) async {
+    final weight = widget.subviewParent.state.weights[weightIndex];
+
+    final nameController = TextEditingController(text: weight['name']);
+    final valueController = TextEditingController(text: '${weight['value']}');
+
+    final results =
+        await showWeightMaker(nameController, valueController, false);
+
+    if (results != null && results is bool && results) {
+      final name = nameController.text.trim();
+      final value = valueController.text.trim();
+
+      if (name != '' &&
+          value != '' &&
+          int.parse(value, onError: (str) => null) != null) {
+        setState(() {
+          widget.subviewParent.state.weights[weightIndex]['name'] = name;
+          widget.subviewParent.state.weights[weightIndex]['value'] =
+              int.parse(value);
+        });
+      }
+    }
+  }
+
   void addWeight(TapUpDetails details) async {
     final nameController = TextEditingController();
     final valueController = TextEditingController();
 
-    final results = await showDialog(
+    final results =
+        await showWeightMaker(nameController, valueController, true);
+
+    if (results != null && results is bool && results) {
+      final name = nameController.text.trim();
+      final value = valueController.text.trim();
+
+      if (name != '' &&
+          value != '' &&
+          int.parse(value, onError: (str) => null) != null) {
+        setState(
+          () => widget.subviewParent.state.weights.add(
+            {
+              'name': name,
+              'value': int.parse(value),
+            },
+          ),
+        );
+      }
+    }
+  }
+
+  Future<bool> showWeightMaker(
+    TextEditingController nameController,
+    TextEditingController valueController,
+    bool isCreate,
+  ) {
+    return showDialog(
       context: context,
       builder: (context) => Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -325,7 +411,7 @@ class _SubviewThreeState extends State<_SubviewThree> {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: <Widget>[
                   Text(
-                    'Create weight',
+                    isCreate ? 'Create weight' : 'Update weight',
                     style: TextStyle(fontSize: 16),
                     textAlign: TextAlign.center,
                   ),
@@ -395,24 +481,6 @@ class _SubviewThreeState extends State<_SubviewThree> {
         ],
       ),
     );
-
-    if (results != null && results is bool && results) {
-      final name = nameController.text.trim();
-      final value = valueController.text.trim();
-
-      if (name != '' &&
-          value != '' &&
-          int.parse(value, onError: (str) => null) != null) {
-        setState(
-          () => widget.subviewParent.state.weights.add(
-            {
-              'name': name,
-              'value': int.parse(value),
-            },
-          ),
-        );
-      }
-    }
   }
 
   void updateType(int index) {
@@ -425,11 +493,60 @@ class _SubviewThreeState extends State<_SubviewThree> {
     widget.subviewParent.state.numPoints = pointsVal;
   }
 
+  void tappedSubmit(TapUpDetails details) async {
+    final currTotal = widget.subviewParent.state.weights
+        .fold(0, (val, item) => item['value'] + val);
+    final validTotal = (isPoints ? numPoints : 100) == currTotal;
+
+    if (!validTotal) return;
+
+    final state = widget.subviewParent.state;
+    final studentClass = widget.subviewParent.studentClass;
+
+    studentClass.createWeights(state.isPoints, state.weights).then((success) {
+      //After creating
+      if (success) {
+        return studentClass.releaseDIYLock(isCompleted: false);
+      } else {
+        throw 'Unsuccessful';
+      }
+    }).then((response) {
+      //After releasing
+      if (response.wasSuccessful()) {
+        return studentClass.refetchSelf();
+      } else {
+        throw 'Unsuccessful';
+      }
+    }).then((response) {
+      //TODO success
+      //After reloading class
+      if (response.wasSuccessful()) {
+        //New info is available, push to assignments
+        DartNotificationCenter.post(channel: NotificationChannels.classChanged);
+
+        Navigator.pushReplacement(
+          context,
+          CupertinoPageRoute(
+            builder: (context) => AssignmentWeightView(studentClass.id),
+          ),
+        );
+      } else {
+        //Pop because new studentClass info isnt ready yet
+        Navigator.pop(context);
+      }
+    }).catchError((error) {
+      if (error != null && error is String) {
+        //TODO error msg
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final state = widget.subviewParent.state;
 
     final currTotal = state.weights.fold(0, (val, item) => item['value'] + val);
+    final validTotal = (isPoints ? numPoints : 100) == currTotal;
 
     return Column(
       children: <Widget>[
@@ -462,18 +579,36 @@ class _SubviewThreeState extends State<_SubviewThree> {
                 border: Border.all(color: SKColors.border_gray),
                 borderRadius: BorderRadius.circular(5)),
             child: ListView.builder(
-              itemCount: state.weights.length,
-              itemBuilder: (context, index) => Container(
-                padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: <Widget>[
-                    Text(state.weights[index]['name']),
-                    Text('${state.weights[index]['value']}'),
-                  ],
-                ),
-              ),
-            ),
+                itemCount: state.weights.length,
+                itemBuilder: (context, index) {
+                  final weight = state.weights[index];
+                  return GestureDetector(
+                    onTapUp: (details) => editWeight(index),
+                    child: Container(
+                      padding:
+                          EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: <Widget>[
+                          GestureDetector(
+                            onTapUp: (details) {
+                              setState(() {
+                                state.weights.removeAt(index);
+                              });
+                            },
+                            child: Padding(
+                              padding: EdgeInsets.only(right: 12),
+                              child: Image.asset(
+                                  ImageNames.assignmentInfoImages.circle_x),
+                            ),
+                          ),
+                          Expanded(child: Text(weight['name'])),
+                          Text('${weight['value']}'),
+                        ],
+                      ),
+                    ),
+                  );
+                }),
           ),
         ),
         GestureDetector(
@@ -502,13 +637,15 @@ class _SubviewThreeState extends State<_SubviewThree> {
                 'Total',
                 style: TextStyle(fontSize: 20),
               ),
-              Text(
-                '$currTotal / $numPoints${isPoints ? '' : '%'}',
-                style: TextStyle(
-                    fontSize: 20,
-                    color: (isPoints ? numPoints : 100) == currTotal
-                        ? SKColors.success
-                        : SKColors.dark_gray),
+              GestureDetector(
+                onTapUp: (details) => widget.subviewParent.backwardState(),
+                child: Text(
+                  '$currTotal / ${isPoints ? numPoints : 100}${isPoints ? '' : '%'}',
+                  style: TextStyle(
+                      fontSize: 20,
+                      color:
+                          validTotal ? SKColors.success : SKColors.dark_gray),
+                ),
               )
             ],
           ),
@@ -535,16 +672,23 @@ class _SubviewThreeState extends State<_SubviewThree> {
           child: Row(
             children: <Widget>[
               Expanded(
-                child: Container(
-                  alignment: Alignment.center,
-                  padding: EdgeInsets.symmetric(vertical: 8),
-                  decoration: BoxDecoration(
-                      color: SKColors.inactive_gray,
-                      borderRadius: BorderRadius.circular(5),
-                      boxShadow: [UIAssets.boxShadow]),
-                  child: Text(
-                    'Submit weights',
-                    style: TextStyle(color: SKColors.light_gray),
+                child: GestureDetector(
+                  onTapUp: tappedSubmit,
+                  child: Container(
+                    alignment: Alignment.center,
+                    padding: EdgeInsets.symmetric(vertical: 8),
+                    decoration: BoxDecoration(
+                        color: validTotal
+                            ? SKColors.success
+                            : SKColors.inactive_gray,
+                        borderRadius: BorderRadius.circular(5),
+                        boxShadow: [UIAssets.boxShadow]),
+                    child: Text(
+                      'Submit weights',
+                      style: TextStyle(
+                          color:
+                              validTotal ? Colors.white : SKColors.light_gray),
+                    ),
                   ),
                 ),
               )

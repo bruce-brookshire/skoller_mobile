@@ -1,7 +1,6 @@
 import 'package:dart_notification_center/dart_notification_center.dart';
 import 'package:flutter/material.dart';
-import 'package:skoller/constants/constants.dart';
-import 'package:skoller/requests/requests_core.dart';
+import 'package:skoller/tools.dart';
 import 'package:intl/intl.dart';
 
 class _UnsavedAssignment {
@@ -89,6 +88,7 @@ class _AssignmentBatchAddViewState extends State<AssignmentBatchAddView> {
       Navigator.pop(context);
     } else {
       //TODO: Error message
+      //TODO: does this create assignments or modifications?
     }
   }
 

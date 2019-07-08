@@ -10,7 +10,7 @@ class School {
 
   static Map<int, School> currentSchools = {};
 
-  static School _fromJsonObject(Map content) {
+  static School _fromJsonObj(Map content) {
     if (content == null) {
       return null;
     }
@@ -31,6 +31,26 @@ class School {
       period_list,
       content['name'],
     );
+  }
+
+  static Future<http.Response> _activeSchoolSearch;
+
+  static void invalidateCurrentSchoolSearch() {
+    _activeSchoolSearch?.timeout(Duration.zero);
+  }
+
+  static Future<RequestResponse> searchSchools(String searchText) async {
+    if (_activeSchoolSearch != null) {
+      _activeSchoolSearch.timeout(Duration.zero);
+      _activeSchoolSearch = null;
+    }
+
+    _activeSchoolSearch =
+        SKRequests.rawGetRequest('/school/list?name=$searchText');
+
+    final request = await _activeSchoolSearch;
+
+    return SKRequests.futureProcessor(request, _fromJsonObj);
   }
 }
 

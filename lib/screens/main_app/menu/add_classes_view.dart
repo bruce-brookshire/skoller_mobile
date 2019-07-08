@@ -2,9 +2,9 @@ import 'dart:async';
 import 'package:dart_notification_center/dart_notification_center.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:skoller/requests/requests_core.dart';
-import 'package:skoller/constants/constants.dart';
+import 'package:skoller/tools.dart';
 import 'package:skoller/screens/main_app/menu/create_class_modal.dart';
+import 'package:skoller/screens/main_app/menu/class_search_settings_modal.dart';
 
 class AddClassesView extends StatefulWidget {
   @override
@@ -257,102 +257,11 @@ class _AddClassesViewState extends State<AddClassesView> {
   }
 
   void tappedSettings(TapUpDetails details) {
-    showDialog(
-      context: context,
-      builder: (context) => Dialog(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(10),
-          side: BorderSide(color: SKColors.border_gray),
-        ),
-        child: Padding(
-          padding: EdgeInsets.all(12),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: <Widget>[
-              Text(
-                'Class search settings',
-                style: TextStyle(fontSize: 18),
-                textAlign: TextAlign.center,
-              ),
-              Padding(
-                padding: EdgeInsets.only(top: 16, left: 8),
-                child: Text(
-                  'School',
-                  style: TextStyle(
-                      color: SKColors.light_gray,
-                      fontWeight: FontWeight.normal,
-                      fontSize: 13),
-                ),
-              ),
-              Container(
-                padding: EdgeInsets.symmetric(horizontal: 8, vertical: 12),
-                decoration: BoxDecoration(
-                  color: SKColors.background_gray,
-                  borderRadius: BorderRadius.circular(5),
-                ),
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: Text('Vanderbilt University'),
-                    ),
-                    Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 4),
-                      child: Image.asset(ImageNames.navArrowImages.down),
-                    )
-                  ],
-                ),
-              ),
-              Padding(
-                padding: EdgeInsets.only(top: 16, left: 8),
-                child: Text(
-                  'Semester',
-                  style: TextStyle(
-                      color: SKColors.light_gray,
-                      fontWeight: FontWeight.normal,
-                      fontSize: 13),
-                ),
-              ),
-              Container(
-                padding: EdgeInsets.symmetric(horizontal: 8, vertical: 12),
-                decoration: BoxDecoration(
-                  color: SKColors.background_gray,
-                  borderRadius: BorderRadius.circular(5),
-                ),
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: Text('Spring 2019'),
-                    ),
-                    Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 4),
-                      child: Image.asset(ImageNames.navArrowImages.down),
-                    )
-                  ],
-                ),
-              ),
-              GestureDetector(
-                onTapUp: (details) {
-                  Navigator.pop(context);
-                },
-                child: Padding(
-                  padding: EdgeInsets.only(top: 16, bottom: 4),
-                  child: Text(
-                    'Done',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(color: SKColors.skoller_blue),
-                  ),
-                ),
-              )
-            ],
-          ),
-        ),
-      ),
-    );
+    showDialog(context: context, builder: (context) => ClassSearchSettingsModal());
   }
 
   void tappedAddClass() {
-    showDialog(context: context, builder: (context) => SKCreateClassModal());
+    showDialog(context: context, builder: (context) => CreateClassModal());
   }
 
   @override

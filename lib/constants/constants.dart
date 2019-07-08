@@ -115,6 +115,7 @@ class _SignUpImages {
   final syllabus_activity = '${_base}/syllabus_activity.png';
   final activities = '${_base}/activities.png';
   final logo_wide_blue = '${_base}/logo_wide_blue.png';
+  final search_back_arrow = '${_base}/search_back_arrow.png';
 }
 
 class _NavigationArrowImages {

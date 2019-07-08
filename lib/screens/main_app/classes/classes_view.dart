@@ -3,8 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:skoller/screens/main_app/classes/weight_extraction_view.dart';
 import 'package:skoller/screens/main_app/menu/add_classes_view.dart';
-import 'package:skoller/constants/constants.dart';
-import 'package:skoller/requests/requests_core.dart';
+import 'package:skoller/tools.dart';
 import 'class_detail_view.dart';
 
 class ClassesView extends StatefulWidget {

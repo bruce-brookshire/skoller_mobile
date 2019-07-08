@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:skoller/constants/constants.dart';
-import 'package:skoller/requests/requests_core.dart';
+import 'package:skoller/tools.dart';
 import 'package:intl/intl.dart';
 
 class UpdateInfoView extends StatefulWidget {

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:skoller/constants/constants.dart';
-import 'package:skoller/requests/requests_core.dart';
+import 'package:skoller/tools.dart';
 import 'package:skoller/screens/main_app/menu/edit_profile_view.dart';
 
 class ProfileView extends StatefulWidget {

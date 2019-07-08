@@ -35,6 +35,7 @@ class SKUser {
     DateTime futureNotificationTime,
     int notificationDays,
     bool isAssignmentPostNotifications,
+    School primarySchool,
   }) {
     Map<String, dynamic> params = {'id': this.student.id};
 
@@ -69,6 +70,10 @@ class SKUser {
     if (isAssignmentPostNotifications != null &&
         isAssignmentPostNotifications != this.student.isAssignPostNotifications)
       params['is_assign_post_notifications'] = isAssignmentPostNotifications;
+
+    if (primarySchool != null &&
+        primarySchool.id != this.student.primarySchool?.id)
+      params['primary_school_id'] = primarySchool.id;
 
     if (params.length == 1) {
       return Future.value(true);
@@ -119,7 +124,7 @@ class Student {
 
   Student._fromJson(Map content) {
     final school_list =
-        JsonListMaker.convert(School._fromJsonObject, content['schools']) ?? [];
+        JsonListMaker.convert(School._fromJsonObj, content['schools']) ?? [];
     School.currentSchools = {};
 
     for (final school in school_list) {
@@ -139,7 +144,7 @@ class Student {
     organizations = content['organization'];
     enrollmentLink = content['enrollment_link'];
     primarySchool = content['primary_school'] != null
-        ? School._fromJsonObject(content['primary_school'])
+        ? School._fromJsonObj(content['primary_school'])
         : null;
 
     final utcNow = DateTime.now().toUtc();

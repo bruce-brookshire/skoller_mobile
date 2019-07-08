@@ -201,6 +201,42 @@ class StudentClass {
     );
   }
 
+  Future<RequestResponse> acquireWeightLock() {
+    return SKRequests.post(
+      "/classes/${id}/lock/weights",
+      null,
+      null,
+    );
+  }
+
+  Future<bool> createWeights(
+    bool isPoints,
+    List<Map> weights,
+  ) async {
+    List<Future<RequestResponse>> requests = weights.toList().map(
+          (weight) => SKRequests.post(
+              '/classes/$id/weights',
+              {
+                'name': weight['name'],
+                'weight': weight['value'],
+                'created_on': 'mobile'
+              },
+              null),
+        ).toList();
+
+    bool success = true;
+
+    for (final request in requests) {
+      final response = await request;
+      if (!response.wasSuccessful()) {
+        success = false;
+        break;
+      }
+    }
+
+    return success;
+  }
+
   Future<RequestResponse> releaseDIYLock({bool isCompleted = true}) {
     return SKRequests.post(
       "/classes/${id}/unlock",
@@ -279,7 +315,8 @@ class StudentClass {
     Color(0xFF9B55E5), //purple
   ];
 
-  static StudentClass _fromJsonObj(Map content, {bool shouldPersistAssignments = true }) {
+  static StudentClass _fromJsonObj(Map content,
+      {bool shouldPersistAssignments = true}) {
     if (content == null) {
       return null;
     }
@@ -299,7 +336,8 @@ class StudentClass {
       content['id'],
       content['name'],
       JsonListMaker.convert(
-        (content) => Assignment._fromJsonObj(content, shouldPersist: shouldPersistAssignments),
+        (content) => Assignment._fromJsonObj(content,
+            shouldPersist: shouldPersistAssignments),
         content['assignments'] ?? [],
       ),
       content['color'],
