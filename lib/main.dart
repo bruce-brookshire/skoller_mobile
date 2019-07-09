@@ -1,4 +1,5 @@
 import 'package:dart_notification_center/dart_notification_center.dart';
+import 'package:dropdown_banner/dropdown_banner.dart';
 import 'package:package_info/package_info.dart';
 import 'package:flutter/material.dart';
 import 'package:skoller/loading_view.dart';
@@ -110,7 +111,7 @@ class _SkollerAppState extends State<SkollerApp> {
     return MaterialApp(
       builder: (context, widget) => Theme(data: currentTheme, child: widget),
       theme: currentTheme,
-      home: currentWidget,
+      home: DropdownBanner(child: currentWidget),
     );
   }
 }

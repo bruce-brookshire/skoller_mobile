@@ -1,4 +1,5 @@
 import 'package:dart_notification_center/dart_notification_center.dart';
+import 'package:dropdown_banner/dropdown_banner.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
@@ -49,7 +50,6 @@ class _TasksViewState extends State<TasksView> {
         channel: NotificationChannels.modsChanged,
         onNotification: _fetchTasks);
   }
-
 
   @override
   void dispose() {
@@ -231,13 +231,14 @@ class _TasksViewState extends State<TasksView> {
             key: _refreshIndicatorKey,
             onRefresh: _fetchTasks,
             child: ListView.builder(
-            padding: EdgeInsets.only(top: 4),
-            itemBuilder: (context, index) => _taskItems[index].isMod
-                ? buildModCell(context, index)
-                : buildTaskCell(context, index),
-            itemCount: _taskItems.length,
+              padding: EdgeInsets.only(top: 4),
+              itemBuilder: (context, index) => _taskItems[index].isMod
+                  ? buildModCell(context, index)
+                  : buildTaskCell(context, index),
+              itemCount: _taskItems.length,
+            ),
           ),
-        ),),
+        ),
       ],
     );
   }

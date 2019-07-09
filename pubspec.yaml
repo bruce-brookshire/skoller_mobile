@@ -31,6 +31,8 @@ dependencies:
   package_info: ^0.4.0+4
   firebase_core: ^0.2.5 
   firebase_messaging: ^5.0.4
+  dropdown_banner:
+    path: ./../../dropdown_banner
   flutter:
     sdk: flutter
 
