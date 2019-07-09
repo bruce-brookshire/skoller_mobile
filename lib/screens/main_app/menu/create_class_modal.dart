@@ -68,10 +68,8 @@ class _CreateClassModalState extends State<CreateClassModal> {
         return day[0];
     };
 
-    final days = selectedDays.keys.fold(
-      '',
-      (r, k) => selectedDays[k] ? r + interpreter(k) : r,
-    );
+    final days = selectedDays.keys
+        .fold('', (r, k) => selectedDays[k] ? r + interpreter(k) : r);
 
     final response = await widget.period.createClass(
       className: classNameController.text.trim(),
@@ -182,7 +180,6 @@ class _CreateClassScreenOneState extends State<_CreateClassScreenOne> {
         ),
         Container(
           margin: EdgeInsets.symmetric(vertical: 6, horizontal: 12),
-          // margin: EdgeInsets.fromLTRB(12, 4, 12, 4),
           padding: EdgeInsets.symmetric(vertical: 4, horizontal: 8),
           decoration: BoxDecoration(
             color: Colors.white,
@@ -205,7 +202,7 @@ class _CreateClassScreenOneState extends State<_CreateClassScreenOne> {
                 cursorColor: SKColors.skoller_blue,
                 padding: EdgeInsets.only(top: 1),
                 placeholder: 'Intro to Calculus',
-                style: TextStyle(fontSize: 15),
+                style: TextStyle(fontSize: 15, color: SKColors.dark_gray),
                 decoration: BoxDecoration(border: null),
                 controller: parent.classNameController,
                 onChanged: checkValid,
@@ -241,7 +238,7 @@ class _CreateClassScreenOneState extends State<_CreateClassScreenOne> {
                       cursorColor: SKColors.skoller_blue,
                       padding: EdgeInsets.only(top: 1),
                       placeholder: 'MATH',
-                      style: TextStyle(fontSize: 15),
+                      style: TextStyle(fontSize: 15, color: SKColors.dark_gray),
                       decoration: BoxDecoration(border: null),
                       controller: parent.subjectController,
                       onChanged: checkValid,
@@ -275,10 +272,11 @@ class _CreateClassScreenOneState extends State<_CreateClassScreenOne> {
                       cursorColor: SKColors.skoller_blue,
                       padding: EdgeInsets.only(top: 1),
                       placeholder: '1300',
-                      style: TextStyle(fontSize: 15),
+                      style: TextStyle(fontSize: 15, color: SKColors.dark_gray),
                       decoration: BoxDecoration(border: null),
                       controller: parent.codeController,
                       onChanged: checkValid,
+                      keyboardType: TextInputType.number,
                     ),
                   ],
                 ),
@@ -309,9 +307,10 @@ class _CreateClassScreenOneState extends State<_CreateClassScreenOne> {
                       cursorColor: SKColors.skoller_blue,
                       padding: EdgeInsets.only(top: 1),
                       placeholder: '2',
-                      style: TextStyle(fontSize: 15),
+                      style: TextStyle(fontSize: 15, color: SKColors.dark_gray),
                       decoration: BoxDecoration(border: null),
                       controller: parent.sectionController,
+                      keyboardType: TextInputType.number,
                       onChanged: checkValid,
                     ),
                   ],
@@ -359,11 +358,11 @@ class _CreateClassScreenTwoState extends State<_CreateClassScreenTwo> {
 
   @override
   void initState() {
-    validState();
+    checkValid();
     super.initState();
   }
 
-  void validState() {
+  void checkValid() {
     final parent = widget.subviewParent;
 
     final newIsValid = parent.professor != null &&
@@ -487,7 +486,7 @@ class _CreateClassScreenTwoState extends State<_CreateClassScreenTwo> {
                 setState(() {
                   parent.professor = professor;
                 });
-                validState();
+                checkValid();
               }),
             ),
           ),
@@ -564,7 +563,7 @@ class _CreateClassScreenTwoState extends State<_CreateClassScreenTwo> {
                     value: parent.isOnline,
                     onChanged: (newVal) {
                       setState(() => parent.isOnline = newVal);
-                      validState();
+                      checkValid();
                     },
                   )
                 ],
@@ -654,7 +653,7 @@ class _CreateClassScreenTwoState extends State<_CreateClassScreenTwo> {
         onTapUp: (details) {
           if (parent.isOnline) return;
           setState(() => parent.selectedDays[day] = !parent.selectedDays[day]);
-          validState();
+          checkValid();
         },
         child: Container(
           padding: EdgeInsets.symmetric(vertical: 7),

@@ -83,6 +83,24 @@ class School {
     );
   }
 
+  static Future<RequestResponse> createSchool({
+    @required bool isUniversity,
+    @required String schoolName,
+    @required String cityName,
+    @required String stateAbv,
+  }) {
+    return SKRequests.post(
+        '/schools/',
+        {
+          'is_university': isUniversity,
+          'name': schoolName,
+          'adr_locality': cityName,
+          'adr_region': stateAbv,
+          'adr_country': 'us'
+        },
+        School._fromJsonObj);
+  }
+
   static Future<http.Response> _activeSchoolSearch;
 
   static void invalidateCurrentSchoolSearch() {
@@ -137,22 +155,26 @@ class Period {
     String meetDays,
     TimeOfDay meetTime,
   }) {
-    Map body = {"name" : className,
-            "professor_id" : professorId,
-            "subject" : subject,
-            "section" : section,
-            "code" : code,
-            "created_on" : "mobile"};
+    Map body = {
+      "name": className,
+      "professor_id": professorId,
+      "subject": subject,
+      "section": section,
+      "code": code,
+      "created_on": "mobile"
+    };
 
     if (isOnline) {
       body['meet_days'] = 'online';
     } else {
       body['meet_days'] = meetDays;
-      body['meet_start_time'] = '${meetTime.hour < 10 ? '0' : ''}${meetTime.hour}:${meetTime.minute < 10 ? '0' : ''}${meetTime.minute}:00';
+      body['meet_start_time'] =
+          '${meetTime.hour < 10 ? '0' : ''}${meetTime.hour}:${meetTime.minute < 10 ? '0' : ''}${meetTime.minute}:00';
       print(body['meet_start_time']);
     }
 
-    return SKRequests.post('/periods/$id/classes/', body, SchoolClass._fromJsonObj);
+    return SKRequests.post(
+        '/periods/$id/classes/', body, SchoolClass._fromJsonObj);
   }
 
   static Map<int, Period> currentPeriods = {};

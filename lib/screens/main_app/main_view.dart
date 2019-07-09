@@ -95,6 +95,7 @@ class _MainViewState extends State<MainView> {
           child: GestureDetector(
             behavior: HitTestBehavior.opaque,
             onTapUp: toggleMenu,
+            onHorizontalDragStart: toggleMenu,
             child: Container(
               color: menuShowing ? Colors.black.withOpacity(0.3) : null,
             ),

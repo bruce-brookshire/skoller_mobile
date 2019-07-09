@@ -124,6 +124,8 @@ class _NavigationArrowImages {
   final left = '${_base}/back.png';
   final down = '${_base}/down.png';
   final right = '${_base}/right.png';
+  final dropdown_blue = '${_base}/dropdown_blue.png';
+  final dropdown_gray = '${_base}/dropdown_gray.png';
 }
 
 class _SammiImages {

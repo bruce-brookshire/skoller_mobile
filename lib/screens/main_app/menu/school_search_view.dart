@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:skoller/screens/main_app/menu/create_school_modal.dart';
 import 'package:skoller/tools.dart';
 import 'package:dart_notification_center/dart_notification_center.dart';
 
@@ -118,7 +119,21 @@ class _SchoolSearchViewState extends State<SchoolSearchView> {
     if (result is bool && result) {
       await SKUser.current.update(primarySchool: school);
       Navigator.pop(context);
-      DartNotificationCenter.post(channel: NotificationChannels.userChanged, options: school);
+      DartNotificationCenter.post(
+          channel: NotificationChannels.userChanged, options: school);
+    }
+  }
+
+  void tappedCreateSchool(TapUpDetails details) async {
+    final result = await showDialog(
+      context: context,
+      builder: (context) => CreateSchoolModal(searchController.text.trim()),
+    );
+
+    if (result is School) {
+      Navigator.pop(context);
+      DartNotificationCenter.post(
+          channel: NotificationChannels.userChanged, options: result);
     }
   }
 
@@ -158,6 +173,7 @@ class _SchoolSearchViewState extends State<SchoolSearchView> {
                         cursorColor: SKColors.skoller_blue,
                         textCapitalization: TextCapitalization.words,
                         decoration: BoxDecoration(border: null),
+                        controller: searchController,
                       ),
                     ),
                     Padding(
@@ -178,39 +194,83 @@ class _SchoolSearchViewState extends State<SchoolSearchView> {
               Expanded(
                 child: ListView.builder(
                   padding: EdgeInsets.only(top: 4),
-                  itemCount: searchedSchools.length,
-                  itemBuilder: (context, index) => GestureDetector(
-                    onTapUp: (details) => tappedSchool(index),
-                    child: Container(
-                      decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(5),
-                          border: Border.all(color: SKColors.border_gray),
-                          boxShadow: [UIAssets.boxShadow]),
-                      margin: EdgeInsets.fromLTRB(12, 4, 12, 4),
-                      padding: EdgeInsets.symmetric(horizontal: 8, vertical: 8),
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: [
-                          Text(
-                            searchedSchools[index].name,
-                            style: TextStyle(
-                                fontSize: 16,
-                                color: searchedSchools[index].color ??
-                                    SKColors.dark_gray),
+                  itemCount: searchController.text.trim().length == 0
+                      ? 0
+                      : (searchedSchools.length + (isSearching ? 0 : 1)),
+                  itemBuilder: (context, index) {
+                    if (index < searchedSchools.length)
+                      return GestureDetector(
+                        onTapUp: (details) => tappedSchool(index),
+                        child: Container(
+                          decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(5),
+                              border: Border.all(color: SKColors.border_gray),
+                              boxShadow: [UIAssets.boxShadow]),
+                          margin: EdgeInsets.fromLTRB(12, 4, 12, 4),
+                          padding:
+                              EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: [
+                              Text(
+                                searchedSchools[index].name,
+                                style: TextStyle(
+                                    fontSize: 16,
+                                    color: searchedSchools[index].color ??
+                                        SKColors.dark_gray),
+                              ),
+                              Text(
+                                '${searchedSchools[index].adrLocality ?? ''}, ${searchedSchools[index].adrRegion ?? ''}',
+                                style: TextStyle(
+                                    color: SKColors.light_gray,
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.normal),
+                              )
+                            ],
                           ),
-                          Text(
-                            '${searchedSchools[index].adrLocality ?? ''} ${searchedSchools[index].adrRegion ?? ''}',
-                            style: TextStyle(
-                                color: SKColors.light_gray,
-                                fontSize: 14,
-                                fontWeight: FontWeight.normal),
-                          )
-                        ],
-                      ),
-                    ),
-                  ),
+                        ),
+                      );
+                    else
+                      return GestureDetector(
+                        onTapUp: tappedCreateSchool,
+                        child: Container(
+                          decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(5),
+                              border: Border.all(color: SKColors.border_gray),
+                              boxShadow: [UIAssets.boxShadow]),
+                          margin: EdgeInsets.fromLTRB(12, 4, 12, 4),
+                          padding:
+                              EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+                          child: Row(
+                            children: [
+                              Container(
+                                width: 36,
+                                padding: EdgeInsets.only(
+                                    right: 8, top: 2, bottom: 2),
+                                child:
+                                    Image.asset(ImageNames.sammiImages.shocked),
+                              ),
+                              Expanded(
+                                child: Text.rich(
+                                  TextSpan(
+                                    text: 'Tap to create a school called ',
+                                    children: [
+                                      TextSpan(
+                                          text: '${searchController.text}',
+                                          style: TextStyle(
+                                              color: SKColors.skoller_blue)),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      );
+                  },
                 ),
               ),
             ],

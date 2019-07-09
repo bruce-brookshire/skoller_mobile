@@ -1115,7 +1115,7 @@ class _SKPickerModalState extends State<SKPickerModal> {
               children: <Widget>[
                 Expanded(
                   child: GestureDetector(
-                    onTapUp: (details) => Navigator.pop(context),
+                    onTapUp: (details) => Navigator.pop(context, false),
                     child: Container(
                       alignment: Alignment.center,
                       padding: EdgeInsets.symmetric(vertical: 12),
@@ -1131,7 +1131,7 @@ class _SKPickerModalState extends State<SKPickerModal> {
                 Expanded(
                   child: GestureDetector(
                     onTapUp: (details) {
-                      Navigator.pop(context);
+                      Navigator.pop(context, true);
                       widget.onSelect(_selectedIndex);
                     },
                     child: Container(

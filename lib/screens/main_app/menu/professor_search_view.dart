@@ -296,7 +296,7 @@ class _ProfessorSearchViewState extends State<ProfessorSearchView> {
                       ? searchedProfessors.length + (isSearching ? 0 : 1)
                       : 0,
                   itemBuilder: (context, index) {
-                    if (index < (searchedProfessors.length - 1))
+                    if (index < searchedProfessors.length)
                       return GestureDetector(
                         onTapUp: (details) {
                           widget.callback(searchedProfessors[index]);

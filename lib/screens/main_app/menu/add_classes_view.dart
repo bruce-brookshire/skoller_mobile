@@ -415,7 +415,7 @@ class _AddClassesViewState extends State<AddClassesView> {
                   children: <Widget>[
                     Text(
                       SKUser.current.student.primarySchool.name,
-                      style: TextStyle(fontSize: 18),
+                      style: TextStyle(fontSize: 18, color: SKUser.current.student.primarySchool.color ?? SKColors.dark_gray),
                     ),
                     Padding(
                       padding: EdgeInsets.only(top: 1, bottom: 4),
