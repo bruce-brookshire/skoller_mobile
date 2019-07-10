@@ -1,3 +1,4 @@
+import 'package:dropdown_banner/dropdown_banner.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:skoller/tools.dart';
@@ -88,8 +89,8 @@ class _PhoneVerificationViewState extends State<PhoneVerificationView> {
       Navigator.pop(context, response.wasSuccessful());
     }).catchError(
       (onError) => setState(() {
-        if (errorMsg != null && errorMsg is String) errorMsg = onError;
         loading = false;
+        errorMsg = errorMsg is String ? errorMsg : 'Invalid code';
       }),
     );
 

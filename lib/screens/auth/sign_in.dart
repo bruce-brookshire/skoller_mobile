@@ -1,4 +1,5 @@
 import 'package:dart_notification_center/dart_notification_center.dart';
+import 'package:dropdown_banner/dropdown_banner.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:skoller/screens/auth/phone_verification_view.dart';
@@ -18,7 +19,14 @@ class _SignInState extends State<SignIn> {
   void tappedLogIn(BuildContext context) async {
     final trimStr =
         phoneNumberController.text.replaceAll(RegExp(r'[\(\) \-]+'), '');
-    if (trimStr.length != 10) return;
+    if (trimStr.length != 10) {
+      DropdownBanner.showBanner(
+          text: 'Please enter a valid US phone number',
+          color: SKColors.warning_red,
+          textStyle: TextStyle(color: Colors.white));
+
+      return;
+    }
 
     final success = await Auth.requestLogin(trimStr);
 
@@ -28,17 +36,18 @@ class _SignInState extends State<SignIn> {
         builder: (context) => PhoneVerificationView(phoneNumberController.text),
       );
 
-      if (result is bool) {
-        if (result) {
-          Navigator.popUntil(context, (route) => route.isFirst);
-          DartNotificationCenter.post(
-            channel: NotificationChannels.appStateChanged,
-            options: AppState.main,
-          );
-        } else {
-          throw 'Verification was unsuccessful. Try again';
-        }
+      if (result is bool && result) {
+        Navigator.popUntil(context, (route) => route.isFirst);
+        DartNotificationCenter.post(
+          channel: NotificationChannels.appStateChanged,
+          options: AppState.main,
+        );
       }
+    } else {
+      DropdownBanner.showBanner(
+          text: 'Failed to log in',
+          color: SKColors.warning_red,
+          textStyle: TextStyle(color: Colors.white));
     }
   }
 

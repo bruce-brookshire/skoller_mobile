@@ -232,11 +232,22 @@ class MenuView extends StatelessWidget {
                   SafeArea(
                     top: false,
                     child: GestureDetector(
-                      onTapUp: (details) {
-                        Auth.logOut();
-                        DartNotificationCenter.post(
-                            channel: NotificationChannels.appStateChanged,
-                            options: AppState.auth);
+                      onTapUp: (details) async {
+                        final result = await showDialog(
+                          context: context,
+                          builder: (context) => SKAlertDialog(
+                            title: 'Logout',
+                            subTitle: 'Are you sure you want to logout?',
+                            confirmText: 'Confirm',
+                          ),
+                        );
+
+                        if (result is bool && result) {
+                          Auth.logOut();
+                          DartNotificationCenter.post(
+                              channel: NotificationChannels.appStateChanged,
+                              options: AppState.auth);
+                        }
                       },
                       child: Container(
                         color: SKColors.skoller_blue,

@@ -13,6 +13,7 @@ class MainView extends StatefulWidget {
 class _MainViewState extends State<MainView> {
   bool menuShowing = false;
   bool constraintsSetup = false;
+  bool needsPrimarySchool = false;
 
   double deviceWidth;
 
@@ -29,11 +30,13 @@ class _MainViewState extends State<MainView> {
       observer: this,
       onNotification: toggleMenu,
     );
+
     DartNotificationCenter.subscribe(
       channel: NotificationChannels.presentViewOverTabBar,
       observer: this,
       onNotification: presentWidgetOverMainView,
     );
+
     super.initState();
   }
 

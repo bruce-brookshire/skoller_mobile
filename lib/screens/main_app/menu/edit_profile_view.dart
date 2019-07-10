@@ -1,3 +1,4 @@
+import 'package:dart_notification_center/dart_notification_center.dart';
 import 'package:dropdown_banner/dropdown_banner.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
@@ -228,40 +229,49 @@ class _EditProfileViewState extends State<EditProfileView> {
               showCupertinoDialog(
                 context: context,
                 builder: (context) => CupertinoActionSheet(
-                      title: Text(
-                        'Delete Account',
-                        style: TextStyle(
-                            color: SKColors.dark_gray,
-                            fontSize: 15,
-                            fontWeight: FontWeight.bold),
+                  title: Text(
+                    'Delete Account',
+                    style: TextStyle(
+                        color: SKColors.dark_gray,
+                        fontSize: 15,
+                        fontWeight: FontWeight.bold),
+                  ),
+                  message: Text(
+                    'DANGER ZONE: This action is irreversible. IF YOU DELETE YOUR ACCOUNT, YOUR DATA IS GONE FOREVER. WE CAN\'T HELP. Are you sure you want to proceed?',
+                    style: TextStyle(color: SKColors.dark_gray),
+                  ),
+                  actions: <Widget>[
+                    CupertinoActionSheetAction(
+                      isDestructiveAction: true,
+                      child: Text(
+                        'I\m sure. Delete me.',
+                        style: TextStyle(fontSize: 16),
                       ),
-                      message: Text(
-                        'DANGER ZONE: This action is irreversible. IF YOU DELETE YOUR ACCOUNT, YOUR DATA IS GONE FOREVER. WE CAN\'T HELP. Are you sure you want to proceed?',
-                        style: TextStyle(color: SKColors.dark_gray),
-                      ),
-                      actions: <Widget>[
-                        CupertinoActionSheetAction(
-                          isDestructiveAction: true,
-                          child: Text(
-                            'I\m sure. Delete me.',
-                            style: TextStyle(fontSize: 16),
-                          ),
-                          onPressed: () => print('hi'),
-                          //TODO delete user and local data and back to log in/sign up
-                        ),
-                        CupertinoActionSheetAction(
-                          child: Text(
-                            'Take me to safety!',
-                            style: TextStyle(
-                                fontSize: 16, color: SKColors.success),
-                          ),
-                          onPressed: () {
-                            print('safe');
-                            Navigator.pop(context);
-                          },
-                        )
-                      ],
+                      onPressed: () async {
+                        Navigator.popUntil(
+                            context, (route) => route.settings.isInitialRoute);
+
+                        bool success = await SKUser.current.delete();
+                        if (success) success = await Auth.logOut();
+
+                        if (success)
+                          DartNotificationCenter.post(
+                              channel: NotificationChannels.appStateChanged,
+                              options: AppState.auth);
+                      },
                     ),
+                    CupertinoActionSheetAction(
+                      child: Text(
+                        'Take me to safety!',
+                        style: TextStyle(fontSize: 16, color: SKColors.success),
+                      ),
+                      onPressed: () {
+                        print('safe');
+                        Navigator.pop(context);
+                      },
+                    )
+                  ],
+                ),
               );
             },
             child: Text(

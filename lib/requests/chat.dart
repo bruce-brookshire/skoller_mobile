@@ -5,7 +5,7 @@ class Chat {
   String post;
   bool isStarred;
   bool isLiked;
-  int classId; //TODO this is nested content['class']['id']
+  int classId;
   DateTime postDate;
   PublicStudent student;
 
@@ -366,7 +366,7 @@ class InboxNotification {
 
 class InboxPost {
   int id;
-  int classId; //TODO this is nested content['class']['id']
+  int classId;
   String post;
 
   InboxPost(this.id, this.classId, this.post);

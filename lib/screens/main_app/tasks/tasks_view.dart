@@ -1,5 +1,4 @@
 import 'package:dart_notification_center/dart_notification_center.dart';
-import 'package:dropdown_banner/dropdown_banner.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
@@ -237,16 +236,6 @@ class _TasksViewState extends State<TasksView> {
                   : buildTaskCell(context, index),
               itemCount: _taskItems.length,
             ),
-          ),
-        ),
-        GestureDetector(
-          onTapUp: (details) => DropdownBanner.showBanner(
-            text: 'Success!',
-            color: SKColors.success,
-            textStyle: TextStyle(color: Colors.white),
-          ),
-          child: Container(
-            child: Image.asset(ImageNames.rightNavImages.plus),
           ),
         ),
       ],

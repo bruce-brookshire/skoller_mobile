@@ -109,7 +109,6 @@ class _AssignmentBatchAddViewState extends State<AssignmentBatchAddView> {
         color: SKColors.warning_red,
         textStyle: TextStyle(color: Colors.white),
       );
-      //TODO: does this create assignments or modifications?
     }
   }
 

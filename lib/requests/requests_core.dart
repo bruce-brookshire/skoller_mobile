@@ -244,8 +244,12 @@ class Auth {
             .then((inst) => inst.setString(_kStudentPhone, phone));
 
         userPhone = phone;
+        return response;
+      } else {
+        throw response.status == 401
+            ? 'Invalid code'
+            : 'Unknown issue. If this persists, please contact us';
       }
-      return response;
     });
   }
 

@@ -507,7 +507,7 @@ class _SubviewThreeState extends State<_SubviewThree> {
     studentClass.createWeights(state.isPoints, state.weights).then((success) {
       //After creating
       if (success) {
-        return studentClass.releaseDIYLock();
+        return studentClass.releaseDIYLock(isCompleted: false);
       } else {
         throw 'Failed to create weights';
       }

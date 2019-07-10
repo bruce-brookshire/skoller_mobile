@@ -1063,8 +1063,7 @@ class _GradeSelectionState extends State<_GradeSelection> {
                     placeholder: '100',
                     keyboardType: TextInputType.number,
                     onChanged: (newStr) => resultsCaddy.numerator = newStr,
-                    //TODO has this been fixed on Flutter yet?
-                    // textAlign: TextAlign.center,
+                    textAlign: TextAlign.center,
                     style: TextStyle(fontSize: 15),
                   )),
             ),
@@ -1080,8 +1079,7 @@ class _GradeSelectionState extends State<_GradeSelection> {
                   placeholder: '100',
                   onChanged: (newStr) => resultsCaddy.denominator = newStr,
                   keyboardType: TextInputType.number,
-                  //TODO has this been fixed on Flutter yet?
-                  // textAlign: TextAlign.center,
+                  textAlign: TextAlign.center,
                   style: TextStyle(fontSize: 15),
                 ),
               ),
