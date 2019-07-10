@@ -1,4 +1,5 @@
 import 'package:dart_notification_center/dart_notification_center.dart';
+import 'package:dropdown_banner/dropdown_banner.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:skoller/screens/main_app/activity/update_info_view.dart';
@@ -25,6 +26,12 @@ class _ActivityViewState extends State<ActivityView> {
         setState(() {
           stackedMods = mods;
         });
+      } else {
+        DropdownBanner.showBanner(
+          text: 'Failed to get mods',
+          color: SKColors.warning_red,
+          textStyle: TextStyle(color: Colors.white),
+        );
       }
     });
   }

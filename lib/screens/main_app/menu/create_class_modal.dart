@@ -1,6 +1,7 @@
 import 'dart:collection';
 
 import 'package:dart_notification_center/dart_notification_center.dart';
+import 'package:dropdown_banner/dropdown_banner.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:skoller/screens/main_app/menu/professor_search_view.dart';
@@ -71,7 +72,8 @@ class _CreateClassModalState extends State<CreateClassModal> {
     final days = selectedDays.keys
         .fold('', (r, k) => selectedDays[k] ? r + interpreter(k) : r);
 
-    final response = await widget.period.createClass(
+    widget.period
+        .createClass(
       className: classNameController.text.trim(),
       subject: subjectController.text.trim(),
       code: codeController.text.trim(),
@@ -80,21 +82,35 @@ class _CreateClassModalState extends State<CreateClassModal> {
       isOnline: isOnline,
       meetDays: days,
       meetTime: TimeOfDay.fromDateTime(time),
-    );
-
-    if (response.wasSuccessful() && response.obj is SchoolClass) {
-      final response2 = await (response.obj as SchoolClass).enrollInClass();
-      if (response2.wasSuccessful()) {
+    )
+        .then((response) {
+      if (response.wasSuccessful() && response.obj is SchoolClass) {
+        return (response.obj as SchoolClass).enrollInClass();
+      } else {
+        throw 'Failed to create this class. Try again';
+      }
+    }).then((response) {
+      if (response.wasSuccessful()) {
         DartNotificationCenter.post(channel: NotificationChannels.classChanged);
         Navigator.pop(context);
+
+        DropdownBanner.showBanner(
+          text: 'Successfully created and enrolled this class!',
+          color: SKColors.success,
+          textStyle: TextStyle(color: Colors.white),
+        );
       } else {
-        //TODO error
-        print('hmm');
+        throw 'Failed automatically enrolling in the class. Try adding it from the search.';
       }
-    } else {
-      //TODO error
-      print('other hmm');
-    }
+    }).catchError((onError) {
+      if (onError is String) {
+        DropdownBanner.showBanner(
+          text: onError,
+          color: SKColors.warning_red,
+          textStyle: TextStyle(color: Colors.white),
+        );
+      }
+    });
   }
 
   @override

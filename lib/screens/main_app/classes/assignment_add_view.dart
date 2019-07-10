@@ -1,4 +1,5 @@
 import 'package:dart_notification_center/dart_notification_center.dart';
+import 'package:dropdown_banner/dropdown_banner.dart';
 import 'package:flutter/material.dart';
 import '../../../requests/requests_core.dart';
 import '../../../constants/constants.dart';
@@ -157,11 +158,20 @@ class _AssignmentAddViewState extends State<AssignmentAddView> {
                   widget.weight,
                   dueDate,
                 )
-                    .then((response) {
+                    .then((response) async {
                   if (response.wasSuccessful()) {
+                    await StudentClass.currentClasses[widget.class_id]
+                        .refetchSelf()
+                        .then((response) => print(response.wasSuccessful()));
                     DartNotificationCenter.post(
                         channel: NotificationChannels.assignmentChanged);
                     Navigator.pop(context);
+                  } else {
+                    DropdownBanner.showBanner(
+                      text: 'Failed to create assignment',
+                      color: SKColors.warning_red,
+                      textStyle: TextStyle(color: Colors.white),
+                    );
                   }
                 });
               }

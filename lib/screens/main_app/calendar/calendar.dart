@@ -1,4 +1,5 @@
 import 'package:dart_notification_center/dart_notification_center.dart';
+import 'package:dropdown_banner/dropdown_banner.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/rendering.dart';
@@ -35,6 +36,12 @@ class _CalendarViewState extends State<CalendarView> {
     Assignment.getAssignments().then((response) {
       if (response.wasSuccessful()) {
         updateAssignments(response.obj);
+      } else {
+        DropdownBanner.showBanner(
+          text: 'Failed to get assignments',
+          color: SKColors.warning_red,
+          textStyle: TextStyle(color: Colors.white),
+        );
       }
     });
 
@@ -127,12 +134,12 @@ class _CalendarViewState extends State<CalendarView> {
                 backgroundColor: Colors.white,
                 childCount: classes.length,
                 itemBuilder: (context, index) => Container(
-                      alignment: Alignment.center,
-                      child: Text(
-                        classes[index].name,
-                        style: TextStyle(fontSize: 15),
-                      ),
-                    ),
+                  alignment: Alignment.center,
+                  child: Text(
+                    classes[index].name,
+                    style: TextStyle(fontSize: 15),
+                  ),
+                ),
                 itemExtent: 32,
                 onSelectedItemChanged: (index) => selectedIndex = index,
               ),
@@ -291,29 +298,29 @@ class _CalendarViewState extends State<CalendarView> {
     final List<Widget> widgetAssignments = dayAssignments
         .map(
           (assignment) => Expanded(
-                child: Container(
-                  margin: EdgeInsets.only(bottom: 2),
-                  padding: EdgeInsets.symmetric(horizontal: 2, vertical: 1),
-                  decoration: BoxDecoration(
-                    color: !isCurrent
-                        ? Color(0xFFD0D0D0)
-                        : assignment.parentClass.getColor(),
-                    borderRadius: BorderRadius.circular(3),
-                  ),
-                  // alignment: Alignment.center,
-                  child: Text(
-                    assignment.name,
-                    maxLines: 1,
-                    softWrap: false,
-                    overflow: TextOverflow.fade,
-                    style: TextStyle(
-                        letterSpacing: -0.8,
-                        fontSize: 10,
-                        fontWeight: FontWeight.normal,
-                        color: Colors.white),
-                  ),
-                ),
+            child: Container(
+              margin: EdgeInsets.only(bottom: 2),
+              padding: EdgeInsets.symmetric(horizontal: 2, vertical: 1),
+              decoration: BoxDecoration(
+                color: !isCurrent
+                    ? Color(0xFFD0D0D0)
+                    : assignment.parentClass.getColor(),
+                borderRadius: BorderRadius.circular(3),
               ),
+              // alignment: Alignment.center,
+              child: Text(
+                assignment.name,
+                maxLines: 1,
+                softWrap: false,
+                overflow: TextOverflow.fade,
+                style: TextStyle(
+                    letterSpacing: -0.8,
+                    fontSize: 10,
+                    fontWeight: FontWeight.normal,
+                    color: Colors.white),
+              ),
+            ),
+          ),
         )
         .toList();
 
@@ -460,8 +467,8 @@ class _CalendarViewState extends State<CalendarView> {
         context,
         CupertinoPageRoute(
           builder: (context) => AssignmentInfoView(
-                assignment_id: result.id,
-              ),
+            assignment_id: result.id,
+          ),
         ),
       );
     }
@@ -474,38 +481,37 @@ class _CalendarViewState extends State<CalendarView> {
       dateAssignments
           .map(
             (assignment) => GestureDetector(
-                  onTapUp: (details) {
-                    Navigator.pop(context, assignment);
-                  },
-                  behavior: HitTestBehavior.opaque,
-                  child: Container(
-                    padding: EdgeInsets.symmetric(horizontal: 6, vertical: 4),
-                    margin: EdgeInsets.symmetric(vertical: 4),
-                    decoration: BoxDecoration(
-                      border:
-                          Border.all(color: assignment.parentClass.getColor()),
-                      borderRadius: BorderRadius.circular(5),
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: <Widget>[
-                        Text(
-                          assignment.parentClass.name,
-                          style: TextStyle(
-                            color: assignment.parentClass.getColor(),
-                            fontSize: 16,
-                          ),
-                        ),
-                        Text(
-                          assignment.name,
-                          style: TextStyle(
-                              fontSize: 13, fontWeight: FontWeight.normal),
-                        )
-                      ],
-                    ),
-                  ),
+              onTapUp: (details) {
+                Navigator.pop(context, assignment);
+              },
+              behavior: HitTestBehavior.opaque,
+              child: Container(
+                padding: EdgeInsets.symmetric(horizontal: 6, vertical: 4),
+                margin: EdgeInsets.symmetric(vertical: 4),
+                decoration: BoxDecoration(
+                  border: Border.all(color: assignment.parentClass.getColor()),
+                  borderRadius: BorderRadius.circular(5),
                 ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: <Widget>[
+                    Text(
+                      assignment.parentClass.name,
+                      style: TextStyle(
+                        color: assignment.parentClass.getColor(),
+                        fontSize: 16,
+                      ),
+                    ),
+                    Text(
+                      assignment.name,
+                      style: TextStyle(
+                          fontSize: 13, fontWeight: FontWeight.normal),
+                    )
+                  ],
+                ),
+              ),
+            ),
           )
           .toList();
 }

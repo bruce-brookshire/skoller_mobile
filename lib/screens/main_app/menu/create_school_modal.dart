@@ -1,3 +1,4 @@
+import 'package:dropdown_banner/dropdown_banner.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:skoller/tools.dart';
@@ -168,26 +169,37 @@ class _CreateSchoolModalState extends State<CreateSchoolModal> {
     }
   }
 
-  void tappedSaveSchool(TapUpDetails details) async {
+  void tappedSaveSchool(TapUpDetails details) {
     if (!isValid) return;
 
-    final result = await School.createSchool(
+    School.createSchool(
       isUniversity: selectedSegment == 0,
       schoolName: nameController.text.trim(),
       cityName: cityController.text.trim(),
       stateAbv: states[selectedState],
-    );
-
-    if (result.wasSuccessful() && result.obj is School) {
-      final result2 = await SKUser.current.update(primarySchool: result.obj);
-      if (result2) {
-        Navigator.pop(context, result.obj);
+    ).then((response) {
+      if (response.wasSuccessful() && response.obj is School) {
+        return SKUser.current
+            .update(primarySchool: response.obj)
+            .then((response2) {
+          if (response2) {
+            Navigator.pop(context, response.obj);
+          } else {
+            throw 'Failed to set preferences. Please search school and add.';
+          }
+        });
       } else {
-        //TODO error
+        throw 'Failed to create school. Try searching and recreating';
       }
-    } else {
-      //TODO error
-    }
+    }).catchError((error) {
+      if (error is String) {
+        DropdownBanner.showBanner(
+          text: error,
+          color: SKColors.warning_red,
+          textStyle: TextStyle(color: Colors.white),
+        );
+      }
+    });
   }
 
   @override

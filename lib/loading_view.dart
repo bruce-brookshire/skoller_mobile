@@ -1,3 +1,4 @@
+import 'package:dropdown_banner/dropdown_banner.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:skoller/tools.dart';
@@ -27,7 +28,6 @@ class _LoadingViewState extends State<LoadingView> {
     }
 
     Auth.attemptLogin().then((result) async {
-      print(result);
       AppState nextState;
       switch (result) {
         case LogInResponse.success:
@@ -43,7 +43,7 @@ class _LoadingViewState extends State<LoadingView> {
             nextState = AppState.main;
           else
             nextState = AppState.auth;
-            
+
           break;
         case LogInResponse.failed:
           nextState = AppState.auth;
@@ -62,7 +62,13 @@ class _LoadingViewState extends State<LoadingView> {
         DartNotificationCenter.post(
             channel: NotificationChannels.appStateChanged, options: nextState);
       } else {
-        print('failed to load');
+        DropdownBanner.showBanner(
+          text: 'Failed to log in. Tap to try again',
+          duration: Duration(days: 1),
+          color: SKColors.warning_red,
+          textStyle: TextStyle(color: Colors.white),
+          tapCallback: () => attemptLogin(),
+        );
         setState(() {
           loading = false;
         });

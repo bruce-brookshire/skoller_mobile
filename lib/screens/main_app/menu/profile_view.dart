@@ -159,7 +159,7 @@ class _ProfileViewState extends State<ProfileView> {
                                     fontSize: 14),
                               ),
                             ),
-                          )
+                          ),
                         ],
                       ),
                     ),

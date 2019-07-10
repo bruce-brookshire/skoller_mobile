@@ -1,4 +1,5 @@
 import 'package:dart_notification_center/dart_notification_center.dart';
+import 'package:dropdown_banner/dropdown_banner.dart';
 import 'package:flutter/material.dart';
 import 'package:skoller/tools.dart';
 import 'package:intl/intl.dart';
@@ -32,7 +33,12 @@ class _AssignmentBatchAddViewState extends State<AssignmentBatchAddView> {
         .acquireAssignmentLock(widget.weight)
         .then((response) {
       if (!response.wasSuccessful()) {
-        print("popping");
+        DropdownBanner.showBanner(
+          text:
+              'One of your classmates is already on it 👍 just sit back and hang tight!',
+          color: SKColors.success,
+          textStyle: TextStyle(color: Colors.white),
+        );
         Navigator.pop(context);
       }
     });
@@ -68,26 +74,41 @@ class _AssignmentBatchAddViewState extends State<AssignmentBatchAddView> {
     final studentClass = StudentClass.currentClasses[widget.class_id];
 
     for (final assignment in queuedAssignments) {
-      final future = studentClass.createAssignment(
+      final future = studentClass.createBatchAssignment(
           assignment.name, widget.weight, assignment.dueDate);
 
       futureQueue.add(future);
     }
 
     //Wait till all Assignments are created
+    int failedRequests = 0;
 
     while (futureQueue.length != 0) {
-      await futureQueue.removeLast();
+      final response = await futureQueue.removeLast();
+      if (!response.wasSuccessful()) failedRequests += 1;
     }
 
-    final response = await studentClass.releaseDIYLock();
+    await studentClass.releaseDIYLock();
+    await studentClass.refetchSelf();
 
-    if (response.wasSuccessful()) {
-      DartNotificationCenter.post(
-          channel: NotificationChannels.assignmentChanged);
-      Navigator.pop(context);
+    DartNotificationCenter.post(
+        channel: NotificationChannels.assignmentChanged);
+    DartNotificationCenter.post(
+        channel: NotificationChannels.classChanged);
+    Navigator.pop(context);
+
+    if (failedRequests == 0) {
+      DropdownBanner.showBanner(
+        text: 'Successfully created all assignments',
+        color: SKColors.success,
+        textStyle: TextStyle(color: Colors.white),
+      );
     } else {
-      //TODO: Error message
+      DropdownBanner.showBanner(
+        text: 'Failed to create some assignments. Try again later',
+        color: SKColors.warning_red,
+        textStyle: TextStyle(color: Colors.white),
+      );
       //TODO: does this create assignments or modifications?
     }
   }

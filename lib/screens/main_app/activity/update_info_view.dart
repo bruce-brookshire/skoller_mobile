@@ -1,3 +1,4 @@
+import 'package:dropdown_banner/dropdown_banner.dart';
 import 'package:flutter/material.dart';
 import 'package:skoller/tools.dart';
 import 'package:intl/intl.dart';
@@ -130,12 +131,21 @@ class _UpdateInfoViewState extends State<UpdateInfoView> {
                           if (mod.isAccepted == null) {
                             mod.declineMod().then((response) {
                               if (!response.wasSuccessful()) {
-                                //TODO show error message
+                                DropdownBanner.showBanner(
+                                  text:
+                                      'Unable to accept assignment modification. Please try again later',
+                                  color: SKColors.warning_red,
+                                  textStyle: TextStyle(color: Colors.white),
+                                );
                                 setState(() {
                                   mod.isAccepted = null;
                                 });
                               } else {
-                                //TODO alert assignment changed
+                                DropdownBanner.showBanner(
+                                  text: 'Success!',
+                                  color: SKColors.success,
+                                  textStyle: TextStyle(color: Colors.white),
+                                );
                               }
                             });
                             setState(() {
@@ -171,12 +181,20 @@ class _UpdateInfoViewState extends State<UpdateInfoView> {
                         onTapUp: (details) {
                           mod.acceptMod().then((response) {
                             if (!response.wasSuccessful()) {
-                              //TODO show error message
+                              DropdownBanner.showBanner(
+                                text: 'Failed to accept assignment modification. Try again later',
+                                color: SKColors.warning_red,
+                                textStyle: TextStyle(color: Colors.white),
+                              );
                               setState(() {
                                 mod.isAccepted = null;
                               });
                             } else {
-                              //TODO alert assignment changed
+                              DropdownBanner.showBanner(
+                                text: 'Success!',
+                                color: SKColors.success,
+                                textStyle: TextStyle(color: Colors.white),
+                              );
                             }
                           });
                           setState(() {

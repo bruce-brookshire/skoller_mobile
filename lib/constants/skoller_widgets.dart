@@ -870,6 +870,12 @@ class _GradeScaleModalViewState extends State<GradeScaleModalView> {
               widget.studentClass.addGradeScale(scale).then((response) {
                 if (response.wasSuccessful()) {
                   Navigator.pop<bool>(context, true);
+                } else {
+                  DropdownBanner.showBanner(
+                    text: 'Failed to add grade scale',
+                    color: SKColors.warning_red,
+                    textStyle: TextStyle(color: Colors.white),
+                  );
                 }
               });
             },
@@ -1275,6 +1281,7 @@ class SammiSpeechBubble extends StatelessWidget {
       case SammiPersonality.ooo:
         return Image.asset(ImageNames.sammiImages.shocked);
     }
+    return null;
   }
 }
 

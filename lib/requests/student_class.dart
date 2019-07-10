@@ -193,6 +193,34 @@ class StudentClass {
         Assignment._fromJsonObj);
   }
 
+  Future<RequestResponse> createBatchAssignment(
+    String name,
+    Weight weight,
+    DateTime dueDate,
+  ) async {
+    String tzCorrectedString = dueDate.toUtc().toIso8601String();
+
+    DateTime correctedDueDate =
+        await TimeZoneManager.convertUtcOffsetFromLocalToSchool(
+      dueDate,
+      getSchool().timezone,
+    );
+
+    if (correctedDueDate != null) {
+      tzCorrectedString = correctedDueDate.toIso8601String();
+    }
+
+    return SKRequests.post(
+        '/classes/${this.id}/assignments',
+        {
+          "due": tzCorrectedString,
+          "weight_id": weight.id,
+          "name": name,
+          "created_on": "mobile"
+        },
+        Assignment._fromJsonObj);
+  }
+
   Future<RequestResponse> acquireAssignmentLock(Weight weight) {
     return SKRequests.post(
       "/classes/${id}/lock/assignments",
@@ -213,7 +241,9 @@ class StudentClass {
     bool isPoints,
     List<Map> weights,
   ) async {
-    List<Future<RequestResponse>> requests = weights.toList().map(
+    List<Future<RequestResponse>> requests = weights
+        .toList()
+        .map(
           (weight) => SKRequests.post(
               '/classes/$id/weights',
               {
@@ -222,7 +252,8 @@ class StudentClass {
                 'created_on': 'mobile'
               },
               null),
-        ).toList();
+        )
+        .toList();
 
     bool success = true;
 
@@ -533,7 +564,9 @@ class Professor {
   String office_location;
 
   String get fullName {
-    return (firstName ?? '') + (firstName == null || lastName == null ? '' : ' ') + (lastName ?? '');
+    return (firstName ?? '') +
+        (firstName == null || lastName == null ? '' : ' ') +
+        (lastName ?? '');
   }
 
   Professor(

@@ -1,6 +1,7 @@
 import 'dart:collection';
 
 import 'package:dart_notification_center/dart_notification_center.dart';
+import 'package:dropdown_banner/dropdown_banner.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/widgets.dart';
@@ -49,97 +50,97 @@ class _AssignmentInfoViewState extends State<AssignmentInfoView> {
     final successful = await showDialog(
       context: context,
       builder: (context) => Dialog(
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.all(Radius.circular(10)),
-            ),
-            child: Container(
-              height: MediaQuery.of(context).size.height / 2,
-              decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10),
-                  border: Border.all(color: SKColors.border_gray)),
-              child: Column(
-                mainAxisSize: MainAxisSize.max,
-                children: [
-                  Container(
-                    padding: EdgeInsets.only(top: 16, bottom: 4),
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      children: [
-                        Expanded(
-                          flex: 1,
-                          child: GestureDetector(
-                            onTapUp: (details) {
-                              Navigator.pop(context, false);
-                            },
-                            child: Container(
-                              padding: EdgeInsets.only(left: 8),
-                              alignment: Alignment.centerLeft,
-                              child: Text(
-                                'Cancel',
-                                style: TextStyle(
-                                  color: SKColors.warning_red,
-                                  fontWeight: FontWeight.normal,
-                                  fontSize: 14,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                        Expanded(
-                          flex: 2,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.all(Radius.circular(10)),
+        ),
+        child: Container(
+          height: MediaQuery.of(context).size.height / 2,
+          decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(10),
+              border: Border.all(color: SKColors.border_gray)),
+          child: Column(
+            mainAxisSize: MainAxisSize.max,
+            children: [
+              Container(
+                padding: EdgeInsets.only(top: 16, bottom: 4),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    Expanded(
+                      flex: 1,
+                      child: GestureDetector(
+                        onTapUp: (details) {
+                          Navigator.pop(context, false);
+                        },
+                        child: Container(
+                          padding: EdgeInsets.only(left: 8),
+                          alignment: Alignment.centerLeft,
                           child: Text(
-                            'Personal Notes',
-                            textAlign: TextAlign.center,
-                            style: TextStyle(fontSize: 17),
-                          ),
-                        ),
-                        Expanded(
-                          flex: 1,
-                          child: GestureDetector(
-                            onTapUp: (details) {
-                              Navigator.pop(context, true);
-                            },
-                            child: Container(
-                              padding: EdgeInsets.only(right: 8),
-                              alignment: Alignment.centerRight,
-                              child: Text(
-                                'Save',
-                                style: TextStyle(
-                                  color: SKColors.skoller_blue,
-                                  fontWeight: FontWeight.normal,
-                                  fontSize: 14,
-                                ),
-                              ),
+                            'Cancel',
+                            style: TextStyle(
+                              color: SKColors.warning_red,
+                              fontWeight: FontWeight.normal,
+                              fontSize: 14,
                             ),
                           ),
                         ),
-                      ],
-                    ),
-                  ),
-                  Expanded(
-                    child: Container(
-                      alignment: Alignment.topLeft,
-                      margin: EdgeInsets.all(8),
-                      child: CupertinoTextField(
-                        decoration: BoxDecoration(border: null),
-                        maxLength: 2000,
-                        maxLengthEnforced: true,
-                        autofocus: true,
-                        maxLines: null,
-                        keyboardType: TextInputType.multiline,
-                        controller: controller,
-                        placeholder: 'Add a note...',
-                        style: TextStyle(
-                            color: SKColors.dark_gray,
-                            fontSize: 15,
-                            fontWeight: FontWeight.normal),
                       ),
                     ),
-                  ),
-                ],
+                    Expanded(
+                      flex: 2,
+                      child: Text(
+                        'Personal Notes',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(fontSize: 17),
+                      ),
+                    ),
+                    Expanded(
+                      flex: 1,
+                      child: GestureDetector(
+                        onTapUp: (details) {
+                          Navigator.pop(context, true);
+                        },
+                        child: Container(
+                          padding: EdgeInsets.only(right: 8),
+                          alignment: Alignment.centerRight,
+                          child: Text(
+                            'Save',
+                            style: TextStyle(
+                              color: SKColors.skoller_blue,
+                              fontWeight: FontWeight.normal,
+                              fontSize: 14,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               ),
-            ),
+              Expanded(
+                child: Container(
+                  alignment: Alignment.topLeft,
+                  margin: EdgeInsets.all(8),
+                  child: CupertinoTextField(
+                    decoration: BoxDecoration(border: null),
+                    maxLength: 2000,
+                    maxLengthEnforced: true,
+                    autofocus: true,
+                    maxLines: null,
+                    keyboardType: TextInputType.multiline,
+                    controller: controller,
+                    placeholder: 'Add a note...',
+                    style: TextStyle(
+                        color: SKColors.dark_gray,
+                        fontSize: 15,
+                        fontWeight: FontWeight.normal),
+                  ),
+                ),
+              ),
+            ],
           ),
+        ),
+      ),
     );
 
     if (successful != null && successful) {
@@ -150,6 +151,12 @@ class _AssignmentInfoViewState extends State<AssignmentInfoView> {
             assignment.notes =
                 Assignment.currentAssignments[assignment.id].notes;
           });
+        } else {
+          DropdownBanner.showBanner(
+            text: 'Failed to save notes',
+            color: SKColors.warning_red,
+            textStyle: TextStyle(color: Colors.white),
+          );
         }
       });
     }
@@ -196,6 +203,12 @@ class _AssignmentInfoViewState extends State<AssignmentInfoView> {
           setState(() {
             assignment.posts.insert(0, response.obj);
           });
+        } else {
+          DropdownBanner.showBanner(
+            text: 'Failed to create post',
+            color: SKColors.warning_red,
+            textStyle: TextStyle(color: Colors.white),
+          );
         }
       });
     }
@@ -1092,17 +1105,17 @@ class _GradeSelectionState extends State<_GradeSelection> {
                 backgroundColor: Colors.white,
                 childCount: 101,
                 itemBuilder: (context, index) => Container(
-                      alignment: Alignment.centerRight,
-                      child: Text(
-                        '${100 - index}',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          color: SKColors.dark_gray,
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
+                  alignment: Alignment.centerRight,
+                  child: Text(
+                    '${100 - index}',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      color: SKColors.dark_gray,
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
                     ),
+                  ),
+                ),
                 itemExtent: 24,
                 onSelectedItemChanged: (index) {
                   resultsCaddy.picker_digit = 100 - index;
@@ -1120,14 +1133,14 @@ class _GradeSelectionState extends State<_GradeSelection> {
                 backgroundColor: Colors.white,
                 childCount: 10,
                 itemBuilder: (context, index) => Text(
-                      '${(index) % 10}',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        color: SKColors.dark_gray,
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
+                  '${(index) % 10}',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    color: SKColors.dark_gray,
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
                 itemExtent: 24,
                 onSelectedItemChanged: (index) {
                   resultsCaddy.picker_decimal = (index) % 10;
@@ -1231,30 +1244,29 @@ class _AssignmentEditModalState extends State<_AssignmentEditModal> {
     final bool result = await showDialog(
       context: context,
       builder: (context) => SKAlertDialog(
-            title: 'Grading category',
-            subTitle: 'Select how this assignment is graded',
-            child: Container(
-              height: 160,
-              child: CupertinoPicker.builder(
-                backgroundColor: Colors.white,
-                childCount: classWeights.length,
-                itemExtent: 24,
-                itemBuilder: (context, index) => Container(
-                      alignment: Alignment.center,
-                      child: Text(
-                        classWeights[index].name,
-                        style: TextStyle(
-                          color: SKColors.dark_gray,
-                          fontSize: 15,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                onSelectedItemChanged: (index) =>
-                    tempWeight = classWeights[index],
+        title: 'Grading category',
+        subTitle: 'Select how this assignment is graded',
+        child: Container(
+          height: 160,
+          child: CupertinoPicker.builder(
+            backgroundColor: Colors.white,
+            childCount: classWeights.length,
+            itemExtent: 24,
+            itemBuilder: (context, index) => Container(
+              alignment: Alignment.center,
+              child: Text(
+                classWeights[index].name,
+                style: TextStyle(
+                  color: SKColors.dark_gray,
+                  fontSize: 15,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             ),
+            onSelectedItemChanged: (index) => tempWeight = classWeights[index],
           ),
+        ),
+      ),
     );
 
     if (result != null && result) {

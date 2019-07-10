@@ -1,3 +1,4 @@
+import 'package:dropdown_banner/dropdown_banner.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:skoller/tools.dart';
@@ -67,7 +68,11 @@ class _SignUpState extends State<SignUp> {
             options: AppState.main,
           );
         } else {
-          //TODO error
+          DropdownBanner.showBanner(
+            text: 'Failed to authenticate',
+            color: SKColors.warning_red,
+            textStyle: TextStyle(color: Colors.white),
+          );
         }
       }
     });

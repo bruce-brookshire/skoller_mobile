@@ -1,4 +1,5 @@
 import 'package:dart_notification_center/dart_notification_center.dart';
+import 'package:dropdown_banner/dropdown_banner.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:auto_size_text/auto_size_text.dart';
@@ -97,9 +98,18 @@ class _ClassDetailViewState extends State<ClassDetailView> {
   void showSpeculate() async {
     final speculate = await studentClass.speculateClass().then(
       (response) {
-        return response.obj;
+        if (response.wasSuccessful())
+          return response.obj;
+        else
+          throw 'Unable to get speculation';
       },
-    );
+    ).catchError((onError) {
+      DropdownBanner.showBanner(
+        text: onError is String ? onError : 'Failed to get speculation',
+        color: SKColors.warning_red,
+        textStyle: TextStyle(color: Colors.white),
+      );
+    });
 
     if (!(speculate is List)) {
       return;
@@ -110,9 +120,7 @@ class _ClassDetailViewState extends State<ClassDetailView> {
           (elem2['speculation'] as num).compareTo(elem1['speculation'] as num),
     );
 
-    int selectedIndex = 0;
-
-    final result = await showDialog(
+    showDialog(
       context: context,
       builder: (context) => Dialog(
         shape: RoundedRectangleBorder(

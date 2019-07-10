@@ -1,4 +1,4 @@
-import 'package:dart_notification_center/dart_notification_center.dart';
+import 'package:dropdown_banner/dropdown_banner.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:skoller/tools.dart';
@@ -37,7 +37,11 @@ class _EditProfileViewState extends State<EditProfileView> {
         }
       });
     } else {
-      //TODO error, need to have a first and last name
+      DropdownBanner.showBanner(
+        text: 'You must have a first and last name',
+        color: SKColors.warning_red,
+        textStyle: TextStyle(color: Colors.white),
+      );
     }
   }
 

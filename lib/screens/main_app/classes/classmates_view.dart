@@ -22,8 +22,8 @@ class _ClassmatesViewState extends State<ClassmatesView> {
     studentClass = StudentClass.currentClasses[widget.class_id];
   }
 
-  void tappedStudent(PublicStudent student) async {
-    final result = await showDialog(
+  void tappedStudent(PublicStudent student) {
+    showDialog(
       context: context,
       builder: (context) => Dialog(
         backgroundColor: Colors.white,
@@ -317,8 +317,7 @@ class _ClassmatesViewState extends State<ClassmatesView> {
                               ),
                               Text(
                                 'Share with classmates',
-                                style: TextStyle(
-                                    color: Colors.white),
+                                style: TextStyle(color: Colors.white),
                               )
                             ],
                           ),

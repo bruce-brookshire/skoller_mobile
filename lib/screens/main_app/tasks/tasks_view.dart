@@ -239,6 +239,16 @@ class _TasksViewState extends State<TasksView> {
             ),
           ),
         ),
+        GestureDetector(
+          onTapUp: (details) => DropdownBanner.showBanner(
+            text: 'Success!',
+            color: SKColors.success,
+            textStyle: TextStyle(color: Colors.white),
+          ),
+          child: Container(
+            child: Image.asset(ImageNames.rightNavImages.plus),
+          ),
+        ),
       ],
     );
   }

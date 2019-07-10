@@ -1,3 +1,4 @@
+import 'package:dart_notification_center/dart_notification_center.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import '../../../requests/requests_core.dart';
@@ -5,17 +6,48 @@ import '../../../constants/constants.dart';
 import 'assignment_add_view.dart';
 import 'assignment_batch_add_view.dart';
 
-class AssignmentWeightView extends StatelessWidget {
+class AssignmentWeightView extends StatefulWidget {
   final int class_id;
-  final List<Weight> weights;
 
-  final Map<int, int> weightAssignmentDensity = {};
+  AssignmentWeightView(this.class_id);
 
-  AssignmentWeightView(this.class_id, {Key key})
-      : weights =
-            (StudentClass.currentClasses[class_id].weights ?? []).toList(),
-        super(key: key) {
-    final studentClass = StudentClass.currentClasses[class_id];
+  @override
+  State createState() => _AssignmentWeightViewState();
+}
+
+class _AssignmentWeightViewState extends State<AssignmentWeightView> {
+  List<Weight> weights;
+  Map<int, int> weightAssignmentDensity = {};
+
+  @override
+  void initState() {
+    refreshAndSortWeights();
+
+    DartNotificationCenter.subscribe(
+        channel: NotificationChannels.assignmentChanged,
+        observer: this,
+        onNotification: updateState);
+
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    DartNotificationCenter.unsubscribe(observer: this);
+
+    super.dispose();
+  }
+
+  void updateState(dynamic options) {
+    refreshAndSortWeights();
+    setState(() {});
+  }
+
+  void refreshAndSortWeights() {
+    weights =
+        (StudentClass.currentClasses[widget.class_id].weights ?? []).toList();
+
+    final studentClass = StudentClass.currentClasses[widget.class_id];
 
     for (var assignment in studentClass.assignments) {
       if (assignment.weight_id != null) {
@@ -44,8 +76,9 @@ class AssignmentWeightView extends StatelessWidget {
     });
   }
 
+  @override
   Widget build(BuildContext context) {
-    final studentClass = StudentClass.currentClasses[class_id];
+    final studentClass = StudentClass.currentClasses[widget.class_id];
 
     return SKNavView(
       title: studentClass.name,
@@ -85,8 +118,8 @@ class AssignmentWeightView extends StatelessWidget {
                                 Navigator.push(
                                   context,
                                   CupertinoPageRoute(
-                                    builder: (context) =>
-                                        AssignmentAddView(class_id, null),
+                                    builder: (context) => AssignmentAddView(
+                                        widget.class_id, null),
                                   ),
                                 );
                               },
@@ -146,9 +179,9 @@ class AssignmentWeightView extends StatelessWidget {
                                     context,
                                     CupertinoPageRoute(
                                       builder: (context) => AssignmentAddView(
-                                            class_id,
-                                            weights[index],
-                                          ),
+                                        widget.class_id,
+                                        weights[index],
+                                      ),
                                     ),
                                   );
                                 } else {
@@ -157,9 +190,9 @@ class AssignmentWeightView extends StatelessWidget {
                                     CupertinoPageRoute(
                                       builder: (context) =>
                                           AssignmentBatchAddView(
-                                            class_id: class_id,
-                                            weight: weight,
-                                          ),
+                                        class_id: widget.class_id,
+                                        weight: weight,
+                                      ),
                                     ),
                                   );
                                 }

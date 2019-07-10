@@ -1,4 +1,5 @@
 import 'package:dart_notification_center/dart_notification_center.dart';
+import 'package:dropdown_banner/dropdown_banner.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:skoller/tools.dart';
@@ -122,7 +123,7 @@ class _WeightExtractionViewState extends State<WeightExtractionView> {
           child: SafeArea(
             top: false,
             child: Container(
-              margin: EdgeInsets.fromLTRB(16, 4, 16, 0),
+              margin: EdgeInsets.fromLTRB(16, 4, 16,12),
               decoration: BoxDecoration(
                 color: Colors.white,
                 border: Border.all(color: SKColors.border_gray),
@@ -506,19 +507,24 @@ class _SubviewThreeState extends State<_SubviewThree> {
     studentClass.createWeights(state.isPoints, state.weights).then((success) {
       //After creating
       if (success) {
-        return studentClass.releaseDIYLock(isCompleted: false);
+        return studentClass.releaseDIYLock();
       } else {
-        throw 'Unsuccessful';
+        throw 'Failed to create weights';
       }
     }).then((response) {
       //After releasing
       if (response.wasSuccessful()) {
         return studentClass.refetchSelf();
       } else {
-        throw 'Unsuccessful';
+        throw 'Failed to unlock assignment. Try again in a few minutes';
       }
     }).then((response) {
-      //TODO success
+      DropdownBanner.showBanner(
+        text: 'Successfully created weights!',
+        color: SKColors.success,
+        textStyle: TextStyle(color: Colors.white),
+      );
+
       //After reloading class
       if (response.wasSuccessful()) {
         //New info is available, push to assignments
@@ -535,8 +541,18 @@ class _SubviewThreeState extends State<_SubviewThree> {
         Navigator.pop(context);
       }
     }).catchError((error) {
-      if (error != null && error is String) {
-        //TODO error msg
+      if (error is String) {
+        DropdownBanner.showBanner(
+          text: error,
+          color: SKColors.warning_red,
+          textStyle: TextStyle(color: Colors.white),
+        );
+      } else {
+        DropdownBanner.showBanner(
+          text: 'Something went wrong :/',
+          color: SKColors.warning_red,
+          textStyle: TextStyle(color: Colors.white),
+        );
       }
     });
   }

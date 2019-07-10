@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:dropdown_banner/dropdown_banner.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:skoller/tools.dart';
@@ -100,10 +101,8 @@ class _ProfessorSearchViewState extends State<ProfessorSearchView> {
         break;
     }
 
-    final firstNameController = TextEditingController(
-        text: firstName);
-    final lastNameController = TextEditingController(
-        text: lastName);
+    final firstNameController = TextEditingController(text: firstName);
+    final lastNameController = TextEditingController(text: lastName);
 
     final result = await showDialog(
       context: context,
@@ -230,7 +229,11 @@ class _ProfessorSearchViewState extends State<ProfessorSearchView> {
         widget.callback(result.obj);
         Navigator.pop(context);
       } else {
-        //TODO error
+        DropdownBanner.showBanner(
+          text: 'Failed to create professor. Try searching and recreating if necessary.',
+          color: SKColors.warning_red,
+          textStyle: TextStyle(color: Colors.white),
+        );
       }
     }
   }
