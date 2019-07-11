@@ -152,6 +152,8 @@ class _AssignmentAddViewState extends State<AssignmentAddView> {
           GestureDetector(
             onTapUp: (details) {
               if (validState()) {
+                final loadingScreen = SKLoadingScreen.fadeIn(context);
+
                 StudentClass.currentClasses[widget.class_id]
                     .createAssignment(
                   assignmentName,
@@ -159,6 +161,8 @@ class _AssignmentAddViewState extends State<AssignmentAddView> {
                   dueDate,
                 )
                     .then((response) async {
+                  loadingScreen.dismiss();
+
                   if (response.wasSuccessful()) {
                     await StudentClass.currentClasses[widget.class_id]
                         .refetchSelf()

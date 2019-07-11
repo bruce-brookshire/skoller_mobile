@@ -266,25 +266,32 @@ class _ChatListViewState extends State<ChatListView> {
     String post = controller.text.trim();
 
     if (result != null && result && post != '') {
-      classes[selectedIndex].createStudentChat(post).then((response) {
-        if (response.wasSuccessful()) {
-          return (response.obj as Chat).refetch();
-        } else {
-          throw 'Unable to create post';
-        }
-      }).then((response) {
-        if (response.wasSuccessful()) {
-          setState(() {
-            chats.insert(0, response.obj);
-          });
-        } else {
-          throw 'Failed to update';
-        }
-      }).catchError((error) => DropdownBanner.showBanner(
-            text: error is String ? error : 'Failed to add grade scale',
-            color: SKColors.warning_red,
-            textStyle: TextStyle(color: Colors.white),
-          ));
+      final loadingScreen = SKLoadingScreen.fadeIn(context);
+
+      classes[selectedIndex]
+          .createStudentChat(post)
+          .then((response) {
+            if (response.wasSuccessful()) {
+              return (response.obj as Chat).refetch();
+            } else {
+              throw 'Unable to create post';
+            }
+          })
+          .then((response) {
+            if (response.wasSuccessful()) {
+              setState(() {
+                chats.insert(0, response.obj);
+              });
+            } else {
+              throw 'Failed to update';
+            }
+          })
+          .catchError((error) => DropdownBanner.showBanner(
+                text: error is String ? error : 'Failed to add grade scale',
+                color: SKColors.warning_red,
+                textStyle: TextStyle(color: Colors.white),
+              ))
+          .then((response) => loadingScreen.dismiss());
     }
   }
 

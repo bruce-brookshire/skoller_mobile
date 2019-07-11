@@ -50,7 +50,11 @@ class _ChatInfoViewState extends State<ChatInfoView> {
 
     Chat chat = Chat.currentChats[widget.chatId];
 
+    final loadingScreen = SKLoadingScreen.fadeIn(context);
+
     chat.createChatComment(post).then((response) {
+      loadingScreen.dismiss();
+
       if (response.wasSuccessful()) {
         setState(() {
           commentFieldController.clear();
@@ -229,27 +233,33 @@ class _ChatInfoViewState extends State<ChatInfoView> {
     final reply = controller.text.trim();
 
     if (result != null && result && reply != '') {
+      final loadingScreen = SKLoadingScreen.fadeIn(context);
+
       Chat chat = Chat.currentChats[widget.chatId];
       comment
           .createReply(
-        chat.parentClass?.id,
-        reply,
-      )
+            chat.parentClass?.id,
+            reply,
+          )
           .then((response) {
-        if (response.wasSuccessful()) {
-          return chat.refetch();
-        } else {
-          throw 'Failed to create reply';
-        }
-      }).then((response) {
-        if (response.wasSuccessful()) {
-          setState(() {});
-        } else throw 'Failed to get updated chat';
-      }).catchError((error) => DropdownBanner.showBanner(
-                    text: error is String ? error : 'Failed to update',
-                    color: SKColors.warning_red,
-                    textStyle: TextStyle(color: Colors.white),
-                  ));
+            if (response.wasSuccessful()) {
+              return chat.refetch();
+            } else {
+              throw 'Failed to create reply';
+            }
+          })
+          .then((response) {
+            if (response.wasSuccessful()) {
+              setState(() {});
+            } else
+              throw 'Failed to get updated chat';
+          })
+          .catchError((error) => DropdownBanner.showBanner(
+                text: error is String ? error : 'Failed to update',
+                color: SKColors.warning_red,
+                textStyle: TextStyle(color: Colors.white),
+              ))
+          .then((_) => loadingScreen.dismiss());
     }
   }
 

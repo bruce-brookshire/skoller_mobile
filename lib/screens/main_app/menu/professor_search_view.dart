@@ -220,10 +220,15 @@ class _ProfessorSearchViewState extends State<ProfessorSearchView> {
     );
 
     if (result is bool && result) {
+
+      final loadingScreen = SKLoadingScreen.fadeIn(context);
+
       final result = await school.createProfessor(
         nameFirst: firstNameController.text.trim(),
         nameLast: lastNameController.text.trim(),
       );
+
+      loadingScreen.dismiss();
 
       if (result.wasSuccessful()) {
         widget.callback(result.obj);

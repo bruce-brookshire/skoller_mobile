@@ -307,9 +307,9 @@ class _ClassInfoViewState extends State<ClassInfoView> {
               Container(
                 alignment: Alignment.centerLeft,
                 child: Text(
-                  (studentClass.professor.firstName ?? '') +
-                      (studentClass.professor.firstName == null ? '' : ' ') +
-                      (studentClass.professor.lastName ?? ''),
+                  (studentClass.professor?.firstName ?? '') +
+                      (studentClass.professor?.firstName == null ? '' : ' ') +
+                      (studentClass.professor?.lastName ?? ''),
                 ),
                 margin: EdgeInsets.symmetric(horizontal: 8),
                 padding: EdgeInsets.only(bottom: 12),

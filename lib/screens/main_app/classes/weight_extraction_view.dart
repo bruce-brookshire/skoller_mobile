@@ -123,7 +123,7 @@ class _WeightExtractionViewState extends State<WeightExtractionView> {
           child: SafeArea(
             top: false,
             child: Container(
-              margin: EdgeInsets.fromLTRB(16, 4, 16,12),
+              margin: EdgeInsets.fromLTRB(16, 4, 16, 12),
               decoration: BoxDecoration(
                 color: Colors.white,
                 border: Border.all(color: SKColors.border_gray),
@@ -501,6 +501,8 @@ class _SubviewThreeState extends State<_SubviewThree> {
 
     if (!validTotal) return;
 
+    final loadingScreen = SKLoadingScreen.fadeIn(context);
+
     final state = widget.subviewParent.state;
     final studentClass = widget.subviewParent.studentClass;
 
@@ -530,6 +532,8 @@ class _SubviewThreeState extends State<_SubviewThree> {
         //New info is available, push to assignments
         DartNotificationCenter.post(channel: NotificationChannels.classChanged);
 
+        loadingScreen.dismiss();
+
         Navigator.pushReplacement(
           context,
           CupertinoPageRoute(
@@ -541,6 +545,8 @@ class _SubviewThreeState extends State<_SubviewThree> {
         Navigator.pop(context);
       }
     }).catchError((error) {
+      loadingScreen.dismiss();
+
       if (error is String) {
         DropdownBanner.showBanner(
           text: error,

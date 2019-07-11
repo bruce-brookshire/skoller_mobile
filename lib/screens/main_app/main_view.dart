@@ -27,10 +27,10 @@ class _MainViewState extends State<MainView> {
 
   @override
   void initState() {
-    // if (SKUser.current.student.primarySchool == null) {
+    if (SKUser.current.student.primarySchool == null) {
       Timer(Duration(milliseconds: 50),
           () => {this.presentWidgetOverMainView(PrimarySchoolView())});
-    // }
+    }
 
     DartNotificationCenter.subscribe(
       channel: NotificationChannels.toggleMenu,

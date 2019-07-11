@@ -44,12 +44,16 @@ class _SignUpState extends State<SignUp> {
     final email = emailController.text.trim();
     final phone = phoneController.text.trim();
 
+    final loadingScreen = SKLoadingScreen.fadeIn(context);
+
     Auth.createUser(
       nameFirst: firstName,
       nameLast: lastName,
       phone: phone.replaceAll(RegExp(r'[\(\) \-]+'), ''),
       email: email,
     ).then((response) async {
+      loadingScreen.dismiss();
+      
       if (response.wasSuccessful()) {
         final result = await showDialog(
           context: context,

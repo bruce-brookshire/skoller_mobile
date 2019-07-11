@@ -172,6 +172,8 @@ class _CreateSchoolModalState extends State<CreateSchoolModal> {
   void tappedSaveSchool(TapUpDetails details) {
     if (!isValid) return;
 
+    final loadingScreen = SKLoadingScreen.fadeIn(context);
+
     School.createSchool(
       isUniversity: selectedSegment == 0,
       schoolName: nameController.text.trim(),
@@ -199,7 +201,7 @@ class _CreateSchoolModalState extends State<CreateSchoolModal> {
           textStyle: TextStyle(color: Colors.white),
         );
       }
-    });
+    }).then((response) => loadingScreen.dismiss());
   }
 
   @override

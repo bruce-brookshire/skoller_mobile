@@ -70,6 +70,8 @@ class _AssignmentBatchAddViewState extends State<AssignmentBatchAddView> {
   }
 
   void tappedSaveAssignments(TapUpDetails details) async {
+    final loadingScreen = SKLoadingScreen.fadeIn(context);
+
     List<Future<RequestResponse>> futureQueue = [];
     final studentClass = StudentClass.currentClasses[widget.class_id];
 
@@ -90,6 +92,8 @@ class _AssignmentBatchAddViewState extends State<AssignmentBatchAddView> {
 
     await studentClass.releaseDIYLock();
     await studentClass.refetchSelf();
+
+    loadingScreen.dismiss();
 
     DartNotificationCenter.post(
         channel: NotificationChannels.assignmentChanged);

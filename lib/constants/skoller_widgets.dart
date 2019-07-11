@@ -605,6 +605,62 @@ class SKNavOverlayRoute extends ModalRoute<void> {
   }
 }
 
+class SKLoadingScreen extends ModalRoute<void> {
+  static SKLoadingScreen fadeIn(BuildContext context) {
+    final loadingScreen = SKLoadingScreen();
+
+    Navigator.of(context).push(loadingScreen);
+
+    return loadingScreen;
+  }
+
+  @override
+  Duration get transitionDuration => Duration(milliseconds: 500);
+
+  @override
+  bool get opaque => false;
+
+  @override
+  bool get barrierDismissible => false;
+
+  @override
+  Color get barrierColor => SKColors.text_light_gray.withOpacity(0.2);
+
+  @override
+  String get barrierLabel => null;
+
+  @override
+  bool get maintainState => true;
+
+  void dismiss() {
+    navigator.pop();
+  }
+
+  @override
+  Widget buildPage(
+    BuildContext context,
+    Animation<double> animation,
+    Animation<double> secondaryAnimation,
+  ) =>
+      BackdropFilter(
+        filter: dartUI.ImageFilter.blur(sigmaX: 3.0, sigmaY: 3.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            SizedBox(width: 44, height: 44, child: CircularProgressIndicator())
+          ],
+        ),
+      );
+
+  @override
+  Widget buildTransitions(BuildContext context, Animation<double> animation,
+          Animation<double> secondaryAnimation, Widget child) =>
+      FadeTransition(
+        opacity: animation,
+        child: child,
+      );
+}
+
 class SKAlertDialog extends StatelessWidget {
   final String title;
   final String subTitle;

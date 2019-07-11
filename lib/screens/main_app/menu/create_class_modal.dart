@@ -72,6 +72,8 @@ class _CreateClassModalState extends State<CreateClassModal> {
     final days = selectedDays.keys
         .fold('', (r, k) => selectedDays[k] ? r + interpreter(k) : r);
 
+    final loadingScreen = SKLoadingScreen.fadeIn(context);
+
     widget.period
         .createClass(
       className: classNameController.text.trim(),
@@ -110,7 +112,7 @@ class _CreateClassModalState extends State<CreateClassModal> {
           textStyle: TextStyle(color: Colors.white),
         );
       }
-    });
+    }).then((response) => loadingScreen);
   }
 
   @override
@@ -126,7 +128,7 @@ class _CreateClassModalState extends State<CreateClassModal> {
         height: 360,
         child: PageView(
           controller: pageController,
-          // physics: NeverScrollableScrollPhysics(),
+          physics: NeverScrollableScrollPhysics(),
           children: <Widget>[
             _CreateClassScreenOne(this),
             _CreateClassScreenTwo(this),
