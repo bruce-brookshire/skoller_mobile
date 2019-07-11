@@ -2,8 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:skoller/constants/constants.dart';
 import 'package:dart_notification_center/dart_notification_center.dart';
-import 'package:skoller/screens/main_app/menu_view.dart';
+import 'package:skoller/tools.dart';
+import 'dart:async';
 import 'tab_bar.dart';
+import 'menu_view.dart';
+import 'primary_school_view.dart';
 
 class MainView extends StatefulWidget {
   @override
@@ -13,7 +16,6 @@ class MainView extends StatefulWidget {
 class _MainViewState extends State<MainView> {
   bool menuShowing = false;
   bool constraintsSetup = false;
-  bool needsPrimarySchool = false;
 
   double deviceWidth;
 
@@ -25,6 +27,11 @@ class _MainViewState extends State<MainView> {
 
   @override
   void initState() {
+    // if (SKUser.current.student.primarySchool == null) {
+      Timer(Duration(milliseconds: 50),
+          () => {this.presentWidgetOverMainView(PrimarySchoolView())});
+    // }
+
     DartNotificationCenter.subscribe(
       channel: NotificationChannels.toggleMenu,
       observer: this,

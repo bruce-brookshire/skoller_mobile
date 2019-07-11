@@ -13,19 +13,19 @@ part 'utilities.dart';
 part 'typedefs.dart';
 
 class SKColors {
-  static final dark_gray = Color(0xFF4A4A4A);
-  static final background_gray = Color(0xFFF5F7F9);
-  static final selected_gray = Color(0xFFF8F8F8);
-  static final border_gray = Color(0xFFEDEDED);
-  static final light_gray = Color(0xFFAAAAAA);
-  static final text_light_gray = Color(0xFFC7C7CD);
-  static final inactive_gray = Color(0xFFEEEEEE);
+  static const dark_gray = Color(0xFF4A4A4A);
+  static const background_gray = Color(0xFFF5F7F9);
+  static const selected_gray = Color(0xFFF8F8F8);
+  static const border_gray = Color(0xFFEDEDED);
+  static const light_gray = Color(0xFFAAAAAA);
+  static const text_light_gray = Color(0xFFC7C7CD);
+  static const inactive_gray = Color(0xFFEEEEEE);
 
-  static final skoller_blue = Color(0xFF57B9E4);
-  static final menu_blue = Color(0xFFEDFAFF);
-  static final success = Color(0xFF4ADD58);
-  static final alert_orange = Color(0xFFFF6D00);
-  static final warning_red = Color(0xFFFF4159);
+  static const skoller_blue = Color(0xFF57B9E4);
+  static const menu_blue = Color(0xFFEDFAFF);
+  static const success = Color(0xFF4ADD58);
+  static const alert_orange = Color(0xFFFF6D00);
+  static const warning_red = Color(0xFFFF4159);
 }
 
 class UIAssets {
@@ -38,11 +38,11 @@ class UIAssets {
 }
 
 class ClassStatuses {
-  static final needs_setup = 1100;
-  static final syllabus_submitted = 1200;
-  static final needs_student_input = 1300;
-  static final class_setup = 1400;
-  static final class_issue = 1500;
+  static const needs_setup = 1100;
+  static const syllabus_submitted = 1200;
+  static const needs_student_input = 1300;
+  static const class_setup = 1400;
+  static const class_issue = 1500;
 }
 
 /// Image paths within the image_assets/ folder
@@ -61,7 +61,7 @@ class ImageNames {
 }
 
 class _MenuImages {
-  static final _base = 'image_assets/menu_assets';
+  static const _base = 'image_assets/menu_assets';
 
   final briefcase = '${_base}/briefcase.png';
   final points = '${_base}/points.png';
@@ -69,13 +69,13 @@ class _MenuImages {
 }
 
 class _TutorialImages {
-  static final _base = 'image_assets/tutorial_assets';
+  static const _base = 'image_assets/tutorial_assets';
 
   final syllabus = '${_base}/syllabus.png';
 }
 
 class _ChatImages {
-  static final _base = 'image_assets/chat_assets';
+  static const _base = 'image_assets/chat_assets';
 
   final star_yellow = '${_base}/star_yellow.png';
   final commented_blue = '${_base}/commented_blue.png';
@@ -95,7 +95,7 @@ class _ChatImages {
 }
 
 class _ActivityImages {
-  static final _base = 'image_assets/activity_assets';
+  static const _base = 'image_assets/activity_assets';
 
   final add_gray = '${_base}/add_gray.png';
   final add_white = '${_base}/add_white.png';
@@ -109,7 +109,7 @@ class _ActivityImages {
 }
 
 class _SignUpImages {
-  static final _base = 'image_assets/sign_up_assets';
+  static const _base = 'image_assets/sign_up_assets';
 
   final happy_classmates = '${_base}/happy_classmates.png';
   final text_verify = '${_base}/text_verify.png';
@@ -120,7 +120,7 @@ class _SignUpImages {
 }
 
 class _NavigationArrowImages {
-  static final _base = 'image_assets/navigation_arrow_assets';
+  static const _base = 'image_assets/navigation_arrow_assets';
 
   final left = '${_base}/back.png';
   final down = '${_base}/down.png';
@@ -130,7 +130,7 @@ class _NavigationArrowImages {
 }
 
 class _SammiImages {
-  static final _base = 'image_assets/sammi_personality_assets';
+  static const _base = 'image_assets/sammi_personality_assets';
 
   final cool = '${_base}/cool_sammi.png';
   final shocked = '${_base}/shocked_sammi.png';
@@ -139,7 +139,7 @@ class _SammiImages {
 }
 
 class _RightNavImages {
-  static final _base = 'image_assets/right_button_assets';
+  static const _base = 'image_assets/right_button_assets';
 
   final plus = '${_base}/plus.png';
   final info = '${_base}/info.png';
@@ -150,7 +150,7 @@ class _RightNavImages {
 }
 
 class _AssignmentInfoImages {
-  static final _base = 'image_assets/assignment_info_assets';
+  static const _base = 'image_assets/assignment_info_assets';
 
   final notes = '${_base}/notes.png';
   final circle_x = '${_base}/circle_x.png';
@@ -160,7 +160,7 @@ class _AssignmentInfoImages {
 }
 
 class _PeopleImages {
-  static final _base = 'image_assets/people_assets';
+  static const _base = 'image_assets/people_assets';
 
   final person_light_gray = '${_base}/person_light_gray.png';
   final person_dark_gray = '${_base}/person_dark_gray.png';
@@ -174,18 +174,18 @@ class _PeopleImages {
 }
 
 class _StatusImages {
-  static final _base = 'image_assets/status_assets';
+  static const _base = 'image_assets/status_assets';
 
   final diy = '${_base}/diy.png';
   final clock = '${_base}/clock.png';
 }
 
 class NotificationChannels {
-  static final toggleMenu = 'toggle-menu';
-  static final presentViewOverTabBar = 'present-view-over-tab-bar';
-  static final userChanged = 'user-changed';
-  static final classChanged = 'class-changed';
-  static final assignmentChanged = 'assignment-changed';
-  static final modsChanged = 'mods-changed';
-  static final appStateChanged = 'app-state-changed';
+  static const toggleMenu = 'toggle-menu';
+  static const presentViewOverTabBar = 'present-view-over-tab-bar';
+  static const userChanged = 'user-changed';
+  static const classChanged = 'class-changed';
+  static const assignmentChanged = 'assignment-changed';
+  static const modsChanged = 'mods-changed';
+  static const appStateChanged = 'app-state-changed';
 }

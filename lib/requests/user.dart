@@ -88,6 +88,11 @@ class SKUser {
       }
     });
   }
+
+  Future<RequestResponse> checkEmailDomain() {
+    final emailDomain = email.split('@')[1];
+    return SKRequests.get('/email_domains/$emailDomain/check', School._fromJsonObj);
+  }
 }
 
 class Student {

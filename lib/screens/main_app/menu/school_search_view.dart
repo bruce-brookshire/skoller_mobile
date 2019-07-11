@@ -173,6 +173,7 @@ class _SchoolSearchViewState extends State<SchoolSearchView> {
                         cursorColor: SKColors.skoller_blue,
                         textCapitalization: TextCapitalization.words,
                         decoration: BoxDecoration(border: null),
+                        autofocus: true,
                         controller: searchController,
                       ),
                     ),
