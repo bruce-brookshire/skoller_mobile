@@ -93,6 +93,8 @@ class _CreateClassModalState extends State<CreateClassModal> {
       }
     }).then((response) {
       if (response.wasSuccessful()) {
+        loadingScreen.dismiss();
+
         DartNotificationCenter.post(channel: NotificationChannels.classChanged);
         Navigator.pop(context);
 
@@ -105,6 +107,8 @@ class _CreateClassModalState extends State<CreateClassModal> {
         throw 'Failed automatically enrolling in the class. Try adding it from the search.';
       }
     }).catchError((onError) {
+      loadingScreen.dismiss();
+      
       if (onError is String) {
         DropdownBanner.showBanner(
           text: onError,
@@ -112,7 +116,7 @@ class _CreateClassModalState extends State<CreateClassModal> {
           textStyle: TextStyle(color: Colors.white),
         );
       }
-    }).then((response) => loadingScreen);
+    });
   }
 
   @override

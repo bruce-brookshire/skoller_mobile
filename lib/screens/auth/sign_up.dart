@@ -53,7 +53,7 @@ class _SignUpState extends State<SignUp> {
       email: email,
     ).then((response) async {
       loadingScreen.dismiss();
-      
+
       if (response.wasSuccessful()) {
         final result = await showDialog(
           context: context,
