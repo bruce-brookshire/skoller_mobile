@@ -424,6 +424,7 @@ class _SubviewThreeState extends State<_SubviewThree> {
                     placeholder: 'Exams',
                     controller: nameController,
                     padding: EdgeInsets.fromLTRB(6, 8, 6, 4),
+                    textCapitalization: TextCapitalization.words,
                     cursorColor: SKColors.skoller_blue,
                     placeholderStyle: TextStyle(
                         fontSize: 14, color: SKColors.text_light_gray),

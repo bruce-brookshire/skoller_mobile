@@ -114,7 +114,7 @@ class _EditProfileViewState extends State<EditProfileView> {
                         ),
                         CupertinoTextField(
                           padding: EdgeInsets.all(0),
-                          placeholder: 'Who are you?',
+                          placeholder: 'Alex',
                           style: TextStyle(fontSize: 15),
                           decoration: BoxDecoration(border: null),
                           controller: firstNameController,
@@ -144,7 +144,7 @@ class _EditProfileViewState extends State<EditProfileView> {
                         ),
                         CupertinoTextField(
                           padding: EdgeInsets.all(0),
-                          placeholder: 'Who are you?',
+                          placeholder: 'Smith',
                           style: TextStyle(fontSize: 15),
                           decoration: BoxDecoration(border: null),
                           controller: lastNameController,

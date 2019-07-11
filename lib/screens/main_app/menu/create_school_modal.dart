@@ -185,6 +185,8 @@ class _CreateSchoolModalState extends State<CreateSchoolModal> {
             .update(primarySchool: response.obj)
             .then((response2) {
           if (response2) {
+            loadingScreen.dismiss();
+
             Navigator.pop(context, response.obj);
           } else {
             throw 'Failed to set preferences. Please search school and add.';
@@ -194,6 +196,8 @@ class _CreateSchoolModalState extends State<CreateSchoolModal> {
         throw 'Failed to create school. Try searching and recreating';
       }
     }).catchError((error) {
+      loadingScreen.dismiss();
+      
       if (error is String) {
         DropdownBanner.showBanner(
           text: error,
@@ -201,7 +205,7 @@ class _CreateSchoolModalState extends State<CreateSchoolModal> {
           textStyle: TextStyle(color: Colors.white),
         );
       }
-    }).then((response) => loadingScreen.dismiss());
+    });
   }
 
   @override
@@ -292,6 +296,7 @@ class _CreateSchoolModalState extends State<CreateSchoolModal> {
                       placeholder: 'Harvard University',
                       style: TextStyle(fontSize: 15, color: SKColors.dark_gray),
                       decoration: BoxDecoration(border: null),
+                      textCapitalization: TextCapitalization.words,
                       controller: nameController,
                       onChanged: checkValid,
                       autofocus: true,
@@ -323,6 +328,7 @@ class _CreateSchoolModalState extends State<CreateSchoolModal> {
                       placeholder: 'Boston',
                       style: TextStyle(fontSize: 15, color: SKColors.dark_gray),
                       decoration: BoxDecoration(border: null),
+                      textCapitalization: TextCapitalization.words,
                       controller: cityController,
                       onChanged: checkValid,
                       autofocus: true,

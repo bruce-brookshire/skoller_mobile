@@ -150,6 +150,7 @@ class _ProfessorSearchViewState extends State<ProfessorSearchView> {
                             decoration: BoxDecoration(border: null),
                             cursorColor: SKColors.skoller_blue,
                             padding: EdgeInsets.only(top: 5),
+                            textCapitalization: TextCapitalization.words,
                             controller: firstNameController,
                             style: TextStyle(
                               fontWeight: FontWeight.normal,
