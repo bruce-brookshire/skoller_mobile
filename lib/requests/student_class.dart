@@ -409,6 +409,8 @@ class StudentClass {
     return SKRequests.get(
       '/students/${SKUser.current.student.id}/classes',
       (content) => _fromJsonObj(content, shouldPersistAssignments: false),
+      cacheResult: true,
+      cachePath: 'student_classes.json',
     );
   }
 

@@ -1,12 +1,15 @@
 library requests_core;
 
+import 'package:dart_notification_center/dart_notification_center.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:intl/intl.dart';
+import 'package:skoller/constants/constants.dart';
 import 'package:time_machine/time_machine.dart';
 import '../constants/timezone_manager.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:path_provider/path_provider.dart';
 import 'dart:collection';
 import 'dart:convert';
 import 'dart:math';
@@ -69,18 +72,45 @@ class SKRequests {
     'Content-Type': 'application/json',
   };
 
+  static Map<String, Future<http.Response>> _currentRequests = {};
+
   static Future<RequestResponse> get<T>(
     String url,
-    _DecodableConstructor<T> construct,
-  ) async {
-    // Construct and start request
-    http.Response request = await http.get(
-      _baseUrl + url,
-      headers: _headers,
-    );
+    _DecodableConstructor<T> construct, {
+    bool cacheResult = false,
+    String cachePath,
+  }) async {
+    //Whether or not we need to remove the request entry in the request map
+    bool shouldRemove = false;
 
-    // Handle request and return future
-    return futureProcessor<T>(request, construct);
+    //If there is not currently an active request for this URL we need to create it
+    if (_currentRequests[url] == null) {
+      //Take ownership for the request
+      shouldRemove = true;
+      //Create request
+      _currentRequests[url] = http.get(
+        _baseUrl + url,
+        headers: _headers,
+      );
+    }
+    //Construct and start request
+    http.Response request = await _currentRequests[url];
+
+    //Remove request entry if we have ownership
+    if (shouldRemove) {
+      _currentRequests.remove(url);
+    }
+
+    //Handle request and return future
+    final result = await futureProcessor<T>(request, construct);
+
+    //Cache result if we are supposed to
+    if (cacheResult && result.wasSuccessful()) {
+      SKCacheManager.writeContents(cachePath, request.body);
+    }
+
+    //Return result
+    return result;
   }
 
   static Future<http.Response> rawGetRequest<T>(String url) {
@@ -154,6 +184,98 @@ class SKRequests {
       content,
       constructor: constructor,
     );
+  }
+}
+
+class SKCacheManager {
+  static Future<void> classesLoader;
+  static Future<void> assignmentsLoader;
+  static Future<void> tasksLoader;
+
+  static Future<String> get _homePath async {
+    final directory = await getTemporaryDirectory();
+
+    return directory.path;
+  }
+
+  static Future<File> _fileAtPath(String subPath) =>
+      _homePath.then((path) => File('$path/data/$subPath'));
+
+  static Future<String> getContents(String subPath) async {
+    final file = await _fileAtPath(subPath);
+
+    return file.readAsString();
+  }
+
+  static void createCacheDir() async {
+    final path = await _homePath;
+    final directory = Directory('$path/data');
+
+    final exists = await directory.exists();
+
+    if (!exists) {
+      await directory.create(recursive: true);
+    }
+  }
+
+  static void writeContents(String subPath, String contents) async {
+    final file = await _fileAtPath(subPath);
+
+    file.writeAsString(contents);
+  }
+
+  static Future<bool> deleteCache() async {
+    return _homePath
+        .then((path) => Directory('$path/data').delete(recursive: true))
+        .then((_) => true)
+        .catchError((_) => false);
+  }
+
+  static void restoreCachedData() {
+    //Load classes
+    classesLoader = getContents('student_classes.json')
+        .then(
+          (contents) => JsonListMaker.convert(
+            (content) => StudentClass._fromJsonObj(content,
+                shouldPersistAssignments: false),
+            json.decode(contents),
+          ),
+        )
+        .then(
+          (classes) => classes.forEach((studentClass) {
+            StudentClass.currentClasses[studentClass.id] = studentClass;
+          }),
+        );
+
+    // Load tasks
+    tasksLoader = getContents('tasks.json')
+        .then(
+          (contents) => JsonListMaker.convert(
+            Assignment._fromJsonObj,
+            json.decode(contents),
+          ),
+        )
+        .then((tasks) => Assignment.currentTasks = tasks);
+
+    //Load assignments
+    assignmentsLoader = SKCacheManager.getContents('assignments.json')
+        .then(
+      (contents) => JsonListMaker.convert(
+        Assignment._fromJsonObj,
+        json.decode(contents),
+      ),
+    )
+        .then(
+      (assignments) {
+        assignments.forEach(
+          (assignment) =>
+              Assignment.currentAssignments[assignment.id] = assignment,
+        );
+      },
+    );
+
+    [classesLoader, tasksLoader, assignmentsLoader]
+        .forEach((future) => future.catchError((error) {}));
   }
 }
 
@@ -265,6 +387,7 @@ class Auth {
     final inst = await SharedPreferences.getInstance();
     inst.clear();
     SKRequests._headers.remove('Authorization');
+    SKCacheManager.deleteCache();
 
     Assignment.currentAssignments = {};
     Assignment.currentTasks = [];

@@ -23,15 +23,18 @@ class _TasksViewState extends State<TasksView> {
   void initState() {
     super.initState();
 
-    if (Assignment.currentTasks != null) {
-      _taskItems = Assignment.currentTasks
-          .map((task) => _TaskLikeItem(
-                task.id,
-                false,
-                task.due,
-              ))
-          .toList();
+    if (SKCacheManager.tasksLoader != null) {
+      SKCacheManager.tasksLoader
+          .then((_) => SKCacheManager.classesLoader)
+          .then((_) => setState(() => _taskItems = Assignment.currentTasks
+              .map((task) => _TaskLikeItem(
+                    task.id,
+                    false,
+                    task.due,
+                  ))
+              .toList()));
     }
+
     _fetchTasks();
 
     DartNotificationCenter.subscribe(

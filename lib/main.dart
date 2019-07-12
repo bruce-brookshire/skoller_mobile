@@ -4,6 +4,7 @@ import 'package:package_info/package_info.dart';
 import 'package:flutter/material.dart';
 import 'package:skoller/loading_view.dart';
 import 'package:skoller/screens/main_app/main_view.dart';
+import 'package:skoller/tools.dart';
 import 'screens/auth/auth_home.dart';
 import 'constants/constants.dart';
 import 'constants/timezone_manager.dart';
@@ -15,6 +16,8 @@ void main() {
 
   PackageInfo.fromPlatform().then((info) => UIAssets.versionNumber =
       (info.version.split('.')..removeAt(1)).join('.'));
+
+  // SKCacheManager.createCacheDir();
 }
 
 class SkollerApp extends StatefulWidget {

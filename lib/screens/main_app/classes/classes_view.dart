@@ -25,7 +25,12 @@ class _ClassesViewState extends State<ClassesView> {
   void initState() {
     super.initState();
 
-    sortClasses();
+    if (StudentClass.currentClasses == {} &&
+        SKCacheManager.classesLoader != null) {
+      SKCacheManager.classesLoader.then((_) => sortClasses());
+    } else {
+      sortClasses();
+    }
     fetchClasses();
 
     cardConstructors = {

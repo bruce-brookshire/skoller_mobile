@@ -1128,12 +1128,12 @@ class _SKPickerModalState extends State<SKPickerModal> {
     if (widget.subtitle != null) {
       children.add(
         Padding(
-          padding: EdgeInsets.fromLTRB(24, 8, 24, 0),
+          padding: EdgeInsets.fromLTRB(24, 4, 24, 0),
           child: Text(
             widget.subtitle,
             textAlign: TextAlign.center,
             style: TextStyle(
-              fontSize: 14,
+              fontSize: 13,
               fontWeight: FontWeight.normal,
             ),
           ),

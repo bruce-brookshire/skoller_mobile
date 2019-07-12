@@ -24,11 +24,11 @@ class _ClassInfoViewState extends State<ClassInfoView> {
       final result = await showDialog(
         context: context,
         builder: (context) => Dialog(
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: GradeScaleModalView(studentClass),
-            ),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
+          child: GradeScaleModalView(studentClass),
+        ),
       );
 
       showGradeScale = result != null && result;
@@ -55,75 +55,72 @@ class _ClassInfoViewState extends State<ClassInfoView> {
       showDialog(
         context: context,
         builder: (context) => Dialog(
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: Container(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10),
-                  color: Colors.white,
-                ),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    Container(
-                      // alignment: Alignment.centerLeft,
-                      padding: EdgeInsets.fromLTRB(12, 12, 0, 8),
-                      decoration: BoxDecoration(
-                          color: SKColors.selected_gray,
-                          borderRadius: BorderRadius.only(
-                              topLeft: Radius.circular(10),
-                              topRight: Radius.circular(10))),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          GestureDetector(
-                            behavior: HitTestBehavior.opaque,
-                            onTapUp: (details) => Navigator.pop(context),
-                            child: Container(
-                              width: 36,
-                              child:
-                                  Image.asset(ImageNames.navArrowImages.down),
-                            ),
-                          ),
-                          Text(
-                            'Grade scale',
-                            style: TextStyle(fontSize: 17),
-                            textAlign: TextAlign.center,
-                          ),
-                          Container(
-                            width: 36,
-                            child:
-                                null, //Text('edit', style: TextStyle(color: SKColors.skoller_blue, fontWeight: FontWeight.normal),),
-                          ),
-                        ],
-                      ),
-                    ),
-                    ...scale
-                        .map(
-                          (elem) => Container(
-                                padding: EdgeInsets.symmetric(
-                                    horizontal: 16, vertical: 6),
-                                child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: <Widget>[
-                                    Text(elem['letter']),
-                                    Text(
-                                      '> ${elem['grade']}',
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.normal),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                        )
-                        .toList(),
-                  ],
-                ),
-              ),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
+          child: Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(10),
+              color: Colors.white,
             ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Container(
+                  // alignment: Alignment.centerLeft,
+                  padding: EdgeInsets.fromLTRB(12, 12, 0, 8),
+                  decoration: BoxDecoration(
+                      color: SKColors.selected_gray,
+                      borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(10),
+                          topRight: Radius.circular(10))),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      GestureDetector(
+                        behavior: HitTestBehavior.opaque,
+                        onTapUp: (details) => Navigator.pop(context),
+                        child: Container(
+                          width: 36,
+                          child: Image.asset(ImageNames.navArrowImages.down),
+                        ),
+                      ),
+                      Text(
+                        'Grade scale',
+                        style: TextStyle(fontSize: 17),
+                        textAlign: TextAlign.center,
+                      ),
+                      Container(
+                        width: 36,
+                        child:
+                            null, //Text('edit', style: TextStyle(color: SKColors.skoller_blue, fontWeight: FontWeight.normal),),
+                      ),
+                    ],
+                  ),
+                ),
+                ...scale
+                    .map(
+                      (elem) => Container(
+                        padding:
+                            EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: <Widget>[
+                            Text(elem['letter']),
+                            Text(
+                              '> ${elem['grade']}',
+                              style: TextStyle(fontWeight: FontWeight.normal),
+                            ),
+                          ],
+                        ),
+                      ),
+                    )
+                    .toList(),
+              ],
+            ),
+          ),
+        ),
       );
     }
   }
@@ -132,11 +129,11 @@ class _ClassInfoViewState extends State<ClassInfoView> {
     final bool result = await showDialog(
       context: context,
       builder: (context) => SKAlertDialog(
-            title: 'Drop class',
-            subTitle: 'Are you sure?',
-            confirmText: 'Confirm',
-            cancelText: 'Cancel',
-          ),
+        title: 'Drop class',
+        subTitle: 'Are you sure?',
+        confirmText: 'Confirm',
+        cancelText: 'Cancel',
+      ),
     );
     if (result != null && result) {
       final bool successfullyDropped =

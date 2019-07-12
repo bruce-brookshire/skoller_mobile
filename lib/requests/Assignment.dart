@@ -238,13 +238,11 @@ class Assignment {
     return SKRequests.get(
       '/students/${SKUser.current.student.id}/assignments?is_complete=false&date=${utcDate.toIso8601String()}',
       _fromJsonObj,
+      cachePath: 'tasks.json',
+      cacheResult: true,
     ).then((response) {
       if (response.wasSuccessful() && response.obj != null) {
         currentTasks = response.obj;
-        currentTasks.forEach((assignment) {
-          Assignment.currentAssignments[assignment.id] = assignment;
-          assignment.configureDateTimeOffset();
-        });
       }
       return response;
     });
@@ -258,13 +256,9 @@ class Assignment {
     return SKRequests.get(
       '/students/${SKUser.current.student.id}/assignments',
       _fromJsonObj,
-    ).then((response) {
-      if (response.wasSuccessful() && response.obj != null) {
-        (response.obj as List<Assignment>).forEach((assignment) =>
-            Assignment.currentAssignments[assignment.id] = assignment);
-      }
-      return response;
-    });
+      cachePath: 'assignments.json',
+      cacheResult: true,
+    );
   }
 }
 

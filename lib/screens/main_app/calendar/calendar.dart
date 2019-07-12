@@ -44,15 +44,15 @@ class _CalendarViewState extends State<CalendarView> {
         );
       }
     });
-
     updateAssignments(Assignment.currentAssignments.values);
   }
 
   void updateAssignments(Iterable<Assignment> new_assignments) {
+    print(Assignment.currentAssignments[2072] == null);
     assignments = {};
     //Add assignments to the day hash map
     for (var assignment in new_assignments) {
-      if (assignment.due != null) {
+      if (assignment.due != null && assignment.parentClass != null) {
         final dateStr = createDateStr(assignment.due);
 
         if (assignments[dateStr] == null) {
@@ -102,75 +102,85 @@ class _CalendarViewState extends State<CalendarView> {
 
     int selectedIndex = 0;
 
-    final result = await showCupertinoDialog(
-        context: context,
-        builder: (context) {
-          return CupertinoAlertDialog(
-            title: Column(
-              children: <Widget>[
-                Text(
-                  'Add an assignment',
-                  style: TextStyle(fontSize: 16),
-                ),
-                Container(
-                  padding: EdgeInsets.only(bottom: 8, top: 2),
-                  child: Text(
-                    'Select a class',
-                    style:
-                        TextStyle(fontSize: 12, fontWeight: FontWeight.normal),
-                  ),
-                ),
-              ],
-            ),
-            content: Container(
-              decoration: BoxDecoration(
-                border: Border(
-                  bottom: BorderSide(color: SKColors.border_gray),
-                  top: BorderSide(color: SKColors.border_gray),
-                ),
-              ),
-              height: 180,
-              child: CupertinoPicker.builder(
-                backgroundColor: Colors.white,
-                childCount: classes.length,
-                itemBuilder: (context, index) => Container(
-                  alignment: Alignment.center,
-                  child: Text(
-                    classes[index].name,
-                    style: TextStyle(fontSize: 15),
-                  ),
-                ),
-                itemExtent: 32,
-                onSelectedItemChanged: (index) => selectedIndex = index,
-              ),
-            ),
-            actions: <Widget>[
-              CupertinoDialogAction(
-                child: Text(
-                  'Cancel',
-                  style: TextStyle(color: SKColors.skoller_blue, fontSize: 16),
-                ),
-                isDefaultAction: false,
-                onPressed: () {
-                  Navigator.pop(context, false);
-                },
-              ),
-              CupertinoDialogAction(
-                child: Text(
-                  'Select',
-                  style: TextStyle(
-                      color: SKColors.skoller_blue,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 16),
-                ),
-                isDefaultAction: true,
-                onPressed: () {
-                  Navigator.pop(context, true);
-                },
-              )
-            ],
-          );
-        });
+    final result = await showDialog(
+      context: context,
+      builder: (context) => SKPickerModal(
+        title: 'Select a class',
+        subtitle: 'Choose a class to add an assignment to',
+        items: classes.map((cl) => cl.name).toList(),
+        onSelect: (newIndex) => selectedIndex = newIndex,
+      ),
+    );
+
+    // final result = await showCupertinoDialog(
+    //     context: context,
+    //     builder: (context) {
+    //       return CupertinoAlertDialog(
+    //         title: Column(
+    //           children: <Widget>[
+    //             Text(
+    //               'Add an assignment',
+    //               style: TextStyle(fontSize: 16),
+    //             ),
+    //             Container(
+    //               padding: EdgeInsets.only(bottom: 8, top: 2),
+    //               child: Text(
+    //                 'Select a class',
+    //                 style:
+    //                     TextStyle(fontSize: 12, fontWeight: FontWeight.normal),
+    //               ),
+    //             ),
+    //           ],
+    //         ),
+    //         content: Container(
+    //           decoration: BoxDecoration(
+    //             border: Border(
+    //               bottom: BorderSide(color: SKColors.border_gray),
+    //               top: BorderSide(color: SKColors.border_gray),
+    //             ),
+    //           ),
+    //           height: 180,
+    //           child: CupertinoPicker.builder(
+    //             backgroundColor: Colors.white,
+    //             childCount: classes.length,
+    //             itemBuilder: (context, index) => Container(
+    //               alignment: Alignment.center,
+    //               child: Text(
+    //                 classes[index].name,
+    //                 style: TextStyle(fontSize: 15),
+    //               ),
+    //             ),
+    //             itemExtent: 32,
+    //             onSelectedItemChanged: (index) => selectedIndex = index,
+    //           ),
+    //         ),
+    //         actions: <Widget>[
+    //           CupertinoDialogAction(
+    //             child: Text(
+    //               'Cancel',
+    //               style: TextStyle(color: SKColors.skoller_blue, fontSize: 16),
+    //             ),
+    //             isDefaultAction: false,
+    //             onPressed: () {
+    //               Navigator.pop(context, false);
+    //             },
+    //           ),
+    //           CupertinoDialogAction(
+    //             child: Text(
+    //               'Select',
+    //               style: TextStyle(
+    //                   color: SKColors.skoller_blue,
+    //                   fontWeight: FontWeight.bold,
+    //                   fontSize: 16),
+    //             ),
+    //             isDefaultAction: true,
+    //             onPressed: () {
+    //               Navigator.pop(context, true);
+    //             },
+    //           )
+    //         ],
+    //       );
+    //     });
 
     if (result is bool && result) {
       final class_id = classes[selectedIndex].id;

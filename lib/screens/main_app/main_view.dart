@@ -32,6 +32,8 @@ class _MainViewState extends State<MainView> {
           () => {this.presentWidgetOverMainView(PrimarySchoolView())});
     }
 
+    SKCacheManager.restoreCachedData();
+
     DartNotificationCenter.subscribe(
       channel: NotificationChannels.toggleMenu,
       observer: this,
