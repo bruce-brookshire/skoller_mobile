@@ -9,10 +9,10 @@ class ChatInfoView extends StatefulWidget {
   ChatInfoView(this.chatId);
 
   @override
-  State createState() => _ChatInfoViewState();
+  State createState() => _ChatInfoState();
 }
 
-class _ChatInfoViewState extends State<ChatInfoView> {
+class _ChatInfoState extends State<ChatInfoView> {
   TextEditingController commentFieldController = TextEditingController();
   FocusNode commentFieldFocusNode = FocusNode();
 

@@ -4,10 +4,10 @@ import 'package:skoller/tools.dart';
 
 class RemindersView extends StatefulWidget {
   @override
-  State createState() => _RemindersViewState();
+  State createState() => _RemindersState();
 }
 
-class _RemindersViewState extends State<RemindersView> {
+class _RemindersState extends State<RemindersView> {
   DateTime defaultTime;
 
   @override

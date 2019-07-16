@@ -5,8 +5,6 @@ import 'sign_in.dart';
 import 'sign_up.dart';
 
 class AuthHome extends StatelessWidget {
-  AuthHome() {}
-
   void tappedLogIn(BuildContext context) {
     Navigator.push(
       context,

@@ -5,12 +5,12 @@ import 'package:share/share.dart';
 
 class ProfileLinkSharingView extends StatefulWidget {
   @override
-  State createState() => _ProfileLinkSharingViewState();
+  State createState() => _ProfileLinkSharingState();
 }
 
 enum _SharingType { classmates, anyone }
 
-class _ProfileLinkSharingViewState extends State<ProfileLinkSharingView> {
+class _ProfileLinkSharingState extends State<ProfileLinkSharingView> {
   _SharingType sharingType;
 
   StudentClass studentClass;

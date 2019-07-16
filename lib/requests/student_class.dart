@@ -318,6 +318,8 @@ class StudentClass {
       bool success = [200, 204].contains(response);
       if (success) {
         StudentClass.currentClasses.remove(id);
+        Assignment.currentAssignments.removeWhere((_, v) => v.classId == id);
+        Assignment.currentTasks.removeWhere((v) => v.classId == id);
       }
       return success;
     });
@@ -327,6 +329,35 @@ class StudentClass {
     this.isNotifications = !this.isNotifications;
 
     return _update({'is_notifications': this.isNotifications})
+        .then((response) => response.wasSuccessful());
+  }
+
+  Future<bool> changeRequest(
+      {TimeOfDay meetTime,
+      String meetDays,
+      String name,
+      String subject,
+      String code,
+      String section}) {
+    Map<String, dynamic> body = {
+      'id': id,
+      'meet_days': meetDays,
+      'meet_start_time': meetTime == null
+          ? null
+          : '${meetTime.hour < 10 ? '0' : ''}${meetTime.hour}:${meetTime.minute < 10 ? '0' : ''}${meetTime.minute}:00',
+      'name': name,
+      'subject': subject,
+      'code': code,
+      'section': section,
+    };
+
+    body.removeWhere((k, v) => v == null);
+
+    if (body.length == 1) return Future.value(true);
+
+    print(body);
+
+    return SKRequests.post('/classes/$id/changes/400', {'data': body}, null)
         .then((response) => response.wasSuccessful());
   }
 
@@ -363,6 +394,10 @@ class StudentClass {
         ? null
         : TimeOfDay(hour: startComponents[0], minute: startComponents[1]);
 
+    if (shouldPersistAssignments) {
+      Assignment.currentAssignments = {};
+    }
+
     StudentClass studentClass = StudentClass(
       content['id'],
       content['name'],
@@ -396,13 +431,14 @@ class StudentClass {
       content['is_points'],
       content['is_notifications'],
     );
-
     StudentClass.currentClasses[studentClass.id] = studentClass;
 
-    (studentClass.assignments ?? [])
-        .forEach((assignment) => assignment.configureDateTimeOffset());
+    print(studentClass.name);
+    print(studentClass.meetTime);
+    print(content['meet_start_time']);
 
-    return studentClass;
+    return studentClass
+      ..assignments.forEach((a) => a.configureDateTimeOffset());
   }
 
   static Future<RequestResponse> getStudentClasses() {
@@ -411,6 +447,7 @@ class StudentClass {
       (content) => _fromJsonObj(content, shouldPersistAssignments: false),
       cacheResult: true,
       cachePath: 'student_classes.json',
+      postRequestAction: () => StudentClass.currentClasses = {},
     );
   }
 

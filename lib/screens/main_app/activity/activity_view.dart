@@ -8,10 +8,10 @@ import 'package:skoller/constants/constants.dart';
 
 class ActivityView extends StatefulWidget {
   @override
-  State createState() => _ActivityViewState();
+  State createState() => _ActivityState();
 }
 
-class _ActivityViewState extends State<ActivityView> {
+class _ActivityState extends State<ActivityView> {
   List<List<Mod>> stackedMods = [];
 
   @override

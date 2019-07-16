@@ -19,10 +19,10 @@ class AssignmentBatchAddView extends StatefulWidget {
       : super(key: key);
 
   @override
-  State createState() => _AssignmentBatchAddViewState();
+  State createState() => _AssignmentBatchAddState();
 }
 
-class _AssignmentBatchAddViewState extends State<AssignmentBatchAddView> {
+class _AssignmentBatchAddState extends State<AssignmentBatchAddView> {
   List<_UnsavedAssignment> queuedAssignments = [];
 
   @override
@@ -306,10 +306,10 @@ class _AddAssignmentSubview extends StatefulWidget {
   _AddAssignmentSubview({Key key, @required this.weight}) : super(key: key);
 
   @override
-  State createState() => _AddAssignmentSubviewState();
+  State createState() => _AddAssignmentSubState();
 }
 
-class _AddAssignmentSubviewState extends State<_AddAssignmentSubview> {
+class _AddAssignmentSubState extends State<_AddAssignmentSubview> {
   DateTime dueDate;
 
   bool isValidState = false;

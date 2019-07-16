@@ -1,18 +1,18 @@
 import 'package:dart_notification_center/dart_notification_center.dart';
+import 'package:dropdown_banner/dropdown_banner.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:skoller/screens/main_app/activity/update_info_view.dart';
-import '../../../constants/constants.dart';
-import '../../../requests/requests_core.dart';
+import 'package:skoller/tools.dart';
 import '../classes/assignment_info_view.dart';
 import '../classes/assignment_weight_view.dart';
 
 class TasksView extends StatefulWidget {
-  State createState() => _TasksViewState();
+  State createState() => _TasksState();
 }
 
-class _TasksViewState extends State<TasksView> {
+class _TasksState extends State<TasksView> {
   List<_TaskLikeItem> _taskItems = [];
   int _tappedIndex;
   final _refreshIndicatorKey = GlobalKey<RefreshIndicatorState>();
@@ -225,7 +225,8 @@ class _TasksViewState extends State<TasksView> {
       },
       rightBtn: Image.asset(ImageNames.rightNavImages.plus),
       callbackRight: () {
-        tappedAdd(context);
+        DropdownBanner.showBanner(text: 'hi');
+        // tappedAdd(context);
       },
       children: <Widget>[
         Expanded(

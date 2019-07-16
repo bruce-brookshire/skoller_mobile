@@ -9,10 +9,10 @@ import 'package:skoller/screens/main_app/menu/class_search_settings_modal.dart';
 
 class AddClassesView extends StatefulWidget {
   @override
-  State createState() => _AddClassesViewState();
+  State createState() => _AddClassesState();
 }
 
-class _AddClassesViewState extends State<AddClassesView> {
+class _AddClassesState extends State<AddClassesView> {
   List<SchoolClass> searchedClasses = [];
 
   Timer _currentTimer;

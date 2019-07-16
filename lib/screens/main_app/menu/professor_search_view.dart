@@ -10,10 +10,10 @@ class ProfessorSearchView extends StatefulWidget {
   ProfessorSearchView(this.callback);
 
   @override
-  State<StatefulWidget> createState() => _ProfessorSearchViewState();
+  State<StatefulWidget> createState() => _ProfessorSearchState();
 }
 
-class _ProfessorSearchViewState extends State<ProfessorSearchView> {
+class _ProfessorSearchState extends State<ProfessorSearchView> {
   final searchController = TextEditingController();
 
   List<Professor> searchedProfessors = [];

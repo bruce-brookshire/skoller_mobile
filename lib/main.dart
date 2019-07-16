@@ -14,10 +14,9 @@ void main() {
   //Allow currentTZ to cache through heuristic exploration before we need it
   TimeZoneManager.verifyTzDbActive();
 
-  PackageInfo.fromPlatform().then((info) => UIAssets.versionNumber =
-      (info.version.split('.')..removeAt(1)).join('.'));
+  PackageInfo.fromPlatform().then((info) => UIAssets.versionNumber = info.version);
 
-  // SKCacheManager.createCacheDir();
+  SKCacheManager.createCacheDir();
 }
 
 class SkollerApp extends StatefulWidget {
@@ -111,10 +110,15 @@ class _SkollerAppState extends State<SkollerApp> {
         break;
     }
 
+    print(currentState);
+
     return MaterialApp(
       builder: (context, widget) => Theme(data: currentTheme, child: widget),
       theme: currentTheme,
-      home: DropdownBanner(builder: (context) => currentWidget),
+      home: currentWidget,
+      // home: DropdownBanner(
+      //   builder: (context) => currentWidget,
+      // ),
     );
   }
 }

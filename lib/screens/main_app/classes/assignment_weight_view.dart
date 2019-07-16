@@ -1,8 +1,7 @@
 import 'package:dart_notification_center/dart_notification_center.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
-import '../../../requests/requests_core.dart';
-import '../../../constants/constants.dart';
+import 'package:skoller/tools.dart';
 import 'assignment_add_view.dart';
 import 'assignment_batch_add_view.dart';
 
@@ -12,10 +11,10 @@ class AssignmentWeightView extends StatefulWidget {
   AssignmentWeightView(this.class_id);
 
   @override
-  State createState() => _AssignmentWeightViewState();
+  State createState() => _AssignmentWeightState();
 }
 
-class _AssignmentWeightViewState extends State<AssignmentWeightView> {
+class _AssignmentWeightState extends State<AssignmentWeightView> {
   List<Weight> weights;
   Map<int, int> weightAssignmentDensity = {};
 

@@ -9,10 +9,10 @@ class UpdateInfoView extends StatefulWidget {
   UpdateInfoView(this.mods, {Key key}) : super(key: key);
 
   @override
-  State createState() => _UpdateInfoViewState();
+  State createState() => _UpdateInfoState();
 }
 
-class _UpdateInfoViewState extends State<UpdateInfoView> {
+class _UpdateInfoState extends State<UpdateInfoView> {
   @override
   Widget build(BuildContext context) {
     StudentClass parentClass = widget.mods[0].parentClass;
@@ -65,7 +65,7 @@ class _UpdateInfoViewState extends State<UpdateInfoView> {
         return '\'s due date has been changed to ${DateFormat('EEEE MMMM d').format((mod.data as DateTime))}.';
         break;
       case ModType.newAssignment:
-        return ' has been added to the assignments for this class. It is due on ${DateFormat('EEEE MMMM d').format((mod.data as Assignment).due)}.';
+        return ' has been added by a classmate. It is due on ${DateFormat('EEEE MMMM d').format((mod.data as Assignment).due)}.';
         break;
       case ModType.delete:
         return ' has been removed from the assignments for this class.';

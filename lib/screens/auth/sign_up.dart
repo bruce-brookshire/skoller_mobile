@@ -152,6 +152,8 @@ class _SignUpState extends State<SignUp> {
                                 style: TextStyle(
                                     fontSize: 15, color: SKColors.dark_gray),
                                 decoration: BoxDecoration(border: null),
+                                textCapitalization: TextCapitalization.words,
+                                autofocus: true,
                                 onChanged: verifyState,
                               ),
                             ],
@@ -187,6 +189,7 @@ class _SignUpState extends State<SignUp> {
                                 style: TextStyle(
                                     fontSize: 15, color: SKColors.dark_gray),
                                 decoration: BoxDecoration(border: null),
+                                textCapitalization: TextCapitalization.words,
                                 onChanged: verifyState,
                               ),
                             ],
@@ -224,6 +227,7 @@ class _SignUpState extends State<SignUp> {
                           placeholderStyle: TextStyle(
                               fontSize: 14, color: SKColors.text_light_gray),
                           decoration: BoxDecoration(border: null),
+                          textCapitalization: TextCapitalization.none,
                           onChanged: verifyState,
                         ),
                       ],
@@ -256,6 +260,7 @@ class _SignUpState extends State<SignUp> {
                           style: TextStyle(
                               fontSize: 15, color: SKColors.dark_gray),
                           decoration: BoxDecoration(border: null),
+                          keyboardType: TextInputType.phone,
                           onChanged: verifyState,
                         ),
                       ],

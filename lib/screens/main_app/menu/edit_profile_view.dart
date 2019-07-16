@@ -6,10 +6,10 @@ import 'package:skoller/tools.dart';
 
 class EditProfileView extends StatefulWidget {
   @override
-  State createState() => _EditProfileViewState();
+  State createState() => _EditProfileState();
 }
 
-class _EditProfileViewState extends State<EditProfileView> {
+class _EditProfileState extends State<EditProfileView> {
   final firstNameController =
       TextEditingController(text: SKUser.current.student.nameFirst);
   final lastNameController =

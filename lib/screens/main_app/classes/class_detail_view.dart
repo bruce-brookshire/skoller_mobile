@@ -6,8 +6,7 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:skoller/screens/main_app/classes/class_link_sharing_modal.dart';
 import 'package:skoller/screens/main_app/classes/classmates_view.dart';
 import 'package:skoller/screens/main_app/classes/weights_info_view.dart';
-import '../../../constants/constants.dart';
-import '../../../requests/requests_core.dart';
+import 'package:skoller/tools.dart';
 import 'assignment_info_view.dart';
 import 'assignment_weight_view.dart';
 import 'class_info_view.dart';
@@ -18,10 +17,10 @@ class ClassDetailView extends StatefulWidget {
   ClassDetailView({Key key, this.classId}) : super(key: key);
 
   @override
-  State<StatefulWidget> createState() => _ClassDetailViewState();
+  State<StatefulWidget> createState() => _ClassDetailState();
 }
 
-class _ClassDetailViewState extends State<ClassDetailView> {
+class _ClassDetailState extends State<ClassDetailView> {
   StudentClass studentClass;
   int _selectedIndex;
   final _refreshIndicatorKey = GlobalKey<RefreshIndicatorState>();
@@ -242,14 +241,13 @@ class _ClassDetailViewState extends State<ClassDetailView> {
                                 ),
                               ),
                               GestureDetector(
-                                onTapUp: (details) {
-                                  Navigator.push(
-                                      context,
-                                      CupertinoPageRoute(
-                                          builder: (context) =>
-                                              AssignmentWeightView(
-                                                  studentClass.id)));
-                                },
+                                onTapUp: (details) => Navigator.push(
+                                  context,
+                                  CupertinoPageRoute(
+                                    builder: (context) =>
+                                        AssignmentWeightView(studentClass.id),
+                                  ),
+                                ),
                                 child: Container(
                                   child: Image.asset(
                                       ImageNames.rightNavImages.plus),
@@ -284,7 +282,10 @@ class _ClassDetailViewState extends State<ClassDetailView> {
                           ),
                           SKColorPicker(
                             callback: (newColor) {
-                              studentClass.setColor(newColor);
+                              studentClass.setColor(newColor).then((response) =>
+                                  DartNotificationCenter.post(
+                                      channel:
+                                          NotificationChannels.classChanged));
                               setState(() {});
                             },
                             child: Container(
@@ -386,7 +387,7 @@ class _ClassDetailViewState extends State<ClassDetailView> {
                     ),
                     Text(
                       classmates < 4
-                          ? '${4 - classmates} classmate${classmates == 1 ? '' : 's'} away'
+                          ? '${4 - classmates} classmate${(4 - classmates) == 1 ? '' : 's'} away'
                           : '${classmates} classmate${classmates == 1 ? '' : 's'}',
                       style: TextStyle(
                           color: classmates < 4
@@ -547,10 +548,10 @@ class _SpeculateModalView extends StatefulWidget {
   _SpeculateModalView(this.speculate);
 
   @override
-  State createState() => _SpeculateModalViewState();
+  State createState() => _SpeculateModalState();
 }
 
-class _SpeculateModalViewState extends State<_SpeculateModalView> {
+class _SpeculateModalState extends State<_SpeculateModalView> {
   int selectedIndex = 0;
 
   @override

@@ -7,10 +7,10 @@ class PhoneVerificationView extends StatefulWidget {
 
   PhoneVerificationView(this.phoneNumber);
   @override
-  State createState() => _PhoneVerificationViewState();
+  State createState() => _PhoneVerificationState();
 }
 
-class _PhoneVerificationViewState extends State<PhoneVerificationView> {
+class _PhoneVerificationState extends State<PhoneVerificationView> {
   final List<TextEditingController> pinControllers = [
     TextEditingController(),
     TextEditingController(),

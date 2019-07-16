@@ -9,10 +9,10 @@ class WeightsInfoView extends StatefulWidget {
   WeightsInfoView(this.classId);
 
   @override
-  State createState() => _WeightsInfoViewState();
+  State createState() => _WeightsInfoState();
 }
 
-class _WeightsInfoViewState extends State<WeightsInfoView> {
+class _WeightsInfoState extends State<WeightsInfoView> {
   @override
   Widget build(BuildContext context) {
     final studentClass = StudentClass.currentClasses[widget.classId];
@@ -93,6 +93,8 @@ class _WeightsInfoViewState extends State<WeightsInfoView> {
     return SKNavView(
       title: studentClass.name,
       titleColor: studentClass.getColor(),
+      rightBtn: Text('Edit', style: TextStyle(color: SKColors.skoller_blue)),
+      callbackRight: () => print('edit'),
       backgroundColor: Colors.white,
       children: <Widget>[
         Expanded(

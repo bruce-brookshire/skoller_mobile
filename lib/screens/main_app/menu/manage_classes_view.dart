@@ -7,22 +7,23 @@ import 'package:skoller/screens/main_app/classes/class_info_view.dart';
 
 class ManageClassesView extends StatefulWidget {
   @override
-  State createState() => _ManageClassesViewState();
+  State createState() => _ManageClassesState();
 }
 
-class _ManageClassesViewState extends State<ManageClassesView> {
+class _ManageClassesState extends State<ManageClassesView> {
   List<StudentClass> classes = [];
+  final _refreshIndicatorKey = GlobalKey<RefreshIndicatorState>();
 
   @override
   void initState() {
     super.initState();
 
-    updateClasses();
+    fetchClasses();
 
     DartNotificationCenter.subscribe(
         observer: this,
         channel: NotificationChannels.classChanged,
-        onNotification: updateClasses);
+        onNotification: fetchClasses);
   }
 
   @override
@@ -31,7 +32,7 @@ class _ManageClassesViewState extends State<ManageClassesView> {
     DartNotificationCenter.unsubscribe(observer: this);
   }
 
-  void updateClasses([dynamic options]) async {
+  void fetchClasses([dynamic options]) {
     final newClasses = StudentClass.currentClasses.values.toList()
       ..sort((class1, class2) => class1.name.compareTo(class2.name));
 
@@ -47,38 +48,45 @@ class _ManageClassesViewState extends State<ManageClassesView> {
       title: 'My Classes',
       rightBtn: Image.asset(ImageNames.rightNavImages.add_class),
       callbackRight: () => Navigator.push(
-            context,
-            CupertinoPageRoute(
-              fullscreenDialog: true,
-              builder: (context) => AddClassesView(),
-            ),
-          ),
+        context,
+        CupertinoPageRoute(
+          fullscreenDialog: true,
+          builder: (context) => AddClassesView(),
+        ),
+      ),
       children: <Widget>[
         Expanded(
-          child: ListView.builder(
-            padding: EdgeInsets.fromLTRB(8, 6, 8, 12),
-            itemCount: classes.length,
-            itemBuilder: (context, index) => GestureDetector(
-                  onTapUp: (details) {
-                    Navigator.push(
-                      context,
-                      CupertinoPageRoute(
-                        builder: (context) => ClassInfoView(classes[index].id),
+          child: RefreshIndicator(
+            key: _refreshIndicatorKey,
+            onRefresh: () async => fetchClasses,
+            child: ListView.builder(
+              padding: EdgeInsets.fromLTRB(8, 6, 8, 12),
+              itemCount: classes.length,
+              itemBuilder: (context, index) => GestureDetector(
+                onTapUp: (details) {
+                  Navigator.push(
+                    context,
+                    CupertinoPageRoute(
+                      builder: (context) => ClassInfoView(
+                        classes[index].id,
+                        isClassesTab: false,
                       ),
-                    );
-                  },
-                  child: Container(
-                    padding: EdgeInsets.symmetric(horizontal: 4, vertical: 3),
-                    margin: EdgeInsets.symmetric(vertical: 4),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      border: Border.all(color: SKColors.border_gray),
-                      borderRadius: BorderRadius.circular(5),
-                      boxShadow: [UIAssets.boxShadow],
                     ),
-                    child: createClassCard(classes[index]),
+                  );
+                },
+                child: Container(
+                  padding: EdgeInsets.symmetric(horizontal: 4, vertical: 3),
+                  margin: EdgeInsets.symmetric(vertical: 4),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    border: Border.all(color: SKColors.border_gray),
+                    borderRadius: BorderRadius.circular(5),
+                    boxShadow: [UIAssets.boxShadow],
                   ),
+                  child: createClassCard(classes[index]),
                 ),
+              ),
+            ),
           ),
         )
       ],

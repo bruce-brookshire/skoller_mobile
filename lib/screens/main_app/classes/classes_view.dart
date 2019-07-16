@@ -9,13 +9,13 @@ import 'class_detail_view.dart';
 
 class ClassesView extends StatefulWidget {
   @override
-  State createState() => _ClassesViewState();
+  State createState() => _ClassesState();
 }
 
 typedef Widget _CardConstruct(StudentClass studentClass, int index);
 enum _SammiExplanationType { needsSetup, diy, inReview }
 
-class _ClassesViewState extends State<ClassesView> {
+class _ClassesState extends State<ClassesView> {
   List<StudentClass> classes = [];
   int selectedIndex;
   Map<int, _CardConstruct> cardConstructors;

@@ -1,9 +1,7 @@
 library requests_core;
 
-import 'package:dart_notification_center/dart_notification_center.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:intl/intl.dart';
-import 'package:skoller/constants/constants.dart';
 import 'package:time_machine/time_machine.dart';
 import '../constants/timezone_manager.dart';
 import 'package:http/http.dart' as http;
@@ -39,6 +37,8 @@ class RequestResponse<T> {
         } else {
           this.obj = constructor(context);
         }
+      } else {
+        this.obj = context;
       }
     } else {
       this.obj = context;
@@ -63,8 +63,8 @@ class JsonListMaker {
 }
 
 class SKRequests {
-  // static final String _environment = 'http://127.0.0.1:4000'; //LOCAL
-  static final String _environment = 'https://api-staging.skoller.co'; //STAGING
+  static final String _environment = 'http://127.0.0.1:4000'; //LOCAL
+  // static final String _environment = 'https://api-staging.skoller.co'; //STAGING
   // static final String _environment = 'https://api.skoller.co'; //PRODUCTION
   static final String _baseUrl = '$_environment/api/v1';
 
@@ -79,6 +79,7 @@ class SKRequests {
     _DecodableConstructor<T> construct, {
     bool cacheResult = false,
     String cachePath,
+    VoidCallback postRequestAction,
   }) async {
     //Whether or not we need to remove the request entry in the request map
     bool shouldRemove = false;
@@ -99,15 +100,15 @@ class SKRequests {
     //Remove request entry if we have ownership
     if (shouldRemove) {
       _currentRequests.remove(url);
+      if (postRequestAction != null) postRequestAction();
     }
 
     //Handle request and return future
     final result = await futureProcessor<T>(request, construct);
 
     //Cache result if we are supposed to
-    if (cacheResult && result.wasSuccessful()) {
+    if (cacheResult && result.wasSuccessful())
       SKCacheManager.writeContents(cachePath, request.body);
-    }
 
     //Return result
     return result;
@@ -238,7 +239,7 @@ class SKCacheManager {
           (contents) => JsonListMaker.convert(
             (content) => StudentClass._fromJsonObj(content,
                 shouldPersistAssignments: false),
-            json.decode(contents),
+            json.decode(contents ?? '[]'),
           ),
         )
         .then(
@@ -252,7 +253,7 @@ class SKCacheManager {
         .then(
           (contents) => JsonListMaker.convert(
             Assignment._fromJsonObj,
-            json.decode(contents),
+            json.decode(contents ?? '[]'),
           ),
         )
         .then((tasks) => Assignment.currentTasks = tasks);
@@ -262,7 +263,7 @@ class SKCacheManager {
         .then(
       (contents) => JsonListMaker.convert(
         Assignment._fromJsonObj,
-        json.decode(contents),
+        json.decode(contents ?? '[]'),
       ),
     )
         .then(
@@ -417,8 +418,6 @@ class Auth {
       notificationTime = '$utc_hour:00:00.000';
     else
       notificationTime = '0$utc_hour:00:00.000';
-
-    print(notificationTime);
 
     return SKRequests.post(
         '/users',

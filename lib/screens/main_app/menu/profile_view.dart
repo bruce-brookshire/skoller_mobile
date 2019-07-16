@@ -5,10 +5,10 @@ import 'package:skoller/screens/main_app/menu/edit_profile_view.dart';
 
 class ProfileView extends StatefulWidget {
   @override
-  State createState() => _ProfileViewState();
+  State createState() => _ProfileState();
 }
 
-class _ProfileViewState extends State<ProfileView> {
+class _ProfileState extends State<ProfileView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(

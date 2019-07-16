@@ -4,10 +4,10 @@ import 'package:skoller/tools.dart';
 
 class ChatInboxView extends StatefulWidget {
   @override
-  State createState() => _ChatInboxViewState();
+  State createState() => _ChatInboxState();
 }
 
-class _ChatInboxViewState extends State<ChatInboxView> {
+class _ChatInboxState extends State<ChatInboxView> {
   @override
   Widget build(BuildContext context) {
     List<Widget> inboxElements = InboxNotification.currentInbox

@@ -7,10 +7,10 @@ import 'package:skoller/screens/auth/phone_verification_view.dart';
 
 class LoadingView extends StatefulWidget {
   @override
-  State createState() => _LoadingViewState();
+  State createState() => _LoadingState();
 }
 
-class _LoadingViewState extends State<LoadingView> {
+class _LoadingState extends State<LoadingView> {
   bool loading = true;
 
   @override

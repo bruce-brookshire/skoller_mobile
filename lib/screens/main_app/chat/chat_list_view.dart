@@ -4,15 +4,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:skoller/screens/main_app/chat/chat_inbox_view.dart';
 import 'package:skoller/screens/main_app/chat/chat_info_view.dart';
-import '../../../requests/requests_core.dart';
-import '../../../constants/constants.dart';
+import 'package:skoller/tools.dart';
 
 class ChatListView extends StatefulWidget {
   @override
-  State createState() => _ChatListViewState();
+  State createState() => _ChatListState();
 }
 
-class _ChatListViewState extends State<ChatListView> {
+class _ChatListState extends State<ChatListView> {
   List<Chat> chats = [];
   bool unreadInbox = false;
 

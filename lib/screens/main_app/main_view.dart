@@ -10,10 +10,10 @@ import 'primary_school_view.dart';
 
 class MainView extends StatefulWidget {
   @override
-  State createState() => _MainViewState();
+  State createState() => _MainState();
 }
 
-class _MainViewState extends State<MainView> {
+class _MainState extends State<MainView> {
   bool menuShowing = false;
   bool constraintsSetup = false;
 

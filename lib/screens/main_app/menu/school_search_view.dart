@@ -7,10 +7,10 @@ import 'package:dart_notification_center/dart_notification_center.dart';
 
 class SchoolSearchView extends StatefulWidget {
   @override
-  State<StatefulWidget> createState() => _SchoolSearchViewState();
+  State<StatefulWidget> createState() => _SchoolSearchState();
 }
 
-class _SchoolSearchViewState extends State<SchoolSearchView> {
+class _SchoolSearchState extends State<SchoolSearchView> {
   final searchController = TextEditingController();
 
   List<School> searchedSchools = [];

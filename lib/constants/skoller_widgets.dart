@@ -782,10 +782,10 @@ class GradeScaleModalView extends StatefulWidget {
   GradeScaleModalView(this.studentClass);
 
   @override
-  State createState() => _GradeScaleModalViewState();
+  State createState() => _GradeScaleModalState();
 }
 
-class _GradeScaleModalViewState extends State<GradeScaleModalView> {
+class _GradeScaleModalState extends State<GradeScaleModalView> {
   int selectedIndex = 0;
 
   final scaleMapper = (List<String> scale, bool isSelected) => Column(

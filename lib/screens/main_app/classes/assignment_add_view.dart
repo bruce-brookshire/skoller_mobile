@@ -1,8 +1,7 @@
 import 'package:dart_notification_center/dart_notification_center.dart';
 import 'package:dropdown_banner/dropdown_banner.dart';
 import 'package:flutter/material.dart';
-import '../../../requests/requests_core.dart';
-import '../../../constants/constants.dart';
+import 'package:skoller/tools.dart';
 import 'package:intl/intl.dart';
 
 class AssignmentAddView extends StatefulWidget {
@@ -12,10 +11,10 @@ class AssignmentAddView extends StatefulWidget {
   AssignmentAddView(this.class_id, this.weight, {Key key}) : super(key: key);
 
   @override
-  State createState() => _AssignmentAddViewState();
+  State createState() => _AssignmentAddState();
 }
 
-class _AssignmentAddViewState extends State<AssignmentAddView> {
+class _AssignmentAddState extends State<AssignmentAddView> {
   DateTime dueDate;
 
   String assignmentName;

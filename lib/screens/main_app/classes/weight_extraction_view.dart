@@ -21,10 +21,10 @@ class WeightExtractionView extends StatefulWidget {
   WeightExtractionView(this.classId);
 
   @override
-  State createState() => _WeightExtractionViewState();
+  State createState() => _WeightExtractionState();
 }
 
-class _WeightExtractionViewState extends State<WeightExtractionView> {
+class _WeightExtractionState extends State<WeightExtractionView> {
   final pageController = PageController(initialPage: 0);
 
   StudentClass studentClass;
@@ -167,7 +167,7 @@ class _WeightExtractionViewState extends State<WeightExtractionView> {
 }
 
 class _SubviewOne extends StatefulWidget {
-  final _WeightExtractionViewState subviewParent;
+  final _WeightExtractionState subviewParent;
 
   _SubviewOne(this.subviewParent);
 
@@ -219,7 +219,7 @@ class _SubviewOneState extends State<_SubviewOne> {
 }
 
 class _SubviewTwo extends StatefulWidget {
-  final _WeightExtractionViewState subviewParent;
+  final _WeightExtractionState subviewParent;
 
   _SubviewTwo(this.subviewParent);
   @override
@@ -319,7 +319,7 @@ class _SubviewTwoState extends State<_SubviewTwo> {
 }
 
 class _SubviewThree extends StatefulWidget {
-  final _WeightExtractionViewState subviewParent;
+  final _WeightExtractionState subviewParent;
 
   _SubviewThree(this.subviewParent);
   @override

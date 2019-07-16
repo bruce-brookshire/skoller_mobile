@@ -18,7 +18,7 @@ class MenuView extends StatelessWidget {
           'Profile',
           style: TextStyle(fontWeight: FontWeight.normal, fontSize: 16),
         ),
-        'view': ProfileView(),
+        'builder': () => ProfileView(),
         'image': Image.asset(ImageNames.peopleImages.person_blue)
       }
     ],
@@ -28,7 +28,7 @@ class MenuView extends StatelessWidget {
           'Share Skoller',
           style: TextStyle(fontWeight: FontWeight.normal, fontSize: 16),
         ),
-        'view': ProfileLinkSharingView(),
+        'builder': () => ProfileLinkSharingView(),
         'image': Image.asset(ImageNames.peopleImages.people_blue)
       },
       {
@@ -36,7 +36,7 @@ class MenuView extends StatelessWidget {
           'My points',
           style: TextStyle(fontWeight: FontWeight.normal, fontSize: 16),
         ),
-        'view': MyPointsView(),
+        'builder': () => MyPointsView(),
         'image': Image.asset(ImageNames.menuImages.points)
       },
     ],
@@ -46,7 +46,7 @@ class MenuView extends StatelessWidget {
           'Reminders',
           style: TextStyle(fontWeight: FontWeight.normal, fontSize: 16),
         ),
-        'view': RemindersView(),
+        'builder': () => RemindersView(),
         'image': Image.asset(ImageNames.menuImages.reminders)
       },
       {
@@ -54,7 +54,7 @@ class MenuView extends StatelessWidget {
           'Manage classes',
           style: TextStyle(fontWeight: FontWeight.normal, fontSize: 16),
         ),
-        'view': ManageClassesView()
+        'builder': () => ManageClassesView()
       },
     ],
     [
@@ -72,7 +72,7 @@ class MenuView extends StatelessWidget {
             style: TextStyle(fontSize: 16),
           ),
         ),
-        'view': SkollerJobsView(),
+        'builder': () => SkollerJobsView(),
         'image': Image.asset(ImageNames.menuImages.briefcase)
       },
     ],
@@ -95,7 +95,7 @@ class MenuView extends StatelessWidget {
           'Tutorial',
           style: TextStyle(fontWeight: FontWeight.normal, fontSize: 16),
         ),
-        'view': ProfileView()
+        'builder': () => ProfileView()
       },
     ]
   ]
@@ -117,11 +117,11 @@ class MenuView extends StatelessWidget {
                       padding: EdgeInsets.symmetric(horizontal: 12),
                       child: GestureDetector(
                         onTapUp: (details) {
-                          if (row.containsKey('view'))
+                          if (row.containsKey('builder'))
                             DartNotificationCenter.post(
                               channel:
                                   NotificationChannels.presentViewOverTabBar,
-                              options: row['view'],
+                              options: (row['builder'] as Function)(),
                             );
                           else if (row.containsKey('action'))
                             (row['action'] as VoidCallback)();

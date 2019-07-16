@@ -6,8 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/widgets.dart';
 import 'package:intl/intl.dart';
-import '../../../constants/constants.dart';
-import '../../../requests/requests_core.dart';
+import 'package:skoller/tools.dart';
 
 class AssignmentInfoView extends StatefulWidget {
   final int assignment_id;
@@ -15,10 +14,10 @@ class AssignmentInfoView extends StatefulWidget {
   AssignmentInfoView({Key key, this.assignment_id}) : super(key: key);
 
   @override
-  State createState() => _AssignmentInfoViewState();
+  State createState() => _AssignmentInfoState();
 }
 
-class _AssignmentInfoViewState extends State<AssignmentInfoView> {
+class _AssignmentInfoState extends State<AssignmentInfoView> {
   Assignment assignment;
 
   TextEditingController postFieldController = TextEditingController(text: '');
@@ -261,7 +260,7 @@ class _AssignmentInfoViewState extends State<AssignmentInfoView> {
   @override
   Widget build(BuildContext context) {
     return SKNavView(
-      title: assignment.parentClass.name,
+      title: assignment.name,
       titleColor: assignment.parentClass.getColor(),
       children: <Widget>[
         Expanded(
@@ -305,7 +304,7 @@ class _AssignmentInfoViewState extends State<AssignmentInfoView> {
       weightDescr = '';
     } else {
       weightDescr =
-          'Worth ${NumberUtilities.formatWeightAsPercent(assignment.weight)} of your total grade';
+          '${NumberUtilities.formatWeightAsPercent(assignment.weight)} of total grade';
     }
     return Container(
       margin: EdgeInsets.all(12),
@@ -329,7 +328,7 @@ class _AssignmentInfoViewState extends State<AssignmentInfoView> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
                 Text(
-                  'Assignment details',
+                  'Details',
                   style: TextStyle(fontSize: 17),
                 ),
                 GestureDetector(
@@ -348,55 +347,75 @@ class _AssignmentInfoViewState extends State<AssignmentInfoView> {
               ],
             ),
           ),
+          // Container(
+          //   alignment: Alignment.centerLeft,
+          //   padding: EdgeInsets.fromLTRB(12, 6, 12, 1),
+          //   child: Text(
+          //     'Assignment name',
+          //     style: TextStyle(
+          //         fontWeight: FontWeight.normal,
+          //         fontSize: 12,
+          //         color: SKColors.light_gray),
+          //   ),
+          // ),
           Container(
             alignment: Alignment.centerLeft,
             margin: EdgeInsets.only(left: 12, right: 12, top: 6),
             child: Text(
-              assignment.name,
+              'Class name',
+              style: TextStyle(
+                  fontWeight: FontWeight.normal,
+                  fontSize: 12,
+                  color: SKColors.light_gray),
             ),
           ),
           Container(
-            decoration: BoxDecoration(
-                border: Border(
-                    bottom:
-                        BorderSide(color: SKColors.selected_gray, width: 1))),
             alignment: Alignment.centerLeft,
-            padding: EdgeInsets.only(bottom: 6),
-            margin: EdgeInsets.only(left: 12, right: 12, top: 1),
+            margin: EdgeInsets.only(left: 12, right: 12),
             child: Text(
-              weightDescr,
-              style: TextStyle(fontSize: 13, fontWeight: FontWeight.normal),
+              assignment.parentClass.name,
             ),
           ),
           Container(
-            decoration: BoxDecoration(
-                border: Border(
-                    bottom:
-                        BorderSide(color: SKColors.selected_gray, width: 1))),
-            margin: EdgeInsets.symmetric(horizontal: 12, vertical: 2),
-            padding: EdgeInsets.symmetric(vertical: 8),
+              decoration: BoxDecoration(
+                  border: Border(
+                      bottom:
+                          BorderSide(color: SKColors.selected_gray, width: 1))),
+              alignment: Alignment.centerLeft,
+              padding: EdgeInsets.only(bottom: 6),
+              margin: EdgeInsets.only(left: 12, right: 12, top: 1),
+              child: null),
+          Padding(
+            padding: EdgeInsets.fromLTRB(12, 8, 12, 1),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
                 Text(
-                  'Grading category:',
-                  style: TextStyle(fontWeight: FontWeight.normal),
+                  'Grading category',
+                  style: TextStyle(
+                      fontWeight: FontWeight.normal,
+                      fontSize: 12,
+                      color: SKColors.light_gray),
                 ),
                 Text(
-                  assignment.getWeightName(),
+                  'Due date',
+                  style: TextStyle(
+                      fontWeight: FontWeight.normal,
+                      fontSize: 12,
+                      color: SKColors.light_gray),
                 ),
               ],
             ),
           ),
           Container(
-            margin: EdgeInsets.only(left: 12, right: 12, bottom: 6),
-            padding: EdgeInsets.symmetric(vertical: 8),
+            margin: EdgeInsets.only(left: 12, right: 12),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
-                Text(
-                  'Due date:',
-                  style: TextStyle(fontWeight: FontWeight.normal),
+                Expanded(
+                  child: Text(
+                    assignment.getWeightName(),
+                  ),
                 ),
                 Text(
                   assignment.due == null
@@ -405,7 +424,18 @@ class _AssignmentInfoViewState extends State<AssignmentInfoView> {
                 ),
               ],
             ),
-          )
+          ),
+          Container(
+            alignment: Alignment.centerLeft,
+            padding: EdgeInsets.only(left: 12, bottom: 8),
+            child: Text(
+              weightDescr,
+              style: TextStyle(
+                  fontWeight: FontWeight.normal,
+                  fontSize: 12,
+                  color: SKColors.dark_gray),
+            ),
+          ),
         ],
       ),
     );
@@ -468,13 +498,9 @@ class _AssignmentInfoViewState extends State<AssignmentInfoView> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
                 Text(
-                  'Personal details',
+                  'Private info',
                   style: TextStyle(fontSize: 17),
                 ),
-                Text(
-                  'Private info',
-                  style: TextStyle(fontSize: 13, fontWeight: FontWeight.normal),
-                )
               ],
             ),
           ),
@@ -519,7 +545,7 @@ class _AssignmentInfoViewState extends State<AssignmentInfoView> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
                           Text(
-                            'Notes',
+                            'Assignment notes',
                             style: TextStyle(fontWeight: FontWeight.normal),
                           ),
                           Text(

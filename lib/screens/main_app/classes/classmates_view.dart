@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../constants/constants.dart';
-import '../../../requests/requests_core.dart';
+import 'package:skoller/tools.dart';
 import 'package:share/share.dart';
 
 class ClassmatesView extends StatefulWidget {
@@ -9,10 +8,10 @@ class ClassmatesView extends StatefulWidget {
   ClassmatesView(this.class_id) : super();
 
   @override
-  State createState() => _ClassmatesViewState();
+  State createState() => _ClassmatesState();
 }
 
-class _ClassmatesViewState extends State<ClassmatesView> {
+class _ClassmatesState extends State<ClassmatesView> {
   StudentClass studentClass;
 
   @override
@@ -176,6 +175,7 @@ class _ClassmatesViewState extends State<ClassmatesView> {
   @override
   Widget build(BuildContext context) {
     List<PublicStudent> students = studentClass.students ?? [];
+    final classmates = students.length;
 
     return SKNavView(
       title: studentClass.name,
@@ -206,9 +206,9 @@ class _ClassmatesViewState extends State<ClassmatesView> {
         ),
         Expanded(
           child: ListView.builder(
-            itemCount: students.length + 1,
+            itemCount: classmates < 5 ? classmates + 1 : classmates,
             itemBuilder: (context, index) {
-              if (index < students.length) {
+              if (index < classmates) {
                 final student = students[index];
                 final bool isOwnStudent =
                     student.id == SKUser.current.student.id;

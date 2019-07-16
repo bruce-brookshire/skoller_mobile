@@ -2,19 +2,21 @@ import 'package:dart_notification_center/dart_notification_center.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:skoller/screens/main_app/classes/weights_info_view.dart';
-import '../../../requests/requests_core.dart';
-import '../../../constants/constants.dart';
+import 'package:skoller/tools.dart';
+import 'class_change_request_view.dart';
 
 class ClassInfoView extends StatefulWidget {
   final int classId;
+  final bool isClassesTab;
 
-  ClassInfoView(this.classId, {Key key}) : super(key: key);
+  ClassInfoView(this.classId, {Key key, this.isClassesTab = true})
+      : super(key: key);
 
   @override
-  State createState() => _ClassInfoViewState();
+  State createState() => _ClassInfoState();
 }
 
-class _ClassInfoViewState extends State<ClassInfoView> {
+class _ClassInfoState extends State<ClassInfoView> {
   void tappedGradeScale(TapUpDetails details) async {
     StudentClass studentClass = StudentClass.currentClasses[widget.classId];
 
@@ -135,11 +137,18 @@ class _ClassInfoViewState extends State<ClassInfoView> {
         cancelText: 'Cancel',
       ),
     );
-    if (result != null && result) {
+    if (result is bool && result) {
       final bool successfullyDropped =
           await StudentClass.currentClasses[widget.classId].dropClass();
+      print(successfullyDropped);
       if (successfullyDropped) {
-        Navigator.popUntil(context, (route) => route.isFirst);
+        DartNotificationCenter.post(channel: NotificationChannels.classChanged);
+
+        if (widget.isClassesTab) {
+          Navigator.popUntil(context, (route) => route.isFirst);
+        } else {
+          Navigator.pop(context);
+        }
       }
     }
   }
@@ -171,10 +180,24 @@ class _ClassInfoViewState extends State<ClassInfoView> {
                       topRight: Radius.circular(10),
                     )),
                 child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[
                     Text(
                       'Class info',
                       style: TextStyle(fontSize: 17),
+                    ),
+                    GestureDetector(
+                      onTapUp: (details) => Navigator.push(
+                        context,
+                        CupertinoPageRoute(
+                            builder: (context) =>
+                                ClassChangeRequestView(studentClass.id)),
+                      ),
+                      child: Text(
+                        'Edit',
+                        style: TextStyle(
+                            color: SKColors.skoller_blue, fontSize: 14),
+                      ),
                     ),
                   ],
                 ),

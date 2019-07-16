@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../constants/constants.dart';
-import '../../../requests/requests_core.dart';
+import 'package:skoller/tools.dart';
 import 'package:share/share.dart';
 
 class ClassLinkSharingModal extends StatelessWidget {

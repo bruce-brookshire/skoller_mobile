@@ -5,10 +5,10 @@ import './menu/school_search_view.dart';
 
 class PrimarySchoolView extends StatefulWidget {
   @override
-  State<StatefulWidget> createState() => _PrimarySchoolViewState();
+  State<StatefulWidget> createState() => _PrimarySchoolState();
 }
 
-class _PrimarySchoolViewState extends State<PrimarySchoolView> {
+class _PrimarySchoolState extends State<PrimarySchoolView> {
   List<School> eligibleSchools;
   int selectedSchoolId;
 
