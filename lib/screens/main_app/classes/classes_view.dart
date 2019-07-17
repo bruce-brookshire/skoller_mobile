@@ -327,7 +327,7 @@ class _ClassesState extends State<ClassesView> {
                     style: TextStyle(
                         color: needsAssignments
                             ? SKColors.dark_gray
-                            : SKColors.skoller_blue,
+                            : SKColors.warning_red,
                         fontSize: 14),
                   )
                 ],

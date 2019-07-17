@@ -227,7 +227,7 @@ class _AssignmentWeightState extends State<AssignmentWeightView> {
                                                       fontWeight:
                                                           FontWeight.normal,
                                                       color:
-                                                          SKColors.skoller_blue,
+                                                          SKColors.warning_red,
                                                     ),
                                                   )
                                                 : null,

@@ -14,3 +14,5 @@ typedef void AppStateCallback(AppState newValue);
 typedef void IntCallback(int index);
 
 typedef void ProfessorCallback(Professor professor);
+
+typedef dynamic DynamicCallback();

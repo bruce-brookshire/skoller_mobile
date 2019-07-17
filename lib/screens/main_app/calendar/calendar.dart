@@ -437,17 +437,10 @@ class _CalendarState extends State<CalendarView> {
                 children: [
                   Container(
                     alignment: Alignment.center,
-                    child: Text(
-                      'Schedule',
-                      style: TextStyle(fontSize: 17),
-                    ),
-                  ),
-                  Container(
-                    alignment: Alignment.center,
                     padding: EdgeInsets.only(bottom: 12),
                     child: Text(
-                      DateFormat('MMMM d').format(dateAssignments.first.due),
-                      style: TextStyle(fontWeight: FontWeight.normal),
+                      DateFormat('EEEE, MMMM d').format(dateAssignments.first.due),
+                      style: TextStyle(fontSize: 17),
                     ),
                   ),
                   ...generateAssignmentCells(context, dateAssignments),
@@ -506,14 +499,14 @@ class _CalendarState extends State<CalendarView> {
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: <Widget>[
                     Text(
-                      assignment.parentClass.name,
+                      assignment.name,
                       style: TextStyle(
                         color: assignment.parentClass.getColor(),
                         fontSize: 16,
                       ),
                     ),
                     Text(
-                      assignment.name,
+                      assignment.parentClass.name,
                       style: TextStyle(
                           fontSize: 13, fontWeight: FontWeight.normal),
                     )

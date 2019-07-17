@@ -20,7 +20,28 @@ class _SignUpState extends State<SignUp> {
   final emailController = TextEditingController();
   final phoneController = TextEditingController();
 
+  final firstNameFocus = FocusNode();
+  final lastNameFocus = FocusNode();
+  final emailFocus = FocusNode();
+  final phoneFocus = FocusNode();
+
   bool validState = false;
+
+  @override
+  void dispose() {
+    [
+      firstNameController,
+      lastNameController,
+      emailController,
+      phoneController,
+      firstNameFocus,
+      lastNameFocus,
+      emailFocus,
+      phoneFocus,
+    ].forEach((obj) => (obj as dynamic).dispose());
+
+    super.dispose();
+  }
 
   void verifyState(String _) {
     final firstName = firstNameController.text.trim();
@@ -82,264 +103,290 @@ class _SignUpState extends State<SignUp> {
     });
   }
 
+  double dist;
+
   @override
   Widget build(BuildContext context) => Scaffold(
         resizeToAvoidBottomInset: true,
         body: Container(
           child: SafeArea(
             child: Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: <Widget>[
-                  Spacer(
-                    flex: 2,
-                  ),
-                  Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 24),
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      children: <Widget>[
-                        Text('Sign up', style: TextStyle(fontSize: 28)),
-                        Padding(
-                          padding: EdgeInsets.only(bottom: 4, left: 4),
-                          child: Text(
-                            '(its free!)',
-                            style: TextStyle(
-                                fontSize: 14,
-                                fontWeight: FontWeight.normal,
-                                color: SKColors.light_gray),
-                          ),
-                        ),
-                        Spacer(
-                          flex: 2,
-                        ),
-                        Image.asset(ImageNames.signUpImages.activities),
-                        Spacer(
-                          flex: 5,
-                        ),
-                      ],
-                    ),
-                  ),
-                  Row(
-                    children: <Widget>[
-                      Expanded(
-                        child: Container(
-                          margin: EdgeInsets.only(
-                              right: 4, bottom: 6, top: 24, left: 24),
-                          padding:
-                              EdgeInsets.symmetric(vertical: 4, horizontal: 8),
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(5),
-                            border: Border.all(color: SKColors.border_gray),
-                            boxShadow: [UIAssets.boxShadow],
-                          ),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            mainAxisSize: MainAxisSize.min,
-                            children: <Widget>[
-                              Text(
-                                'First name',
-                                style: TextStyle(
-                                    color: SKColors.skoller_blue,
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.normal),
-                              ),
-                              CupertinoTextField(
-                                padding: EdgeInsets.all(1),
-                                controller: firstNameController,
-                                style: TextStyle(
-                                    fontSize: 15, color: SKColors.dark_gray),
-                                decoration: BoxDecoration(border: null),
-                                textCapitalization: TextCapitalization.words,
-                                autofocus: true,
-                                onChanged: verifyState,
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                      Expanded(
-                        child: Container(
-                          margin: EdgeInsets.only(
-                              left: 4, bottom: 6, top: 24, right: 24),
-                          padding:
-                              EdgeInsets.symmetric(vertical: 4, horizontal: 8),
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(5),
-                            border: Border.all(color: SKColors.border_gray),
-                            boxShadow: [UIAssets.boxShadow],
-                          ),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            mainAxisSize: MainAxisSize.min,
-                            children: <Widget>[
-                              Text(
-                                'Last name',
-                                style: TextStyle(
-                                    color: SKColors.skoller_blue,
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.normal),
-                              ),
-                              CupertinoTextField(
-                                padding: EdgeInsets.all(1),
-                                controller: lastNameController,
-                                style: TextStyle(
-                                    fontSize: 15, color: SKColors.dark_gray),
-                                decoration: BoxDecoration(border: null),
-                                textCapitalization: TextCapitalization.words,
-                                onChanged: verifyState,
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  Container(
-                    margin: EdgeInsets.symmetric(vertical: 6, horizontal: 24),
-                    padding: EdgeInsets.symmetric(vertical: 4, horizontal: 8),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(5),
-                      border: Border.all(color: SKColors.border_gray),
-                      boxShadow: [UIAssets.boxShadow],
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisSize: MainAxisSize.min,
-                      children: <Widget>[
-                        Text(
-                          'Email',
-                          style: TextStyle(
-                              color: SKColors.skoller_blue,
-                              fontSize: 12,
-                              fontWeight: FontWeight.normal),
-                        ),
-                        CupertinoTextField(
-                          padding: EdgeInsets.all(1),
-                          controller: emailController,
-                          style: TextStyle(
-                              fontSize: 15, color: SKColors.dark_gray),
-                          placeholder: 'School email recommended',
-                          placeholderStyle: TextStyle(
-                              fontSize: 14, color: SKColors.text_light_gray),
-                          decoration: BoxDecoration(border: null),
-                          textCapitalization: TextCapitalization.none,
-                          onChanged: verifyState,
-                        ),
-                      ],
-                    ),
-                  ),
-                  Container(
-                    margin: EdgeInsets.symmetric(vertical: 6, horizontal: 24),
-                    padding: EdgeInsets.symmetric(vertical: 4, horizontal: 8),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(5),
-                      border: Border.all(color: SKColors.border_gray),
-                      boxShadow: [UIAssets.boxShadow],
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisSize: MainAxisSize.min,
-                      children: <Widget>[
-                        Text(
-                          'Phone',
-                          style: TextStyle(
-                              color: SKColors.skoller_blue,
-                              fontSize: 12,
-                              fontWeight: FontWeight.normal),
-                        ),
-                        CupertinoTextField(
-                          padding: EdgeInsets.all(1),
-                          controller: phoneController,
-                          inputFormatters: [USNumberTextInputFormatter()],
-                          style: TextStyle(
-                              fontSize: 15, color: SKColors.dark_gray),
-                          decoration: BoxDecoration(border: null),
-                          keyboardType: TextInputType.phone,
-                          onChanged: verifyState,
-                        ),
-                      ],
-                    ),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.only(top: 16),
-                    child: GestureDetector(
-                      onTapUp: (details) async {
-                        final url = 'https://skoller.co/useragreement';
+              child: GestureDetector(
+                behavior: HitTestBehavior.opaque,
+                onVerticalDragStart: (details) =>
+                    dist = details.localPosition.dy,
+                onVerticalDragCancel: () => dist = null,
+                onVerticalDragEnd: (details) => dist = null,
+                onVerticalDragUpdate: (details) {
+                  if (dist != null && details.localPosition.dy - dist > 30) {
+                    [
+                      firstNameFocus,
+                      lastNameFocus,
+                      emailFocus,
+                      phoneFocus,
+                    ].forEach((node) => node.hasFocus ? node.unfocus() : null);
 
-                        if (await canLaunch(url)) {
-                          await launch(url);
-                        }
-                      },
-                      child: Text.rich(
-                        TextSpan(
-                          text: 'By signing up you agree to our ',
-                          style: TextStyle(
-                              fontWeight: FontWeight.normal,
-                              fontSize: 12,
-                              color: SKColors.light_gray),
-                          children: [
-                            TextSpan(
-                                text: 'User Agreement',
-                                style: TextStyle(color: SKColors.skoller_blue))
-                          ],
-                        ),
-                        textAlign: TextAlign.center,
-                      ),
+                    dist = null;
+                  }
+                },
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: <Widget>[
+                    Spacer(
+                      flex: 2,
                     ),
-                  ),
-                  Spacer(
-                    flex: 3,
-                  ),
-                  validState
-                      ? GestureDetector(
-                          onTapUp: tappedSignUp,
-                          child: Container(
-                            alignment: Alignment.center,
-                            color: SKColors.skoller_blue,
-                            padding: EdgeInsets.symmetric(vertical: 12),
+                    Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 24),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: <Widget>[
+                          Text('Sign up', style: TextStyle(fontSize: 28)),
+                          Padding(
+                            padding: EdgeInsets.only(bottom: 4, left: 4),
                             child: Text(
-                              'Sign up',
-                              style: TextStyle(color: Colors.white),
+                              '(its free!)',
+                              style: TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.normal,
+                                  color: SKColors.light_gray),
                             ),
                           ),
-                        )
-                      : Container(
-                          decoration: BoxDecoration(color: Colors.white),
-                          padding: EdgeInsets.symmetric(
-                              horizontal: 16, vertical: 12),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: <Widget>[
-                              Text(
-                                'Already have an account?',
-                                style: TextStyle(color: SKColors.dark_gray),
-                              ),
-                              GestureDetector(
-                                onTapUp: (details) {
-                                  Navigator.pushReplacement(
-                                    context,
-                                    CupertinoPageRoute(
-                                      builder: (context) => SignIn(),
-                                    ),
-                                  );
-                                },
-                                child: Text(
-                                  ' Log In',
+                          Spacer(
+                            flex: 2,
+                          ),
+                          Image.asset(ImageNames.signUpImages.activities),
+                          Spacer(
+                            flex: 5,
+                          ),
+                        ],
+                      ),
+                    ),
+                    Row(
+                      children: <Widget>[
+                        Expanded(
+                          child: Container(
+                            margin: EdgeInsets.only(
+                                right: 4, bottom: 6, top: 24, left: 24),
+                            padding: EdgeInsets.symmetric(
+                                vertical: 4, horizontal: 8),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(5),
+                              border: Border.all(color: SKColors.border_gray),
+                              boxShadow: [UIAssets.boxShadow],
+                            ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisSize: MainAxisSize.min,
+                              children: <Widget>[
+                                Text(
+                                  'First name',
                                   style: TextStyle(
                                       color: SKColors.skoller_blue,
-                                      fontWeight: FontWeight.bold),
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.normal),
                                 ),
-                              ),
-                            ],
+                                CupertinoTextField(
+                                  padding: EdgeInsets.all(1),
+                                  controller: firstNameController,
+                                  style: TextStyle(
+                                      fontSize: 15, color: SKColors.dark_gray),
+                                  decoration: BoxDecoration(border: null),
+                                  textCapitalization: TextCapitalization.words,
+                                  autofocus: true,
+                                  onChanged: verifyState,
+                                  focusNode: firstNameFocus,
+                                ),
+                              ],
+                            ),
                           ),
                         ),
-                ],
+                        Expanded(
+                          child: Container(
+                            margin: EdgeInsets.only(
+                                left: 4, bottom: 6, top: 24, right: 24),
+                            padding: EdgeInsets.symmetric(
+                                vertical: 4, horizontal: 8),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(5),
+                              border: Border.all(color: SKColors.border_gray),
+                              boxShadow: [UIAssets.boxShadow],
+                            ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisSize: MainAxisSize.min,
+                              children: <Widget>[
+                                Text(
+                                  'Last name',
+                                  style: TextStyle(
+                                      color: SKColors.skoller_blue,
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.normal),
+                                ),
+                                CupertinoTextField(
+                                  padding: EdgeInsets.all(1),
+                                  controller: lastNameController,
+                                  style: TextStyle(
+                                      fontSize: 15, color: SKColors.dark_gray),
+                                  decoration: BoxDecoration(border: null),
+                                  textCapitalization: TextCapitalization.words,
+                                  onChanged: verifyState,
+                                  focusNode: lastNameFocus,
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    Container(
+                      margin: EdgeInsets.symmetric(vertical: 6, horizontal: 24),
+                      padding: EdgeInsets.symmetric(vertical: 4, horizontal: 8),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(5),
+                        border: Border.all(color: SKColors.border_gray),
+                        boxShadow: [UIAssets.boxShadow],
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisSize: MainAxisSize.min,
+                        children: <Widget>[
+                          Text(
+                            'Email',
+                            style: TextStyle(
+                                color: SKColors.skoller_blue,
+                                fontSize: 12,
+                                fontWeight: FontWeight.normal),
+                          ),
+                          CupertinoTextField(
+                            padding: EdgeInsets.all(1),
+                            controller: emailController,
+                            style: TextStyle(
+                                fontSize: 15, color: SKColors.dark_gray),
+                            placeholder: 'School email recommended',
+                            placeholderStyle: TextStyle(
+                                fontSize: 14, color: SKColors.text_light_gray),
+                            decoration: BoxDecoration(border: null),
+                            textCapitalization: TextCapitalization.none,
+                            onChanged: verifyState,
+                            focusNode: emailFocus,
+                          ),
+                        ],
+                      ),
+                    ),
+                    Container(
+                      margin: EdgeInsets.symmetric(vertical: 6, horizontal: 24),
+                      padding: EdgeInsets.symmetric(vertical: 4, horizontal: 8),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(5),
+                        border: Border.all(color: SKColors.border_gray),
+                        boxShadow: [UIAssets.boxShadow],
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisSize: MainAxisSize.min,
+                        children: <Widget>[
+                          Text(
+                            'Phone',
+                            style: TextStyle(
+                                color: SKColors.skoller_blue,
+                                fontSize: 12,
+                                fontWeight: FontWeight.normal),
+                          ),
+                          CupertinoTextField(
+                            padding: EdgeInsets.all(1),
+                            controller: phoneController,
+                            inputFormatters: [USNumberTextInputFormatter()],
+                            style: TextStyle(
+                                fontSize: 15, color: SKColors.dark_gray),
+                            decoration: BoxDecoration(border: null),
+                            keyboardType: TextInputType.phone,
+                            onChanged: verifyState,
+                            focusNode: phoneFocus,
+                          ),
+                        ],
+                      ),
+                    ),
+                    Padding(
+                      padding: EdgeInsets.only(top: 16),
+                      child: GestureDetector(
+                        onTapUp: (details) async {
+                          final url = 'https://skoller.co/useragreement';
+
+                          if (await canLaunch(url)) {
+                            await launch(url);
+                          }
+                        },
+                        child: Text.rich(
+                          TextSpan(
+                            text: 'By signing up you agree to our ',
+                            style: TextStyle(
+                                fontWeight: FontWeight.normal,
+                                fontSize: 12,
+                                color: SKColors.light_gray),
+                            children: [
+                              TextSpan(
+                                  text: 'User Agreement',
+                                  style:
+                                      TextStyle(color: SKColors.skoller_blue))
+                            ],
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                    ),
+                    Spacer(
+                      flex: 3,
+                    ),
+                    validState
+                        ? GestureDetector(
+                            onTapUp: tappedSignUp,
+                            child: Container(
+                              alignment: Alignment.center,
+                              color: SKColors.skoller_blue,
+                              padding: EdgeInsets.symmetric(vertical: 12),
+                              child: Text(
+                                'Sign up',
+                                style: TextStyle(color: Colors.white),
+                              ),
+                            ),
+                          )
+                        : Container(
+                            decoration: BoxDecoration(color: Colors.white),
+                            padding: EdgeInsets.symmetric(
+                                horizontal: 16, vertical: 12),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: <Widget>[
+                                Text(
+                                  'Already have an account?',
+                                  style: TextStyle(color: SKColors.dark_gray),
+                                ),
+                                GestureDetector(
+                                  onTapUp: (details) {
+                                    Navigator.pushReplacement(
+                                      context,
+                                      CupertinoPageRoute(
+                                        builder: (context) => SignIn(),
+                                      ),
+                                    );
+                                  },
+                                  child: Text(
+                                    ' Log In',
+                                    style: TextStyle(
+                                        color: SKColors.skoller_blue,
+                                        fontWeight: FontWeight.bold),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                  ],
+                ),
               ),
             ),
           ),

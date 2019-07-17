@@ -91,7 +91,8 @@ class SKUser {
 
   Future<RequestResponse> checkEmailDomain() {
     final emailDomain = email.split('@')[1];
-    return SKRequests.get('/email_domains/$emailDomain/check', School._fromJsonObj);
+    return SKRequests.get(
+        '/email_domains/$emailDomain/check', School._fromJsonObj);
   }
 }
 
@@ -128,12 +129,22 @@ class Student {
   }
 
   Student._fromJson(Map content) {
-    final school_list =
+    schools =
         JsonListMaker.convert(School._fromJsonObj, content['schools']) ?? [];
     School.currentSchools = {};
 
-    for (final school in school_list) {
+    for (final school in schools) {
       School.currentSchools[school.id] = school;
+    }
+
+    primarySchool = content['primary_school'] == null
+        ? null
+        : School._fromJsonObj(
+            content['primary_school'],
+          );
+
+    if (primarySchool != null) {
+      School.currentSchools[primarySchool.id] = primarySchool;
     }
 
     id = content['id'];
@@ -144,7 +155,6 @@ class Student {
     isVerified = content['is_verified'];
     points = content['points'];
     gradYear = content['grad_year'];
-    schools = school_list;
     bio = content['bio'];
     organizations = content['organization'];
     enrollmentLink = content['enrollment_link'];

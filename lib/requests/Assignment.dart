@@ -25,7 +25,7 @@ class Assignment {
   List<AssignmentChat> posts;
 
   Future configureDateTimeOffset() async {
-    if (!_dueDateShifted && due != null) {
+    if (!_dueDateShifted && due != null && parentClass.getSchool() != null) {
       _dueDateShifted = true;
 
       due = await TimeZoneManager.createLocalRelativeAssignmentDueDate(

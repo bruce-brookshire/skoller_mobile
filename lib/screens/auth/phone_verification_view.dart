@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/services.dart';
 import 'package:skoller/tools.dart';
 
 class PhoneVerificationView extends StatefulWidget {
@@ -58,8 +59,12 @@ class _PhoneVerificationState extends State<PhoneVerificationView> {
       } else {
         pinFocusNodes[currentIndex + 2].requestFocus();
       }
-    } else if (text.length > 0) {
-      pinControllers[index].text = text[0];
+    } else if (text.length == 5 && index == 0) {
+      while (index < 5) {
+        pinControllers[index].text = text[index];
+        index++;
+      }
+      checkPinValidity();
     }
   }
 
@@ -143,26 +148,36 @@ class _PhoneVerificationState extends State<PhoneVerificationView> {
                       width: 24,
                       height: 24,
                       child: CircularProgressIndicator()))
-              : Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 24, vertical: 24),
-                  child: Row(children: List.generate(5, createPinField)),
-                ),
-          ...errorMsg != null
-              ? [
-                  Padding(
-                    padding: EdgeInsets.only(bottom: 8),
-                    child: Text(
-                      errorMsg,
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        color: SKColors.warning_red,
-                        fontSize: 13,
-                        fontWeight: FontWeight.normal,
-                      ),
+              : GestureDetector(
+                  onTapDown: (details) {
+                    Clipboard.getData('text/plain').then((response) {
+                      final code = response.text;
+                      if (code.length == 5 && int.tryParse(code) != null) {
+                        pinControllers[0].text = code;
+                        pinFieldChanged(0);
+                      }
+                    });
+                  },
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 24, vertical: 24),
+                    child: Row(
+                      children: List.generate(5, createPinField),
                     ),
                   ),
-                ]
-              : []
+                ),
+          if (errorMsg != null)
+            Padding(
+              padding: EdgeInsets.only(bottom: 8),
+              child: Text(
+                errorMsg,
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  color: SKColors.warning_red,
+                  fontSize: 13,
+                  fontWeight: FontWeight.normal,
+                ),
+              ),
+            ),
         ],
       ),
     );
@@ -177,13 +192,15 @@ class _PhoneVerificationState extends State<PhoneVerificationView> {
     });
     return Expanded(
       child: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 8),
+        padding: EdgeInsets.symmetric(horizontal: 6),
         child: CupertinoTextField(
           autofocus: true,
           onChanged: (String newContent) => pinFieldChanged(index),
           controller: pinControllers[index],
           focusNode: pinFocusNodes[index],
           textAlign: TextAlign.center,
+          keyboardType: TextInputType.number,
+          cursorColor: SKColors.skoller_blue,
           decoration: BoxDecoration(
             border: Border(
               bottom: BorderSide(color: SKColors.skoller_blue),

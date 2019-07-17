@@ -46,6 +46,10 @@ class _MainState extends State<MainView> {
       onNotification: presentWidgetOverMainView,
     );
 
+    Mod.fetchMods();
+    Assignment.getAssignments();
+    Chat.getStudentChats();
+
     super.initState();
   }
 

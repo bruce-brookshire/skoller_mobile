@@ -225,8 +225,7 @@ class _TasksState extends State<TasksView> {
       },
       rightBtn: Image.asset(ImageNames.rightNavImages.plus),
       callbackRight: () {
-        DropdownBanner.showBanner(text: 'hi');
-        // tappedAdd(context);
+        tappedAdd(context);
       },
       children: <Widget>[
         Expanded(
@@ -303,7 +302,7 @@ class _TasksState extends State<TasksView> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
                   Text(
-                    task.parentClass.name,
+                    task.name,
                     style: TextStyle(
                         color: task.parentClass.getColor(),
                         fontWeight: FontWeight.bold,
@@ -321,7 +320,7 @@ class _TasksState extends State<TasksView> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
                 Text(
-                  task.name,
+                  task.parentClass?.name ?? '',
                   style: TextStyle(fontSize: 15, fontWeight: FontWeight.normal),
                 ),
                 Text(
@@ -385,7 +384,7 @@ class _TasksState extends State<TasksView> {
                 children: <Widget>[
                   Expanded(
                     child: Text(
-                      mod.parentClass.name,
+                      mod.data.name,
                       style: TextStyle(
                           color: mod.parentClass.getColor(),
                           fontWeight: FontWeight.bold,
@@ -397,7 +396,7 @@ class _TasksState extends State<TasksView> {
                     style: TextStyle(
                       fontSize: 13,
                       fontWeight: FontWeight.normal,
-                      color: SKColors.skoller_blue,
+                      color: SKColors.warning_red,
                     ),
                   ),
                 ],
@@ -418,7 +417,7 @@ class _TasksState extends State<TasksView> {
                 ),
                 Expanded(
                   child: Text(
-                    mod.data.name,
+                    mod.parentClass?.name ?? '',
                     style:
                         TextStyle(fontSize: 15, fontWeight: FontWeight.normal),
                   ),

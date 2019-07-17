@@ -670,12 +670,15 @@ class SKAlertDialog extends StatelessWidget {
 
   final Widget child;
 
+  final DynamicCallback getResults;
+
   SKAlertDialog({
     @required this.title,
     this.subTitle,
     this.child,
     this.confirmText,
     this.cancelText,
+    this.getResults,
   });
 
   @override
@@ -688,6 +691,7 @@ class SKAlertDialog extends StatelessWidget {
         child: Text(
           title,
           textAlign: TextAlign.center,
+          style: TextStyle(fontSize: 16),
         ),
       ),
     );
@@ -695,11 +699,11 @@ class SKAlertDialog extends StatelessWidget {
     if (subTitle != null) {
       children.add(
         Padding(
-          padding: EdgeInsets.all(4),
+          padding: EdgeInsets.symmetric(vertical: 4, horizontal: 12),
           child: Text(
             subTitle,
             textAlign: TextAlign.center,
-            style: TextStyle(fontWeight: FontWeight.normal, fontSize: 14),
+            style: TextStyle(fontWeight: FontWeight.normal, fontSize: 12, color: SKColors.light_gray),
           ),
         ),
       );
@@ -709,8 +713,8 @@ class SKAlertDialog extends StatelessWidget {
       children.add(
         Container(
           child: null,
-          margin: EdgeInsets.fromLTRB(16, 4, 16, 12),
-          height: 1.25,
+          margin: EdgeInsets.only(top: 4, bottom: 12),
+          height: 1,
           color: SKColors.border_gray,
         ),
       );
@@ -727,8 +731,15 @@ class SKAlertDialog extends StatelessWidget {
               onTapUp: (details) => Navigator.pop(context, false),
               child: Container(
                 decoration: BoxDecoration(
-                  borderRadius: BorderRadius.only(
-                    bottomLeft: Radius.circular(10),
+                  // borderRadius: BorderRadius.only(
+                  //   bottomLeft: Radius.circular(0),
+                  //   bottomRight: Radius.circular(0),
+                  //   topLeft: Radius.circular(0),
+                  //   topRight: Radius.circular(0),
+                  // ),
+                  border: Border(
+                    right: BorderSide(color: SKColors.border_gray, width: 0.5),
+                    top: BorderSide(color: SKColors.border_gray, width: 1),
                   ),
                 ),
                 padding: EdgeInsets.symmetric(vertical: 12),
@@ -744,11 +755,18 @@ class SKAlertDialog extends StatelessWidget {
           ),
           Expanded(
             child: GestureDetector(
-              onTapUp: (details) => Navigator.pop(context, true),
+              onTapUp: (details) => Navigator.pop(
+                context,
+                getResults == null ? true : getResults(),
+              ),
               child: Container(
                 decoration: BoxDecoration(
-                  borderRadius: BorderRadius.only(
-                    bottomRight: Radius.circular(10),
+                  // borderRadius: BorderRadius.only(
+                  //   bottomRight: Radius.circular(10),
+                  // ),
+                  border: Border(
+                    left: BorderSide(color: SKColors.border_gray, width: 0.5),
+                    top: BorderSide(color: SKColors.border_gray, width: 1),
                   ),
                 ),
                 padding: EdgeInsets.symmetric(vertical: 12),
