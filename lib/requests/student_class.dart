@@ -332,7 +332,7 @@ class StudentClass {
         .then((response) => response.wasSuccessful());
   }
 
-  Future<bool> changeRequest(
+  Future<bool> classChangeRequest(
       {TimeOfDay meetTime,
       String meetDays,
       String name,
@@ -352,12 +352,17 @@ class StudentClass {
     };
 
     body.removeWhere((k, v) => v == null);
-
     if (body.length == 1) return Future.value(true);
 
-    print(body);
-
     return SKRequests.post('/classes/$id/changes/400', {'data': body}, null)
+        .then((response) => response.wasSuccessful());
+  }
+
+  Future<bool> weightChangeRequest(bool isPoints, List<Map> weights) async {
+    final body = weights.fold<Map<String, num>>(
+        Map(), (c, e) => c..[e['name']] = e['value']);
+    print(body);
+    return SKRequests.post('/classes/$id/changes/200', {'data': body}, null)
         .then((response) => response.wasSuccessful());
   }
 
@@ -432,10 +437,6 @@ class StudentClass {
       content['is_notifications'],
     );
     StudentClass.currentClasses[studentClass.id] = studentClass;
-
-    print(studentClass.name);
-    print(studentClass.meetTime);
-    print(content['meet_start_time']);
 
     return studentClass
       ..assignments.forEach((a) => a.configureDateTimeOffset());

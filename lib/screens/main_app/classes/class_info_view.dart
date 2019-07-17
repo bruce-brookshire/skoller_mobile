@@ -190,6 +190,7 @@ class _ClassInfoState extends State<ClassInfoView> {
                       onTapUp: (details) => Navigator.push(
                         context,
                         CupertinoPageRoute(
+                          fullscreenDialog: true,
                             builder: (context) =>
                                 ClassChangeRequestView(studentClass.id)),
                       ),

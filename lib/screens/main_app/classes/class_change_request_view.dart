@@ -100,7 +100,7 @@ class _ClassChangeRequestState extends State<ClassChangeRequestView> {
     final loader = SKLoadingScreen.fadeIn(context);
 
     studentClass
-        .changeRequest(
+        .classChangeRequest(
       name: name == studentClass.name ? null : name,
       subject: subject == studentClass.subject ? null : subject,
       code: code == studentClass.code ? null : code,
@@ -222,6 +222,7 @@ class _ClassChangeRequestState extends State<ClassChangeRequestView> {
       title: studentClass.name,
       titleColor: studentClass.getColor(),
       backgroundColor: SKColors.background_gray,
+      leftBtn: Image.asset(ImageNames.navArrowImages.down),
       children: <Widget>[
         Container(
           margin: EdgeInsets.all(16),

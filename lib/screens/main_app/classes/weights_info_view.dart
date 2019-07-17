@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:skoller/screens/main_app/classes/weights_change_request_view.dart';
 import 'package:skoller/tools.dart';
 import 'assignment_weight_view.dart';
 
@@ -94,7 +95,13 @@ class _WeightsInfoState extends State<WeightsInfoView> {
       title: studentClass.name,
       titleColor: studentClass.getColor(),
       rightBtn: Text('Edit', style: TextStyle(color: SKColors.skoller_blue)),
-      callbackRight: () => print('edit'),
+      callbackRight: () => Navigator.push(
+        context,
+        CupertinoPageRoute(
+          builder: (context) => WeightsChangeRequestView(widget.classId),
+          fullscreenDialog: true,
+        ),
+      ),
       backgroundColor: Colors.white,
       children: <Widget>[
         Expanded(
