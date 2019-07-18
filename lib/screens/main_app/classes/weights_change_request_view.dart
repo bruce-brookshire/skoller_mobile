@@ -46,7 +46,7 @@ class _WeightsChangeRequestState extends State<WeightsChangeRequestView> {
 
       if (name != '' &&
           value != '' &&
-          int.parse(value, onError: (str) => null) != null) {
+          int.tryParse(value) != null) {
         setState(() {
           weights[weightIndex]['name'] = name;
           weights[weightIndex]['value'] = int.parse(value);
@@ -68,7 +68,7 @@ class _WeightsChangeRequestState extends State<WeightsChangeRequestView> {
 
       if (name != '' &&
           value != '' &&
-          int.parse(value, onError: (str) => null) != null) {
+          int.tryParse(value) != null) {
         setState(
           () => weights.add({
             'name': name,

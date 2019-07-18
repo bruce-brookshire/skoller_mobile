@@ -354,7 +354,7 @@ class _SubviewThreeState extends State<_SubviewThree> {
 
       if (name != '' &&
           value != '' &&
-          int.parse(value, onError: (str) => null) != null) {
+          int.tryParse(value) != null) {
         setState(() {
           widget.subviewParent.state.weights[weightIndex]['name'] = name;
           widget.subviewParent.state.weights[weightIndex]['value'] =
@@ -377,7 +377,7 @@ class _SubviewThreeState extends State<_SubviewThree> {
 
       if (name != '' &&
           value != '' &&
-          int.parse(value, onError: (str) => null) != null) {
+          int.tryParse(value) != null) {
         setState(
           () => widget.subviewParent.state.weights.add(
             {

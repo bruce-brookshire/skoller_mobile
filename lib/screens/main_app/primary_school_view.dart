@@ -35,7 +35,7 @@ class _PrimarySchoolState extends State<PrimarySchoolView> {
   void tappedSearch(TapUpDetails details) async {
     await Navigator.push(
       context,
-      SKNavOverlayRoute(builder: (context) => SchoolSearchView()),
+      SKNavFadeUpRoute(builder: (context) => SchoolSearchView()),
     );
 
     if (SKUser.current.student.primarySchool != null) {

@@ -211,8 +211,13 @@ class MenuView extends StatelessWidget {
                       ),
                     ],
                   ),
-                  ...menuOptions,
-                  Spacer(),
+                  Expanded(
+                    child: ListView(
+                      physics: ClampingScrollPhysics(),
+                      children: menuOptions,
+                    ),
+                  ),
+
                   Text(
                     'v${UIAssets.versionNumber ?? '-'}',
                     textAlign: TextAlign.center,

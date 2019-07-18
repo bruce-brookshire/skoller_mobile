@@ -290,10 +290,19 @@ class _AddClassesState extends State<AddClassesView> {
   }
 
   void tappedAddClass() {
-    showDialog(
-        context: context,
-        builder: (context) =>
-            CreateClassModal(activePeriod, searchController.text.trim()));
+    Navigator.push(
+      context,
+      SKNavOverlayRoute(
+        builder: (context) => CreateClassModal(
+          activePeriod,
+          searchController.text.trim(),
+        ),
+      ),
+    );
+    // showDialog(
+    //     context: context,
+    //     builder: (context) =>
+    //         );
   }
 
   @override
@@ -336,20 +345,22 @@ class _AddClassesState extends State<AddClassesView> {
                                     child: Image.asset(
                                         ImageNames.sammiImages.shocked),
                                   ),
-                                  Text.rich(
-                                    TextSpan(
-                                      text: 'Can\'t find your class?',
-                                      children: [
-                                        TextSpan(
-                                          text: ' Tap to add it!',
-                                          style: TextStyle(
-                                            color: SKColors.skoller_blue,
-                                          ),
-                                        )
-                                      ],
+                                  Expanded(
+                                    child: Text.rich(
+                                      TextSpan(
+                                        text: 'Can\'t find your class?',
+                                        children: [
+                                          TextSpan(
+                                            text: ' Tap to add it!',
+                                            style: TextStyle(
+                                              color: SKColors.skoller_blue,
+                                            ),
+                                          )
+                                        ],
+                                      ),
+                                      style: TextStyle(fontSize: 16),
+                                      textAlign: TextAlign.center,
                                     ),
-                                    style: TextStyle(fontSize: 16),
-                                    textAlign: TextAlign.center,
                                   ),
                                 ],
                               );

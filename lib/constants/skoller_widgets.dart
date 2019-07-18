@@ -557,10 +557,10 @@ class _SKCalendarPickerState extends State<SKCalendarPicker> {
   }
 }
 
-class SKNavOverlayRoute extends ModalRoute<void> {
+class SKNavFadeUpRoute extends ModalRoute<void> {
   final WidgetBuilder builder;
 
-  SKNavOverlayRoute({@required this.builder});
+  SKNavFadeUpRoute({@required this.builder});
 
   @override
   Duration get transitionDuration => Duration(milliseconds: 500);
@@ -573,6 +573,54 @@ class SKNavOverlayRoute extends ModalRoute<void> {
 
   @override
   Color get barrierColor => Colors.white;
+
+  @override
+  String get barrierLabel => null;
+
+  @override
+  bool get maintainState => true;
+
+  @override
+  Widget buildPage(
+    BuildContext context,
+    Animation<double> animation,
+    Animation<double> secondaryAnimation,
+  ) {
+    // This makes sure that text and other content follows the material style
+    return builder(context);
+  }
+
+  @override
+  Widget buildTransitions(BuildContext context, Animation<double> animation,
+      Animation<double> secondaryAnimation, Widget child) {
+    // You can add your own animations for the overlay content
+
+    return FadeTransition(
+      opacity: animation,
+      child: CupertinoFullscreenDialogTransition(
+        animation: animation,
+        child: child,
+      ),
+    );
+  }
+}
+
+class SKNavOverlayRoute extends ModalRoute<void> {
+  final WidgetBuilder builder;
+
+  SKNavOverlayRoute({@required this.builder});
+
+  @override
+  Duration get transitionDuration => Duration(milliseconds: 500);
+
+  @override
+  bool get opaque => false;
+
+  @override
+  bool get barrierDismissible => true;
+
+  @override
+  Color get barrierColor => Colors.black.withOpacity(0.3);
 
   @override
   String get barrierLabel => null;

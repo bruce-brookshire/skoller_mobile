@@ -64,7 +64,7 @@ class _ClassSearchSettingsModalState extends State<ClassSearchSettingsModal> {
   void tappedSchool(TapUpDetails details) {
     Navigator.push(
       context,
-      SKNavOverlayRoute(
+      SKNavFadeUpRoute(
         builder: (context) => SchoolSearchView(),
       ),
     );

@@ -108,7 +108,7 @@ class _CreateClassModalState extends State<CreateClassModal> {
       }
     }).catchError((onError) {
       loadingScreen.dismiss();
-      
+
       if (onError is String) {
         DropdownBanner.showBanner(
           text: onError,
@@ -122,22 +122,27 @@ class _CreateClassModalState extends State<CreateClassModal> {
   @override
   Widget build(BuildContext context) {
     // controller.animateToPage(page)x
-    return Dialog(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(10),
-        side: BorderSide(color: SKColors.border_gray),
-      ),
-      child: Container(
-        decoration: BoxDecoration(borderRadius: BorderRadius.circular(10)),
-        height: 360,
-        child: PageView(
-          controller: pageController,
-          physics: NeverScrollableScrollPhysics(),
-          children: <Widget>[
-            _CreateClassScreenOne(this),
-            _CreateClassScreenTwo(this),
-            _CreateClassScreenThree(this),
-          ],
+    return Center(
+      child: Padding(
+        padding: EdgeInsets.symmetric(horizontal: 16),
+        child: Material(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+            side: BorderSide(color: SKColors.border_gray),
+          ),
+          child: Container(
+            decoration: BoxDecoration(borderRadius: BorderRadius.circular(10)),
+            height: 360,
+            child: PageView(
+              controller: pageController,
+              physics: NeverScrollableScrollPhysics(),
+              children: <Widget>[
+                _CreateClassScreenOne(this),
+                _CreateClassScreenTwo(this),
+                _CreateClassScreenThree(this),
+              ],
+            ),
+          ),
         ),
       ),
     );
@@ -235,6 +240,7 @@ class _CreateClassScreenOneState extends State<_CreateClassScreenOne> {
           ),
         ),
         Row(
+          mainAxisSize: MainAxisSize.min,
           children: <Widget>[
             Expanded(
               child: Container(
@@ -505,7 +511,7 @@ class _CreateClassScreenTwoState extends State<_CreateClassScreenTwo> {
         GestureDetector(
           onTapUp: (details) => Navigator.push(
             context,
-            SKNavOverlayRoute(
+            SKNavFadeUpRoute(
               builder: (context) => ProfessorSearchView((professor) {
                 setState(() {
                   parent.professor = professor;
