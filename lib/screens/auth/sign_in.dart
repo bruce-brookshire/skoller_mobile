@@ -87,7 +87,7 @@ class _SignInState extends State<SignIn> {
                               fontSize: 14, color: SKColors.text_light_gray),
                           inputFormatters: [USNumberTextInputFormatter()],
                           keyboardType: TextInputType.phone,
-                          // autofocus: true,
+                          autofocus: true,
                         ),
                       ),
                     ),

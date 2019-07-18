@@ -57,7 +57,8 @@ class _ClassDetailState extends State<ClassDetailView> {
   Future fetchClass([dynamic options]) async {
     final response = await studentClass.refetchSelf();
     if (response.wasSuccessful()) {
-      setState(() => studentClass = response.obj);
+      studentClass = response.obj;
+      if (mounted) setState(() {});
     }
   }
 
@@ -467,6 +468,7 @@ class _ClassDetailState extends State<ClassDetailView> {
                 assignment.grade == null
                     ? '--'
                     : '${(assignment.grade).round()}%',
+                textScaleFactor: 1,
                 style: TextStyle(
                     color: Colors.white,
                     fontWeight: FontWeight.normal,
@@ -485,10 +487,14 @@ class _ClassDetailState extends State<ClassDetailView> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
                         Expanded(
-                          child: Text(assignment.name),
+                          child: Text(
+                            assignment.name,
+                            textScaleFactor: 1,
+                          ),
                         ),
                         Text(
                           DateUtilities.getFutureRelativeString(assignment.due),
+                          textScaleFactor: 1,
                           style: TextStyle(
                             fontSize: 12,
                             fontWeight: FontWeight.normal,
@@ -508,6 +514,7 @@ class _ClassDetailState extends State<ClassDetailView> {
                                   : (assignment.weight == 0
                                       ? 'Not graded'
                                       : weight),
+                              textScaleFactor: 1,
                               style: TextStyle(
                                 fontWeight: FontWeight.normal,
                                 fontSize: 13,
@@ -524,6 +531,7 @@ class _ClassDetailState extends State<ClassDetailView> {
                         ),
                         Text(
                           '${assignment.posts.length == 0 ? '' : assignment.posts.length}',
+                          textScaleFactor: 1,
                           style: TextStyle(
                               fontSize: 12,
                               fontWeight: FontWeight.normal,

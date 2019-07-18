@@ -23,15 +23,21 @@ class _TasksState extends State<TasksView> {
     super.initState();
 
     if (SKCacheManager.tasksLoader != null) {
-      SKCacheManager.tasksLoader
-          .then((_) => SKCacheManager.classesLoader)
-          .then((_) => setState(() => _taskItems = Assignment.currentTasks
-              .map((task) => _TaskLikeItem(
-                    task.id,
-                    false,
-                    task.due,
-                  ))
-              .toList()));
+      SKCacheManager.tasksLoader.then((_) => SKCacheManager.classesLoader).then(
+            (_) => setState(
+              () {
+                if (_taskItems.length == 0)
+                  _taskItems = Assignment.currentTasks
+                      .map((task) => _TaskLikeItem(
+                            task.id,
+                            false,
+                            task.due,
+                          ))
+                      .toList()
+                        ..removeWhere((task) => task.getParent == null);
+              },
+            ),
+          );
     }
 
     _fetchTasks();

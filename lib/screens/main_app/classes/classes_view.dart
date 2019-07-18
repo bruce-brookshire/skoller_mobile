@@ -187,6 +187,7 @@ class _ClassesState extends State<ClassesView> {
                 grade == null
                     ? '--%'
                     : '${NumberUtilities.formatGradeAsPercent(grade)}',
+                textScaleFactor: 1,
                 style: TextStyle(
                     color: Colors.white,
                     fontWeight: FontWeight.normal,
@@ -204,6 +205,7 @@ class _ClassesState extends State<ClassesView> {
                     padding: EdgeInsets.only(bottom: 1),
                     child: Text(
                       studentClass.name,
+                      textScaleFactor: 1,
                       style: TextStyle(
                           fontSize: 17, color: studentClass.getColor()),
                     ),
@@ -217,6 +219,7 @@ class _ClassesState extends State<ClassesView> {
                       ),
                       Text(
                         '${studentClass.enrollment - 1} classmate${(studentClass.enrollment - 1) == 1 ? '' : 's'}',
+                        textScaleFactor: 1,
                         style: TextStyle(
                             fontWeight: FontWeight.normal, fontSize: 14),
                       ),
@@ -233,6 +236,7 @@ class _ClassesState extends State<ClassesView> {
                       ),
                       Text(
                         '${(studentClass.completion * 100).round()}% complete',
+                        textScaleFactor: 1,
                         style: TextStyle(
                             fontWeight: FontWeight.normal, fontSize: 14),
                       ),
@@ -313,6 +317,7 @@ class _ClassesState extends State<ClassesView> {
                     padding: EdgeInsets.only(bottom: 1),
                     child: Text(
                       studentClass.name,
+                      textScaleFactor: 1,
                       style: TextStyle(
                           fontSize: 17,
                           color: needsAssignments
@@ -324,6 +329,7 @@ class _ClassesState extends State<ClassesView> {
                     needsAssignments
                         ? 'Add your first assignment'
                         : 'Set up this class',
+                    textScaleFactor: 1,
                     style: TextStyle(
                         color: needsAssignments
                             ? SKColors.dark_gray
@@ -391,11 +397,13 @@ class _ClassesState extends State<ClassesView> {
                     padding: EdgeInsets.only(bottom: 1),
                     child: Text(
                       studentClass.name,
+                      textScaleFactor: 1,
                       style: TextStyle(fontSize: 17, color: SKColors.dark_gray),
                     ),
                   ),
                   Text(
                     'DIY required',
+                    textScaleFactor: 1,
                     style:
                         TextStyle(color: SKColors.alert_orange, fontSize: 14),
                   )
@@ -461,11 +469,13 @@ class _ClassesState extends State<ClassesView> {
                     padding: EdgeInsets.only(bottom: 1),
                     child: Text(
                       studentClass.name,
+                      textScaleFactor: 1,
                       style: TextStyle(fontSize: 17, color: SKColors.dark_gray),
                     ),
                   ),
                   Text(
                     'Syllabus in review',
+                    textScaleFactor: 1,
                     style: TextStyle(color: SKColors.dark_gray, fontSize: 14),
                   )
                 ],

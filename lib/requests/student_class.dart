@@ -383,7 +383,7 @@ class StudentClass {
   ];
 
   static StudentClass _fromJsonObj(Map content,
-      {bool shouldPersistAssignments = true}) {
+      {bool shouldPersistAssignments = false}) {
     if (content == null) {
       return null;
     }
@@ -445,7 +445,7 @@ class StudentClass {
   static Future<RequestResponse> getStudentClasses() {
     return SKRequests.get(
       '/students/${SKUser.current.student.id}/classes',
-      (content) => _fromJsonObj(content, shouldPersistAssignments: false),
+      _fromJsonObj,
       cacheResult: true,
       cachePath: 'student_classes.json',
       postRequestAction: () => StudentClass.currentClasses = {},
@@ -455,7 +455,7 @@ class StudentClass {
   static Future<RequestResponse> getStudentClassById(int id) {
     return SKRequests.get(
       '/students/${SKUser.current.student.id}/classes/${id}',
-      _fromJsonObj,
+      (content) => _fromJsonObj(content, shouldPersistAssignments: false),
     );
   }
 }

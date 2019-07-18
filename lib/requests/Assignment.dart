@@ -237,7 +237,9 @@ class Assignment {
 
     return SKRequests.get(
       '/students/${SKUser.current.student.id}/assignments?is_complete=false&date=${utcDate.toIso8601String()}',
-      _fromJsonObj,
+      (content) => currentAssignments.length == 0
+          ? _fromJsonObj(content)
+          : _fromJsonObj(content, shouldPersist: false),
       cachePath: 'tasks.json',
       cacheResult: true,
     ).then((response) {

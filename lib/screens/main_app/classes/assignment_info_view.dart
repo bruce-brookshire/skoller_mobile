@@ -32,7 +32,7 @@ class _AssignmentInfoState extends State<AssignmentInfoView> {
     assignment = Assignment.currentAssignments[widget.assignment_id];
 
     for (final mod in Mod.currentMods.values) {
-      if (mod.modType != ModType.newAssignment && mod.parentAssigment.id == assignment.id) {
+      if (mod.modType != ModType.newAssignment && mod.parentAssignment?.id == assignment.id) {
         if (assignmentMods[mod.modType.index] == null) {
           assignmentMods[mod.modType.index] = [];
         }

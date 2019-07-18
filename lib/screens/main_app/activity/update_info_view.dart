@@ -104,7 +104,7 @@ class _UpdateInfoState extends State<UpdateInfoView> {
                 TextSpan(
                     text: mod.modType == ModType.newAssignment
                         ? (mod.data as Assignment).name
-                        : mod.parentAssigment.name,
+                        : mod.parentAssignment.name,
                     style: TextStyle(color: SKColors.skoller_blue)),
                 TextSpan(
                     text: generateLongModDescr(mod),

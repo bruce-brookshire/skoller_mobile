@@ -194,7 +194,7 @@ class _SignUpState extends State<SignUp> {
                                       fontSize: 15, color: SKColors.dark_gray),
                                   decoration: BoxDecoration(border: null),
                                   textCapitalization: TextCapitalization.words,
-                                  // autofocus: true,
+                                  autofocus: true,
                                   onChanged: verifyState,
                                   focusNode: firstNameFocus,
                                 ),

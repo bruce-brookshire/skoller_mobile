@@ -14,7 +14,8 @@ void main() {
   //Allow currentTZ to cache through heuristic exploration before we need it
   TimeZoneManager.verifyTzDbActive();
 
-  PackageInfo.fromPlatform().then((info) => UIAssets.versionNumber = info.version);
+  PackageInfo.fromPlatform()
+      .then((info) => UIAssets.versionNumber = info.version);
 
   SKCacheManager.createCacheDir();
 }

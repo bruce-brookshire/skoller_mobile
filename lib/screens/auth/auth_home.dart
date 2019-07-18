@@ -34,16 +34,16 @@ class AuthHome extends StatelessWidget {
                 Container(
                   margin: EdgeInsets.symmetric(vertical: 16),
                   child: Text(
-                    'One syllabus, endless opportunity',
+                    'Keep up with classes, together',
                     style: Theme.of(context).textTheme.body1,
                   ),
                 ),
-                // Padding(
-                //   padding: EdgeInsets.symmetric(vertical: 8),
-                //   child: Image(
-                //       image: AssetImage(
-                //           ImageNames.signUpImages.syllabus_activity)),
-                // ),
+                Padding(
+                  padding: EdgeInsets.symmetric(vertical: 8),
+                  child: Image(
+                      image: AssetImage(
+                          ImageNames.signUpImages.syllabus_activity)),
+                ),
                 SKButton(
                   margin: EdgeInsets.only(top: 16, bottom: 8),
                   width: 180,

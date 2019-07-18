@@ -300,48 +300,9 @@ class _CalendarState extends State<CalendarView> {
 
     final dayListAssignments = assignments[dateStr] ?? [];
     final endIndex =
-        dayListAssignments.length <= 4 ? dayListAssignments.length : 4;
-    final dayAssignments =
-        (assignments[createDateStr(date)] ?? []).getRange(0, endIndex);
+        dayListAssignments.length <= 4 ? dayListAssignments.length : 1;
 
-    final List<Widget> widgetAssignments = dayAssignments
-        .map(
-          (assignment) => Expanded(
-            child: Container(
-              margin: EdgeInsets.only(bottom: 2),
-              padding: EdgeInsets.symmetric(horizontal: 2, vertical: 1),
-              decoration: BoxDecoration(
-                color: !isCurrent
-                    ? Color(0xFFD0D0D0)
-                    : assignment.parentClass.getColor(),
-                borderRadius: BorderRadius.circular(3),
-              ),
-              // alignment: Alignment.center,
-              child: Text(
-                assignment.name,
-                maxLines: 1,
-                softWrap: false,
-                overflow: TextOverflow.fade,
-                style: TextStyle(
-                    letterSpacing: -0.8,
-                    fontSize: 10,
-                    fontWeight: FontWeight.normal,
-                    color: Colors.white),
-              ),
-            ),
-          ),
-        )
-        .toList();
 
-    while (widgetAssignments.length < 4) {
-      widgetAssignments.add(
-        Expanded(
-          child: Container(
-            margin: EdgeInsets.only(bottom: 2),
-          ),
-        ),
-      );
-    }
 
     return Expanded(
       child: Column(
@@ -389,11 +350,9 @@ class _CalendarState extends State<CalendarView> {
               },
               child: Container(
                 margin: EdgeInsets.fromLTRB(2, 1.5, 2, 4),
-                padding: EdgeInsets.all(2),
+                padding: EdgeInsets.fromLTRB(2, 2, 2, 2),
                 decoration: BoxDecoration(
-                  color: date.month == firstOfMonth.month
-                      ? Colors.white
-                      : SKColors.inactive_gray,
+                  color: isCurrent ? Colors.white : SKColors.inactive_gray,
                   borderRadius: BorderRadius.circular(5),
                   boxShadow: [
                     BoxShadow(
@@ -403,12 +362,35 @@ class _CalendarState extends State<CalendarView> {
                     )
                   ],
                 ),
-                child: widgetAssignments.length == 0
-                    ? null
-                    : Column(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: widgetAssignments,
-                      ),
+                child: ListView(
+                  children: dayListAssignments
+                      .map(
+                        (assignment) => Container(
+                          margin: EdgeInsets.only(bottom: 2),
+                          padding: EdgeInsets.symmetric(horizontal: 2),
+                          decoration: BoxDecoration(
+                            color: isCurrent
+                                ? assignment.parentClass.getColor()
+                                : Color(0xFFD0D0D0),
+                            borderRadius: BorderRadius.circular(3),
+                          ),
+                          alignment: Alignment.centerLeft,
+                          height: 14,
+                          child: Text(
+                            assignment.name,
+                            maxLines: 1,
+                            softWrap: false,
+                            overflow: TextOverflow.fade,
+                            style: TextStyle(
+                                letterSpacing: -0.8,
+                                fontSize: 10,
+                                fontWeight: FontWeight.normal,
+                                color: Colors.white),
+                          ),
+                        ),
+                      )
+                      .toList(),
+                ),
               ),
             ),
           ),
@@ -439,7 +421,8 @@ class _CalendarState extends State<CalendarView> {
                     alignment: Alignment.center,
                     padding: EdgeInsets.only(bottom: 12),
                     child: Text(
-                      DateFormat('EEEE, MMMM d').format(dateAssignments.first.due),
+                      DateFormat('EEEE, MMMM d')
+                          .format(dateAssignments.first.due),
                       style: TextStyle(fontSize: 17),
                     ),
                   ),

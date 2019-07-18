@@ -63,8 +63,8 @@ class _ProfileState extends State<ProfileView> {
                         ),
                 ),
                 margin: EdgeInsets.only(bottom: 12),
-                height: 64,
-                width: 64,
+                height: 80,
+                width: 80,
                 child: SKUser.current.avatarUrl == null
                     ? Text(
                         SKUser.current.student.nameFirst[0] +
