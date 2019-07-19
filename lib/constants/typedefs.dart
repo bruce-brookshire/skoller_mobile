@@ -6,6 +6,7 @@ typedef void PresentationCallback(Widget widget);
 typedef ContextCallback(BuildContext context);
 
 typedef void DateCallback(DateTime date);
+typedef DateTime DateFetch();
 
 typedef void ColorCallback(Color color);
 

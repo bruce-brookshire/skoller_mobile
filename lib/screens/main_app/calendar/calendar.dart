@@ -15,10 +15,16 @@ class CalendarView extends StatefulWidget {
 
 class _CalendarState extends State<CalendarView> {
   final weekDayStyle = TextStyle(fontSize: 14, color: SKColors.text_light_gray);
+  final controller = PageController(initialPage: 1);
 
-  DateTime firstOfMonth;
-  DateTime startDate;
+  // DateTime firstOfMonth;
+  // DateTime startDate;
   DateTime today;
+
+  List<DateTime> children = [];
+  int curIndex = 1;
+
+  DateTime selectedDate;
 
   Map<String, List<Assignment>> assignments = {};
 
@@ -27,10 +33,6 @@ class _CalendarState extends State<CalendarView> {
     super.initState();
 
     today = DateTime.now();
-    firstOfMonth = DateTime(today.year, today.month, 1);
-    startDate = firstOfMonth.weekday == 7
-        ? firstOfMonth
-        : DateTime(today.year, today.month, 1 - firstOfMonth.weekday);
 
     Assignment.getAssignments().then((response) {
       if (response.wasSuccessful()) {
@@ -44,6 +46,12 @@ class _CalendarState extends State<CalendarView> {
       }
     });
     updateAssignments(Assignment.currentAssignments.values);
+
+    children = [
+      DateTime(today.year, today.month - 1, 1),
+      DateTime(today.year, today.month, 1),
+      DateTime(today.year, today.month + 1, 1),
+    ];
   }
 
   void updateAssignments(Iterable<Assignment> new_assignments) {
@@ -68,24 +76,45 @@ class _CalendarState extends State<CalendarView> {
     return '${date.day}-${date.month}-${date.year}';
   }
 
-  void tappedNextMonth(dynamic details) {
+  void tappedNextMonth([dynamic details]) {
+    controller.animateToPage(curIndex + 1,
+        duration: Duration(milliseconds: 300), curve: Curves.decelerate);
+  }
+
+  void tappedPreviousMonth([dynamic details]) {
+    controller.animateToPage(curIndex - 1,
+        duration: Duration(milliseconds: 300), curve: Curves.decelerate);
+  }
+
+  void pageChanged(int index) {
     setState(() {
-      firstOfMonth = DateTime(firstOfMonth.year, firstOfMonth.month + 1, 1);
-      startDate = firstOfMonth.weekday == 7
-          ? firstOfMonth
-          : DateTime(
-              firstOfMonth.year, firstOfMonth.month, 1 - firstOfMonth.weekday);
+      curIndex = index;
+
+      if (curIndex == (children.length - 1)) {
+        final curMonth = children.last;
+        children.add(DateTime(curMonth.year, curMonth.month + 1, 1));
+      } else if (curIndex == 0) {
+        final curMonth = children.first;
+        children.insert(0, DateTime(curMonth.year, curMonth.month - 1, 1));
+        curIndex = 1;
+        controller.jumpToPage(curIndex);
+      }
     });
   }
 
-  void tappedPreviousMonth(dynamic details) {
-    setState(() {
-      firstOfMonth = DateTime(firstOfMonth.year, firstOfMonth.month - 1, 1);
-      startDate = firstOfMonth.weekday == 7
-          ? firstOfMonth
-          : DateTime(
-              firstOfMonth.year, firstOfMonth.month, 1 - firstOfMonth.weekday);
-    });
+  void tappedDate(DateTime date) {
+    final curMonth = children[curIndex].month;
+    final dayListAssignments = assignments[createDateStr(date)];
+
+    if (date.month != curMonth) {
+      if (date.month < curMonth) {
+        this.tappedPreviousMonth();
+      } else {
+        this.tappedNextMonth();
+      }
+    } else if (dayListAssignments.length > 0) {
+      this.detailModal(dayListAssignments);
+    }
   }
 
   void tappedAdd(BuildContext context) async {
@@ -110,76 +139,6 @@ class _CalendarState extends State<CalendarView> {
         onSelect: (newIndex) => selectedIndex = newIndex,
       ),
     );
-
-    // final result = await showCupertinoDialog(
-    //     context: context,
-    //     builder: (context) {
-    //       return CupertinoAlertDialog(
-    //         title: Column(
-    //           children: <Widget>[
-    //             Text(
-    //               'Add an assignment',
-    //               style: TextStyle(fontSize: 16),
-    //             ),
-    //             Container(
-    //               padding: EdgeInsets.only(bottom: 8, top: 2),
-    //               child: Text(
-    //                 'Select a class',
-    //                 style:
-    //                     TextStyle(fontSize: 12, fontWeight: FontWeight.normal),
-    //               ),
-    //             ),
-    //           ],
-    //         ),
-    //         content: Container(
-    //           decoration: BoxDecoration(
-    //             border: Border(
-    //               bottom: BorderSide(color: SKColors.border_gray),
-    //               top: BorderSide(color: SKColors.border_gray),
-    //             ),
-    //           ),
-    //           height: 180,
-    //           child: CupertinoPicker.builder(
-    //             backgroundColor: Colors.white,
-    //             childCount: classes.length,
-    //             itemBuilder: (context, index) => Container(
-    //               alignment: Alignment.center,
-    //               child: Text(
-    //                 classes[index].name,
-    //                 style: TextStyle(fontSize: 15),
-    //               ),
-    //             ),
-    //             itemExtent: 32,
-    //             onSelectedItemChanged: (index) => selectedIndex = index,
-    //           ),
-    //         ),
-    //         actions: <Widget>[
-    //           CupertinoDialogAction(
-    //             child: Text(
-    //               'Cancel',
-    //               style: TextStyle(color: SKColors.skoller_blue, fontSize: 16),
-    //             ),
-    //             isDefaultAction: false,
-    //             onPressed: () {
-    //               Navigator.pop(context, false);
-    //             },
-    //           ),
-    //           CupertinoDialogAction(
-    //             child: Text(
-    //               'Select',
-    //               style: TextStyle(
-    //                   color: SKColors.skoller_blue,
-    //                   fontWeight: FontWeight.bold,
-    //                   fontSize: 16),
-    //             ),
-    //             isDefaultAction: true,
-    //             onPressed: () {
-    //               Navigator.pop(context, true);
-    //             },
-    //           )
-    //         ],
-    //       );
-    //     });
 
     if (result is bool && result) {
       final class_id = classes[selectedIndex].id;
@@ -220,7 +179,7 @@ class _CalendarState extends State<CalendarView> {
               ),
               Container(
                 child: Text(
-                  DateFormat('MMMM yyyy').format(firstOfMonth),
+                  DateFormat('MMMM yyyy').format(children[curIndex]),
                   style: TextStyle(fontSize: 16),
                 ),
               ),
@@ -255,147 +214,24 @@ class _CalendarState extends State<CalendarView> {
                 Text('S', style: weekDayStyle),
               ],
             )),
-        ...calendarBody(),
+        Expanded(
+          child: PageView.builder(
+            itemCount: children.length,
+            controller: controller,
+            itemBuilder: (context, index) => _CalendarBody(
+              onTappedDay: tappedDate,
+              assignmentsForDateCallback: (date) =>
+                  assignments[createDateStr(date)] ?? [],
+              month: children[index],
+            ),
+            onPageChanged: pageChanged,
+          ),
+        ),
         Container(
           height: 4,
           child: null,
         )
       ],
-    );
-  }
-
-  List<Widget> calendarBody() {
-    return <Widget>[
-      week(startDate),
-      week(DateTime(startDate.year, startDate.month, startDate.day + 7)),
-      week(DateTime(startDate.year, startDate.month, startDate.day + 14)),
-      week(DateTime(startDate.year, startDate.month, startDate.day + 21)),
-      week(DateTime(startDate.year, startDate.month, startDate.day + 28)),
-      week(DateTime(startDate.year, startDate.month, startDate.day + 35)),
-    ];
-  }
-
-  Widget week(DateTime date) {
-    return Expanded(
-      child: Container(
-        padding: EdgeInsets.symmetric(horizontal: 2),
-        child: Row(
-          children: <Widget>[
-            day(date),
-            day(DateTime(date.year, date.month, date.day + 1)),
-            day(DateTime(date.year, date.month, date.day + 2)),
-            day(DateTime(date.year, date.month, date.day + 3)),
-            day(DateTime(date.year, date.month, date.day + 4)),
-            day(DateTime(date.year, date.month, date.day + 5)),
-            day(DateTime(date.year, date.month, date.day + 6)),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget day(DateTime date) {
-    final isCurrent = date.month == firstOfMonth.month;
-    final dateStr = createDateStr(date);
-
-    final dayListAssignments = assignments[dateStr] ?? [];
-    final endIndex =
-        dayListAssignments.length <= 4 ? dayListAssignments.length : 1;
-
-
-
-    return Expanded(
-      child: Column(
-        children: <Widget>[
-          Row(
-            children: <Widget>[
-              Container(
-                padding: EdgeInsets.fromLTRB(2, 1, 2, 0),
-                margin: EdgeInsets.only(left: 3),
-                alignment: Alignment.center,
-                decoration: BoxDecoration(
-                  color: date.day == today.day &&
-                          date.month == today.month &&
-                          isCurrent
-                      ? SKColors.skoller_blue
-                      : null,
-                  borderRadius: BorderRadius.circular(3),
-                ),
-                child: Text(
-                  '${date.day}',
-                  style: TextStyle(
-                      fontSize: 12,
-                      fontWeight: FontWeight.normal,
-                      color: isCurrent
-                          ? (date.day == today.day && date.month == today.month
-                              ? Colors.white
-                              : SKColors.dark_gray)
-                          : SKColors.text_light_gray),
-                ),
-              ),
-            ],
-          ),
-          Expanded(
-            child: GestureDetector(
-              onTapUp: (details) {
-                if (!isCurrent) {
-                  if (date.month < firstOfMonth.month) {
-                    this.tappedPreviousMonth(details);
-                  } else {
-                    this.tappedNextMonth(details);
-                  }
-                } else if (endIndex > 0) {
-                  this.detailModal(dayListAssignments);
-                }
-              },
-              child: Container(
-                margin: EdgeInsets.fromLTRB(2, 1.5, 2, 4),
-                padding: EdgeInsets.fromLTRB(2, 2, 2, 2),
-                decoration: BoxDecoration(
-                  color: isCurrent ? Colors.white : SKColors.inactive_gray,
-                  borderRadius: BorderRadius.circular(5),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Color(0x0A000000),
-                      offset: Offset(0, 1.75),
-                      blurRadius: 3,
-                    )
-                  ],
-                ),
-                child: ListView(
-                  children: dayListAssignments
-                      .map(
-                        (assignment) => Container(
-                          margin: EdgeInsets.only(bottom: 2),
-                          padding: EdgeInsets.symmetric(horizontal: 2),
-                          decoration: BoxDecoration(
-                            color: isCurrent
-                                ? assignment.parentClass.getColor()
-                                : Color(0xFFD0D0D0),
-                            borderRadius: BorderRadius.circular(3),
-                          ),
-                          alignment: Alignment.centerLeft,
-                          height: 14,
-                          child: Text(
-                            assignment.name,
-                            maxLines: 1,
-                            softWrap: false,
-                            overflow: TextOverflow.fade,
-                            style: TextStyle(
-                                letterSpacing: -0.8,
-                                fontSize: 10,
-                                fontWeight: FontWeight.normal,
-                                color: Colors.white),
-                          ),
-                        ),
-                      )
-                      .toList(),
-                ),
-              ),
-            ),
-          ),
-        ],
-      ),
     );
   }
 
@@ -499,4 +335,154 @@ class _CalendarState extends State<CalendarView> {
             ),
           )
           .toList();
+}
+
+typedef List<Assignment> AssignmentsForDateCallback(DateTime time);
+
+class _CalendarBody extends StatelessWidget {
+  final DateTime firstOfMonth;
+  final DateTime startDate;
+  final DateTime today = DateTime.now();
+
+  final AssignmentsForDateCallback assignmentsForDateCallback;
+  final DateCallback onTappedDay;
+
+  _CalendarBody(
+      {@required DateTime month,
+      @required this.assignmentsForDateCallback,
+      @required this.onTappedDay})
+      : firstOfMonth = month,
+        startDate = month.weekday == 7
+            ? month
+            : DateTime(month.year, month.month, 1 - month.weekday);
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: calendarBody(),
+    );
+  }
+
+  List<Widget> calendarBody() {
+    return <Widget>[
+      week(startDate),
+      week(DateTime(startDate.year, startDate.month, startDate.day + 7)),
+      week(DateTime(startDate.year, startDate.month, startDate.day + 14)),
+      week(DateTime(startDate.year, startDate.month, startDate.day + 21)),
+      week(DateTime(startDate.year, startDate.month, startDate.day + 28)),
+      week(DateTime(startDate.year, startDate.month, startDate.day + 35)),
+    ];
+  }
+
+  Widget week(DateTime date) {
+    return Expanded(
+      child: Container(
+        padding: EdgeInsets.symmetric(horizontal: 2),
+        child: Row(
+          children: <Widget>[
+            day(date),
+            day(DateTime(date.year, date.month, date.day + 1)),
+            day(DateTime(date.year, date.month, date.day + 2)),
+            day(DateTime(date.year, date.month, date.day + 3)),
+            day(DateTime(date.year, date.month, date.day + 4)),
+            day(DateTime(date.year, date.month, date.day + 5)),
+            day(DateTime(date.year, date.month, date.day + 6)),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget day(DateTime date) {
+    final isCurrent = date.month == firstOfMonth.month;
+
+    final dayListAssignments = assignmentsForDateCallback(date);
+
+    return Expanded(
+      child: Column(
+        children: <Widget>[
+          Row(
+            children: <Widget>[
+              Container(
+                padding: EdgeInsets.fromLTRB(2, 1, 2, 0),
+                margin: EdgeInsets.only(left: 3),
+                alignment: Alignment.center,
+                decoration: BoxDecoration(
+                  color: date.day == today.day &&
+                          date.month == today.month &&
+                          isCurrent
+                      ? SKColors.skoller_blue
+                      : null,
+                  borderRadius: BorderRadius.circular(3),
+                ),
+                child: Text(
+                  '${date.day}',
+                  style: TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.normal,
+                      color: isCurrent
+                          ? (date.day == today.day && date.month == today.month
+                              ? Colors.white
+                              : SKColors.dark_gray)
+                          : SKColors.text_light_gray),
+                ),
+              ),
+            ],
+          ),
+          Expanded(
+            child: GestureDetector(
+              onTapUp: (details) {
+                onTappedDay(date);
+              },
+              child: Container(
+                margin: EdgeInsets.fromLTRB(2, 1.5, 2, 4),
+                padding: EdgeInsets.fromLTRB(2, 2, 2, 2),
+                decoration: BoxDecoration(
+                  color: isCurrent ? Colors.white : SKColors.inactive_gray,
+                  borderRadius: BorderRadius.circular(5),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Color(0x0A000000),
+                      offset: Offset(0, 1.75),
+                      blurRadius: 3,
+                    )
+                  ],
+                ),
+                child: ListView(
+                  children: dayListAssignments
+                      .map(
+                        (assignment) => Container(
+                          margin: EdgeInsets.only(bottom: 2),
+                          padding: EdgeInsets.symmetric(horizontal: 2),
+                          decoration: BoxDecoration(
+                            color: isCurrent
+                                ? assignment.parentClass.getColor()
+                                : Color(0xFFD0D0D0),
+                            borderRadius: BorderRadius.circular(3),
+                          ),
+                          alignment: Alignment.centerLeft,
+                          height: 14,
+                          child: Text(
+                            assignment.name,
+                            maxLines: 1,
+                            softWrap: false,
+                            overflow: TextOverflow.fade,
+                            style: TextStyle(
+                                letterSpacing: -0.8,
+                                fontSize: 10,
+                                fontWeight: FontWeight.normal,
+                                color: Colors.white),
+                          ),
+                        ),
+                      )
+                      .toList(),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 }

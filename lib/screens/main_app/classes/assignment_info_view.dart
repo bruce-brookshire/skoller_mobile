@@ -1098,7 +1098,7 @@ class _GradeSelection extends StatefulWidget {
 
 class _GradePickerResults {
   //Active segment
-  int selectedSegment = 0;
+  int selectedSegment = 1;
 
   //Fields
   String numerator = '';

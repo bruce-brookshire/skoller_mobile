@@ -283,6 +283,7 @@ class SKCalendarPicker extends StatefulWidget {
 
     final calendar = SKCalendarPicker._(startDate, (date) {
       selectedDate = date;
+      print(date);
     });
 
     return showDialog(
@@ -329,7 +330,7 @@ class SKCalendarPicker extends StatefulWidget {
                       Expanded(
                         child: Container(
                           child: null,
-                          margin: EdgeInsets.only(bottom: 8),
+                          margin: EdgeInsets.only(bottom: 4),
                           height: 1.25,
                           color: SKColors.border_gray,
                         ),
@@ -385,41 +386,50 @@ class SKCalendarPicker extends StatefulWidget {
 
 class _SKCalendarPickerState extends State<SKCalendarPicker> {
   final weekDayStyle = TextStyle(fontSize: 14, color: SKColors.text_light_gray);
+  final controller = PageController(initialPage: 1);
 
-  DateTime firstOfMonth;
-  DateTime startDate;
+  List<DateTime> children = [];
+  int curIndex = 1;
 
-  DateTime selectedDay;
+  DateTime selectedDate;
 
   @override
   void initState() {
     super.initState();
 
-    selectedDay = widget.startDate;
-    firstOfMonth = DateTime(selectedDay.year, selectedDay.month, 1);
-    startDate = firstOfMonth.weekday == 7
-        ? firstOfMonth
-        : DateTime(
-            selectedDay.year, selectedDay.month, 1 - firstOfMonth.weekday);
+    selectedDate = widget.startDate;
+
+    children = [
+      DateTime(widget.startDate.year, widget.startDate.month - 1, 1),
+      DateTime(widget.startDate.year, widget.startDate.month, 1),
+      DateTime(widget.startDate.year, widget.startDate.month + 1, 1),
+    ];
   }
 
   void tappedNextMonth(dynamic details) {
-    setState(() {
-      firstOfMonth = DateTime(firstOfMonth.year, firstOfMonth.month + 1, 1);
-      startDate = firstOfMonth.weekday == 7
-          ? firstOfMonth
-          : DateTime(
-              firstOfMonth.year, firstOfMonth.month, 1 - firstOfMonth.weekday);
-    });
+    controller.animateToPage(curIndex + 1,
+        duration: Duration(milliseconds: 300), curve: Curves.decelerate);
   }
 
   void tappedPreviousMonth(dynamic details) {
+    controller.animateToPage(curIndex - 1,
+        duration: Duration(milliseconds: 300), curve: Curves.decelerate);
+  }
+
+  void pageChanged(int index) {
     setState(() {
-      firstOfMonth = DateTime(firstOfMonth.year, firstOfMonth.month - 1, 1);
-      startDate = firstOfMonth.weekday == 7
-          ? firstOfMonth
-          : DateTime(
-              firstOfMonth.year, firstOfMonth.month, 1 - firstOfMonth.weekday);
+      curIndex = index;
+
+
+      if (curIndex == (children.length - 1)) {
+        final curMonth = children.last;
+        children.add(DateTime(curMonth.year, curMonth.month + 1, 1));
+      } else if (curIndex == 0) {
+        final curMonth = children.first;
+        children.insert(0, DateTime(curMonth.year, curMonth.month - 1, 1));
+        curIndex = 1;
+        controller.jumpToPage(curIndex);
+      }
     });
   }
 
@@ -429,25 +439,31 @@ class _SKCalendarPickerState extends State<SKCalendarPicker> {
       aspectRatio: 1,
       child: Container(
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
             Container(
-              padding: EdgeInsets.symmetric(horizontal: 4),
-              margin: EdgeInsets.symmetric(vertical: 8),
+              margin: EdgeInsets.symmetric(vertical: 4),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
                   GestureDetector(
+                    behavior: HitTestBehavior.opaque,
                     onTapUp: tappedPreviousMonth,
                     child: Container(
-                      padding: EdgeInsets.all(4),
+                      width: 36,
+                      height: 36,
+                      alignment: Alignment.center,
                       child: Image.asset(ImageNames.navArrowImages.left),
                     ),
                   ),
-                  Text(DateFormat('MMMM, yyyy').format(firstOfMonth)),
+                  Text(DateFormat('MMMM, yyyy').format(children[curIndex])),
                   GestureDetector(
+                    behavior: HitTestBehavior.opaque,
                     onTapUp: tappedNextMonth,
                     child: Container(
-                      padding: EdgeInsets.all(4),
+                      width: 36,
+                      height: 36,
+                      alignment: Alignment.center,
                       child: Image.asset(ImageNames.navArrowImages.right),
                     ),
                   ),
@@ -455,48 +471,92 @@ class _SKCalendarPickerState extends State<SKCalendarPicker> {
               ),
             ),
             Container(
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  // border: Border(
-                  //     bottom: BorderSide(color: SKColors.text_light_gray)),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                // border: Border(
+                //     bottom: BorderSide(color: SKColors.text_light_gray)),
+              ),
+              alignment: Alignment.centerLeft,
+              padding: EdgeInsets.symmetric(horizontal: 2, vertical: 4),
+              margin: EdgeInsets.only(bottom: 4),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: <Widget>[
+                  Text('U', style: weekDayStyle),
+                  Text('M', style: weekDayStyle),
+                  Text('T', style: weekDayStyle),
+                  Text('W', style: weekDayStyle),
+                  Text('R', style: weekDayStyle),
+                  Text('F', style: weekDayStyle),
+                  Text('S', style: weekDayStyle),
+                ],
+              ),
+            ),
+            Expanded(
+              child: PageView.builder(
+                itemCount: children.length,
+                controller: controller,
+                itemBuilder: (context, index) => _SKCalendarBody(
+                  month: children[index],
+                  onDateSelected: (date) {
+                    setState(() {
+                      selectedDate = date;
+                    });
+
+                    widget._completionHandler(date);
+                  },
+                  getSelected: () => selectedDate,
                 ),
-                alignment: Alignment.centerLeft,
-                padding: EdgeInsets.symmetric(horizontal: 2, vertical: 4),
-                margin: EdgeInsets.only(bottom: 4),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: <Widget>[
-                    Text('U', style: weekDayStyle),
-                    Text('M', style: weekDayStyle),
-                    Text('T', style: weekDayStyle),
-                    Text('W', style: weekDayStyle),
-                    Text('R', style: weekDayStyle),
-                    Text('F', style: weekDayStyle),
-                    Text('S', style: weekDayStyle),
-                  ],
-                )),
-            ...calendarBody(),
+                onPageChanged: pageChanged,
+              ),
+            )
           ],
         ),
       ),
     );
   }
+}
 
-  List<Widget> calendarBody() {
-    return <Widget>[
-      week(startDate),
-      week(DateTime(startDate.year, startDate.month, startDate.day + 7)),
-      week(DateTime(startDate.year, startDate.month, startDate.day + 14)),
-      week(DateTime(startDate.year, startDate.month, startDate.day + 21)),
-      week(DateTime(startDate.year, startDate.month, startDate.day + 28)),
-      week(DateTime(startDate.year, startDate.month, startDate.day + 35)),
-    ];
+class _SKCalendarBody extends StatefulWidget {
+  final DateTime firstOfMonth;
+  final DateTime startDate;
+  final DateCallback onDateSelected;
+  final DateFetch getSelected;
+
+  _SKCalendarBody({DateTime month, this.onDateSelected, this.getSelected})
+      : firstOfMonth = month,
+        startDate = month.weekday == 7
+            ? month
+            : DateTime(month.year, month.month, 1 - month.weekday);
+
+  @override
+  State createState() => _SKCalendarBodyState();
+}
+
+class _SKCalendarBodyState extends State<_SKCalendarBody> {
+  DateTime selectedDay;
+
+  Widget build(BuildContext context) {
+    final startDate = widget.startDate;
+    selectedDay = widget.getSelected();
+
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: <Widget>[
+        week(startDate),
+        week(DateTime(startDate.year, startDate.month, startDate.day + 7)),
+        week(DateTime(startDate.year, startDate.month, startDate.day + 14)),
+        week(DateTime(startDate.year, startDate.month, startDate.day + 21)),
+        week(DateTime(startDate.year, startDate.month, startDate.day + 28)),
+        week(DateTime(startDate.year, startDate.month, startDate.day + 35)),
+      ],
+    );
   }
 
   Widget week(DateTime date) {
     final isEmptyBottomRow = date.weekday == 7 &&
-        date.day != startDate.day &&
-        date.month != firstOfMonth.month;
+        date.day != widget.startDate.day &&
+        date.month != widget.firstOfMonth.month;
 
     return isEmptyBottomRow
         ? Container(child: null)
@@ -523,17 +583,15 @@ class _SKCalendarPickerState extends State<SKCalendarPicker> {
         date.month == selectedDay.month &&
         selectedDay.year == date.year;
 
-    return date.month != firstOfMonth.month
+    return date.month != widget.firstOfMonth.month
         ? Expanded(child: Container(child: null))
         : Expanded(
             child: AspectRatio(
               aspectRatio: 1,
               child: GestureDetector(
                 onTapUp: (details) {
-                  setState(() {
-                    selectedDay = date;
-                    widget._completionHandler(date);
-                  });
+                  widget.onDateSelected(date);
+                  // selectedDay = date;
                 },
                 child: Container(
                   margin: EdgeInsets.all(3),
@@ -751,7 +809,10 @@ class SKAlertDialog extends StatelessWidget {
           child: Text(
             subTitle,
             textAlign: TextAlign.center,
-            style: TextStyle(fontWeight: FontWeight.normal, fontSize: 12, color: SKColors.light_gray),
+            style: TextStyle(
+                fontWeight: FontWeight.normal,
+                fontSize: 12,
+                color: SKColors.light_gray),
           ),
         ),
       );
