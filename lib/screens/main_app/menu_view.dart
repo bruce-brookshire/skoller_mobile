@@ -116,6 +116,7 @@ class MenuView extends StatelessWidget {
                               top: BorderSide(color: SKColors.border_gray))),
                       padding: EdgeInsets.symmetric(horizontal: 12),
                       child: GestureDetector(
+                        behavior: HitTestBehavior.opaque,
                         onTapUp: (details) {
                           if (row.containsKey('builder'))
                             DartNotificationCenter.post(

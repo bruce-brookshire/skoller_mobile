@@ -82,6 +82,7 @@ class SKNavBar extends StatelessWidget {
 
   final VoidCallback callbackRight;
   final VoidCallback callbackLeft;
+  final VoidCallback callbackTitle;
 
   SKNavBar(
     this.title, {
@@ -91,6 +92,7 @@ class SKNavBar extends StatelessWidget {
     this.titleColor,
     this.callbackRight,
     this.callbackLeft,
+    this.callbackTitle,
   });
 
   Widget build(BuildContext context) => Container(
@@ -119,17 +121,23 @@ class SKNavBar extends StatelessWidget {
                 height: 44,
               ),
             ),
-            Text(
-              title,
-              style: TextStyle(
-                  fontSize: 18, fontWeight: FontWeight.bold, color: titleColor),
+            GestureDetector(
+              behavior: HitTestBehavior.opaque,
+              onTapUp: (details) {
+                if (callbackTitle != null) callbackTitle();
+              },
+              child: Text(
+                title,
+                style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: titleColor),
+              ),
             ),
             GestureDetector(
               behavior: HitTestBehavior.opaque,
               onTapUp: (details) {
-                if (callbackRight != null) {
-                  callbackRight();
-                }
+                if (callbackRight != null) callbackRight();
               },
               child: Container(
                 padding: EdgeInsets.only(right: 4),
@@ -153,6 +161,7 @@ class SKNavView extends StatelessWidget {
 
   final VoidCallback callbackRight;
   final VoidCallback callbackLeft;
+  final VoidCallback callbackTitle;
 
   final List<Widget> children;
 
@@ -168,6 +177,7 @@ class SKNavView extends StatelessWidget {
     this.leftBtn,
     this.callbackRight,
     this.callbackLeft,
+    this.callbackTitle,
     this.backgroundColor,
   });
 
@@ -181,6 +191,7 @@ class SKNavView extends StatelessWidget {
       titleColor: titleColor,
       callbackRight: callbackRight,
       callbackLeft: callbackLeft,
+      callbackTitle: callbackTitle,
     );
     return Scaffold(
       backgroundColor: Colors.white,
@@ -419,7 +430,6 @@ class _SKCalendarPickerState extends State<SKCalendarPicker> {
   void pageChanged(int index) {
     setState(() {
       curIndex = index;
-
 
       if (curIndex == (children.length - 1)) {
         final curMonth = children.last;

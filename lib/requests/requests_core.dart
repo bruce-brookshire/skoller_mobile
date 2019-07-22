@@ -1,7 +1,9 @@
 library requests_core;
 
+import 'package:dart_notification_center/dart_notification_center.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:intl/intl.dart';
+import 'package:skoller/tools.dart';
 import 'package:time_machine/time_machine.dart';
 import '../constants/timezone_manager.dart';
 import 'package:http/http.dart' as http;
@@ -63,8 +65,8 @@ class JsonListMaker {
 }
 
 class SKRequests {
-  // static const String _environment = 'http://127.0.0.1:4000'; //LOCAL
-  static final String _environment = 'https://api-staging.skoller.co'; //STAGING
+  static const String _environment = 'http://127.0.0.1:4000'; //LOCAL
+  // static final String _environment = 'https://api-staging.skoller.co'; //STAGING
   // static final String _environment = 'https://api.skoller.co'; //PRODUCTION
   static final String _baseUrl = '$_environment/api/v1';
 
@@ -190,8 +192,6 @@ class SKRequests {
 
 class SKCacheManager {
   static Future<void> classesLoader;
-  static Future<void> assignmentsLoader;
-  static Future<void> tasksLoader;
 
   static Future<String> get _homePath async {
     final directory = await getTemporaryDirectory();
@@ -236,47 +236,24 @@ class SKCacheManager {
     //Load classes
     classesLoader = getContents('student_classes.json')
         .then(
-          (contents) => JsonListMaker.convert(
-            (content) => StudentClass._fromJsonObj(content,
-                shouldPersistAssignments: false),
-            json.decode(contents ?? '[]'),
-          ),
+          (contents) {
+            if (StudentClass.currentClasses.length != 0) {
+              throw 'Already loaded from server';
+            } else {
+              return JsonListMaker.convert(
+                (content) => StudentClass._fromJsonObj(content,
+                    shouldPersistAssignments: false),
+                json.decode(contents ?? '[]'),
+              );
+            }
+          },
         )
         .then(
           (classes) => classes.forEach((studentClass) {
             StudentClass.currentClasses[studentClass.id] = studentClass;
           }),
-        );
-
-    // Load tasks
-    tasksLoader = getContents('tasks.json')
-        .then(
-          (contents) => JsonListMaker.convert(
-            Assignment._fromJsonObj,
-            json.decode(contents ?? '[]'),
-          ),
         )
-        .then((tasks) => Assignment.currentTasks = tasks);
-
-    //Load assignments
-    assignmentsLoader = SKCacheManager.getContents('assignments.json')
-        .then(
-      (contents) => JsonListMaker.convert(
-        Assignment._fromJsonObj,
-        json.decode(contents ?? '[]'),
-      ),
-    )
-        .then(
-      (assignments) {
-        assignments.forEach(
-          (assignment) =>
-              Assignment.currentAssignments[assignment.id] = assignment,
-        );
-      },
-    );
-
-    [classesLoader, tasksLoader, assignmentsLoader]
-        .forEach((future) => future.catchError((error) {}));
+        .catchError((error) {});
   }
 }
 
@@ -391,7 +368,6 @@ class Auth {
     SKCacheManager.deleteCache();
 
     Assignment.currentAssignments = {};
-    Assignment.currentTasks = [];
     StudentClass.currentClasses = {};
     Chat.currentChats = {};
     InboxNotification.currentInbox = [];

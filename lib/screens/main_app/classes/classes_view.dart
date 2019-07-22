@@ -123,12 +123,43 @@ class _ClassesState extends State<ClassesView> {
             onRefresh: fetchClasses,
             child: ListView.builder(
               padding: EdgeInsets.only(top: 4),
-              itemCount: classes.length,
-              itemBuilder: createClassCard,
+              itemCount: classes.length == 0 ? 1 : classes.length,
+              itemBuilder:
+                  classes.length == 0 ? createSammiPrompt : createClassCard,
             ),
           ),
         ),
       ],
+    );
+  }
+
+  Widget createSammiPrompt(BuildContext context, int index) {
+    return GestureDetector(
+      behavior: HitTestBehavior.opaque,
+      onTapUp: (details) => Navigator.push(
+        context,
+        CupertinoPageRoute(
+          builder: (context) => AddClassesView(),
+          fullscreenDialog: true,
+        ),
+      ),
+      child: Container(
+        padding: EdgeInsets.symmetric(vertical: 16, horizontal: 16),
+        color: Colors.transparent,
+        child: SammiSpeechBubble(
+          speechBubbleContents: Text.rich(
+            TextSpan(
+              text: 'School has never been this easy.',
+              children: [
+                TextSpan(
+                    text: ' Add your first class!',
+                    style: TextStyle(color: SKColors.skoller_blue))
+              ],
+            ),
+          ),
+          sammiPersonality: SammiPersonality.ooo,
+        ),
+      ),
     );
   }
 

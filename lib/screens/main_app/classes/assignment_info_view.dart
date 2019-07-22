@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/widgets.dart';
 import 'package:intl/intl.dart';
+import 'package:skoller/screens/main_app/classes/class_detail_view.dart';
 import 'package:skoller/screens/main_app/classes/student_profile_modal.dart';
 import 'package:skoller/tools.dart';
 import '../activity/update_info_view.dart';
@@ -32,7 +33,8 @@ class _AssignmentInfoState extends State<AssignmentInfoView> {
     assignment = Assignment.currentAssignments[widget.assignment_id];
 
     for (final mod in Mod.currentMods.values) {
-      if (mod.modType != ModType.newAssignment && mod.parentAssignment?.id == assignment.id) {
+      if (mod.modType != ModType.newAssignment &&
+          mod.parentAssignment?.id == assignment.id) {
         if (assignmentMods[mod.modType.index] == null) {
           assignmentMods[mod.modType.index] = [];
         }
@@ -404,6 +406,16 @@ class _AssignmentInfoState extends State<AssignmentInfoView> {
     return SKNavView(
       title: assignment.parentClass.name,
       titleColor: assignment.parentClass.getColor(),
+      callbackTitle: () {
+        Navigator.push(
+          context,
+          CupertinoPageRoute(
+            builder: (context) => ClassDetailView(
+              classId: assignment.parentClass.id,
+            ),
+          ),
+        );
+      },
       children: <Widget>[
         Expanded(
           child: Stack(

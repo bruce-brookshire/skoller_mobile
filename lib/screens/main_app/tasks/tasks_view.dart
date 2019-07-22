@@ -22,40 +22,22 @@ class _TasksState extends State<TasksView> {
   void initState() {
     super.initState();
 
-    if (SKCacheManager.tasksLoader != null) {
-      SKCacheManager.tasksLoader.then((_) => SKCacheManager.classesLoader).then(
-            (_) => setState(
-              () {
-                if (_taskItems.length == 0)
-                  _taskItems = Assignment.currentTasks
-                      .map((task) => _TaskLikeItem(
-                            task.id,
-                            false,
-                            task.due,
-                          ))
-                      .toList()
-                        ..removeWhere((task) => task.getParent == null);
-              },
-            ),
-          );
-    }
-
-    _fetchTasks();
+    loadTasks();
 
     DartNotificationCenter.subscribe(
         observer: this,
         channel: NotificationChannels.assignmentChanged,
-        onNotification: _fetchTasks);
+        onNotification: loadTasks);
 
     DartNotificationCenter.subscribe(
         observer: this,
         channel: NotificationChannels.classChanged,
-        onNotification: _fetchTasks);
+        onNotification: loadTasks);
 
     DartNotificationCenter.subscribe(
         observer: this,
         channel: NotificationChannels.modsChanged,
-        onNotification: _fetchTasks);
+        onNotification: loadTasks);
   }
 
   @override
@@ -64,25 +46,26 @@ class _TasksState extends State<TasksView> {
     DartNotificationCenter.unsubscribe(observer: this);
   }
 
-  Future _fetchTasks([dynamic options]) async {
-    Future<RequestResponse> assignmentsRequest = Assignment.getTasks();
+  Future loadTasks([dynamic options]) async {
     Future<RequestResponse> modsRequest = Mod.fetchNewAssignmentMods();
 
-    RequestResponse assignmentResponse = await assignmentsRequest;
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
 
-    List<_TaskLikeItem> tasks = [];
-
-    if (assignmentResponse.wasSuccessful()) {
-      tasks.addAll((assignmentResponse.obj as List<Assignment>)
-          .map(
-            (task) => _TaskLikeItem(
-              task.id,
-              false,
-              task.due,
-            ),
-          )
-          .toList());
-    }
+    List<_TaskLikeItem> tasks = (Assignment.currentAssignments.values.toList()
+          ..removeWhere((a) => a.due?.isBefore(today))
+          ..sort(
+            (a1, a2) {
+              return -1;
+            },
+          ))
+        .map(
+      (a) => _TaskLikeItem(
+        a.id,
+        false,
+        a.due,
+      ),
+    ).toList();
 
     RequestResponse modResponse = await modsRequest;
 
@@ -102,22 +85,24 @@ class _TasksState extends State<TasksView> {
 
       temp.removeWhere((task) =>
           task.dueDate.isBefore(referenceDate) ||
-          task.getParent.isAccepted != null);
+          task.getParent?.isAccepted != null);
 
       tasks.addAll(temp);
     }
 
-    tasks.sort((task1, task2) {
-      if (task1.dueDate == null && task2.dueDate == null) {
-        return task1.parentObjectId.compareTo(task2.parentObjectId);
-      } else if (task1.dueDate != null && task2.dueDate == null) {
-        return -1;
-      } else if (task1.dueDate == null && task2.dueDate != null) {
-        return 1;
-      } else {
-        return task1.dueDate.compareTo(task2.dueDate);
-      }
-    });
+    tasks
+      ..removeWhere((task) => task.getParent == null)
+      ..sort((task1, task2) {
+        if (task1.dueDate == null && task2.dueDate == null) {
+          return task1.parentObjectId.compareTo(task2.parentObjectId);
+        } else if (task1.dueDate != null && task2.dueDate == null) {
+          return -1;
+        } else if (task1.dueDate == null && task2.dueDate != null) {
+          return 1;
+        } else {
+          return task1.dueDate.compareTo(task2.dueDate);
+        }
+      });
 
     setState(() {
       _taskItems = tasks;
@@ -236,7 +221,7 @@ class _TasksState extends State<TasksView> {
         Expanded(
           child: RefreshIndicator(
             key: _refreshIndicatorKey,
-            onRefresh: _fetchTasks,
+            onRefresh: loadTasks,
             child: ListView.builder(
               padding: EdgeInsets.only(top: 4),
               itemBuilder: (context, index) => _taskItems[index].isMod

@@ -195,7 +195,6 @@ class Assignment {
   //Static Members//
   //--------------//
 
-  static List<Assignment> currentTasks;
   static Map<int, Assignment> currentAssignments = {};
 
   static Assignment _fromJsonObj(Map content, {bool shouldPersist = true}) {
@@ -227,41 +226,18 @@ class Assignment {
     return assignment;
   }
 
-/**
- * Gets the current tasks for the User.
- * Tasks are assignments for active classes that are in the future (and on today) and have not been completed
- */
-  static Future<RequestResponse> getTasks() {
-    DateTime now = DateTime.now();
-    DateTime utcDate = DateTime.utc(now.year, now.month, now.day);
-
-    return SKRequests.get(
-      '/students/${SKUser.current.student.id}/assignments?is_complete=false&date=${utcDate.toIso8601String()}',
-      (content) => currentAssignments.length == 0
-          ? _fromJsonObj(content)
-          : _fromJsonObj(content, shouldPersist: false),
-      cachePath: 'tasks.json',
-      cacheResult: true,
-    ).then((response) {
-      if (response.wasSuccessful() && response.obj != null) {
-        currentTasks = response.obj;
-      }
-      return response;
-    });
-  }
-
-/**
- * Gets the current assignments for the User.
- * Assignments are from all active classes
- */
-  static Future<RequestResponse> getAssignments() {
-    return SKRequests.get(
-      '/students/${SKUser.current.student.id}/assignments',
-      _fromJsonObj,
-      cachePath: 'assignments.json',
-      cacheResult: true,
-    );
-  }
+// /**
+//  * Gets the current assignments for the User.
+//  * Assignments are from all active classes
+//  */
+//   static Future<RequestResponse> getAssignments() {
+//     return SKRequests.get(
+//       '/students/${SKUser.current.student.id}/assignments',
+//       _fromJsonObj,
+//       cachePath: 'assignments.json',
+//       cacheResult: true,
+//     );
+//   }
 }
 
 class AssignmentChat {

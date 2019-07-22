@@ -114,6 +114,8 @@ class StudentClass {
     }
   }
 
+  void initializeColor() {}
+
   Future<RequestResponse> setColor(Color color) {
     this._color = color.value.toRadixString(16).substring(2) + 'ff';
     StudentClass.currentClasses[id]._color = this._color;
@@ -150,13 +152,19 @@ class StudentClass {
     return SKRequests.put(
       '/students/${SKUser.current.student.id}/classes/${id}',
       params,
-      StudentClass._fromJsonObj,
+      (content) =>
+          StudentClass._fromJsonObj(content, shouldPersistAssignments: false),
     ).then((response) {
       if (response.wasSuccessful()) {
         return refetchSelf();
       } else {
         return response;
       }
+    }).then((response) {
+      if ((response as RequestResponse).wasSuccessful()) {
+        DartNotificationCenter.post(channel: NotificationChannels.classChanged);
+      }
+      return response;
     });
   }
 
@@ -319,7 +327,6 @@ class StudentClass {
       if (success) {
         StudentClass.currentClasses.remove(id);
         Assignment.currentAssignments.removeWhere((_, v) => v.classId == id);
-        Assignment.currentTasks.removeWhere((v) => v.classId == id);
       }
       return success;
     });
@@ -383,7 +390,7 @@ class StudentClass {
   ];
 
   static StudentClass _fromJsonObj(Map content,
-      {bool shouldPersistAssignments = false}) {
+      {bool shouldPersistAssignments = true}) {
     if (content == null) {
       return null;
     }
@@ -398,10 +405,6 @@ class StudentClass {
     final startTime = (startString == null || startComponents.length < 2)
         ? null
         : TimeOfDay(hour: startComponents[0], minute: startComponents[1]);
-
-    if (shouldPersistAssignments) {
-      Assignment.currentAssignments = {};
-    }
 
     StudentClass studentClass = StudentClass(
       content['id'],
@@ -436,6 +439,7 @@ class StudentClass {
       content['is_points'],
       content['is_notifications'],
     );
+
     StudentClass.currentClasses[studentClass.id] = studentClass;
 
     return studentClass
@@ -448,14 +452,17 @@ class StudentClass {
       _fromJsonObj,
       cacheResult: true,
       cachePath: 'student_classes.json',
-      postRequestAction: () => StudentClass.currentClasses = {},
+      postRequestAction: () {
+        StudentClass.currentClasses = {};
+        Assignment.currentAssignments = {};
+      },
     );
   }
 
   static Future<RequestResponse> getStudentClassById(int id) {
     return SKRequests.get(
       '/students/${SKUser.current.student.id}/classes/${id}',
-      (content) => _fromJsonObj(content, shouldPersistAssignments: false),
+      _fromJsonObj,
     );
   }
 }

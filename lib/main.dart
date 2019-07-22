@@ -52,10 +52,7 @@ class _SkollerAppState extends State<SkollerApp> {
   void dispose() {
     super.dispose();
 
-    DartNotificationCenter.unsubscribe(
-      channel: NotificationChannels.appStateChanged,
-      observer: this,
-    );
+    DartNotificationCenter.unsubscribe(observer: this);
   }
 
   @override

@@ -41,8 +41,6 @@ class Mod {
   StudentClass get parentClass => StudentClass.currentClasses[_parentClassId];
 
   Assignment get parentAssignment {
-    //=>
-    print(modType);
     return Assignment.currentAssignments[_parentAssignmentId];
   }
 

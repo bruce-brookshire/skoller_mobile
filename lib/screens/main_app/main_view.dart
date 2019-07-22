@@ -47,8 +47,6 @@ class _MainState extends State<MainView> {
     );
 
     Mod.fetchMods();
-    Assignment.getAssignments();
-    Chat.getStudentChats();
 
     super.initState();
   }

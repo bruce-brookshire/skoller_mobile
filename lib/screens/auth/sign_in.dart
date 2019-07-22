@@ -37,6 +37,8 @@ class _SignInState extends State<SignIn> {
       );
 
       if (result is bool && result) {
+        await StudentClass.getStudentClasses();
+
         Navigator.popUntil(context, (route) => route.isFirst);
         DartNotificationCenter.post(
           channel: NotificationChannels.appStateChanged,

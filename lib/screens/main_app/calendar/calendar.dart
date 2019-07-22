@@ -34,17 +34,6 @@ class _CalendarState extends State<CalendarView> {
 
     today = DateTime.now();
 
-    Assignment.getAssignments().then((response) {
-      if (response.wasSuccessful()) {
-        updateAssignments(response.obj);
-      } else {
-        DropdownBanner.showBanner(
-          text: 'Failed to get assignments',
-          color: SKColors.warning_red,
-          textStyle: TextStyle(color: Colors.white),
-        );
-      }
-    });
     updateAssignments(Assignment.currentAssignments.values);
 
     children = [
@@ -55,7 +44,6 @@ class _CalendarState extends State<CalendarView> {
   }
 
   void updateAssignments(Iterable<Assignment> new_assignments) {
-    print(Assignment.currentAssignments[2072] == null);
     assignments = {};
     //Add assignments to the day hash map
     for (var assignment in new_assignments) {
