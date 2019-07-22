@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/widgets.dart';
 import 'package:intl/intl.dart';
+import 'package:skoller/constants/constants.dart';
 import 'package:skoller/screens/main_app/classes/class_detail_view.dart';
 import 'package:skoller/screens/main_app/classes/student_profile_modal.dart';
 import 'package:skoller/tools.dart';
@@ -273,6 +274,7 @@ class _AssignmentInfoState extends State<AssignmentInfoView> {
 
   void tappedEdit(TapUpDetails details) async {
     final results = await showDialog(
+        barrierDismissible: false,
         context: context,
         builder: (context) => _AssignmentEditModal(assignment.id));
 
@@ -452,7 +454,7 @@ class _AssignmentInfoState extends State<AssignmentInfoView> {
                             ),
                           ],
                         ),
-                      buildPersonalDetails(context),
+                      buildProgressDetails(context),
                       ...chatViews(),
                     ],
                   ),
@@ -475,6 +477,9 @@ class _AssignmentInfoState extends State<AssignmentInfoView> {
 
   Widget buildAssignmentDetails() {
     String weightDescr;
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+    final days = assignment.due?.difference(today)?.inDays;
 
     if (assignment.weight_id == null) {
       weightDescr = 'Not graded';
@@ -482,7 +487,7 @@ class _AssignmentInfoState extends State<AssignmentInfoView> {
       weightDescr = '';
     } else {
       weightDescr =
-          'Worth ${NumberUtilities.formatWeightAsPercent(assignment.weight)} of grade';
+          '${NumberUtilities.formatWeightAsPercent(assignment.weight)} of your final grade';
     }
     return Container(
       margin: EdgeInsets.all(12),
@@ -507,8 +512,9 @@ class _AssignmentInfoState extends State<AssignmentInfoView> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
                 Text(
-                  'Details',
-                  style: TextStyle(fontSize: 17),
+                  assignment.name,
+                  style: TextStyle(
+                      fontSize: 17, color: assignment.parentClass.getColor()),
                 ),
                 GestureDetector(
                   onTapUp: tappedEdit,
@@ -526,32 +532,39 @@ class _AssignmentInfoState extends State<AssignmentInfoView> {
               ],
             ),
           ),
-          Container(
-            alignment: Alignment.centerLeft,
-            margin: EdgeInsets.only(left: 12, right: 12, top: 6),
-            child: Text(
-              'Assignment name',
-              style: TextStyle(
-                  fontWeight: FontWeight.normal,
-                  fontSize: 12,
-                  color: SKColors.light_gray),
-            ),
-          ),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
-              Container(
-                margin: EdgeInsets.only(left: 12, right: 12),
-                child: Text(assignment.name),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(
+                    alignment: Alignment.centerLeft,
+                    margin: EdgeInsets.only(left: 12, right: 12, top: 6),
+                    child: Text(
+                      'Due date',
+                      style: TextStyle(
+                          fontWeight: FontWeight.normal,
+                          fontSize: 12,
+                          color: SKColors.light_gray),
+                    ),
+                  ),
+                  Container(
+                    margin: EdgeInsets.only(left: 12, right: 12),
+                    child: Text(assignment.due == null
+                        ? 'No due date'
+                        : DateFormat('E, MMM. d').format(assignment.due)),
+                  ),
+                ],
               ),
               Container(
-                padding: EdgeInsets.only(right: 12),
+                padding: EdgeInsets.only(top: 12, right: 12),
                 child: Text(
-                  weightDescr,
+                  days == null ? '' : (days == 0 ? 'Today' : 'in $days days'),
                   style: TextStyle(
                       fontWeight: FontWeight.normal,
-                      fontSize: 13,
-                      color: SKColors.dark_gray),
+                      fontSize: 14,
+                      color: SKColors.light_gray),
                 ),
               ),
             ],
@@ -562,46 +575,27 @@ class _AssignmentInfoState extends State<AssignmentInfoView> {
                       bottom:
                           BorderSide(color: SKColors.selected_gray, width: 1))),
               alignment: Alignment.centerLeft,
-              padding: EdgeInsets.only(bottom: 6),
-              margin: EdgeInsets.only(left: 12, right: 12, top: 1),
+              margin: EdgeInsets.only(left: 12, right: 12, top: 8, bottom: 2),
               child: null),
           Padding(
             padding: EdgeInsets.fromLTRB(12, 8, 12, 1),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
-                Text(
-                  'Grading category',
-                  style: TextStyle(
-                      fontWeight: FontWeight.normal,
-                      fontSize: 12,
-                      color: SKColors.light_gray),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Text(
+                      'Impact',
+                      style: TextStyle(
+                          fontWeight: FontWeight.normal,
+                          fontSize: 12,
+                          color: SKColors.light_gray),
+                    ),
+                    Text(weightDescr),
+                  ],
                 ),
-                Text(
-                  'Due date',
-                  style: TextStyle(
-                      fontWeight: FontWeight.normal,
-                      fontSize: 12,
-                      color: SKColors.light_gray),
-                ),
-              ],
-            ),
-          ),
-          Container(
-            margin: EdgeInsets.only(left: 12, right: 12),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: <Widget>[
-                Expanded(
-                  child: Text(
-                    assignment.getWeightName(),
-                  ),
-                ),
-                Text(
-                  assignment.due == null
-                      ? 'No due date'
-                      : DateFormat('E, MMM. d').format(assignment.due),
-                ),
+                SKAssignmentImpactGraph(assignment),
               ],
             ),
           ),
@@ -614,7 +608,7 @@ class _AssignmentInfoState extends State<AssignmentInfoView> {
   //Personal Details//
   //----------------//
 
-  Widget buildPersonalDetails(BuildContext context) {
+  Widget buildProgressDetails(BuildContext context) {
     List<Widget> gradeElems = [
       GestureDetector(
         onTapUp: tappedGradeSelector,
@@ -665,7 +659,7 @@ class _AssignmentInfoState extends State<AssignmentInfoView> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
                 Text(
-                  'Private info',
+                  'My progress',
                   style: TextStyle(fontSize: 17),
                 ),
               ],
@@ -805,7 +799,7 @@ class _AssignmentInfoState extends State<AssignmentInfoView> {
                     child: Image.asset(ImageNames.assignmentInfoImages.comment),
                   ),
                   Text(
-                    'Comments',
+                    'Chat with classmates',
                     style: TextStyle(fontSize: 17),
                   ),
                 ],
@@ -1367,141 +1361,185 @@ class _AssignmentEditModalState extends State<_AssignmentEditModal> {
     }
   }
 
+  void tappedSubmit(TapUpDetails _) {
+    List<Map> requests = [];
+    if (shouldDelete) {
+      requests.add({
+        'request': assignment.delete(isPrivate),
+        'mod_type': 'delete',
+      });
+    } else {
+      if (!selectedDate.isAtSameMomentAs(assignment.due)) {
+        requests.add({
+          'request': assignment.updateDueDate(
+            isPrivate,
+            selectedDate,
+          ),
+          'mod_type': 'due_date',
+        });
+      }
+      if (selectedWeight.id != assignment.weight_id) {
+        requests.add({
+          'request': assignment.updateWeightCategory(
+            isPrivate,
+            selectedWeight,
+          ),
+          'mod_type': 'weight',
+        });
+      }
+    }
+
+    Navigator.pop(context, requests);
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Dialog(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.all(Radius.circular(10)),
-      ),
-      child: Container(
-        padding: EdgeInsets.all(12),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          // crossAxisAlignment: CrossAxisAlignment,
-          children: [
-            Text(
-              'Edit assignment details',
-              textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 17),
-            ),
-            Container(
-              child: null,
-              margin: EdgeInsets.fromLTRB(16, 4, 16, 16),
-              height: 1.25,
-              color: SKColors.border_gray,
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: <Widget>[
-                Container(
-                  padding: EdgeInsets.symmetric(vertical: 8),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      Text(
-                        'Due date',
-                        style: TextStyle(
-                            fontWeight: FontWeight.normal,
-                            fontSize: 13,
-                            color: SKColors.light_gray),
-                      ),
-                      GestureDetector(
-                        onTapUp: tappedDueDate,
-                        child: Text(
-                          selectedDate == null
-                              ? 'No due date'
-                              : DateFormat('E, MMM. d').format(selectedDate),
-                          style: TextStyle(color: SKColors.skoller_blue),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                Expanded(
-                  child: Container(
-                    padding: EdgeInsets.symmetric(vertical: 8),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      children: <Widget>[
-                        Text(
-                          'Graded as',
-                          style: TextStyle(
-                              fontWeight: FontWeight.normal,
-                              fontSize: 13,
-                              color: SKColors.light_gray),
-                        ),
-                        GestureDetector(
-                          onTapUp: tappedWeight,
-                          child: Text(
-                            selectedWeight.name,
-                            style: TextStyle(color: SKColors.skoller_blue),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            Container(
-              padding: EdgeInsets.symmetric(vertical: 8),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Container(
-                    alignment: Alignment.centerLeft,
-                    child: Text(
-                      'Share changes',
-                      style: TextStyle(
-                        fontSize: 15,
-                        fontWeight: FontWeight.normal,
-                      ),
-                    ),
-                  ),
-                  CupertinoSwitch(
-                      value: !isPrivate,
-                      onChanged: (value) {
-                        setState(() {
-                          isPrivate = !value;
-                        });
-                      },
-                      activeColor: SKColors.skoller_blue),
-                ],
-              ),
-            ),
-            GestureDetector(
-              onTapUp: (details) {
-                setState(() {
-                  shouldDelete = !shouldDelete;
-                });
-              },
-              child: Container(
-                decoration: BoxDecoration(
-                    border: Border.all(color: SKColors.warning_red),
-                    borderRadius: BorderRadius.circular(5)),
-                padding: EdgeInsets.symmetric(vertical: 4, horizontal: 24),
-                margin: EdgeInsets.symmetric(horizontal: 2),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  // mainAxisSize: MainAxisSize.min,
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: 24),
+      child: Center(
+        child: Material(
+          shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
+              side: BorderSide(color: SKColors.border_gray)),
+          child: Container(
+            padding: EdgeInsets.all(14),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[
-                    Image.asset(ImageNames.assignmentInfoImages.trash),
-                    Container(
-                      width: 4,
-                      child: null,
+                    GestureDetector(
+                      onTapUp: (details) => Navigator.pop(context),
+                      child: SizedBox(
+                        width: 32,
+                        height: 32,
+                        child: Image.asset(ImageNames.navArrowImages.down),
+                      ),
                     ),
                     Text(
-                      shouldDelete ? 'Cancel' : 'Delete',
-                      style: TextStyle(color: SKColors.warning_red),
+                      'Edit assignment details',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(fontSize: 17),
+                    ),
+                    GestureDetector(
+                      onTapUp: (details) async {
+                        final results = await showDialog(
+                          context: context,
+                          builder: (context) => SKAlertDialog(
+                            title: 'Delete assignment',
+                            subTitle: 'Are you absolutely sure?',
+                            confirmText: 'Delete',
+                            cancelText: 'Cancel',
+                          ),
+                        );
+
+                        if (results is bool && results) {
+                          shouldDelete = true;
+                          tappedSubmit(null);
+                        }
+                      },
+                      child: SizedBox(
+                        width: 32,
+                        height: 32,
+                        child:
+                            Image.asset(ImageNames.assignmentInfoImages.trash),
+                      ),
                     ),
                   ],
                 ),
-              ),
+                Container(
+                  child: null,
+                  margin: EdgeInsets.only(top: 4, bottom: 16),
+                  height: 1.25,
+                  color: SKColors.border_gray,
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    Container(
+                      padding: EdgeInsets.symmetric(vertical: 8),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          Text(
+                            'Due date',
+                            style: TextStyle(
+                                fontWeight: FontWeight.normal,
+                                fontSize: 13,
+                                color: SKColors.light_gray),
+                          ),
+                          GestureDetector(
+                            onTapUp: tappedDueDate,
+                            child: Text(
+                              selectedDate == null
+                                  ? 'No due date'
+                                  : DateFormat('E, MMM. d')
+                                      .format(selectedDate),
+                              style: TextStyle(color: SKColors.skoller_blue),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Expanded(
+                      child: Container(
+                        padding: EdgeInsets.symmetric(vertical: 8),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          children: <Widget>[
+                            Text(
+                              'Graded as',
+                              style: TextStyle(
+                                  fontWeight: FontWeight.normal,
+                                  fontSize: 13,
+                                  color: SKColors.light_gray),
+                            ),
+                            GestureDetector(
+                              onTapUp: tappedWeight,
+                              child: Text(
+                                selectedWeight.name,
+                                style: TextStyle(color: SKColors.skoller_blue),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                Container(
+                  padding: EdgeInsets.symmetric(vertical: 8),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Container(
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          'Share changes',
+                          style: TextStyle(
+                            fontSize: 15,
+                            fontWeight: FontWeight.normal,
+                          ),
+                        ),
+                      ),
+                      CupertinoSwitch(
+                          value: !isPrivate,
+                          onChanged: (value) {
+                            setState(() {
+                              isPrivate = !value;
+                            });
+                          },
+                          activeColor: SKColors.skoller_blue),
+                    ],
+                  ),
+                ),
+                createActionButton(context),
+              ],
             ),
-            createActionButton(context),
-          ],
+          ),
         ),
       ),
     );
@@ -1575,36 +1613,7 @@ class _AssignmentEditModalState extends State<_AssignmentEditModal> {
     }
 
     return GestureDetector(
-      onTapUp: (details) {
-        List<Map> requests = [];
-        if (shouldDelete) {
-          requests.add({
-            'request': assignment.delete(isPrivate),
-            'mod_type': 'delete',
-          });
-        } else {
-          if (!selectedDate.isAtSameMomentAs(assignment.due)) {
-            requests.add({
-              'request': assignment.updateDueDate(
-                isPrivate,
-                selectedDate,
-              ),
-              'mod_type': 'due_date',
-            });
-          }
-          if (selectedWeight.id != assignment.weight_id) {
-            requests.add({
-              'request': assignment.updateWeightCategory(
-                isPrivate,
-                selectedWeight,
-              ),
-              'mod_type': 'weight',
-            });
-          }
-        }
-
-        Navigator.pop(context, requests);
-      },
+      onTapUp: tappedSubmit,
       child: Container(
           alignment: Alignment.center,
           decoration: BoxDecoration(

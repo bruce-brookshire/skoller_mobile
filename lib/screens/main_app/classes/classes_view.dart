@@ -221,7 +221,6 @@ class _ClassesState extends State<ClassesView> {
                 textScaleFactor: 1,
                 style: TextStyle(
                     color: Colors.white,
-                    fontWeight: FontWeight.normal,
                     fontSize: 17,
                     letterSpacing: -0.75),
               ),

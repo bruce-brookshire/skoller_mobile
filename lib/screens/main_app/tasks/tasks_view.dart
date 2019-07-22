@@ -2,6 +2,7 @@ import 'package:dart_notification_center/dart_notification_center.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:skoller/constants/constants.dart';
 import 'package:skoller/screens/main_app/activity/update_info_view.dart';
 import 'package:skoller/tools.dart';
 import '../classes/assignment_info_view.dart';
@@ -60,12 +61,13 @@ class _TasksState extends State<TasksView> {
             },
           ))
         .map(
-      (a) => _TaskLikeItem(
-        a.id,
-        false,
-        a.due,
-      ),
-    ).toList();
+          (a) => _TaskLikeItem(
+            a.id,
+            false,
+            a.due,
+          ),
+        )
+        .toList();
 
     RequestResponse modResponse = await modsRequest;
 
@@ -292,7 +294,7 @@ class _TasksState extends State<TasksView> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
                   Text(
-                    task.name,
+                    task?.name ?? 'N/A',
                     style: TextStyle(
                         color: task.parentClass.getColor(),
                         fontWeight: FontWeight.bold,
@@ -313,14 +315,8 @@ class _TasksState extends State<TasksView> {
                   task.parentClass?.name ?? '',
                   style: TextStyle(fontSize: 15, fontWeight: FontWeight.normal),
                 ),
-                Text(
-                  task.weight_id == null
-                      ? 'Not graded'
-                      : task.weight == null
-                          ? ''
-                          : NumberUtilities.formatWeightAsPercent(task.weight),
-                  style: TextStyle(fontSize: 14, fontWeight: FontWeight.normal),
-                ),
+                if (task.weight_id != null && task.weight != null)
+                  SKAssignmentImpactGraph(task, size: ImpactGraphSize.small)
               ],
             )
           ],

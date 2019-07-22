@@ -1549,3 +1549,111 @@ class _SammiArrowPainter extends CustomPainter {
           ];
   }
 }
+
+enum ImpactGraphSize { small, large }
+
+class SKAssignmentImpactGraph extends StatelessWidget {
+  final Assignment assignment;
+  final ImpactGraphSize size;
+
+  SKAssignmentImpactGraph(this.assignment, {this.size = ImpactGraphSize.large});
+
+  @override
+  Widget build(BuildContext context) {
+    _ImpactLevel level;
+
+    if (assignment.weight < 0.05) {
+      level = _ImpactLevel.low;
+    } else if (assignment.weight < 0.15) {
+      level = _ImpactLevel.medium;
+    } else {
+      level = _ImpactLevel.high;
+    }
+
+    final double width = size == ImpactGraphSize.large ? 40 : 32;
+    final double height = size == ImpactGraphSize.large ? 26 : 18;
+
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: <Widget>[
+        CustomPaint(
+          painter:
+              _SKImpactGraphPainter(assignment.parentClass.getColor(), level),
+          child: Container(
+            width: width,
+            height: height,
+          ),
+        ),
+        if (size == ImpactGraphSize.large) 
+          Padding(
+            padding: EdgeInsets.only(top: 2),
+            child: Text(
+              level == _ImpactLevel.low
+                  ? 'Low'
+                  : (level == _ImpactLevel.medium ? 'Medium' : 'High'),
+              style: TextStyle(
+                fontSize: 9,
+              ),
+            ),
+          )
+      ],
+    );
+  }
+}
+
+enum _ImpactLevel { low, medium, high }
+
+class _SKImpactGraphPainter extends CustomPainter {
+  final Color color;
+  final _ImpactLevel impact;
+
+  _SKImpactGraphPainter(this.color, this.impact);
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final fillPaint1 = Paint()
+      ..color = color.withOpacity(0.5)
+      ..style = PaintingStyle.fill
+      ..isAntiAlias = true;
+
+    final fillPaint2 = Paint()
+      ..color = color.withOpacity(0.7)
+      ..style = PaintingStyle.fill
+      ..isAntiAlias = true;
+
+    final fillPaint3 = Paint()
+      ..color = color
+      ..style = PaintingStyle.fill
+      ..isAntiAlias = true;
+
+    final emptyPaint = Paint()
+      ..color = SKColors.inactive_gray
+      ..style = PaintingStyle.fill
+      ..isAntiAlias = true;
+
+    final oneThird = size.height / 3;
+    final width = (size.width - 6) / 3;
+
+    final smallRect = Rect.fromLTWH(0, size.height - oneThird, width, oneThird);
+    final mediumRect = Rect.fromLTWH(width + 3, oneThird, width, oneThird * 2);
+    final largeRect = Rect.fromLTWH((width + 3) * 2, 0, width, size.height);
+
+    canvas.drawRect(smallRect, fillPaint1);
+
+    if (impact.index > 0) {
+      canvas.drawRect(mediumRect, fillPaint2);
+
+      if (impact.index > 1)
+        canvas.drawRect(largeRect, fillPaint3);
+      else
+        canvas.drawRect(largeRect, emptyPaint);
+    } else {
+      canvas.drawRect(mediumRect, emptyPaint);
+      canvas.drawRect(largeRect, emptyPaint);
+    }
+  }
+
+  @override
+  bool shouldRepaint(CustomPainter oldDelegate) => false;
+}

@@ -44,7 +44,7 @@ class _ActivityState extends State<ActivityView> {
         modHash['${mod.id} new'] = [mod];
       } else {
 
-        String key = '${mod.parentAssignment.id} ${mod.modType.index}';
+        String key = '${mod.parentAssignment?.id ?? mod.id} ${mod.modType.index}';
 
         if (modHash[key] == null) {
           modHash[key] = [mod];
