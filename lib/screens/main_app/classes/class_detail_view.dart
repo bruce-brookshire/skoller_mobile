@@ -55,11 +55,8 @@ class _ClassDetailState extends State<ClassDetailView> {
   }
 
   Future fetchClass([dynamic options]) async {
-    final response = await studentClass.refetchSelf();
-    if (response.wasSuccessful()) {
-      studentClass = response.obj;
-      if (mounted) setState(() {});
-    }
+    studentClass = StudentClass.currentClasses[studentClass.id];
+    if (mounted) setState(() {});
   }
 
   void tappedLink(TapUpDetails details) {

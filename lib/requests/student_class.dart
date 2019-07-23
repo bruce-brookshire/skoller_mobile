@@ -152,8 +152,7 @@ class StudentClass {
     return SKRequests.put(
       '/students/${SKUser.current.student.id}/classes/${id}',
       params,
-      (content) =>
-          StudentClass._fromJsonObj(content, shouldPersistAssignments: false),
+      (content) => StudentClass._fromJsonObj(content),
     ).then((response) {
       if (response.wasSuccessful()) {
         return refetchSelf();
@@ -189,16 +188,22 @@ class StudentClass {
     }
 
     return SKRequests.post(
-        '/students/${SKUser.current.student.id}/classes/${this.id}/assignments',
-        {
-          "due": tzCorrectedString,
-          "weight_id": weight.id,
-          "name": name,
-          "is_completed": false,
-          "is_private": false,
-          "created_on": "mobile"
-        },
-        Assignment._fromJsonObj);
+            '/students/${SKUser.current.student.id}/classes/${this.id}/assignments',
+            {
+              "due": tzCorrectedString,
+              "weight_id": weight.id,
+              "name": name,
+              "is_completed": false,
+              "is_private": false,
+              "created_on": "mobile"
+            },
+            Assignment._fromJsonObj)
+        .then((response) {
+      if (response.wasSuccessful()) {
+        (response.obj as Assignment).refetchSelf();
+      }
+      return response;
+    });
   }
 
   Future<RequestResponse> createBatchAssignment(
@@ -368,7 +373,6 @@ class StudentClass {
   Future<bool> weightChangeRequest(bool isPoints, List<Map> weights) async {
     final body = weights.fold<Map<String, num>>(
         Map(), (c, e) => c..[e['name']] = e['value']);
-    print(body);
     return SKRequests.post('/classes/$id/changes/200', {'data': body}, null)
         .then((response) => response.wasSuccessful());
   }
@@ -389,8 +393,7 @@ class StudentClass {
     Color(0xFF9B55E5), //purple
   ];
 
-  static StudentClass _fromJsonObj(Map content,
-      {bool shouldPersistAssignments = true}) {
+  static StudentClass _fromJsonObj(Map content) {
     if (content == null) {
       return null;
     }
@@ -410,8 +413,7 @@ class StudentClass {
       content['id'],
       content['name'],
       JsonListMaker.convert(
-        (content) => Assignment._fromJsonObj(content,
-            shouldPersist: shouldPersistAssignments),
+        (content) => Assignment._fromJsonObj(content, shouldPersist: true),
         content['assignments'] ?? [],
       ),
       content['color'],

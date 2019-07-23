@@ -140,7 +140,6 @@ class _ClassInfoState extends State<ClassInfoView> {
     if (result is bool && result) {
       final bool successfullyDropped =
           await StudentClass.currentClasses[widget.classId].dropClass();
-      print(successfullyDropped);
       if (successfullyDropped) {
         DartNotificationCenter.post(channel: NotificationChannels.classChanged);
 

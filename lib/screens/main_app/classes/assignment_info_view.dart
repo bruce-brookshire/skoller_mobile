@@ -285,17 +285,17 @@ class _AssignmentInfoState extends State<AssignmentInfoView> {
           final result = await modAction['request'];
           if (result != null && result) {
             DartNotificationCenter.post(
-                channel: NotificationChannels.assignmentChanged);
+                channel: NotificationChannels.classChanged);
             Navigator.pop(context);
             return;
           }
         }
         DartNotificationCenter.post(
-            channel: NotificationChannels.assignmentChanged);
+            channel: NotificationChannels.classChanged);
       }
     }
 
-    bool response = await assignment.fetchSelf();
+    bool response = await assignment.refetchSelf();
 
     if (response != null && response) {
       setState(() {

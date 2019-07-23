@@ -294,7 +294,6 @@ class SKCalendarPicker extends StatefulWidget {
 
     final calendar = SKCalendarPicker._(startDate, (date) {
       selectedDate = date;
-      print(date);
     });
 
     return showDialog(

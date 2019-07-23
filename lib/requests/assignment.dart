@@ -161,13 +161,15 @@ class Assignment {
 
     if ([200, 204].contains(statusCode)) {
       Assignment.currentAssignments.remove(id);
+      StudentClass.currentClasses[classId].assignments
+          .removeWhere((a) => a.id == id);
       return true;
     } else {
       return false;
     }
   }
 
-  Future<bool> fetchSelf() {
+  Future<bool> refetchSelf() {
     Future<RequestResponse> request = SKRequests.get(
       '/assignments/${id}',
       Assignment._fromJsonObj,
@@ -202,6 +204,13 @@ class Assignment {
       return null;
     }
     var due = content['due'] != null ? DateTime.parse(content['due']) : null;
+    if (content['class_id'] == null) {
+      print(content['class_id'] == null);
+      print(StackTrace.current);
+      print(StackTrace.current.toString() == '');
+      print(StackTrace.current.toString());
+      print('hi');
+    }
 
     Assignment assignment = Assignment(
       content['id'],

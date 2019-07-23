@@ -65,8 +65,8 @@ class JsonListMaker {
 }
 
 class SKRequests {
-  // static const String _environment = 'http://127.0.0.1:4000'; //LOCAL
-  static final String _environment = 'https://api-staging.skoller.co'; //STAGING
+  static const String _environment = 'http://127.0.0.1:4000'; //LOCAL
+  // static final String _environment = 'https://api-staging.skoller.co'; //STAGING
   // static final String _environment = 'https://api.skoller.co'; //PRODUCTION
   static final String _baseUrl = '$_environment/api/v1';
 
@@ -241,8 +241,7 @@ class SKCacheManager {
               throw 'Already loaded from server';
             } else {
               return JsonListMaker.convert(
-                (content) => StudentClass._fromJsonObj(content,
-                    shouldPersistAssignments: false),
+                (content) => StudentClass._fromJsonObj(content),
                 json.decode(contents ?? '[]'),
               );
             }

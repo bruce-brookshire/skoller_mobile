@@ -170,7 +170,6 @@ class Period {
       body['meet_days'] = meetDays;
       body['meet_start_time'] =
           '${meetTime.hour < 10 ? '0' : ''}${meetTime.hour}:${meetTime.minute < 10 ? '0' : ''}${meetTime.minute}:00';
-      print(body['meet_start_time']);
     }
 
     return SKRequests.post(

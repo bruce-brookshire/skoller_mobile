@@ -164,8 +164,8 @@ class _AssignmentAddState extends State<AssignmentAddView> {
 
                   if (response.wasSuccessful()) {
                     await StudentClass.currentClasses[widget.class_id]
-                        .refetchSelf()
-                        .then((response) => print(response.wasSuccessful()));
+                        .refetchSelf();
+                        
                     DartNotificationCenter.post(
                         channel: NotificationChannels.assignmentChanged);
                     Navigator.pop(context);
@@ -184,9 +184,8 @@ class _AssignmentAddState extends State<AssignmentAddView> {
               alignment: Alignment.center,
               padding: EdgeInsets.symmetric(vertical: 8),
               decoration: BoxDecoration(
-                  color: validState()
-                      ? SKColors.skoller_blue
-                      : SKColors.inactive_gray,
+                  color:
+                      validState() ? SKColors.success : SKColors.inactive_gray,
                   borderRadius: BorderRadius.circular(5)),
               child: Text(
                 'Save',

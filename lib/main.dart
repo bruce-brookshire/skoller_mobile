@@ -108,8 +108,6 @@ class _SkollerAppState extends State<SkollerApp> {
         break;
     }
 
-    print(currentState);
-
     return MaterialApp(
       builder: (context, widget) => Theme(data: currentTheme, child: widget),
       theme: currentTheme,

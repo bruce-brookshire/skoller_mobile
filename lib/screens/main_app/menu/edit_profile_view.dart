@@ -266,7 +266,6 @@ class _EditProfileState extends State<EditProfileView> {
                         style: TextStyle(fontSize: 16, color: SKColors.success),
                       ),
                       onPressed: () {
-                        print('safe');
                         Navigator.pop(context);
                       },
                     )
