@@ -80,30 +80,49 @@ class _LoadingState extends State<LoadingView> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Image.asset(ImageNames.signUpImages.logo_wide_blue),
-            Container(
-              margin: EdgeInsets.only(top: 64),
-              height: 32,
-              width: loading ? 32 : null,
-              child: loading
-                  ? CircularProgressIndicator()
-                  : GestureDetector(
-                      onTapUp: (details) {
-                        attemptLogin();
-                      },
-                      child: Text(
-                        'Failed loading. Tap to retry',
-                        style: TextStyle(
-                            color: SKColors.warning_red,
-                            fontWeight: FontWeight.normal),
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            stops: [0.1, 0.5, 1],
+            colors: [
+              SKColors.skoller_blue,
+              SKColors.skoller_blue,
+              Color(0xFF2966D8),
+            ],
+          ),
+        ),
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 24),
+                child: Image.asset(ImageNames.signUpImages.logo_wide_white),
+              ),
+              Container(
+                margin: EdgeInsets.only(top: 24, bottom: 48),
+                height: 32,
+                width: loading ? 32 : null,
+                child: loading
+                    ? CircularProgressIndicator(
+                        valueColor: AlwaysStoppedAnimation(Colors.white),
+                      )
+                    : GestureDetector(
+                        onTapUp: (details) {
+                          attemptLogin();
+                        },
+                        child: Text(
+                          'Failed loading. Tap to retry',
+                          style: TextStyle(
+                              color: SKColors.warning_red,
+                              fontWeight: FontWeight.normal),
+                        ),
                       ),
-                    ),
-            )
-          ],
+              )
+            ],
+          ),
         ),
       ),
     );

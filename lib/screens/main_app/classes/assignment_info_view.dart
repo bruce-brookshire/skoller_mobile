@@ -1614,7 +1614,7 @@ class _AssignmentEditModalState extends State<_AssignmentEditModal> {
                           ),
                         ),
                       ),
-                      CupertinoSwitch(
+                      Switch(
                           value: !isPrivate,
                           onChanged: (value) {
                             setState(() {

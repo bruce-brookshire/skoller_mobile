@@ -410,7 +410,7 @@ class _RemindersState extends State<RemindersView> {
                             style: TextStyle(
                                 fontWeight: FontWeight.normal, fontSize: 14),
                           ),
-                          CupertinoSwitch(
+                          Switch(
                             value: SKUser
                                 .current.student.isAssignPostNotifications,
                             activeColor: SKColors.skoller_blue,
@@ -483,7 +483,7 @@ class _RemindersState extends State<RemindersView> {
                                       fontWeight: FontWeight.normal,
                                       fontSize: 14),
                                 ),
-                                CupertinoSwitch(
+                                Switch(
                                   value: studentClass.isNotifications,
                                   activeColor: SKColors.skoller_blue,
                                   onChanged: (newVal) {

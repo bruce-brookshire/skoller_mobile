@@ -408,7 +408,7 @@ class _ClassChangeRequestState extends State<ClassChangeRequestView> {
                           'This is an online class',
                           style: TextStyle(fontWeight: FontWeight.normal),
                         ),
-                        CupertinoSwitch(
+                        Switch(
                           activeColor: SKColors.skoller_blue,
                           value: isOnline,
                           onChanged: (newVal) {

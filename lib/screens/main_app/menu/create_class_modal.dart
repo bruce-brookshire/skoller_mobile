@@ -588,7 +588,7 @@ class _CreateClassScreenTwoState extends State<_CreateClassScreenTwo> {
                     'This is an online class',
                     style: TextStyle(fontWeight: FontWeight.normal),
                   ),
-                  CupertinoSwitch(
+                  Switch(
                     activeColor: SKColors.skoller_blue,
                     value: parent.isOnline,
                     onChanged: (newVal) {

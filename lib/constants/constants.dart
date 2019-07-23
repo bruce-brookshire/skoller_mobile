@@ -114,6 +114,7 @@ class _SignUpImages {
   static const _base = 'image_assets/sign_up_assets';
 
   final happy_classmates = '${_base}/happy_classmates.png';
+  final logo_wide_white = '${_base}/logo_wide_white.png';
   final text_verify = '${_base}/text_verify.png';
   final syllabus_activity = '${_base}/syllabus_activity.png';
   final activities = '${_base}/activities.png';
