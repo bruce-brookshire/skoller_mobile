@@ -23,7 +23,7 @@ class _AssignmentWeightState extends State<AssignmentWeightView> {
     refreshAndSortWeights();
 
     DartNotificationCenter.subscribe(
-        channel: NotificationChannels.assignmentChanged,
+        channel: NotificationChannels.classChanged,
         observer: this,
         onNotification: updateState);
 

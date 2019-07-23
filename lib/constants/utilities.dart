@@ -75,13 +75,10 @@ class DateUtilities {
 }
 
 class NumberUtilities {
-  static String formatWeightAsPercent(double weight) {
-    return NumberFormat.percentPattern().format(weight);
-  }
+  static String formatWeightAsPercent(double weight) =>
+      '${((weight * 1000).round()) / 10}%';
 
-  static String formatGradeAsPercent(double grade) {
-    return '${grade.round()}%';
-  }
+  static String formatGradeAsPercent(double grade) => '${grade.round()}%';
 }
 
 /// Format incoming numeric text to fit the format of (###) ###-#### ##...

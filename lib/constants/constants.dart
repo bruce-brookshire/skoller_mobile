@@ -154,6 +154,7 @@ class _RightNavImages {
 class _AssignmentInfoImages {
   static const _base = 'image_assets/assignment_info_assets';
 
+  final yellow_lock = '${_base}/yellow_lock.png';
   final notes = '${_base}/notes.png';
   final circle_x = '${_base}/circle_x.png';
   final comment = '${_base}/comment.png';
@@ -164,6 +165,8 @@ class _AssignmentInfoImages {
 class _PeopleImages {
   static const _base = 'image_assets/people_assets';
 
+  final large_person_blue = '${_base}/large_person_blue.png';
+  final large_person_gray_plus = '${_base}/large_person_gray_plus.png';
   final person_light_gray = '${_base}/person_light_gray.png';
   final person_dark_gray = '${_base}/person_dark_gray.png';
   final person_white = '${_base}/person_white.png';

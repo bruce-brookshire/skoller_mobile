@@ -220,9 +220,7 @@ class _ClassesState extends State<ClassesView> {
                     : '${NumberUtilities.formatGradeAsPercent(grade)}',
                 textScaleFactor: 1,
                 style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 17,
-                    letterSpacing: -0.75),
+                    color: Colors.white, fontSize: 17, letterSpacing: -0.75),
               ),
             ),
             Container(

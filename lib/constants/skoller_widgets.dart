@@ -1561,13 +1561,12 @@ class SKAssignmentImpactGraph extends StatelessWidget {
   Widget build(BuildContext context) {
     _ImpactLevel level;
 
-    if (assignment.weight < 0.05) {
+    if (assignment.weight == null || assignment.weight < 0.05)
       level = _ImpactLevel.low;
-    } else if (assignment.weight < 0.15) {
+    else if (assignment.weight < 0.15)
       level = _ImpactLevel.medium;
-    } else {
+    else
       level = _ImpactLevel.high;
-    }
 
     final double width = size == ImpactGraphSize.large ? 40 : 32;
     final double height = size == ImpactGraphSize.large ? 26 : 18;
@@ -1584,7 +1583,7 @@ class SKAssignmentImpactGraph extends StatelessWidget {
             height: height,
           ),
         ),
-        if (size == ImpactGraphSize.large) 
+        if (size == ImpactGraphSize.large)
           Padding(
             padding: EdgeInsets.only(top: 2),
             child: Text(

@@ -18,12 +18,12 @@ class _ManageClassesState extends State<ManageClassesView> {
   void initState() {
     super.initState();
 
-    fetchClasses();
+    loadClasses();
 
     DartNotificationCenter.subscribe(
         observer: this,
         channel: NotificationChannels.classChanged,
-        onNotification: fetchClasses);
+        onNotification: loadClasses);
   }
 
   @override
@@ -32,7 +32,12 @@ class _ManageClassesState extends State<ManageClassesView> {
     DartNotificationCenter.unsubscribe(observer: this);
   }
 
-  void fetchClasses([dynamic options]) {
+  Future fetchClasses() async {
+    await StudentClass.getStudentClasses();
+    loadClasses();
+  }
+
+  void loadClasses([dynamic options]) {
     final newClasses = StudentClass.currentClasses.values.toList()
       ..sort((class1, class2) => class1.name.compareTo(class2.name));
 
@@ -58,7 +63,7 @@ class _ManageClassesState extends State<ManageClassesView> {
         Expanded(
           child: RefreshIndicator(
             key: _refreshIndicatorKey,
-            onRefresh: () async => fetchClasses,
+            onRefresh: fetchClasses,
             child: ListView.builder(
               padding: EdgeInsets.fromLTRB(8, 6, 8, 12),
               itemCount: classes.length,

@@ -21,31 +21,31 @@ class ClassDetailView extends StatefulWidget {
 }
 
 class _ClassDetailState extends State<ClassDetailView> {
-  StudentClass studentClass;
   int _selectedIndex;
+
+  StudentClass get studentClass => StudentClass.currentClasses[widget.classId];
   final _refreshIndicatorKey = GlobalKey<RefreshIndicatorState>();
 
   @override
   void initState() {
     super.initState();
-    studentClass = StudentClass.currentClasses[widget.classId];
 
-    fetchClass();
+    loadClass();
 
     DartNotificationCenter.subscribe(
         observer: this,
         channel: NotificationChannels.assignmentChanged,
-        onNotification: fetchClass);
+        onNotification: loadClass);
 
     DartNotificationCenter.subscribe(
         observer: this,
         channel: NotificationChannels.modsChanged,
-        onNotification: fetchClass);
+        onNotification: loadClass);
 
     DartNotificationCenter.subscribe(
         observer: this,
         channel: NotificationChannels.classChanged,
-        onNotification: fetchClass);
+        onNotification: loadClass);
   }
 
   @override
@@ -54,8 +54,12 @@ class _ClassDetailState extends State<ClassDetailView> {
     DartNotificationCenter.unsubscribe(observer: this);
   }
 
-  Future fetchClass([dynamic options]) async {
-    studentClass = StudentClass.currentClasses[studentClass.id];
+  Future fetchClass() async {
+    await studentClass.refetchSelf();
+    if (mounted) setState(() {});
+  }
+
+  Future loadClass([dynamic options]) async {
     if (mounted) setState(() {});
   }
 
@@ -132,6 +136,8 @@ class _ClassDetailState extends State<ClassDetailView> {
 
   @override
   Widget build(BuildContext context) {
+    final studentClass = this.studentClass;
+    
     final grade = (studentClass.grade == null || studentClass.grade == 0)
         ? '-- %'
         : '${studentClass.grade}%';
@@ -404,7 +410,8 @@ class _ClassDetailState extends State<ClassDetailView> {
   }
 
   Widget assignmentCellBuilder(BuildContext context, int index) {
-    final assignment = studentClass.assignments[index];
+    final assignment_id = studentClass.assignments[index].id;
+    final assignment = Assignment.currentAssignments[assignment_id];
     double pre_weight =
         assignment.weight != null ? assignment.weight * 100 : null;
     String weight;
@@ -486,6 +493,8 @@ class _ClassDetailState extends State<ClassDetailView> {
                         Expanded(
                           child: Text(
                             assignment.name,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
                             textScaleFactor: 1,
                           ),
                         ),

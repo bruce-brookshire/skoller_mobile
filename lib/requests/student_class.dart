@@ -139,13 +139,7 @@ class StudentClass {
   }
 
   Future<RequestResponse> refetchSelf() {
-    return getStudentClassById(id).then((response) {
-      if (response.wasSuccessful()) {
-        StudentClass copy = response.obj;
-        StudentClass.currentClasses[copy.id] = copy;
-      }
-      return response;
-    });
+    return getStudentClassById(id);
   }
 
   Future<RequestResponse> _update(Map params) {
@@ -188,17 +182,18 @@ class StudentClass {
     }
 
     return SKRequests.post(
-            '/students/${SKUser.current.student.id}/classes/${this.id}/assignments',
-            {
-              "due": tzCorrectedString,
-              "weight_id": weight.id,
-              "name": name,
-              "is_completed": false,
-              "is_private": false,
-              "created_on": "mobile"
-            },
-            Assignment._fromJsonObj)
-        .then((response) {
+        '/students/${SKUser.current.student.id}/classes/${this.id}/assignments',
+        {
+          "due": tzCorrectedString,
+          "weight_id": weight.id,
+          "name": name,
+          "is_completed": false,
+          "is_private": false,
+          "created_on": "mobile"
+        },
+        (content) =>
+            Assignment._fromJsonObj(content, shouldPersist: false)).then(
+        (response) {
       if (response.wasSuccessful()) {
         (response.obj as Assignment).refetchSelf();
       }
@@ -231,7 +226,7 @@ class StudentClass {
           "name": name,
           "created_on": "mobile"
         },
-        Assignment._fromJsonObj);
+        (content) => Assignment._fromJsonObj(content, shouldPersist: false));
   }
 
   Future<RequestResponse> acquireAssignmentLock(Weight weight) {

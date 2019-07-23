@@ -70,7 +70,7 @@ class ClassLinkSharingModal extends StatelessWidget {
             GestureDetector(
               onTapUp: (details) {
                 Share.share(
-                    'School is hard. But this new app called Skoller makes it easy! Our class \(studentClass.name ?? "") is already in the app. Download so we can keep up together!\n\n${studentClass.enrollmentLink}');
+                    'School is hard. But this new app called Skoller makes it easy! Our class ${studentClass.name ?? ''} is already in the app. Download so we can keep up together!\n\n${studentClass.enrollmentLink}');
               },
               child: Container(
                 margin: EdgeInsets.symmetric(horizontal: 16, vertical: 12),

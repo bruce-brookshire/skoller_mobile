@@ -47,6 +47,11 @@ class _TasksState extends State<TasksView> {
     DartNotificationCenter.unsubscribe(observer: this);
   }
 
+  Future fetchTasks() async {
+    await StudentClass.getStudentClasses();
+    loadTasks();
+  }
+
   Future loadTasks([dynamic options]) async {
     Future<RequestResponse> modsRequest = Mod.fetchNewAssignmentMods();
 
@@ -54,7 +59,10 @@ class _TasksState extends State<TasksView> {
     final today = DateTime(now.year, now.month, now.day);
 
     List<_TaskLikeItem> tasks = (Assignment.currentAssignments.values.toList()
-          ..removeWhere((a) => a.due?.isBefore(today))
+          ..removeWhere((a) =>
+              (a.due?.isBefore(today) ?? true) ||
+              a.parentClass == null ||
+              a.weight_id == null)
           ..sort(
             (a1, a2) {
               return -1;
@@ -223,7 +231,7 @@ class _TasksState extends State<TasksView> {
         Expanded(
           child: RefreshIndicator(
             key: _refreshIndicatorKey,
-            onRefresh: loadTasks,
+            onRefresh: fetchTasks,
             child: ListView.builder(
               padding: EdgeInsets.only(top: 4),
               itemBuilder: (context, index) => _taskItems[index].isMod
@@ -293,12 +301,16 @@ class _TasksState extends State<TasksView> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
-                  Text(
-                    task?.name ?? 'N/A',
-                    style: TextStyle(
-                        color: task.parentClass.getColor(),
-                        fontWeight: FontWeight.bold,
-                        fontSize: 17),
+                  Expanded(
+                    child: Text(
+                      task?.name ?? 'N/A',
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                          color: task.parentClass.getColor(),
+                          fontWeight: FontWeight.bold,
+                          fontSize: 17),
+                    ),
                   ),
                   Text(
                     DateUtilities.getFutureRelativeString(task.due),

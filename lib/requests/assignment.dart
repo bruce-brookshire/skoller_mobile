@@ -57,13 +57,19 @@ class Assignment {
   Future<bool> toggleComplete() {
     final newComplete = !(completed ?? false);
 
-    Future<RequestResponse> request = SKRequests.put(
+    return SKRequests.put(
       '/assignments/${id}',
       {'is_completed': newComplete},
-      _fromJsonObj,
-    );
+      (content) => _fromJsonObj(content, shouldPersist: false),
+    ).then((response) {
+      final success = response.wasSuccessful();
 
-    return _storeSuccessfulRequest(request);
+      if (success) {
+        Assignment.currentAssignments[id].completed = response.obj.completed;
+      }
+      // Assignment.currentAssignments.
+      return success;
+    });
   }
 
   String getWeightName() {
@@ -84,36 +90,60 @@ class Assignment {
     return SKRequests.post(
       '/assignments/${id}/grades',
       {'grade': grade},
-      Assignment._fromJsonObj,
-    );
+      (content) => _fromJsonObj(content, shouldPersist: false),
+    ).then((response) {
+      if (response.wasSuccessful()) {
+        Assignment.currentAssignments[id].grade = response.obj.grade;
+        parentClass.refetchSelf();
+      }
+
+      return response;
+    });
   }
 
   Future<RequestResponse> removeGrade() {
     return SKRequests.post(
       '/assignments/${id}/grades',
       {'grade': null},
-      Assignment._fromJsonObj,
-    );
+      (content) => _fromJsonObj(content, shouldPersist: false),
+    ).then((response) {
+      if (response.wasSuccessful()) {
+        Assignment.currentAssignments[id].grade = null;
+        parentClass.refetchSelf();
+      }
+
+      return response;
+    });
   }
 
   Future<bool> saveNotes(String notes) {
-    Future<RequestResponse> request = SKRequests.put(
+    return SKRequests.put(
       '/assignments/${id}',
       {'notes': notes},
-      _fromJsonObj,
-    );
+      (content) => _fromJsonObj(content, shouldPersist: false),
+    ).then((response) {
+      final success = response.wasSuccessful();
 
-    return _storeSuccessfulRequest(request);
+      if (success) Assignment.currentAssignments[id].notes = response.obj.notes;
+
+      return success;
+    });
   }
 
   Future<bool> togglePostNotifications() {
-    Future<RequestResponse> request = SKRequests.put(
+    return SKRequests.put(
       '/assignments/${id}',
       {'is_post_notifications': !isPostNotifications},
-      Assignment._fromJsonObj,
-    );
+      (content) => _fromJsonObj(content, shouldPersist: false),
+    ).then((response) {
+      final success = response.wasSuccessful();
 
-    return _storeSuccessfulRequest(request);
+      if (success)
+        Assignment.currentAssignments[id].isPostNotifications =
+            response.obj.isPostNotifications;
+
+      return success;
+    });
   }
 
   Future<RequestResponse> updateDueDate(
@@ -170,27 +200,10 @@ class Assignment {
   }
 
   Future<bool> refetchSelf() {
-    Future<RequestResponse> request = SKRequests.get(
+    return SKRequests.get(
       '/assignments/${id}',
       Assignment._fromJsonObj,
-    );
-
-    return _storeSuccessfulRequest(request);
-  }
-
-  Future<bool> _storeSuccessfulRequest(
-    Future<RequestResponse> request,
-  ) async {
-    RequestResponse response = await request;
-
-    bool success = response.wasSuccessful();
-
-    if (success) {
-      Assignment assignment = response.obj;
-      currentAssignments[assignment.id] = assignment;
-    }
-
-    return success;
+    ).then((response) => response.wasSuccessful());
   }
 
   //--------------//
@@ -204,13 +217,6 @@ class Assignment {
       return null;
     }
     var due = content['due'] != null ? DateTime.parse(content['due']) : null;
-    if (content['class_id'] == null) {
-      print(content['class_id'] == null);
-      print(StackTrace.current);
-      print(StackTrace.current.toString() == '');
-      print(StackTrace.current.toString());
-      print('hi');
-    }
 
     Assignment assignment = Assignment(
       content['id'],
