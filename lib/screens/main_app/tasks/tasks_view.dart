@@ -17,9 +17,12 @@ class TasksView extends StatefulWidget {
 
 class _TasksState extends State<TasksView> {
   List<_TaskLikeItem> _taskItems = [];
+  Forecast forecast = Forecast.tenDay;
+  bool showingCompletedTasks = false;
+
   int _tappedIndex;
+
   final _refreshIndicatorKey = GlobalKey<RefreshIndicatorState>();
-  Forecast forecast = Forecast.all;
 
   SlidableController controller = SlidableController();
 
@@ -67,19 +70,11 @@ class _TasksState extends State<TasksView> {
               (a.due?.isBefore(today) ?? true) ||
               a.parentClass == null ||
               a.weight_id == null ||
-              a.completed)
-          ..sort(
-            (a1, a2) {
-              return -1;
-            },
-          ))
-        .map(
-          (a) => _TaskLikeItem(
-            a.id,
-            false,
-            a.due,
-          ),
-        )
+              (!showingCompletedTasks && a.completed))
+          ..sort((a1, a2) {
+            return -1;
+          }))
+        .map((a) => _TaskLikeItem(a.id, false, a.due))
         .toList();
 
     RequestResponse modResponse = await modsRequest;
@@ -108,7 +103,7 @@ class _TasksState extends State<TasksView> {
     tasks
       ..removeWhere((task) {
         if (task.getParent == null) return true;
-        
+
         int outlook;
         if (forecast == Forecast.all)
           outlook = 365;
@@ -234,6 +229,7 @@ class _TasksState extends State<TasksView> {
 
   void tappedChangeForecast(TapUpDetails details) async {
     int selectedIndex;
+
     final results = await showDialog(
       barrierDismissible: false,
       context: context,
@@ -291,7 +287,7 @@ class _TasksState extends State<TasksView> {
               children: [
                 ListView.builder(
                   padding: EdgeInsets.only(top: 4, bottom: 64),
-                  itemCount: _taskItems.length + 1,
+                  itemCount: _taskItems.length + 2,
                   itemBuilder: (context, index) {
                     if (index == 0) {
                       final day = DateFormat('EEEE').format(DateTime.now());
@@ -352,10 +348,32 @@ class _TasksState extends State<TasksView> {
                           ),
                         ),
                       );
-                    } else
+                    } else if (index <= _taskItems.length)
                       return _taskItems[index - 1].isMod
                           ? buildModCell(context, index - 1)
                           : buildTaskCell(context, index - 1);
+                    else
+                      return GestureDetector(
+                        behavior: HitTestBehavior.opaque,
+                        onTapUp: (details) {
+                          setState(() =>
+                              showingCompletedTasks = !showingCompletedTasks);
+                          loadTasks();
+                        },
+                        child: Container(
+                          padding:
+                              EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+                          child: Text(
+                            showingCompletedTasks
+                                ? 'Hide completed tasks'
+                                : 'Show completed tasks',
+                            style: TextStyle(
+                                color: SKColors.skoller_blue,
+                                fontWeight: FontWeight.normal,
+                                fontSize: 14),
+                          ),
+                        ),
+                      );
                   },
                 ),
                 Align(

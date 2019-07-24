@@ -111,10 +111,10 @@ class _SkollerAppState extends State<SkollerApp> {
     return MaterialApp(
       builder: (context, widget) => Theme(data: currentTheme, child: widget),
       theme: currentTheme,
-      home: currentWidget,
-      // home: DropdownBanner(
-      //   builder: (context) => currentWidget,
-      // ),
+      // home: currentWidget,
+      home: DropdownBanner(
+        builder: (context) => currentWidget,
+      ),
     );
   }
 }
