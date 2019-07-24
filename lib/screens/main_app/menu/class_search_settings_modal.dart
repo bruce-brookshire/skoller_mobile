@@ -83,7 +83,7 @@ class _ClassSearchSettingsModalState extends State<ClassSearchSettingsModal> {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: <Widget>[
               Text(
-                'Class search settings',
+                'School and Term',
                 style: TextStyle(fontSize: 18),
                 textAlign: TextAlign.center,
               ),
@@ -108,7 +108,10 @@ class _ClassSearchSettingsModalState extends State<ClassSearchSettingsModal> {
                   child: Row(
                     children: [
                       Expanded(
-                        child: Text(school?.name ?? 'N/A'),
+                        child: Text(
+                          school?.name ?? 'N/A',
+                          style: TextStyle(color: SKColors.skoller_blue),
+                        ),
                       ),
                       Padding(
                         padding: EdgeInsets.symmetric(horizontal: 4),
@@ -139,7 +142,10 @@ class _ClassSearchSettingsModalState extends State<ClassSearchSettingsModal> {
                   child: Row(
                     children: [
                       Expanded(
-                        child: Text(period?.name ?? 'N/A'),
+                        child: Text(
+                          period?.name ?? 'N/A',
+                          style: TextStyle(color: SKColors.skoller_blue),
+                        ),
                       ),
                       Padding(
                         padding: EdgeInsets.symmetric(horizontal: 4),
@@ -156,7 +162,7 @@ class _ClassSearchSettingsModalState extends State<ClassSearchSettingsModal> {
                 child: Padding(
                   padding: EdgeInsets.only(top: 16, bottom: 4),
                   child: Text(
-                    'Done',
+                    'Save',
                     textAlign: TextAlign.center,
                     style: TextStyle(color: SKColors.skoller_blue),
                   ),

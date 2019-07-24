@@ -364,10 +364,10 @@ class _ProfessorSearchState extends State<ProfessorSearchView> {
                               Expanded(
                                 child: Text.rich(
                                   TextSpan(
-                                    text: 'Tap to create a professor named ',
+                                    text: 'Can\'t find your professor?',
                                     children: [
                                       TextSpan(
-                                          text: '${searchController.text}',
+                                          text: 'Tap here to add a professor to Skoller',
                                           style: TextStyle(
                                               color: SKColors.skoller_blue)),
                                     ],

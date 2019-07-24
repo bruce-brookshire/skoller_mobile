@@ -860,7 +860,8 @@ class _AssignmentInfoState extends State<AssignmentInfoView> {
                   text: 'You\'re ',
                   children: [
                     TextSpan(
-                      text: '${4 - enrollment} classmates',
+                      text:
+                          '${4 - enrollment} classmate${(4 - enrollment) == 1 ? '' : 's'}',
                       style: TextStyle(fontWeight: FontWeight.bold),
                     ),
                     TextSpan(text: ' away from unlocking chat!')

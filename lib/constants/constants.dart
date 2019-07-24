@@ -59,6 +59,7 @@ class ImageNames {
   static final chatImages = _ChatImages();
   static final sammiImages = _SammiImages();
   static final menuImages = _MenuImages();
+  static final tasksImages = _TasksImages();
   static final tutorialImages = _TutorialImages();
 }
 
@@ -68,6 +69,12 @@ class _MenuImages {
   final briefcase = '${_base}/briefcase.png';
   final points = '${_base}/points.png';
   final reminders = '${_base}/reminders.png';
+}
+
+class _TasksImages {
+  static const _base = 'image_assets/tasks_assets';
+
+  final forecast = '${_base}/forecast.png';
 }
 
 class _TutorialImages {

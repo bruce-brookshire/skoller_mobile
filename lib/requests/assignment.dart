@@ -67,7 +67,6 @@ class Assignment {
       if (success) {
         Assignment.currentAssignments[id].completed = response.obj.completed;
       }
-      // Assignment.currentAssignments.
       return success;
     });
   }
@@ -94,6 +93,7 @@ class Assignment {
     ).then((response) {
       if (response.wasSuccessful()) {
         Assignment.currentAssignments[id].grade = response.obj.grade;
+        Assignment.currentAssignments[id].completed = response.obj.completed;
         parentClass.refetchSelf();
       }
 

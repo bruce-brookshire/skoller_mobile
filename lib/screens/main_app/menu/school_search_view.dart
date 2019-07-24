@@ -257,10 +257,10 @@ class _SchoolSearchState extends State<SchoolSearchView> {
                               Expanded(
                                 child: Text.rich(
                                   TextSpan(
-                                    text: 'Tap to create a school called ',
+                                    text: 'Can\'t find your school? ',
                                     children: [
                                       TextSpan(
-                                          text: '${searchController.text}',
+                                          text: 'Tap here to add it to Skoller.',
                                           style: TextStyle(
                                               color: SKColors.skoller_blue)),
                                     ],

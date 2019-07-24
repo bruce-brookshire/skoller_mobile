@@ -165,7 +165,7 @@ class _AssignmentAddState extends State<AssignmentAddView> {
                   if (response.wasSuccessful()) {
                     await StudentClass.currentClasses[widget.class_id]
                         .refetchSelf();
-                        
+
                     DartNotificationCenter.post(
                         channel: NotificationChannels.assignmentChanged);
                     Navigator.pop(context);
@@ -243,19 +243,19 @@ class _AssignmentAddState extends State<AssignmentAddView> {
 
                   return Container(
                     padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                    child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            name,
-                            style: TextStyle(fontSize: 14),
-                          ),
-                          Text(
-                            due == null ? 'Not due' : dateFormatter.format(due),
-                            style: TextStyle(
-                                fontSize: 14, fontWeight: FontWeight.normal),
-                          ),
-                        ]),
+                    child: Row(children: [
+                      Expanded(
+                        child: Text(
+                          name,
+                          style: TextStyle(fontSize: 14),
+                        ),
+                      ),
+                      Text(
+                        due == null ? 'Not due' : dateFormatter.format(due),
+                        style: TextStyle(
+                            fontSize: 14, fontWeight: FontWeight.normal),
+                      ),
+                    ]),
                   );
                 },
               ),

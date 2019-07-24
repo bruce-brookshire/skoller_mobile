@@ -351,7 +351,7 @@ class _AddClassesState extends State<AddClassesView> {
                                         text: 'Can\'t find your class?',
                                         children: [
                                           TextSpan(
-                                            text: ' Tap to add it!',
+                                            text: 'Tap here to add it to Skoller.',
                                             style: TextStyle(
                                               color: SKColors.skoller_blue,
                                             ),
