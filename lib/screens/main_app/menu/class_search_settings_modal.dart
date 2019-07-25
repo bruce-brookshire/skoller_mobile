@@ -17,6 +17,8 @@ class _ClassSearchSettingsModalState extends State<ClassSearchSettingsModal> {
   School school;
   Period period;
 
+  List<Period> possiblePeriods = [];
+
   @override
   void initState() {
     school = SKUser.current.student.primarySchool;
@@ -24,6 +26,10 @@ class _ClassSearchSettingsModalState extends State<ClassSearchSettingsModal> {
     if (widget.initialPeriodId != null) {
       period = Period.currentPeriods[widget.initialPeriodId];
     }
+
+    final now = DateTime.now();
+    possiblePeriods = school.periods.toList()
+      ..removeWhere((p) => now.isAfter(p.endDate));
 
     DartNotificationCenter.subscribe(
         channel: NotificationChannels.userChanged,
@@ -43,6 +49,11 @@ class _ClassSearchSettingsModalState extends State<ClassSearchSettingsModal> {
     if (options is School) {
       school = options;
       period = null;
+
+      final now = DateTime.now();
+      possiblePeriods = school.periods.toList()
+        ..removeWhere((p) => now.isAfter(p.endDate));
+
       if (mounted) setState(() {});
       tappedPeriod(null);
     }
@@ -53,9 +64,9 @@ class _ClassSearchSettingsModalState extends State<ClassSearchSettingsModal> {
       context: context,
       builder: (context) => SKPickerModal(
         title: 'Select semester',
-        items: school.periods.toList().map((period) => period.name).toList(),
+        items: possiblePeriods.map((period) => period.name).toList(),
         onSelect: (index) => setState(() {
-          period = school.periods[index];
+          period = possiblePeriods[index];
         }),
       ),
     );

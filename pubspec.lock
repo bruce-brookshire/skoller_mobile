@@ -67,10 +67,10 @@ packages:
   dropdown_banner:
     dependency: "direct main"
     description:
-      path: "../../Fun Projects!/dropdown_banner"
-      relative: true
-    source: path
-    version: "1.0.2"
+      name: dropdown_banner
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.1.1"
   firebase_core:
     dependency: "direct main"
     description:

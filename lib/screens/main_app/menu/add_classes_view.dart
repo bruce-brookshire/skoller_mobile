@@ -283,9 +283,8 @@ class _AddClassesState extends State<AddClassesView> {
     );
 
     if (results is Map && results['period'] is Period) {
-      setState(() {
-        activePeriod = results['period'];
-      });
+      activePeriod = results['period'];
+      if (mounted) setState(() {});
     }
   }
 
@@ -351,7 +350,8 @@ class _AddClassesState extends State<AddClassesView> {
                                         text: 'Can\'t find your class?',
                                         children: [
                                           TextSpan(
-                                            text: 'Tap here to add it to Skoller.',
+                                            text:
+                                                'Tap here to add it to Skoller.',
                                             style: TextStyle(
                                               color: SKColors.skoller_blue,
                                             ),

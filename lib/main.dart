@@ -28,6 +28,7 @@ class SkollerApp extends StatefulWidget {
 class _SkollerAppState extends State<SkollerApp> {
   bool _darkTheme = false;
   AppState currentState = AppState.loading;
+  final key = GlobalKey<NavigatorState>();
 
   void changeAppState(dynamic newState) {
     if (newState is AppState) {
@@ -113,7 +114,8 @@ class _SkollerAppState extends State<SkollerApp> {
       theme: currentTheme,
       // home: currentWidget,
       home: DropdownBanner(
-        builder: (context) => currentWidget,
+        child: currentWidget,
+        navigatorKey: key,
       ),
     );
   }
