@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:skoller/requests/requests_core.dart';
+import 'package:skoller/tools.dart';
 import 'chat/chat_list_view.dart';
 import 'tasks/tasks_view.dart';
 import 'classes/classes_view.dart';
@@ -13,7 +15,6 @@ class SKTabBar extends StatefulWidget {
 }
 
 class _SKTabBarState extends State<SKTabBar> {
-  int _selectedIndex;
   final _widgetOptions = [
     TasksView(),
     CalendarView(),
@@ -29,6 +30,35 @@ class _SKTabBarState extends State<SKTabBar> {
     GlobalKey<NavigatorState>(),
     GlobalKey<NavigatorState>(),
   ];
+
+  final List<String> _indexIconPartialPaths = [
+    'tasks_',
+    'calendar_',
+    'chat_',
+    'classes_',
+    'activity_',
+  ];
+
+  List<bool> _indexNeedsDot = [false, false, false, true, false];
+  int _selectedIndex;
+
+  @override
+  void initState() {
+    super.initState();
+
+    SchedulerBinding.instance.addPostFrameCallback(afterFirstLayout);
+  }
+
+  void afterFirstLayout(_) {
+    for (final partialPath in _indexIconPartialPaths) {
+      precacheImage(
+          AssetImage('image_assets/tab_bar_assets/${partialPath}blue.png'),
+          context);
+      precacheImage(
+          AssetImage('image_assets/tab_bar_assets/${partialPath}gray.png'),
+          context);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -54,42 +84,42 @@ class _SKTabBarState extends State<SKTabBar> {
         },
         tabBar: CupertinoTabBar(
           backgroundColor: Colors.white,
-          items: <BottomNavigationBarItem>[
-            BottomNavigationBarItem(
-              icon: _selectedIndex == 0
-                  ? Image.asset("image_assets/tab_bar_assets/tasks_blue.png")
-                  : Image.asset("image_assets/tab_bar_assets/tasks_gray.png"),
-            ),
-            BottomNavigationBarItem(
-              icon: _selectedIndex == 1
-                  ? Image.asset("image_assets/tab_bar_assets/calendar_blue.png")
-                  : Image.asset(
-                      "image_assets/tab_bar_assets/calendar_gray.png"),
-            ),
-            BottomNavigationBarItem(
-              icon: _selectedIndex == 2
-                  ? Image.asset("image_assets/tab_bar_assets/chat_blue.png")
-                  : Image.asset("image_assets/tab_bar_assets/chat_gray.png"),
-            ),
-            BottomNavigationBarItem(
-              icon: _selectedIndex == 3
-                  ? Image.asset("image_assets/tab_bar_assets/classes_blue.png")
-                  : Image.asset("image_assets/tab_bar_assets/classes_gray.png"),
-            ),
-            BottomNavigationBarItem(
-              icon: _selectedIndex == 4
-                  ? Image.asset("image_assets/tab_bar_assets/activity_blue.png")
-                  : Image.asset(
-                      "image_assets/tab_bar_assets/activity_gray.png"),
-            ),
-          ],
+          items: List.generate(5, createTabIndex),
           currentIndex: _selectedIndex,
           onTap: _onItemTapped,
         ),
       ),
     );
   }
-  //Icon(Icons.school)
+
+  BottomNavigationBarItem createTabIndex(int index) {
+    return BottomNavigationBarItem(
+      icon: Stack(
+        children: [
+          Align(
+            alignment: Alignment.center,
+            child: Container(
+              child: Image.asset(
+                  'image_assets/tab_bar_assets/${_indexIconPartialPaths[index]}${_selectedIndex == index ? 'blue' : 'gray'}.png'),
+            ),
+          ),
+          if (_indexNeedsDot[index])
+            Align(
+              alignment: Alignment.bottomCenter,
+              child: Container(
+                margin: EdgeInsets.only(bottom: 3),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(2),
+                  color: SKColors.warning_red,
+                ),
+                width: 4,
+                height: 4,
+              ),
+            )
+        ],
+      ),
+    );
+  }
 
   void _onItemTapped(int index) {
     setState(() {
