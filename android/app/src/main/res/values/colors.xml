@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <color name="startGradientSplashColor">#89CCE9</color>
     <color name="primaryColor">#57B9E4</color>
-    <color name="splashGradientColor">#2966D8</color>
+    <color name="endGradientSplashColor">#116C95</color>
 </resources>
