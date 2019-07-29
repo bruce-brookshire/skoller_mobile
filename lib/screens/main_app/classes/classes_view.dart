@@ -736,109 +736,151 @@ class _ClassesState extends State<ClassesView> {
       case _SammiExplanationType.needsSetup:
         sammiText = Text.rich(
           TextSpan(
-            text: 'It\'s time to ',
+            text: 'Send us the syllabus and ',
             children: [
               TextSpan(
-                  text: 'locate your syllabus',
+                  text: 'WE will set up the class',
                   style: TextStyle(fontWeight: FontWeight.bold)),
             ],
           ),
           style: TextStyle(fontWeight: FontWeight.normal, fontSize: 15),
         );
 
-        body = Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisSize: MainAxisSize.min,
-          children: <Widget>[
-            Row(
-              children: <Widget>[
-                Container(
-                  height: 100,
-                  padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-                  child: Image.asset(ImageNames.tutorialImages.syllabus),
-                ),
-                Expanded(
-                  child: Text(
-                    'Set up your class in two ways',
-                    style: TextStyle(fontSize: 19),
-                  ),
-                )
-              ],
-            ),
-            Padding(
-              padding: EdgeInsets.symmetric(vertical: 4),
-              child: Text(
-                'Send your syllabus',
-                textAlign: TextAlign.center,
-              ),
-            ),
-            Container(
-              padding: EdgeInsets.symmetric(vertical: 8),
-              margin: EdgeInsets.symmetric(vertical: 16),
-              alignment: Alignment.center,
-              width: 136,
-              decoration: BoxDecoration(
-                color: SKColors.skoller_blue,
-                borderRadius: BorderRadius.circular(5),
-                boxShadow: [UIAssets.boxShadow],
-              ),
-              child: Text(
-                'Learn how',
-                style: TextStyle(color: Colors.white),
-              ),
-            ),
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 24, vertical: 8),
-              child: Row(
+        body = Padding(
+          padding: EdgeInsets.all(24),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              Row(
                 children: <Widget>[
+                  Image.asset(ImageNames.statusImages.computer_monitor),
                   Expanded(
-                      child: Container(color: SKColors.light_gray, height: 1)),
-                  Padding(
-                    padding: EdgeInsets.symmetric(vertical: 4, horizontal: 4),
-                    child: Text(
-                      'OR',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                          color: SKColors.light_gray,
-                          fontWeight: FontWeight.normal,
-                          fontStyle: FontStyle.italic),
+                    child: Padding(
+                      padding: EdgeInsets.only(left: 16),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        mainAxisSize: MainAxisSize.min,
+                        children: <Widget>[
+                          Text('Syllabus Online?'),
+                          Text.rich(
+                            TextSpan(
+                                text: 'Hop on your computer and ',
+                                children: [
+                                  TextSpan(
+                                    text: 'login at skoller.co',
+                                    style:
+                                        TextStyle(fontWeight: FontWeight.bold),
+                                  ),
+                                  TextSpan(text: ' to '),
+                                  TextSpan(
+                                    text: 'drag-and-drop ',
+                                    style:
+                                        TextStyle(fontWeight: FontWeight.bold),
+                                  ),
+                                  TextSpan(text: 'your syllabus'),
+                                ],
+                                style: TextStyle(
+                                    fontWeight: FontWeight.normal,
+                                    fontSize: 14)),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
-                  Expanded(
-                      child: Container(color: SKColors.light_gray, height: 1)),
                 ],
               ),
-            ),
-            Padding(
-              padding: EdgeInsets.symmetric(vertical: 4),
-              child: Text(
-                'Instant class setup',
-                textAlign: TextAlign.center,
-              ),
-            ),
-            GestureDetector(
-              onTapUp: (details) => Navigator.pushReplacement(
-                context,
-                CupertinoPageRoute(
-                    builder: (context) => WeightExtractionView(classId)),
-              ),
-              child: Container(
-                alignment: Alignment.center,
-                padding: EdgeInsets.symmetric(vertical: 8, horizontal: 12),
-                margin: EdgeInsets.symmetric(vertical: 16),
-                width: 136,
-                decoration: BoxDecoration(
-                  color: SKColors.skoller_blue,
-                  borderRadius: BorderRadius.circular(5),
-                  boxShadow: [UIAssets.boxShadow],
-                ),
-                child: Text(
-                  'Get started',
-                  style: TextStyle(color: Colors.white),
+              Padding(
+                padding: EdgeInsets.symmetric(vertical: 12),
+                child: Row(
+                  children: <Widget>[
+                    Expanded(
+                        child:
+                            Container(color: SKColors.light_gray, height: 1)),
+                    Padding(
+                      padding: EdgeInsets.symmetric(vertical: 4, horizontal: 4),
+                      child: Text(
+                        'OR',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                            color: SKColors.light_gray,
+                            fontWeight: FontWeight.normal,
+                            fontStyle: FontStyle.italic),
+                      ),
+                    ),
+                    Expanded(
+                        child:
+                            Container(color: SKColors.light_gray, height: 1)),
+                  ],
                 ),
               ),
-            ),
-          ],
+              GestureDetector(
+                onTapUp: (details) => Navigator.pushReplacement(
+                  context,
+                  CupertinoPageRoute(
+                      builder: (context) => WeightExtractionView(classId)),
+                ),
+                child: Row(
+                  children: <Widget>[
+                    Container(
+                      width: 40,
+                      alignment: Alignment.center,
+                      margin: EdgeInsets.only(right: 16),
+                      child:
+                          Image.asset(ImageNames.statusImages.check_clipboard),
+                    ),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        mainAxisSize: MainAxisSize.min,
+                        children: <Widget>[
+                          Text(
+                            'Ready to go?',
+                            style: TextStyle(color: SKColors.skoller_blue),
+                          ),
+                          Text.rich(
+                            TextSpan(
+                                text: 'Set up your class ',
+                                children: [
+                                  TextSpan(
+                                    text: 'NOW!',
+                                    style:
+                                        TextStyle(fontWeight: FontWeight.bold),
+                                  ),
+                                ],
+                                style: TextStyle(
+                                    fontWeight: FontWeight.normal,
+                                    fontSize: 14)),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              GestureDetector(
+                onTapUp: (details) => Navigator.pushReplacement(
+                  context,
+                  CupertinoPageRoute(
+                      builder: (context) => WeightExtractionView(classId)),
+                ),
+                child: Container(
+                  padding: EdgeInsets.symmetric(vertical: 8),
+                  margin: EdgeInsets.only(top: 16),
+                  alignment: Alignment.center,
+                  decoration: BoxDecoration(
+                    color: SKColors.skoller_blue,
+                    borderRadius: BorderRadius.circular(5),
+                    boxShadow: [UIAssets.boxShadow],
+                  ),
+                  child: Text(
+                    'Get started',
+                    style: TextStyle(color: Colors.white),
+                  ),
+                ),
+              )
+            ],
+          ),
         );
         break;
     }
