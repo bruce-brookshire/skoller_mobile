@@ -165,7 +165,11 @@ class _ClassesState extends State<ClassesView> {
 
   Widget createClassCard(BuildContext context, int index) {
     final studentClass = classes[index];
-    return cardConstructors[studentClass.status.id](studentClass, index);
+    if (studentClass.status.id == ClassStatuses.needs_student_input &&
+        (studentClass.weights ?? []).length > 0)
+      return cardConstructors[ClassStatuses.needs_setup](studentClass, index);
+    else
+      return cardConstructors[studentClass.status.id](studentClass, index);
   }
 
   Widget createCompleteCard(StudentClass studentClass, int index) {

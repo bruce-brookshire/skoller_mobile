@@ -76,6 +76,16 @@ class _ClassChangeRequestState extends State<ClassChangeRequestView> {
     super.initState();
   }
 
+  @override
+  void dispose() {
+    super.dispose();
+    
+    nameController.dispose();
+    subjectController.dispose();
+    codeController.dispose();
+    sectionController.dispose();
+  }
+
   void tappedSave() {
     final meetDays = isOnline
         ? 'online'

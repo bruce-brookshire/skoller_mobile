@@ -40,6 +40,12 @@ class _WeightExtractionState extends State<WeightExtractionView> {
     super.initState();
   }
 
+  @override
+  void dispose() {
+    super.dispose();
+    pageController.dispose();
+  }
+
   void forwardState() {
     if (currentView < 2) {
       final newView = currentView + 1;
@@ -352,9 +358,7 @@ class _SubviewThreeState extends State<_SubviewThree> {
       final name = nameController.text.trim();
       final value = valueController.text.trim();
 
-      if (name != '' &&
-          value != '' &&
-          int.tryParse(value) != null) {
+      if (name != '' && value != '' && int.tryParse(value) != null) {
         setState(() {
           widget.subviewParent.state.weights[weightIndex]['name'] = name;
           widget.subviewParent.state.weights[weightIndex]['value'] =
@@ -362,6 +366,9 @@ class _SubviewThreeState extends State<_SubviewThree> {
         });
       }
     }
+
+    nameController.dispose();
+    valueController.dispose();
   }
 
   void addWeight(TapUpDetails details) async {
@@ -375,9 +382,7 @@ class _SubviewThreeState extends State<_SubviewThree> {
       final name = nameController.text.trim();
       final value = valueController.text.trim();
 
-      if (name != '' &&
-          value != '' &&
-          int.tryParse(value) != null) {
+      if (name != '' && value != '' && int.tryParse(value) != null) {
         setState(
           () => widget.subviewParent.state.weights.add(
             {
@@ -388,6 +393,9 @@ class _SubviewThreeState extends State<_SubviewThree> {
         );
       }
     }
+
+    nameController.dispose();
+    valueController.dispose();
   }
 
   Future<bool> showWeightMaker(
@@ -397,90 +405,84 @@ class _SubviewThreeState extends State<_SubviewThree> {
   ) {
     return showDialog(
       context: context,
-      builder: (context) => Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: <Widget>[
-          Dialog(
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(10),
-              side: BorderSide(color: SKColors.border_gray),
-            ),
-            child: Padding(
-              padding: EdgeInsets.all(12),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.stretch,
+      builder: (context) => Dialog(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10),
+          side: BorderSide(color: SKColors.border_gray),
+        ),
+        child: Padding(
+          padding: EdgeInsets.fromLTRB(12, 12, 12, 0),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: <Widget>[
+              Text(
+                isCreate ? 'Create weight' : 'Update weight',
+                style: TextStyle(fontSize: 16),
+                textAlign: TextAlign.center,
+              ),
+              Padding(
+                padding: EdgeInsets.only(top: 16),
+                child: Text('Name'),
+              ),
+              CupertinoTextField(
+                placeholder: 'Exams',
+                controller: nameController,
+                padding: EdgeInsets.fromLTRB(6, 8, 6, 4),
+                textCapitalization: TextCapitalization.words,
+                cursorColor: SKColors.skoller_blue,
+                placeholderStyle:
+                    TextStyle(fontSize: 14, color: SKColors.text_light_gray),
+                style: TextStyle(color: SKColors.dark_gray, fontSize: 15),
+              ),
+              Padding(
+                padding: EdgeInsets.only(top: 12),
+                child: Text('Value'),
+              ),
+              Row(
                 children: <Widget>[
-                  Text(
-                    isCreate ? 'Create weight' : 'Update weight',
-                    style: TextStyle(fontSize: 16),
-                    textAlign: TextAlign.center,
-                  ),
+                  SizedBox(
+                      width: 60,
+                      child: CupertinoTextField(
+                        controller: valueController,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(5),
+                          border: Border.all(color: SKColors.border_gray),
+                        ),
+                        padding: EdgeInsets.fromLTRB(6, 8, 6, 4),
+                        cursorColor: SKColors.skoller_blue,
+                        placeholder: '25',
+                        placeholderStyle: TextStyle(
+                            fontSize: 14, color: SKColors.text_light_gray),
+                        style:
+                            TextStyle(color: SKColors.dark_gray, fontSize: 15),
+                      )),
                   Padding(
-                    padding: EdgeInsets.only(top: 16),
-                    child: Text('Name'),
+                    padding: EdgeInsets.only(left: 8, bottom: 24),
+                    child: Text('${isPoints ? 'pts.' : '%'}'),
                   ),
-                  CupertinoTextField(
-                    placeholder: 'Exams',
-                    controller: nameController,
-                    padding: EdgeInsets.fromLTRB(6, 8, 6, 4),
-                    textCapitalization: TextCapitalization.words,
-                    cursorColor: SKColors.skoller_blue,
-                    placeholderStyle: TextStyle(
-                        fontSize: 14, color: SKColors.text_light_gray),
-                    style: TextStyle(color: SKColors.dark_gray, fontSize: 15),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.only(top: 12),
-                    child: Text('Value'),
-                  ),
-                  Row(
-                    children: <Widget>[
-                      SizedBox(
-                          width: 60,
-                          child: CupertinoTextField(
-                            controller: valueController,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(5),
-                              border: Border.all(color: SKColors.border_gray),
-                            ),
-                            padding: EdgeInsets.fromLTRB(6, 8, 6, 4),
-                            cursorColor: SKColors.skoller_blue,
-                            placeholder: '25',
-                            placeholderStyle: TextStyle(
-                                fontSize: 14, color: SKColors.text_light_gray),
-                            style: TextStyle(
-                                color: SKColors.dark_gray, fontSize: 15),
-                          )),
-                      Padding(
-                        padding: EdgeInsets.only(left: 8),
-                        child: Text('${isPoints ? 'pts.' : '%'}'),
-                      ),
-                      Spacer(),
-                    ],
-                  ),
+                  Spacer(),
                 ],
               ),
-            ),
-          ),
-          Material(
-            color: Colors.white.withAlpha(0),
-            child: GestureDetector(
-              onTapUp: (details) => Navigator.pop(context, true),
-              child: Container(
-                decoration: BoxDecoration(
-                    color: Colors.white,
+              GestureDetector(
+                onTapUp: (details) => Navigator.pop(context, true),
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: SKColors.skoller_blue,
                     borderRadius: BorderRadius.circular(5),
-                    boxShadow: [UIAssets.boxShadow]),
-                padding: EdgeInsets.symmetric(vertical: 12, horizontal: 56),
-                child: Text(
-                  'Done',
-                  style: TextStyle(color: SKColors.skoller_blue),
+                  ),
+                  padding: EdgeInsets.symmetric(vertical: 8),
+                  margin: EdgeInsets.symmetric(vertical: 12),
+                  child: Text(
+                    'Add',
+                    style: TextStyle(color: Colors.white),
+                    textAlign: TextAlign.center,
+                  ),
                 ),
               ),
-            ),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }
@@ -510,7 +512,7 @@ class _SubviewThreeState extends State<_SubviewThree> {
     studentClass.createWeights(state.isPoints, state.weights).then((success) {
       //After creating
       if (success) {
-        return studentClass.releaseDIYLock(isCompleted: false);
+        return studentClass.releaseDIYLock(isCompleted: true);
       } else {
         throw 'Failed to create weights';
       }

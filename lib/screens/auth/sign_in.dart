@@ -16,6 +16,15 @@ class SignIn extends StatefulWidget {
 class _SignInState extends State<SignIn> {
   final phoneNumberController = TextEditingController();
 
+
+
+  @override
+  void dispose() {
+    super.dispose();
+    phoneNumberController.dispose();
+  }
+
+
   void tappedLogIn(BuildContext context) async {
     final trimStr =
         phoneNumberController.text.replaceAll(RegExp(r'[\(\) \-]+'), '');

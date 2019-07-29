@@ -46,6 +46,17 @@ class _CreateClassModalState extends State<CreateClassModal> {
     super.initState();
   }
 
+  @override
+  void dispose() {
+    super.dispose();
+    pageController.dispose();
+    
+    subjectController.dispose();
+    codeController.dispose();
+    sectionController.dispose();
+    classNameController.dispose();
+  }
+
   void advanceController() {
     final page = pageController.page.toInt();
     if (page < 2) {
@@ -121,7 +132,6 @@ class _CreateClassModalState extends State<CreateClassModal> {
 
   @override
   Widget build(BuildContext context) {
-    // controller.animateToPage(page)x
     return Center(
       child: Padding(
         padding: EdgeInsets.symmetric(horizontal: 16),

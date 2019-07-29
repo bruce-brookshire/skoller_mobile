@@ -1,5 +1,3 @@
-import 'dart:collection';
-
 import 'package:dart_notification_center/dart_notification_center.dart';
 import 'package:dropdown_banner/dropdown_banner.dart';
 import 'package:flutter/material.dart';
@@ -10,8 +8,11 @@ import 'package:share/share.dart';
 import 'package:skoller/constants/constants.dart';
 import 'package:skoller/screens/main_app/classes/class_detail_view.dart';
 import 'package:skoller/screens/main_app/classes/student_profile_modal.dart';
+import 'package:skoller/screens/main_app/activity/update_info_view.dart';
 import 'package:skoller/tools.dart';
-import '../activity/update_info_view.dart';
+import 'dart:collection';
+import 'dart:async';
+import 'dart:math';
 
 class AssignmentInfoView extends StatefulWidget {
   final int assignment_id;
@@ -189,9 +190,11 @@ class _AssignmentInfoState extends State<AssignmentInfoView> {
         }
       });
     }
+
+    controller.dispose();
   }
 
-  void tappedGradeSelector(TapUpDetails details) async {
+  void tappedGradeSelector() async {
     final results = await showDialog(
       context: context,
       barrierDismissible: false,
@@ -633,13 +636,10 @@ class _AssignmentInfoState extends State<AssignmentInfoView> {
 
   Widget buildProgressDetails(BuildContext context) {
     List<Widget> gradeElems = [
-      GestureDetector(
-        onTapUp: tappedGradeSelector,
-        child: Text(
-          assignment.grade == null ? '--%' : '${assignment.grade}%',
-          style: TextStyle(color: SKColors.skoller_blue),
-        ),
-      ),
+      _GradeShakeAnimation(
+        onTap: tappedGradeSelector,
+        text: assignment.grade == null ? '--%' : '${assignment.grade}%',
+      )
     ];
 
     if (assignment.grade != null) {
@@ -1714,6 +1714,89 @@ class _AssignmentEditModalState extends State<_AssignmentEditModal> {
           height: 32,
           margin: EdgeInsets.only(top: 12),
           child: child),
+    );
+  }
+}
+
+class _GradeShakeAnimation extends StatefulWidget {
+  final VoidCallback onTap;
+  final String text;
+  final bool isAlert;
+
+  _GradeShakeAnimation({this.onTap, this.text, this.isAlert = false});
+
+  @override
+  State<StatefulWidget> createState() => _GradeShakeAnimationState();
+}
+
+class _GradeShakeAnimationState extends State<_GradeShakeAnimation>
+    with SingleTickerProviderStateMixin {
+  AnimationController _controller;
+  Animation _animation;
+
+  @override
+  void initState() {
+    super.initState();
+
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 1000),
+    )..addListener(() => setState(() {}));
+
+    _animation = CurvedAnimation(
+      curve: Curves.easeInToLinear,
+      parent: _controller,
+    )
+      ..addStatusListener((status) {
+        if (status == AnimationStatus.completed) {
+          Timer(
+            Duration(seconds: 4),
+            () => _controller.forward(from: 0),
+          );
+        }
+      })
+      ..addListener(() => setState(() {}));
+
+    if (widget.isAlert) _controller.forward();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+
+    _controller.dispose();
+  }
+
+  ///Then you can get a shake type motion like so;
+  Matrix4 get translation {
+    double progress = _animation.value;
+    double offset = sin(progress * pi * 3) * 0.2;
+    return Matrix4.rotationZ(offset);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final double width = 36;
+    final double height = 22;
+
+    return Transform(
+      transform: translation,
+      origin: Offset(width / 2, height / 2),
+      child: GestureDetector(
+        onTapUp: (details) => widget.onTap(),
+        child: Container(
+          alignment: Alignment.center,
+          width: width,
+          height: height,
+          child: Text(
+            widget.text,
+            style: TextStyle(
+              color:
+                  widget.isAlert ? SKColors.warning_red : SKColors.skoller_blue,
+            ),
+          ),
+        ),
+      ),
     );
   }
 }

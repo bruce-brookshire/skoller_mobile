@@ -263,6 +263,7 @@ class _ChatListState extends State<ChatListView> {
     );
 
     String post = controller.text.trim();
+    controller.dispose();
 
     if (result != null && result && post != '') {
       final loadingScreen = SKLoadingScreen.fadeIn(context);

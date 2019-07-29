@@ -314,6 +314,14 @@ class _AddAssignmentSubState extends State<_AddAssignmentSubview> {
 
   TextEditingController textFieldController = TextEditingController();
 
+
+
+  @override
+  void dispose() {
+    super.dispose();
+    textFieldController.dispose();
+  }
+
   checkState() {
     bool prevState = isValidState;
     bool newState = textFieldController.text.trim() != "" && dueDate != null;

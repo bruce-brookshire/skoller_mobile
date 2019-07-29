@@ -18,6 +18,12 @@ class _SchoolSearchState extends State<SchoolSearchView> {
   Timer _currentTimer;
   bool isSearching = false;
 
+  @override
+  void dispose() {
+    super.dispose();
+    searchController.dispose();
+  }
+
   void didTypeInSearch(String text) {
     if (_currentTimer != null) {
       _currentTimer.cancel();
@@ -246,24 +252,32 @@ class _SchoolSearchState extends State<SchoolSearchView> {
                           padding:
                               EdgeInsets.symmetric(horizontal: 8, vertical: 8),
                           child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              Container(
-                                width: 36,
-                                padding: EdgeInsets.only(
-                                    right: 8, top: 2, bottom: 2),
+                              Padding(
+                                padding: EdgeInsets.symmetric(
+                                    horizontal: 8, vertical: 2),
                                 child:
                                     Image.asset(ImageNames.sammiImages.shocked),
                               ),
                               Expanded(
-                                child: Text.rich(
-                                  TextSpan(
-                                    text: 'Can\'t find your school? ',
-                                    children: [
-                                      TextSpan(
-                                          text: 'Tap here to add it to Skoller.',
+                                child: Padding(
+                                  padding: EdgeInsets.only(top: 4, right: 8),
+                                  child: Text.rich(
+                                    TextSpan(
+                                      text: 'Can\'t find your school?',
+                                      children: [
+                                        TextSpan(
+                                          text:
+                                              ' Tap here to add it to Skoller.',
                                           style: TextStyle(
-                                              color: SKColors.skoller_blue)),
-                                    ],
+                                            color: SKColors.skoller_blue,
+                                          ),
+                                        )
+                                      ],
+                                    ),
+                                    style: TextStyle(fontSize: 16),
+                                    textAlign: TextAlign.left,
                                   ),
                                 ),
                               ),

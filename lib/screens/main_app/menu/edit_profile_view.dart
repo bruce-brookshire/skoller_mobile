@@ -18,6 +18,17 @@ class _EditProfileState extends State<EditProfileView> {
   final organizationsController =
       TextEditingController(text: SKUser.current.student.organizations);
 
+
+
+  @override
+  void dispose() {
+    super.dispose();
+    firstNameController.dispose();
+    lastNameController.dispose();
+    bioController.dispose();
+    organizationsController.dispose();
+  }
+
   void tappedSave() async {
     final firstName = firstNameController.text.trim();
     final lastName = lastNameController.text.trim();

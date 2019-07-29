@@ -29,6 +29,12 @@ class _ProfessorSearchState extends State<ProfessorSearchView> {
     super.initState();
   }
 
+  @override
+  void dispose() {
+    super.dispose();
+    searchController.dispose();
+  }
+
   void didTypeInSearch(String text) {
     if (_currentTimer != null) {
       _currentTimer.cancel();
@@ -221,7 +227,6 @@ class _ProfessorSearchState extends State<ProfessorSearchView> {
     );
 
     if (result is bool && result) {
-
       final loadingScreen = SKLoadingScreen.fadeIn(context);
 
       final result = await school.createProfessor(
@@ -236,12 +241,16 @@ class _ProfessorSearchState extends State<ProfessorSearchView> {
         Navigator.pop(context);
       } else {
         DropdownBanner.showBanner(
-          text: 'Failed to create professor. Try searching and recreating if necessary.',
+          text:
+              'Failed to create professor. Try searching and recreating if necessary.',
           color: SKColors.warning_red,
           textStyle: TextStyle(color: Colors.white),
         );
       }
     }
+
+    firstNameController.dispose();
+    lastNameController.dispose();
   }
 
   @override
@@ -329,13 +338,14 @@ class _ProfessorSearchState extends State<ProfessorSearchView> {
                                 style: TextStyle(
                                     fontSize: 16, color: SKColors.dark_gray),
                               ),
-                              Text(
-                                '${searchedProfessors[index].email ?? ''}',
-                                style: TextStyle(
-                                    color: SKColors.light_gray,
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.normal),
-                              )
+                              if (searchedProfessors[index].email != null)
+                                Text(
+                                  '${searchedProfessors[index].email}',
+                                  style: TextStyle(
+                                      color: SKColors.light_gray,
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.normal),
+                                )
                             ],
                           ),
                         ),
@@ -353,24 +363,32 @@ class _ProfessorSearchState extends State<ProfessorSearchView> {
                           padding:
                               EdgeInsets.symmetric(horizontal: 8, vertical: 8),
                           child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              Container(
-                                width: 36,
-                                padding: EdgeInsets.only(
-                                    right: 8, top: 2, bottom: 2),
+                              Padding(
+                                padding: EdgeInsets.symmetric(
+                                    horizontal: 8, vertical: 2),
                                 child:
                                     Image.asset(ImageNames.sammiImages.shocked),
                               ),
                               Expanded(
-                                child: Text.rich(
-                                  TextSpan(
-                                    text: 'Can\'t find your professor?',
-                                    children: [
-                                      TextSpan(
-                                          text: 'Tap here to add a professor to Skoller',
+                                child: Padding(
+                                  padding: EdgeInsets.only(top: 4, right: 8),
+                                  child: Text.rich(
+                                    TextSpan(
+                                      text: 'Can\'t find your professor?',
+                                      children: [
+                                        TextSpan(
+                                          text:
+                                              ' Tap here to create them on Skoller.',
                                           style: TextStyle(
-                                              color: SKColors.skoller_blue)),
-                                    ],
+                                            color: SKColors.skoller_blue,
+                                          ),
+                                        )
+                                      ],
+                                    ),
+                                    style: TextStyle(fontSize: 16),
+                                    textAlign: TextAlign.left,
                                   ),
                                 ),
                               ),

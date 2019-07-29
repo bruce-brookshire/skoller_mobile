@@ -78,6 +78,7 @@ class _AddClassesState extends State<AddClassesView> {
   void dispose() {
     super.dispose();
     DartNotificationCenter.unsubscribe(observer: this);
+    searchController.dispose();
   }
 
   void didTypeInSearch(String searchText) {
@@ -339,27 +340,30 @@ class _AddClassesState extends State<AddClassesView> {
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
                                   Padding(
-                                    padding: EdgeInsets.only(
-                                        right: 8, top: 2, bottom: 2),
+                                    padding: EdgeInsets.symmetric(
+                                        horizontal: 8, vertical: 2),
                                     child: Image.asset(
                                         ImageNames.sammiImages.shocked),
                                   ),
                                   Expanded(
-                                    child: Text.rich(
-                                      TextSpan(
-                                        text: 'Can\'t find your class?',
-                                        children: [
-                                          TextSpan(
-                                            text:
-                                                'Tap here to add it to Skoller.',
-                                            style: TextStyle(
-                                              color: SKColors.skoller_blue,
-                                            ),
-                                          )
-                                        ],
+                                    child: Padding(
+                                      padding: EdgeInsets.only(top: 4, right: 8),
+                                      child: Text.rich(
+                                        TextSpan(
+                                          text: 'Can\'t find your class?',
+                                          children: [
+                                            TextSpan(
+                                              text:
+                                                  ' Tap here to add it to Skoller.',
+                                              style: TextStyle(
+                                                color: SKColors.skoller_blue,
+                                              ),
+                                            )
+                                          ],
+                                        ),
+                                        style: TextStyle(fontSize: 16),
+                                        textAlign: TextAlign.left,
                                       ),
-                                      style: TextStyle(fontSize: 16),
-                                      textAlign: TextAlign.center,
                                     ),
                                   ),
                                 ],

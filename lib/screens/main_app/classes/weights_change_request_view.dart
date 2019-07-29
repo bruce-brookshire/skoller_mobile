@@ -53,6 +53,9 @@ class _WeightsChangeRequestState extends State<WeightsChangeRequestView> {
         });
       }
     }
+
+    nameController.dispose();
+    valueController.dispose();
   }
 
   void addWeight(TapUpDetails details) async {

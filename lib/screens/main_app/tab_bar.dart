@@ -1,3 +1,4 @@
+import 'package:dart_notification_center/dart_notification_center.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/scheduler.dart';
@@ -39,14 +40,29 @@ class _SKTabBarState extends State<SKTabBar> {
     'activity_',
   ];
 
-  List<bool> _indexNeedsDot = [false, false, false, true, false];
+  List<bool> _indexNeedsDot = [false, false, false, false, false];
   int _selectedIndex;
 
   @override
   void initState() {
     super.initState();
+    checkAlertDots();
+
+    DartNotificationCenter.subscribe(
+      channel: NotificationChannels.classChanged,
+      observer: this,
+      onNotification: (_) {
+        checkAlertDots();
+        if (mounted) setState(() {});
+      },
+    );
 
     SchedulerBinding.instance.addPostFrameCallback(afterFirstLayout);
+  }
+
+  @override void dispose() {
+    DartNotificationCenter.unsubscribe(observer: this);
+    super.dispose();
   }
 
   void afterFirstLayout(_) {
@@ -58,6 +74,15 @@ class _SKTabBarState extends State<SKTabBar> {
           AssetImage('image_assets/tab_bar_assets/${partialPath}gray.png'),
           context);
     }
+  }
+
+  void checkAlertDots() {
+    _indexNeedsDot[3] = StudentClass.currentClasses.values.fold(
+        false,
+        (val, elem) => val
+            ? val
+            : ![ClassStatuses.class_setup, ClassStatuses.class_issue, ClassStatuses.syllabus_submitted]
+                .contains(elem.status.id));
   }
 
   @override
@@ -93,17 +118,22 @@ class _SKTabBarState extends State<SKTabBar> {
   }
 
   BottomNavigationBarItem createTabIndex(int index) {
-    return BottomNavigationBarItem(
-      icon: Stack(
-        children: [
-          Align(
-            alignment: Alignment.center,
-            child: Container(
-              child: Image.asset(
-                  'image_assets/tab_bar_assets/${_indexIconPartialPaths[index]}${_selectedIndex == index ? 'blue' : 'gray'}.png'),
+    if (!_indexNeedsDot[index])
+      return BottomNavigationBarItem(
+        icon: Image.asset(
+            'image_assets/tab_bar_assets/${_indexIconPartialPaths[index]}${_selectedIndex == index ? 'blue' : 'gray'}.png'),
+      );
+    else
+      return BottomNavigationBarItem(
+        icon: Stack(
+          children: [
+            Align(
+              alignment: Alignment.center,
+              child: Container(
+                child: Image.asset(
+                    'image_assets/tab_bar_assets/${_indexIconPartialPaths[index]}${_selectedIndex == index ? 'blue' : 'gray'}.png'),
+              ),
             ),
-          ),
-          if (_indexNeedsDot[index])
             Align(
               alignment: Alignment.bottomCenter,
               child: Container(
@@ -116,9 +146,9 @@ class _SKTabBarState extends State<SKTabBar> {
                 height: 4,
               ),
             )
-        ],
-      ),
-    );
+          ],
+        ),
+      );
   }
 
   void _onItemTapped(int index) {

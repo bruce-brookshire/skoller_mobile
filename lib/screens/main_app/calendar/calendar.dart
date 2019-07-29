@@ -43,6 +43,13 @@ class _CalendarState extends State<CalendarView> {
     ];
   }
 
+  @override
+  void dispose() {
+    super.dispose();
+    controller.dispose();
+  }
+
+
   void updateAssignments(Iterable<Assignment> new_assignments) {
     assignments = {};
     //Add assignments to the day hash map

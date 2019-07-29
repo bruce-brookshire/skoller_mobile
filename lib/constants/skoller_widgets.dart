@@ -416,6 +416,12 @@ class _SKCalendarPickerState extends State<SKCalendarPicker> {
     ];
   }
 
+  @override
+  void dispose() {
+    super.dispose();
+    controller.dispose();
+  }
+
   void tappedNextMonth(dynamic details) {
     controller.animateToPage(curIndex + 1,
         duration: Duration(milliseconds: 300), curve: Curves.decelerate);

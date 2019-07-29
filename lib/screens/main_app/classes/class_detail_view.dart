@@ -22,6 +22,7 @@ class ClassDetailView extends StatefulWidget {
 
 class _ClassDetailState extends State<ClassDetailView> {
   int _selectedIndex;
+  int weightsWithoutAssignments = 0;
 
   StudentClass get studentClass => StudentClass.currentClasses[widget.classId];
   final _refreshIndicatorKey = GlobalKey<RefreshIndicatorState>();
@@ -60,6 +61,20 @@ class _ClassDetailState extends State<ClassDetailView> {
   }
 
   Future loadClass([dynamic options]) async {
+    Map<int, int> weightDensity = {};
+
+    for (final Assignment assignment in studentClass.assignments ?? []) {
+      if (assignment.weight_id != null) {
+        final currCount = weightDensity[assignment.weight_id] ?? 0;
+        weightDensity[assignment.weight_id] = currCount + 1;
+      }
+    }
+
+    weightsWithoutAssignments = 0;
+
+    for (final Weight weight in studentClass.weights ?? [])
+      if (weightDensity[weight.id] == null) weightsWithoutAssignments += 1;
+
     if (mounted) setState(() {});
   }
 
@@ -137,7 +152,7 @@ class _ClassDetailState extends State<ClassDetailView> {
   @override
   Widget build(BuildContext context) {
     final studentClass = this.studentClass;
-    
+
     final grade = (studentClass.grade == null || studentClass.grade == 0)
         ? '-- %'
         : '${studentClass.grade}%';
@@ -237,14 +252,15 @@ class _ClassDetailState extends State<ClassDetailView> {
                                           builder: (context) =>
                                               ClassInfoView(studentClass.id)));
                                 },
-                                child: Container(
+                                child: SizedBox(
                                   child: Image.asset(
                                       ImageNames.rightNavImages.info),
                                   width: 36,
-                                  height: 44,
+                                  height: 40,
                                 ),
                               ),
                               GestureDetector(
+                                behavior: HitTestBehavior.opaque,
                                 onTapUp: (details) => Navigator.push(
                                   context,
                                   CupertinoPageRoute(
@@ -252,11 +268,10 @@ class _ClassDetailState extends State<ClassDetailView> {
                                         AssignmentWeightView(studentClass.id),
                                   ),
                                 ),
-                                child: Container(
-                                  child: Image.asset(
-                                      ImageNames.rightNavImages.plus),
+                                child: SizedBox(
+                                  child: createPlusButton(),
                                   width: 36,
-                                  height: 44,
+                                  height: 40,
                                 ),
                               ),
                             ],
@@ -553,6 +568,43 @@ class _ClassDetailState extends State<ClassDetailView> {
         ),
       ),
     );
+  }
+
+  Widget createPlusButton() {
+    if (weightsWithoutAssignments == 0)
+      return Image.asset(ImageNames.rightNavImages.plus);
+    else
+      return Stack(
+        children: [
+          Align(
+            alignment: Alignment.center,
+            child: Container(
+              child: Image.asset(ImageNames.rightNavImages.plus),
+            ),
+          ),
+          Align(
+            alignment: Alignment.topRight,
+            child: Container(
+              alignment: Alignment.center,
+              margin: EdgeInsets.only(top: 4, right: 2),
+              padding: EdgeInsets.only(bottom: 0.5),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(6),
+                color: SKColors.warning_red,
+              ),
+              width: 12,
+              height: 12,
+              child: Text(
+                '${weightsWithoutAssignments}',
+                style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 9,
+                    fontWeight: FontWeight.normal),
+              ),
+            ),
+          )
+        ],
+      );
   }
 }
 

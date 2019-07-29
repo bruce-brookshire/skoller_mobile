@@ -135,6 +135,13 @@ class _CreateSchoolModalState extends State<CreateSchoolModal> {
     super.initState();
   }
 
+  @override
+  void dispose() {
+    super.dispose();
+    nameController.dispose();
+    cityController.dispose();
+  }
+
   void checkValid([String str]) {
     final newIsValid = nameController.text.trim() != '' &&
         cityController.text.trim() != '' &&
