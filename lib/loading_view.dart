@@ -85,11 +85,12 @@ class _LoadingState extends State<LoadingView> {
           gradient: LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
-            stops: [0.1, 0.5, 1],
+            stops: [0, 0.35, 0.55, 1],
             colors: [
+              Color(0xFF98D2EB),
               SKColors.skoller_blue,
-              SKColors.skoller_blue,
-              Color(0xFF2966D8),
+              Color(0xFF27A9D9),
+              Color(0xFF0F7599),
             ],
           ),
         ),

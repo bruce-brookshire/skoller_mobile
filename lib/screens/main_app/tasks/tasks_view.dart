@@ -321,7 +321,7 @@ class _TasksState extends State<TasksView> {
                                 padding: EdgeInsets.only(top: 4),
                                 child: Text.rich(
                                   TextSpan(
-                                    text: 'Your personal forecast is showing ',
+                                    text: 'Your personal forecast shows ',
                                     style: TextStyle(
                                         fontWeight: FontWeight.normal,
                                         fontSize: 13),

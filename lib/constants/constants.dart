@@ -191,6 +191,13 @@ class _StatusImages {
 
   final diy = '${_base}/diy.png';
   final clock = '${_base}/clock.png';
+  final blank_syllabus = '${_base}/blank_syllabus.png';
+  final check_clipboard = '${_base}/check_clipboard.png';
+  final computer_monitor = '${_base}/computer_monitor.png';
+  final in_review = '${_base}/in_review.png';
+  final needs_syllabus = '${_base}/needs_syllabus.png';
+  final setup_community = '${_base}/setup_community.png';
+  final setup_live = '${_base}/setup_live.png';
 }
 
 class NotificationChannels {

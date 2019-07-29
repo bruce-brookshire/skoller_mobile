@@ -4,6 +4,7 @@ import 'package:dart_notification_center/dart_notification_center.dart';
 import 'package:dropdown_banner/dropdown_banner.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:skoller/screens/main_app/menu/class_status_modal.dart';
 import 'package:skoller/screens/main_app/menu/professor_search_view.dart';
 import 'package:skoller/tools.dart';
 
@@ -50,7 +51,7 @@ class _CreateClassModalState extends State<CreateClassModal> {
   void dispose() {
     super.dispose();
     pageController.dispose();
-    
+
     subjectController.dispose();
     codeController.dispose();
     sectionController.dispose();
@@ -102,12 +103,21 @@ class _CreateClassModalState extends State<CreateClassModal> {
       } else {
         throw 'Failed to create this class. Try again';
       }
-    }).then((response) {
+    }).then((response) async {
       if (response.wasSuccessful()) {
         loadingScreen.dismiss();
 
-        DartNotificationCenter.post(channel: NotificationChannels.classChanged);
-        Navigator.pop(context);
+        StudentClass.getStudentClasses().then(
+          (response) => DartNotificationCenter.post(
+              channel: NotificationChannels.classChanged),
+        );
+
+        Navigator.pushReplacement(
+          context,
+          SKNavOverlayRoute(
+            builder: (context) => ClassStatusModal(response.obj.id),
+          ),
+        );
 
         DropdownBanner.showBanner(
           text: 'Successfully created and enrolled this class!',
@@ -115,6 +125,7 @@ class _CreateClassModalState extends State<CreateClassModal> {
           textStyle: TextStyle(color: Colors.white),
         );
       } else {
+        Navigator.pop(context);
         throw 'Failed automatically enrolling in the class. Try adding it from the search.';
       }
     }).catchError((onError) {

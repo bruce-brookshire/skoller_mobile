@@ -639,6 +639,7 @@ class _AssignmentInfoState extends State<AssignmentInfoView> {
       _GradeShakeAnimation(
         onTap: tappedGradeSelector,
         text: assignment.grade == null ? '--%' : '${assignment.grade}%',
+        isAlert: assignment.grade == null && assignment.completed,
       )
     ];
 
@@ -1723,7 +1724,8 @@ class _GradeShakeAnimation extends StatefulWidget {
   final String text;
   final bool isAlert;
 
-  _GradeShakeAnimation({this.onTap, this.text, this.isAlert = false});
+  _GradeShakeAnimation({this.onTap, this.text, this.isAlert = false})
+      : super(key: UniqueKey());
 
   @override
   State<StatefulWidget> createState() => _GradeShakeAnimationState();
@@ -1749,10 +1751,13 @@ class _GradeShakeAnimationState extends State<_GradeShakeAnimation>
     )
       ..addStatusListener((status) {
         if (status == AnimationStatus.completed) {
-          Timer(
-            Duration(seconds: 4),
-            () => _controller.forward(from: 0),
-          );
+          if (mounted)
+            Timer(
+              Duration(seconds: 4),
+              () {
+                if (mounted) _controller.forward(from: 0);
+              },
+            );
         }
       })
       ..addListener(() => setState(() {}));
@@ -1768,26 +1773,22 @@ class _GradeShakeAnimationState extends State<_GradeShakeAnimation>
   }
 
   ///Then you can get a shake type motion like so;
-  Matrix4 get translation {
+  double get translation {
     double progress = _animation.value;
-    double offset = sin(progress * pi * 3) * 0.2;
-    return Matrix4.rotationZ(offset);
+    return sin(progress * pi * 3) * 0.2;
+    // return Matrix4.rotationZ(offset);
   }
 
   @override
   Widget build(BuildContext context) {
-    final double width = 36;
-    final double height = 22;
-
-    return Transform(
-      transform: translation,
-      origin: Offset(width / 2, height / 2),
+    return Transform.rotate(
+      angle: translation,
+      alignment: Alignment.center,
       child: GestureDetector(
         onTapUp: (details) => widget.onTap(),
         child: Container(
           alignment: Alignment.center,
-          width: width,
-          height: height,
+          padding: EdgeInsets.symmetric(horizontal: 4, vertical: 1),
           child: Text(
             widget.text,
             style: TextStyle(

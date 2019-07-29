@@ -3,6 +3,7 @@ import 'package:dart_notification_center/dart_notification_center.dart';
 import 'package:dropdown_banner/dropdown_banner.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:skoller/screens/main_app/menu/class_status_modal.dart';
 import 'package:skoller/tools.dart';
 import 'package:skoller/screens/main_app/menu/create_class_modal.dart';
 import 'package:skoller/screens/main_app/menu/class_search_settings_modal.dart';
@@ -238,13 +239,23 @@ class _AddClassesState extends State<AddClassesView> {
                       return false;
                     }
                   }).then((success) async {
-                    Navigator.pop(context);
-
                     if (success) {
                       await StudentClass.getStudentClasses();
+
+                      if (isEnrolled)
+                        Navigator.pop(context);
+                      else
+                        Navigator.pushReplacement(
+                          context,
+                          SKNavOverlayRoute(
+                            builder: (context) =>
+                                ClassStatusModal(schoolClass.id),
+                          ),
+                        );
                       DartNotificationCenter.post(
                           channel: NotificationChannels.classChanged);
                     } else {
+                      Navigator.pop(context);
                       DropdownBanner.showBanner(
                         text:
                             'Failed to ${isEnrolled ? 'enroll in' : 'drop'} class',
@@ -347,7 +358,8 @@ class _AddClassesState extends State<AddClassesView> {
                                   ),
                                   Expanded(
                                     child: Padding(
-                                      padding: EdgeInsets.only(top: 4, right: 8),
+                                      padding:
+                                          EdgeInsets.only(top: 4, right: 8),
                                       child: Text.rich(
                                         TextSpan(
                                           text: 'Can\'t find your class?',
