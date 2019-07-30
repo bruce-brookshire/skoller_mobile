@@ -17,8 +17,6 @@ class _CalendarState extends State<CalendarView> {
   final weekDayStyle = TextStyle(fontSize: 14, color: SKColors.text_light_gray);
   final controller = PageController(initialPage: 1);
 
-  // DateTime firstOfMonth;
-  // DateTime startDate;
   DateTime today;
 
   List<DateTime> children = [];

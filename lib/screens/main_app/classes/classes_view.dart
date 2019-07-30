@@ -537,7 +537,7 @@ class _ClassesState extends State<ClassesView> {
   Widget generateSyllabusDialog(
       _SammiExplanationType type, int classId, BuildContext context) {
     Text sammiText;
-    Widget body = Text('todo');
+    Widget body = Text('');
 
     switch (type) {
       case _SammiExplanationType.diy:

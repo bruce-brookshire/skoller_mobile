@@ -66,7 +66,7 @@ final _colors = [
 class _TaskCellItem {
   final String name;
   final String className;
-  final Color color;
+  final int color;
   final String due;
   final double completion;
 
@@ -76,18 +76,18 @@ class _TaskCellItem {
 
 class _ViewOne extends StatelessWidget {
   final items = [
-    _TaskCellItem('Assignment 1', '', Color(0xFF9b55e5), '', 0.3),
-    _TaskCellItem('Assignment 1', '', Color(0xFF9b55e5), '', 0.3),
-    _TaskCellItem('Assignment 1', '', Color(0xFF9b55e5), '', 0.3),
-    _TaskCellItem('Assignment 1', '', Color(0xFF9b55e5), '', 0.3),
-    _TaskCellItem('Assignment 1', '', Color(0xFF9b55e5), '', 0.3),
-    _TaskCellItem('Assignment 1', '', Color(0xFF9b55e5), '', 0.3),
-    _TaskCellItem('Assignment 1', '', Color(0xFF9b55e5), '', 0.3),
-    _TaskCellItem('Assignment 1', '', Color(0xFF9b55e5), '', 0.3),
-    _TaskCellItem('Assignment 1', '', Color(0xFF9b55e5), '', 0.3),
-    _TaskCellItem('Assignment 1', '', Color(0xFF9b55e5), '', 0.3),
-    _TaskCellItem('Assignment 1', '', Color(0xFF9b55e5), '', 0.3),
-    _TaskCellItem('Assignment 1', '', Color(0xFF9b55e5), '', 0.3),
+    _TaskCellItem('Assignment 1', '', 1, '', 0.3),
+    _TaskCellItem('Assignment 1', '', 1, '', 0.3),
+    _TaskCellItem('Assignment 1', '', 1, '', 0.3),
+    _TaskCellItem('Assignment 1', '', 1, '', 0.3),
+    _TaskCellItem('Assignment 1', '', 1, '', 0.3),
+    _TaskCellItem('Assignment 1', '', 1, '', 0.3),
+    _TaskCellItem('Assignment 1', '', 1, '', 0.3),
+    _TaskCellItem('Assignment 1', '', 1, '', 0.3),
+    _TaskCellItem('Assignment 1', '', 1, '', 0.3),
+    _TaskCellItem('Assignment 1', '', 1, '', 0.3),
+    _TaskCellItem('Assignment 1', '', 1, '', 0.3),
+    _TaskCellItem('Assignment 1', '', 1, '', 0.3),
   ];
 
   @override
@@ -102,7 +102,7 @@ class _ViewOne extends StatelessWidget {
           children: [
             Expanded(
               child: ListView(
-                padding: EdgeInsets.only(top: 4),
+                padding: EdgeInsets.only(top: 68),
                 children: items.map(createTaskCell).toList(),
               ),
             ),
@@ -268,7 +268,7 @@ class _ViewTwo extends StatelessWidget {
           children: [
             Container(
               color: Colors.white,
-              height: 72,
+              height: 80,
             ),
             Container(
               color: Colors.white,
@@ -295,7 +295,7 @@ class _ViewTwo extends StatelessWidget {
             child: Column(
               children: <Widget>[
                 Padding(
-                  padding: EdgeInsets.only(left: 12, right: 12, top: 44),
+                  padding: EdgeInsets.only(left: 12, right: 12, top: 48),
                   child: SammiSpeechBubble(
                     sammiPersonality: SammiPersonality.smile,
                     speechBubbleContents: Text.rich(
@@ -505,7 +505,7 @@ class _ViewThree extends StatelessWidget {
           children: <Widget>[
             Expanded(
               child: ListView.builder(
-                padding: EdgeInsets.only(top: 4),
+                padding: EdgeInsets.only(top: 88),
                 itemCount: chats.length,
                 itemBuilder: buildCard,
               ),
@@ -520,7 +520,7 @@ class _ViewThree extends StatelessWidget {
             child: Column(
               children: <Widget>[
                 Padding(
-                  padding: EdgeInsets.only(left: 12, right: 12, top: 44),
+                  padding: EdgeInsets.only(left: 12, right: 12, top: 48),
                   child: SammiSpeechBubble(
                     sammiPersonality: SammiPersonality.smile,
                     speechBubbleContents: Text.rich(
@@ -596,7 +596,8 @@ class _ViewThree extends StatelessWidget {
                     ),
                     Text(
                       chat.className,
-                      style: TextStyle(color: _colors[chat.color], fontSize: 14),
+                      style:
+                          TextStyle(color: _colors[chat.color], fontSize: 14),
                     )
                   ],
                 ),
@@ -707,7 +708,6 @@ class _ViewFour extends StatelessWidget {
     _GradesCellItem('Assignment 1', 95.5, 2, 0.68, 1),
     _GradesCellItem('Assignment 1', 95.5, 2, 0.68, 1),
     _GradesCellItem('Assignment 1', 95.5, 2, 0.68, 1),
-
   ];
 
   @override
@@ -736,7 +736,7 @@ class _ViewFour extends StatelessWidget {
             child: Column(
               children: <Widget>[
                 Padding(
-                  padding: EdgeInsets.only(left: 12, right: 12, top: 44),
+                  padding: EdgeInsets.only(left: 12, right: 12, top: 48),
                   child: SammiSpeechBubble(
                     sammiPersonality: SammiPersonality.smile,
                     speechBubbleContents: Text.rich(
@@ -860,20 +860,55 @@ class _ViewFour extends StatelessWidget {
   }
 }
 
+class _ActivityCellItem {
+  final int color;
+  final String date;
+  final bool isMod;
+  final String className;
+  final String msg;
+
+  final String modImg;
+
+  final String postPost;
+  final String postName;
+  final String postAssignment;
+
+  _ActivityCellItem(
+    this.color,
+    this.date,
+    this.isMod,
+    this.className,
+    this.msg, {
+    this.modImg,
+    this.postPost,
+    this.postName,
+    this.postAssignment,
+  });
+}
+
 class _ViewFive extends StatelessWidget {
   final items = [
-    _TaskCellItem('Assignment 1', '', Color(0xFF9b55e5), '', 0.3),
-    _TaskCellItem('Assignment 1', '', Color(0xFF9b55e5), '', 0.3),
-    _TaskCellItem('Assignment 1', '', Color(0xFF9b55e5), '', 0.3),
-    _TaskCellItem('Assignment 1', '', Color(0xFF9b55e5), '', 0.3),
-    _TaskCellItem('Assignment 1', '', Color(0xFF9b55e5), '', 0.3),
-    _TaskCellItem('Assignment 1', '', Color(0xFF9b55e5), '', 0.3),
-    _TaskCellItem('Assignment 1', '', Color(0xFF9b55e5), '', 0.3),
-    _TaskCellItem('Assignment 1', '', Color(0xFF9b55e5), '', 0.3),
-    _TaskCellItem('Assignment 1', '', Color(0xFF9b55e5), '', 0.3),
-    _TaskCellItem('Assignment 1', '', Color(0xFF9b55e5), '', 0.3),
-    _TaskCellItem('Assignment 1', '', Color(0xFF9b55e5), '', 0.3),
-    _TaskCellItem('Assignment 1', '', Color(0xFF9b55e5), '', 0.3),
+    _ActivityCellItem(1, '32 min.', true, 'Calculus', 'Exam 3 added',
+        modImg: ImageNames.activityImages.add_white),
+    _ActivityCellItem(1, '32 min.', true, 'Calculus', 'Exam 3 added',
+        modImg: ImageNames.activityImages.add_white),
+    _ActivityCellItem(1, '32 min.', true, 'Calculus', 'Exam 3 added',
+        modImg: ImageNames.activityImages.add_white),
+    _ActivityCellItem(1, '32 min.', true, 'Calculus', 'Exam 3 added',
+        modImg: ImageNames.activityImages.add_white),
+    _ActivityCellItem(1, '32 min.', true, 'Calculus', 'Exam 3 added',
+        modImg: ImageNames.activityImages.add_white),
+    _ActivityCellItem(
+      1,
+      '32 min.',
+      false,
+      'Calculus',
+      'replied to your comment in',
+      postAssignment: 'Exam 3',
+      postName: 'Bruce Brookshire',
+      postPost:
+          'This is a really long and sappy post about how life is honestly going pretty well despite my degenerativeness',
+    ),
   ];
 
   @override
@@ -882,16 +917,15 @@ class _ViewFive extends StatelessWidget {
       alignment: Alignment.center,
       children: <Widget>[
         SKNavView(
-          title: 'Tasks',
-          leftBtn: Image.asset(ImageNames.peopleImages.static_profile),
-          rightBtn: Image.asset(ImageNames.rightNavImages.plus),
-          children: [
+          title: 'Activity',
+          leftBtn: SKHeaderProfilePhoto(),
+          children: <Widget>[
             Expanded(
               child: ListView(
-                padding: EdgeInsets.only(top: 4),
-                children: items.map(createTaskCell).toList(),
+                padding: EdgeInsets.only(top: 88),
+                children: items.map(buildListItem).toList(),
               ),
-            ),
+            )
           ],
         ),
         Container(color: Colors.black.withOpacity(0.5)),
@@ -906,10 +940,10 @@ class _ViewFive extends StatelessWidget {
                   child: SammiSpeechBubble(
                     sammiPersonality: SammiPersonality.smile,
                     speechBubbleContents: Text.rich(
-                      TextSpan(text: 'Tasks', children: [
+                      TextSpan(text: 'Activity', children: [
                         TextSpan(
                             text:
-                                ' lays out YOUR personal 10-day forecast, which updates every day!',
+                                ' has changes to due dates and other suggestions from classmates.',
                             style: TextStyle(fontWeight: FontWeight.normal))
                       ]),
                     ),
@@ -938,57 +972,130 @@ class _ViewFive extends StatelessWidget {
     );
   }
 
-  Widget createTaskCell(_TaskCellItem item) {
-    return Container(
-      margin: EdgeInsets.fromLTRB(7, 3, 7, 4),
-      padding: EdgeInsets.symmetric(horizontal: 8, vertical: 6),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(5),
-        border: Border.all(color: SKColors.border_gray, width: 1),
-        boxShadow: [UIAssets.boxShadow],
-        color: Colors.white,
-      ),
-      child: Column(
-        children: <Widget>[
-          Container(
-            padding: EdgeInsets.only(bottom: 4),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  Widget buildListItem(_ActivityCellItem item) =>
+      item.isMod ? createModCard(item) : createPostCard(item);
+
+  Widget createPostCard(_ActivityCellItem post) => Container(
+        margin: EdgeInsets.fromLTRB(7, 3, 7, 4),
+        padding: EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          boxShadow: [UIAssets.boxShadow],
+          borderRadius: BorderRadius.circular(5),
+          border: Border.all(color: SKColors.border_gray),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                Expanded(
+                Container(
+                  width: 32,
+                  height: 32,
+                  margin: EdgeInsets.only(right: 6),
+                  alignment: Alignment.center,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: _colors[post.color],
+                  ),
                   child: Text(
-                    item.name,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: TextStyle(
-                        color: item.color,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 17),
+                    post.postName.split(' ').map((str) => str[0]).join(),
+                    style: TextStyle(color: Colors.white),
+                  ),
+                ),
+                Expanded(
+                  child: Text.rich(
+                    TextSpan(
+                      text: post.postName,
+                      children: [
+                        TextSpan(
+                          text: ' ${post.msg} ',
+                          style: TextStyle(fontWeight: FontWeight.normal),
+                        ),
+                        TextSpan(
+                          text: post.className,
+                          style: TextStyle(
+                            fontWeight: FontWeight.normal,
+                            color: _colors[post.color],
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
                 Text(
-                  item.due,
-                  style: TextStyle(fontSize: 13, fontWeight: FontWeight.normal),
+                  post.date,
+                  style: TextStyle(
+                    color: SKColors.text_light_gray,
+                    fontSize: 13,
+                    fontWeight: FontWeight.normal,
+                  ),
                 ),
               ],
             ),
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: <Widget>[
-              Text(
-                item.className,
-                style: TextStyle(fontSize: 15, fontWeight: FontWeight.normal),
+            Padding(
+              padding: EdgeInsets.all(4),
+              child: Text(post.postPost, style: TextStyle(fontWeight: FontWeight.normal, fontSize: 14, color: SKColors.light_gray),),
+            ),
+          ],
+        ),
+      );
+
+  Widget createModCard(_ActivityCellItem mod) => Container(
+        margin: EdgeInsets.fromLTRB(7, 3, 7, 4),
+        padding: EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          boxShadow: [UIAssets.boxShadow],
+          borderRadius: BorderRadius.circular(5),
+          border: Border.all(color: SKColors.border_gray),
+        ),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Container(
+              width: 28,
+              height: 28,
+              margin: EdgeInsets.only(right: 6),
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: _colors[mod.color],
               ),
-              SKAssignmentImpactGraph(
-                item.completion,
-                item.color,
-                size: ImpactGraphSize.small,
-              )
-            ],
-          )
-        ],
-      ),
-    );
-  }
+              child: Image.asset(mod.modImg),
+            ),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      Text(
+                        mod.className,
+                        style: TextStyle(color: _colors[mod.color]),
+                      ),
+                      Text(
+                        mod.date,
+                        style: TextStyle(
+                            color: SKColors.text_light_gray,
+                            fontSize: 13,
+                            fontWeight: FontWeight.normal),
+                      ),
+                    ],
+                  ),
+                  Text(
+                    mod.msg,
+                    style: TextStyle(
+                        fontWeight: FontWeight.normal,
+                        fontSize: 13,
+                        color: SKColors.dark_gray),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      );
 }
