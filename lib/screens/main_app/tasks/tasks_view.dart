@@ -503,7 +503,11 @@ class _TasksState extends State<TasksView> {
                   style: TextStyle(fontSize: 15, fontWeight: FontWeight.normal),
                 ),
                 if (task.weight_id != null && task.weight != null)
-                  SKAssignmentImpactGraph(task, size: ImpactGraphSize.small)
+                  SKAssignmentImpactGraph(
+                    task.weight,
+                    task.parentClass.getColor(),
+                    size: ImpactGraphSize.small,
+                  )
               ],
             )
           ],

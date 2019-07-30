@@ -621,7 +621,10 @@ class _AssignmentInfoState extends State<AssignmentInfoView> {
                     ],
                   ),
                 ),
-                SKAssignmentImpactGraph(assignment),
+                SKAssignmentImpactGraph(
+                  assignment.weight,
+                  assignment.parentClass.getColor(),
+                ),
               ],
             ),
           ),
@@ -1753,7 +1756,7 @@ class _GradeShakeAnimationState extends State<_GradeShakeAnimation>
         if (status == AnimationStatus.completed) {
           if (mounted)
             Timer(
-              Duration(seconds: 4),
+              Duration(seconds: 3),
               () {
                 if (mounted) _controller.forward(from: 0);
               },

@@ -1108,7 +1108,7 @@ class SKColorPicker extends StatefulWidget {
   final List<Color> colors = [
     Color(0xFF9B55E5),
     Color(0xFFFF71A8),
-    Color(0xFF57B9E4),
+    Color(0xFF1088B3),
     Color(0xFF4CD8BD),
     Color(0xFF4CCC58),
     Color(0xFFF7D300),
@@ -1558,18 +1558,19 @@ class _SammiArrowPainter extends CustomPainter {
 enum ImpactGraphSize { small, large }
 
 class SKAssignmentImpactGraph extends StatelessWidget {
-  final Assignment assignment;
+  final double completion;
   final ImpactGraphSize size;
+  final Color color;
 
-  SKAssignmentImpactGraph(this.assignment, {this.size = ImpactGraphSize.large});
+  SKAssignmentImpactGraph(this.completion, this.color, {this.size = ImpactGraphSize.large});
 
   @override
   Widget build(BuildContext context) {
     _ImpactLevel level;
 
-    if (assignment.weight == null || assignment.weight < 0.05)
+    if (completion == null || completion < 0.05)
       level = _ImpactLevel.low;
-    else if (assignment.weight < 0.15)
+    else if (completion < 0.15)
       level = _ImpactLevel.medium;
     else
       level = _ImpactLevel.high;
@@ -1583,7 +1584,7 @@ class SKAssignmentImpactGraph extends StatelessWidget {
       children: <Widget>[
         CustomPaint(
           painter:
-              _SKImpactGraphPainter(assignment.parentClass.getColor(), level),
+              _SKImpactGraphPainter(color, level),
           child: Container(
             width: width,
             height: height,

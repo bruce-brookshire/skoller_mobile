@@ -4,6 +4,7 @@ import 'package:package_info/package_info.dart';
 import 'package:flutter/material.dart';
 import 'package:skoller/loading_view.dart';
 import 'package:skoller/screens/main_app/main_view.dart';
+import 'package:skoller/screens/main_app/tutorial.dart';
 import 'package:skoller/tools.dart';
 import 'screens/auth/auth_home.dart';
 import 'constants/constants.dart';
@@ -102,7 +103,7 @@ class _SkollerAppState extends State<SkollerApp> {
         currentWidget = LoadingView();
         break;
       case AppState.main:
-        currentWidget = MainView();
+        currentWidget = TutorialTab();
         break;
       case AppState.auth:
         currentWidget = AuthHome();

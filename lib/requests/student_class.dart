@@ -35,7 +35,7 @@ class StudentClass {
   static final _classColors = [
     '9b55e5ff', // purple
     'ff71a8ff', // pink
-    '57b9e4ff', // blue
+    '1088b3ff', // blue
     '4cd8bdff', // mint
     '4add58ff', // green
     'f7d300ff', // yellow
