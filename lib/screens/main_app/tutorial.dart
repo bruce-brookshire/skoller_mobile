@@ -4,18 +4,16 @@ import 'package:intl/intl.dart';
 import 'package:skoller/tools.dart';
 
 class TutorialTab extends StatefulWidget {
+  final VoidCallback onTapDismiss;
+
+  TutorialTab(this.onTapDismiss);
+
   @override
   State createState() => _TutorialTabState();
 }
 
 class _TutorialTabState extends State<TutorialTab> {
-  final views = [
-    _ViewOne(),
-    _ViewTwo(),
-    _ViewThree(),
-    _ViewFour(),
-    _ViewFive(),
-  ];
+  List<StatelessWidget> views;
 
   final List<String> _indexIconPartialPaths = [
     'tasks_',
@@ -25,7 +23,20 @@ class _TutorialTabState extends State<TutorialTab> {
     'activity_',
   ];
 
-  int _selectedIndex = 1;
+  int _selectedIndex = 0;
+
+  @override
+  void initState() {
+    views = [
+      _ViewOne(widget.onTapDismiss),
+      _ViewTwo(widget.onTapDismiss),
+      _ViewThree(widget.onTapDismiss),
+      _ViewFour(widget.onTapDismiss),
+      _ViewFive(widget.onTapDismiss),
+    ];
+
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -53,14 +64,14 @@ class _TutorialTabState extends State<TutorialTab> {
 }
 
 final _colors = [
-  Color(0xFF9b55e5), // purple
-  Color(0xFFff71a8), // pink
-  Color(0xFF1088b3), // blue
-  Color(0xFF4cd8bd), // mint
-  Color(0xFF4add58), // green
-  Color(0xFFf7d300), // yellow
-  Color(0xFFffae42), // orange
-  Color(0xFFdd4a63), // red
+  Color(0xFF9b55e5), // 0purple
+  Color(0xFFff71a8), // 1pink
+  Color(0xFF1088b3), // 2blue
+  Color(0xFF4cd8bd), // 3mint
+  Color(0xFF4add58), // 4green
+  Color(0xFFf7d300), // 5yellow
+  Color(0xFFffae42), // 6orange
+  Color(0xFFdd4a63), // 7red
 ];
 
 class _TaskCellItem {
@@ -75,19 +86,25 @@ class _TaskCellItem {
 }
 
 class _ViewOne extends StatelessWidget {
+  final VoidCallback onTapDismiss;
+
+  _ViewOne(this.onTapDismiss);
+
   final items = [
-    _TaskCellItem('Assignment 1', '', 1, '', 0.3),
-    _TaskCellItem('Assignment 1', '', 1, '', 0.3),
-    _TaskCellItem('Assignment 1', '', 1, '', 0.3),
-    _TaskCellItem('Assignment 1', '', 1, '', 0.3),
-    _TaskCellItem('Assignment 1', '', 1, '', 0.3),
-    _TaskCellItem('Assignment 1', '', 1, '', 0.3),
-    _TaskCellItem('Assignment 1', '', 1, '', 0.3),
-    _TaskCellItem('Assignment 1', '', 1, '', 0.3),
-    _TaskCellItem('Assignment 1', '', 1, '', 0.3),
-    _TaskCellItem('Assignment 1', '', 1, '', 0.3),
-    _TaskCellItem('Assignment 1', '', 1, '', 0.3),
-    _TaskCellItem('Assignment 1', '', 1, '', 0.3),
+    _TaskCellItem('Reading Quiz', 'World Religions', 6, 'Today', 0.3),
+    _TaskCellItem('Assignment 1', 'Calculus I', 2, 'Today', 0.1),
+    _TaskCellItem('Speech 1 Outline', 'Public Speaking', 0, 'Tomorrow', 0.01),
+    _TaskCellItem('Group Persuasion', 'Entrepreneurship', 3, 'Thursday', 0.1),
+    _TaskCellItem('Quiz 1', 'Environmental Science', 1, 'Friday', 0.1),
+    _TaskCellItem('Speech 1 Presentation', 'Public Speaking', 0, 'Monday', 0.3),
+    _TaskCellItem('Assignment 2', 'Calculus I', 2, 'Monday', 0.1),
+    _TaskCellItem(
+        'Creative Writing Assignment', 'Entrepreneurship', 3, 'Monday', 0.3),
+    _TaskCellItem('Speech 2 Outline', 'Public Speaking', 0, '6 days', 0.3),
+    _TaskCellItem('Terms and Names', 'World Religions', 6, '8 days', 0.3),
+    _TaskCellItem('Assignment 3', 'Calculus I', 2, '9 days', 0.1),
+    _TaskCellItem('Quiz 2', 'Environmental Science', 1, '10 days', 0.1),
+    _TaskCellItem('Final exam', 'Calculus I', 2, '10 days', 0.3),
   ];
 
   @override
@@ -130,20 +147,23 @@ class _ViewOne extends StatelessWidget {
                   ),
                 ),
                 Spacer(),
-                Container(
-                  padding: EdgeInsets.symmetric(vertical: 8, horizontal: 24),
-                  margin: EdgeInsets.only(bottom: 48),
-                  decoration: BoxDecoration(
-                    color: SKColors.skoller_blue,
-                    borderRadius: BorderRadius.circular(5),
-                    border: Border.all(color: Colors.white),
-                    boxShadow: [UIAssets.boxShadow],
+                GestureDetector(
+                  onTapUp: (details) => onTapDismiss(),
+                  child: Container(
+                    padding: EdgeInsets.symmetric(vertical: 8, horizontal: 24),
+                    margin: EdgeInsets.only(bottom: 48),
+                    decoration: BoxDecoration(
+                      color: SKColors.skoller_blue,
+                      borderRadius: BorderRadius.circular(5),
+                      border: Border.all(color: Colors.white),
+                      boxShadow: [UIAssets.boxShadow],
+                    ),
+                    child: Text(
+                      'Join your first class 👌',
+                      style: TextStyle(color: Colors.white),
+                    ),
                   ),
-                  child: Text(
-                    'Join your first class 👌',
-                    style: TextStyle(color: Colors.white),
-                  ),
-                )
+                ),
               ],
             ),
           ),
@@ -175,7 +195,7 @@ class _ViewOne extends StatelessWidget {
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: TextStyle(
-                        color: item.color,
+                        color: _colors[item.color],
                         fontWeight: FontWeight.bold,
                         fontSize: 17),
                   ),
@@ -196,7 +216,7 @@ class _ViewOne extends StatelessWidget {
               ),
               SKAssignmentImpactGraph(
                 item.completion,
-                item.color,
+                _colors[item.color],
                 size: ImpactGraphSize.small,
               )
             ],
@@ -215,41 +235,45 @@ class _CalendarItem {
 }
 
 class _ViewTwo extends StatelessWidget {
+  final VoidCallback onTapDismiss;
+
+  _ViewTwo(this.onTapDismiss);
+
   final firstOfMonth = DateTime(2019, 10, 1);
   final startDate = DateTime(2019, 9, 29);
   final today = DateTime(2019, 10, 15);
 
   final Map<String, List<_CalendarItem>> assignments = {
-    '10-2': [_CalendarItem('Reading', 1)],
+    '10-2': [_CalendarItem('Reading Quiz 1', 3)],
     '10-4': [
-      _CalendarItem('Reading', 1),
-      _CalendarItem('Reading', 1),
-      _CalendarItem('Reading', 1),
+      _CalendarItem('Assignment 1', 2),
+      _CalendarItem('Lab Quiz 1', 1),
+      _CalendarItem('Research Meeting', 4),
     ],
-    '10-7': [_CalendarItem('Reading', 1)],
-    '10-8': [_CalendarItem('Reading', 1)],
-    '10-10': [_CalendarItem('Reading', 1)],
+    '10-7': [_CalendarItem('Midterm', 1)],
+    '10-8': [_CalendarItem('Speech Outline', 0)],
+    '10-10': [_CalendarItem('Reading Quiz 2', 3)],
     '10-14': [
-      _CalendarItem('Reading', 1),
-      _CalendarItem('Reading', 1),
+      _CalendarItem('Speech Presentation', 0),
+      _CalendarItem('Assignment 2', 2),
     ],
+    '10-16': [_CalendarItem('Lab Quiz 3', 1)],
     '10-18': [
-      _CalendarItem('Reading', 1),
-      _CalendarItem('Reading', 1),
+      _CalendarItem('Lab Quiz 2', 1),
+      _CalendarItem('Reading Quiz 3', 3),
     ],
-    '10-24': [_CalendarItem('Reading', 1)],
     '10-22': [
-      _CalendarItem('Reading', 1),
-      _CalendarItem('Reading', 1),
+      _CalendarItem('Reading Quiz 4', 3),
+      _CalendarItem('Group Presentation', 6),
     ],
-    '10-16': [_CalendarItem('Reading', 1)],
-    '10-22': [
-      _CalendarItem('Reading', 1),
-      _CalendarItem('Reading', 1),
+    '10-24': [_CalendarItem('Assignment 3', 2)],
+    '10-25': [_CalendarItem('Lab Quiz 4', 1)],
+    '10-28': [_CalendarItem('Final', 2)],
+    '10-30': [
+      _CalendarItem('Research Checkpoint', 4),
+      _CalendarItem('Assignment 4', 2),
     ],
-    '10-25': [_CalendarItem('Reading', 1)],
-    '10-28': [_CalendarItem('Reading', 1)],
-    '10-31': [_CalendarItem('Reading', 1)],
+    '10-31': [_CalendarItem('Reading Quiz 5', 3)],
   };
 
   List<_CalendarItem> assignmentsForDate(DateTime day) {
@@ -297,7 +321,7 @@ class _ViewTwo extends StatelessWidget {
                 Padding(
                   padding: EdgeInsets.only(left: 12, right: 12, top: 48),
                   child: SammiSpeechBubble(
-                    sammiPersonality: SammiPersonality.smile,
+                    sammiPersonality: SammiPersonality.ooo,
                     speechBubbleContents: Text.rich(
                       TextSpan(text: 'Calendar', children: [
                         TextSpan(
@@ -309,20 +333,23 @@ class _ViewTwo extends StatelessWidget {
                   ),
                 ),
                 Spacer(),
-                Container(
-                  padding: EdgeInsets.symmetric(vertical: 8, horizontal: 24),
-                  margin: EdgeInsets.only(bottom: 48),
-                  decoration: BoxDecoration(
-                    color: SKColors.skoller_blue,
-                    borderRadius: BorderRadius.circular(5),
-                    border: Border.all(color: Colors.white),
-                    boxShadow: [UIAssets.boxShadow],
+                GestureDetector(
+                  onTapUp: (details) => onTapDismiss(),
+                  child: Container(
+                    padding: EdgeInsets.symmetric(vertical: 8, horizontal: 24),
+                    margin: EdgeInsets.only(bottom: 48),
+                    decoration: BoxDecoration(
+                      color: SKColors.skoller_blue,
+                      borderRadius: BorderRadius.circular(5),
+                      border: Border.all(color: Colors.white),
+                      boxShadow: [UIAssets.boxShadow],
+                    ),
+                    child: Text(
+                      'Join your first class 👌',
+                      style: TextStyle(color: Colors.white),
+                    ),
                   ),
-                  child: Text(
-                    'Join your first class 👌',
-                    style: TextStyle(color: Colors.white),
-                  ),
-                )
+                ),
               ],
             ),
           ),
@@ -474,23 +501,51 @@ class _ChatCellItem {
 }
 
 class _ViewThree extends StatelessWidget {
+  final VoidCallback onTapDismiss;
+
+  _ViewThree(this.onTapDismiss);
+
   final chats = [
     _ChatCellItem(
-        'Post', 'Bruce Brookshire', 'Calculus', 1, 1, '30 min.', 1, true, true),
-    _ChatCellItem('Post', 'Bruce Brookshire', 'Calculus', 1, 1, '10/15/19', 1,
-        true, true),
-    _ChatCellItem('Post', 'Bruce Brookshire', 'Calculus', 1, 1, '10/15/19', 1,
-        true, true),
-    _ChatCellItem('Post', 'Bruce Brookshire', 'Calculus', 1, 1, '10/15/19', 1,
-        true, true),
-    _ChatCellItem('Post', 'Bruce Brookshire', 'Calculus', 1, 1, '10/15/19', 1,
-        true, true),
-    _ChatCellItem('Post', 'Bruce Brookshire', 'Calculus', 1, 1, '10/15/19', 1,
-        true, true),
-    _ChatCellItem('Post', 'Bruce Brookshire', 'Calculus', 1, 1, '10/15/19', 1,
-        true, true),
-    _ChatCellItem('Post', 'Bruce Brookshire', 'Calculus', 1, 1, '10/15/19', 1,
-        true, true),
+        'I was wondering where the explanation of the equation for number 4 was in the book?',
+        'Jake Smith',
+        'Calculus I',
+        0,
+        0,
+        '28 min.',
+        3,
+        false,
+        true),
+    _ChatCellItem(
+        'Don\'t forget to bring your books tomorrow! There is an open notes quiz over chapter 7, and I\'ve heard its hard.',
+        'Lexie Brown',
+        'Financial Accounting',
+        1,
+        1,
+        '2 days',
+        1,
+        true,
+        true),
+    _ChatCellItem(
+        'Is the TA offering office hours this week? I am having trouble understanding that explanation from class yesterday.',
+        'Jessie Rothschild',
+        'Philosophy 101',
+        2,
+        1,
+        '41 min.',
+        5,
+        false,
+        false),
+    _ChatCellItem(
+        'Like this if you want cupcakes! I\'m bringing some to class tomorrow.',
+        'Mason Ainsley',
+        'Microeconomics',
+        3,
+        6,
+        '6 hrs.',
+        2,
+        true,
+        true),
   ];
 
   @override
@@ -522,7 +577,7 @@ class _ViewThree extends StatelessWidget {
                 Padding(
                   padding: EdgeInsets.only(left: 12, right: 12, top: 48),
                   child: SammiSpeechBubble(
-                    sammiPersonality: SammiPersonality.smile,
+                    sammiPersonality: SammiPersonality.cool,
                     speechBubbleContents: Text.rich(
                       TextSpan(text: 'Chat', children: [
                         TextSpan(
@@ -534,20 +589,23 @@ class _ViewThree extends StatelessWidget {
                   ),
                 ),
                 Spacer(),
-                Container(
-                  padding: EdgeInsets.symmetric(vertical: 8, horizontal: 24),
-                  margin: EdgeInsets.only(bottom: 48),
-                  decoration: BoxDecoration(
-                    color: SKColors.skoller_blue,
-                    borderRadius: BorderRadius.circular(5),
-                    border: Border.all(color: Colors.white),
-                    boxShadow: [UIAssets.boxShadow],
+                GestureDetector(
+                  onTapUp: (details) => onTapDismiss(),
+                  child: Container(
+                    padding: EdgeInsets.symmetric(vertical: 8, horizontal: 24),
+                    margin: EdgeInsets.only(bottom: 48),
+                    decoration: BoxDecoration(
+                      color: SKColors.skoller_blue,
+                      borderRadius: BorderRadius.circular(5),
+                      border: Border.all(color: Colors.white),
+                      boxShadow: [UIAssets.boxShadow],
+                    ),
+                    child: Text(
+                      'Join your first class 👌',
+                      style: TextStyle(color: Colors.white),
+                    ),
                   ),
-                  child: Text(
-                    'Join your first class 👌',
-                    style: TextStyle(color: Colors.white),
-                  ),
-                )
+                ),
               ],
             ),
           ),
@@ -701,13 +759,17 @@ class _GradesCellItem {
 }
 
 class _ViewFour extends StatelessWidget {
+  final VoidCallback onTapDismiss;
+
+  _ViewFour(this.onTapDismiss);
+
   final classes = [
-    _GradesCellItem('Assignment 1', 95.5, 2, 0.68, 1),
-    _GradesCellItem('Assignment 1', 95.5, 2, 0.68, 1),
-    _GradesCellItem('Assignment 1', 95.5, 2, 0.68, 1),
-    _GradesCellItem('Assignment 1', 95.5, 2, 0.68, 1),
-    _GradesCellItem('Assignment 1', 95.5, 2, 0.68, 1),
-    _GradesCellItem('Assignment 1', 95.5, 2, 0.68, 1),
+    _GradesCellItem('Calculus I', 89, 9, 0.13, 0),
+    _GradesCellItem('Cultural Rhetorics of Film', 97, 7, 0.27, 6),
+    _GradesCellItem('Financial Accounting', 92, 16, 0.23, 1),
+    _GradesCellItem('Microeconomics', 88, 14, 0.4, 3),
+    _GradesCellItem('Philosophy 101', 94, 13, 0.68, 2),
+    _GradesCellItem('Research', 99, 5, 0.35, 4),
   ];
 
   @override
@@ -738,7 +800,7 @@ class _ViewFour extends StatelessWidget {
                 Padding(
                   padding: EdgeInsets.only(left: 12, right: 12, top: 48),
                   child: SammiSpeechBubble(
-                    sammiPersonality: SammiPersonality.smile,
+                    sammiPersonality: SammiPersonality.wow,
                     speechBubbleContents: Text.rich(
                       TextSpan(text: 'Classes', children: [
                         TextSpan(
@@ -750,20 +812,23 @@ class _ViewFour extends StatelessWidget {
                   ),
                 ),
                 Spacer(),
-                Container(
-                  padding: EdgeInsets.symmetric(vertical: 8, horizontal: 24),
-                  margin: EdgeInsets.only(bottom: 48),
-                  decoration: BoxDecoration(
-                    color: SKColors.skoller_blue,
-                    borderRadius: BorderRadius.circular(5),
-                    border: Border.all(color: Colors.white),
-                    boxShadow: [UIAssets.boxShadow],
+                GestureDetector(
+                  onTapUp: (details) => onTapDismiss(),
+                  child: Container(
+                    padding: EdgeInsets.symmetric(vertical: 8, horizontal: 24),
+                    margin: EdgeInsets.only(bottom: 48),
+                    decoration: BoxDecoration(
+                      color: SKColors.skoller_blue,
+                      borderRadius: BorderRadius.circular(5),
+                      border: Border.all(color: Colors.white),
+                      boxShadow: [UIAssets.boxShadow],
+                    ),
+                    child: Text(
+                      'Join your first class 👌',
+                      style: TextStyle(color: Colors.white),
+                    ),
                   ),
-                  child: Text(
-                    'Join your first class 👌',
-                    style: TextStyle(color: Colors.white),
-                  ),
-                )
+                ),
               ],
             ),
           ),
@@ -871,7 +936,6 @@ class _ActivityCellItem {
 
   final String postPost;
   final String postName;
-  final String postAssignment;
 
   _ActivityCellItem(
     this.color,
@@ -882,33 +946,37 @@ class _ActivityCellItem {
     this.modImg,
     this.postPost,
     this.postName,
-    this.postAssignment,
   });
 }
 
 class _ViewFive extends StatelessWidget {
+  final VoidCallback onTapDismiss;
+
+  _ViewFive(this.onTapDismiss);
+
   final items = [
-    _ActivityCellItem(1, '32 min.', true, 'Calculus', 'Exam 3 added',
+    _ActivityCellItem(0, '48 min.', true, 'Calculus I', 'Exam 2 added',
         modImg: ImageNames.activityImages.add_white),
-    _ActivityCellItem(1, '32 min.', true, 'Calculus', 'Exam 3 added',
-        modImg: ImageNames.activityImages.add_white),
-    _ActivityCellItem(1, '32 min.', true, 'Calculus', 'Exam 3 added',
-        modImg: ImageNames.activityImages.add_white),
-    _ActivityCellItem(1, '32 min.', true, 'Calculus', 'Exam 3 added',
-        modImg: ImageNames.activityImages.add_white),
-    _ActivityCellItem(1, '32 min.', true, 'Calculus', 'Exam 3 added',
-        modImg: ImageNames.activityImages.add_white),
+    _ActivityCellItem(3, '2 hrs.', false, 'Microeconomics',
+        'replied to your comment on Homework 2 in',
+        postName: 'Lexie Brown',
+        postPost:
+            'I agree, but remember that you have to take inflation into account.'),
+    _ActivityCellItem(2, '7 hrs.', true, 'Philosophy 101',
+        'Reading Quiz 2 due date changed to Oct. 16th',
+        modImg: ImageNames.activityImages.due_white),
     _ActivityCellItem(
-      1,
-      '32 min.',
-      false,
-      'Calculus',
-      'replied to your comment in',
-      postAssignment: 'Exam 3',
-      postName: 'Bruce Brookshire',
-      postPost:
-          'This is a really long and sappy post about how life is honestly going pretty well despite my degenerativeness',
-    ),
+        3, '2 days', true, 'Microeconomics', 'Reading Response added',
+        modImg: ImageNames.activityImages.add_white),
+    _ActivityCellItem(1, '4 days', false, 'Financial Accounting',
+        'replied to your comment on Midterm 2 in',
+        postName: 'Jack Rogers',
+        postPost:
+            'No, section 4 will not be on the exam, but section 5 will be. Good luck studying!'),
+    _ActivityCellItem(2, '5 days', false, 'Philosophy 101',
+        'replied to your comment on Reading Quiz 1 in',
+        postName: 'Janie Wilcox',
+        postPost: 'We actually only have to read pgs. 110-132 for the quiz!'),
   ];
 
   @override
@@ -950,20 +1018,23 @@ class _ViewFive extends StatelessWidget {
                   ),
                 ),
                 Spacer(),
-                Container(
-                  padding: EdgeInsets.symmetric(vertical: 8, horizontal: 24),
-                  margin: EdgeInsets.only(bottom: 48),
-                  decoration: BoxDecoration(
-                    color: SKColors.skoller_blue,
-                    borderRadius: BorderRadius.circular(5),
-                    border: Border.all(color: Colors.white),
-                    boxShadow: [UIAssets.boxShadow],
+                GestureDetector(
+                  onTapUp: (details) => onTapDismiss(),
+                  child: Container(
+                    padding: EdgeInsets.symmetric(vertical: 8, horizontal: 24),
+                    margin: EdgeInsets.only(bottom: 48),
+                    decoration: BoxDecoration(
+                      color: SKColors.skoller_blue,
+                      borderRadius: BorderRadius.circular(5),
+                      border: Border.all(color: Colors.white),
+                      boxShadow: [UIAssets.boxShadow],
+                    ),
+                    child: Text(
+                      'Join your first class 👌',
+                      style: TextStyle(color: Colors.white),
+                    ),
                   ),
-                  child: Text(
-                    'Join your first class 👌',
-                    style: TextStyle(color: Colors.white),
-                  ),
-                )
+                ),
               ],
             ),
           ),
@@ -1007,21 +1078,18 @@ class _ViewFive extends StatelessWidget {
                 Expanded(
                   child: Text.rich(
                     TextSpan(
-                      text: post.postName,
-                      children: [
-                        TextSpan(
-                          text: ' ${post.msg} ',
-                          style: TextStyle(fontWeight: FontWeight.normal),
-                        ),
-                        TextSpan(
-                          text: post.className,
-                          style: TextStyle(
-                            fontWeight: FontWeight.normal,
-                            color: _colors[post.color],
+                        text: post.postName,
+                        children: [
+                          TextSpan(
+                            text: ' ${post.msg} ',
+                            style: TextStyle(fontWeight: FontWeight.normal),
                           ),
-                        ),
-                      ],
-                    ),
+                          TextSpan(
+                            text: post.className,
+                            style: TextStyle(color: _colors[post.color]),
+                          ),
+                        ],
+                        style: TextStyle(fontSize: 14)),
                   ),
                 ),
                 Text(
@@ -1036,7 +1104,13 @@ class _ViewFive extends StatelessWidget {
             ),
             Padding(
               padding: EdgeInsets.all(4),
-              child: Text(post.postPost, style: TextStyle(fontWeight: FontWeight.normal, fontSize: 14, color: SKColors.light_gray),),
+              child: Text(
+                post.postPost,
+                style: TextStyle(
+                    fontWeight: FontWeight.normal,
+                    fontSize: 14,
+                    color: SKColors.light_gray),
+              ),
             ),
           ],
         ),

@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:skoller/constants/constants.dart';
 import 'package:dart_notification_center/dart_notification_center.dart';
+import 'package:skoller/screens/main_app/menu/add_classes_view.dart';
+import 'package:skoller/screens/main_app/tutorial.dart';
 import 'package:skoller/tools.dart';
 import 'dart:async';
 import 'tab_bar.dart';
@@ -85,48 +87,54 @@ class _MainState extends State<MainView> {
 
   @override
   Widget build(BuildContext context) {
-    if (!constraintsSetup) {
-      constraintsSetup = true;
+    if (StudentClass.currentClasses.length == 0) {
+      return TutorialTab(() {
+        presentWidgetOverMainView(AddClassesView());
+      });
+    } else {
+      if (!constraintsSetup) {
+        constraintsSetup = true;
 
-      Size size = MediaQuery.of(context).size;
-      deviceWidth = size.width;
+        Size size = MediaQuery.of(context).size;
+        deviceWidth = size.width;
 
-      menuWidth = deviceWidth * 0.7;
-      menuLeft = -menuWidth - 5;
+        menuWidth = deviceWidth * 0.7;
+        menuLeft = -menuWidth - 5;
 
-      backgroundWidth = (deviceWidth - menuWidth) + 15;
-      backgroundLeft = -backgroundWidth - 5;
-    }
+        backgroundWidth = (deviceWidth - menuWidth) + 15;
+        backgroundLeft = -backgroundWidth - 5;
+      }
 
-    return Stack(
-      children: <Widget>[
-        SKTabBar(),
-        AnimatedPositioned(
-          left: backgroundLeft,
-          width: backgroundWidth,
-          top: 0,
-          bottom: 0,
-          child: GestureDetector(
-            behavior: HitTestBehavior.opaque,
-            onTapUp: toggleMenu,
-            onHorizontalDragStart: toggleMenu,
-            child: Container(
-              color: menuShowing ? Colors.black.withOpacity(0.3) : null,
+      return Stack(
+        children: <Widget>[
+          SKTabBar(),
+          AnimatedPositioned(
+            left: backgroundLeft,
+            width: backgroundWidth,
+            top: 0,
+            bottom: 0,
+            child: GestureDetector(
+              behavior: HitTestBehavior.opaque,
+              onTapUp: toggleMenu,
+              onHorizontalDragStart: toggleMenu,
+              child: Container(
+                color: menuShowing ? Colors.black.withOpacity(0.3) : null,
+              ),
             ),
+            duration: Duration(milliseconds: 300),
+            curve: Curves.decelerate,
           ),
-          duration: Duration(milliseconds: 300),
-          curve: Curves.decelerate,
-        ),
-        AnimatedPositioned(
-          left: menuLeft,
-          width: menuWidth,
-          top: 0,
-          bottom: 0,
-          child: MenuView(),
-          duration: Duration(milliseconds: 300),
-          curve: Curves.decelerate,
-        ),
-      ],
-    );
+          AnimatedPositioned(
+            left: menuLeft,
+            width: menuWidth,
+            top: 0,
+            bottom: 0,
+            child: MenuView(),
+            duration: Duration(milliseconds: 300),
+            curve: Curves.decelerate,
+          ),
+        ],
+      );
+    }
   }
 }
