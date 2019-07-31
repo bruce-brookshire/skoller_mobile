@@ -208,4 +208,5 @@ class NotificationChannels {
   static const assignmentChanged = 'assignment-changed';
   static const modsChanged = 'mods-changed';
   static const appStateChanged = 'app-state-changed';
+  static const selectTab = 'select-tab';
 }

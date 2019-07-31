@@ -1,6 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:share/share.dart';
+import 'package:skoller/screens/main_app/classes/assignment_weight_view.dart';
+import 'package:skoller/screens/main_app/classes/weight_extraction_view.dart';
 import 'package:skoller/tools.dart';
 
 class _SyllabusAction {
@@ -54,7 +56,7 @@ class ClassStatusModal extends StatelessWidget {
         subHeader: 'And this class is already set up 🙌',
         prompt: 'Invite classmates using your class link 👇',
         imageName: ImageNames.statusImages.setup_community,
-        primaryActionStr: studentClass.name,
+        primaryActionStr: studentClass.enrollmentLink,
         secondaryActionStr: 'Enter Skoller',
         primaryAction: () {
           Share.share(
@@ -70,7 +72,22 @@ class ClassStatusModal extends StatelessWidget {
         subHeader: 'And this class is already LIVE 🎉',
         imageName: ImageNames.statusImages.setup_live,
         primaryActionStr: 'Enter Skoller',
-        primaryAction: () => Navigator.pop(context),
+        primaryAction: () => Navigator.pop(context, true),
+      );
+    } else if ((studentClass.weights ?? []).length > 0) {
+      status = _SyllabusAction(
+        header: 'You\'ve joined the class! 👌',
+        prompt: 'Now lets finish getting it set up...',
+        imageName: ImageNames.statusImages.needs_syllabus,
+        primaryActionStr: 'Create assignments',
+        secondaryActionStr: 'Do this later',
+        primaryAction: () => Navigator.pushReplacement(
+          context,
+          CupertinoPageRoute(
+            builder: (context) => AssignmentWeightView(classId),
+          ),
+        ),
+        secondaryAction: () => Navigator.pop(context),
       );
     } else {
       status = _SyllabusAction(
@@ -79,7 +96,20 @@ class ClassStatusModal extends StatelessWidget {
         imageName: ImageNames.statusImages.needs_syllabus,
         primaryActionStr: 'Send us your Syllabus!',
         secondaryActionStr: 'Do this later',
-        primaryAction: () {},
+        primaryAction: () => Navigator.pushReplacement(
+          context,
+          SKNavOverlayRoute(
+            builder: (context) => SyllabusInstructionsModal(
+              SammiExplanationType.needsSetup,
+              () => Navigator.pushReplacement(
+                context,
+                CupertinoPageRoute(
+                  builder: (context) => WeightExtractionView(classId),
+                ),
+              ),
+            ),
+          ),
+        ),
         secondaryAction: () => Navigator.pop(context),
       );
     }

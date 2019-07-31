@@ -13,7 +13,6 @@ class ClassesView extends StatefulWidget {
 }
 
 typedef Widget _CardConstruct(StudentClass studentClass, int index);
-enum _SammiExplanationType { needsSetup, diy, inReview }
 
 class _ClassesState extends State<ClassesView> {
   List<StudentClass> classes = [];
@@ -101,6 +100,18 @@ class _ClassesState extends State<ClassesView> {
 
   @override
   Widget build(BuildContext context) {
+    int cardCount;
+
+    if (classes.length == 0)
+      cardCount = 1;
+    else if (classes.length == 1) {
+      if (classes[0].status.id == ClassStatuses.needs_setup)
+        cardCount = 2;
+      else
+        cardCount = 1;
+    } else
+      cardCount = classes.length;
+
     return SKNavView(
       title: 'Classes',
       leftBtn: SKHeaderProfilePhoto(),
@@ -108,12 +119,9 @@ class _ClassesState extends State<ClassesView> {
           DartNotificationCenter.post(channel: NotificationChannels.toggleMenu),
       rightBtn: Image.asset(ImageNames.rightNavImages.add_class),
       callbackRight: () {
-        Navigator.push(
-          context,
-          CupertinoPageRoute(
-            builder: (context) => AddClassesView(),
-            fullscreenDialog: true,
-          ),
+        DartNotificationCenter.post(
+          channel: NotificationChannels.presentViewOverTabBar,
+          options: AddClassesView(),
         );
       },
       children: <Widget>[
@@ -123,7 +131,7 @@ class _ClassesState extends State<ClassesView> {
             onRefresh: fetchClasses,
             child: ListView.builder(
               padding: EdgeInsets.only(top: 4),
-              itemCount: classes.length == 0 ? 1 : classes.length,
+              itemCount: cardCount,
               itemBuilder:
                   classes.length == 0 ? createSammiPrompt : createClassCard,
             ),
@@ -136,12 +144,9 @@ class _ClassesState extends State<ClassesView> {
   Widget createSammiPrompt(BuildContext context, int index) {
     return GestureDetector(
       behavior: HitTestBehavior.opaque,
-      onTapUp: (details) => Navigator.push(
-        context,
-        CupertinoPageRoute(
-          builder: (context) => AddClassesView(),
-          fullscreenDialog: true,
-        ),
+      onTapUp: (details) => DartNotificationCenter.post(
+        channel: NotificationChannels.presentViewOverTabBar,
+        options: AddClassesView(),
       ),
       child: Container(
         padding: EdgeInsets.symmetric(vertical: 16, horizontal: 16),
@@ -164,12 +169,51 @@ class _ClassesState extends State<ClassesView> {
   }
 
   Widget createClassCard(BuildContext context, int index) {
-    final studentClass = classes[index];
+    StudentClass studentClass;
+
+    if (classes.length == 1 &&
+        ClassStatuses.needs_setup == classes[0].status.id) {
+      if (index == 0)
+        return createSammiInstructionCard();
+      else
+        studentClass = classes[index - 1];
+    } else
+      studentClass = classes[index];
+
     if (studentClass.status.id == ClassStatuses.needs_student_input &&
         (studentClass.weights ?? []).length > 0)
       return cardConstructors[ClassStatuses.needs_setup](studentClass, index);
     else
       return cardConstructors[studentClass.status.id](studentClass, index);
+  }
+
+  Widget createSammiInstructionCard() {
+    return GestureDetector(
+      onTapUp: (details) => tappedSammiExplanation(
+          SammiExplanationType.needsSetup, classes.first.id),
+      child: Padding(
+        padding: EdgeInsets.fromLTRB(12, 0, 0, 8),
+        child: SammiSpeechBubble(
+          sammiPersonality: SammiPersonality.cool,
+          speechBubbleContents: Text.rich(
+            TextSpan(
+                text: 'Hey ${SKUser.current.student.nameFirst},\n',
+                children: [
+                  TextSpan(
+                      text: 'Please feed me your',
+                      style: TextStyle(fontWeight: FontWeight.normal)),
+                  TextSpan(
+                      text: ' syllabus 🍔',
+                      style: TextStyle(color: SKColors.skoller_blue)),
+                  TextSpan(
+                      text: ' I\'m hungry!',
+                      style: TextStyle(fontWeight: FontWeight.normal)),
+                ]),
+            style: TextStyle(fontSize: 14),
+          ),
+        ),
+      ),
+    );
   }
 
   Widget createCompleteCard(StudentClass studentClass, int index) {
@@ -304,7 +348,7 @@ class _ClassesState extends State<ClassesView> {
         needsAssignments
             ? tappedAddAssignment(studentClass.id)
             : tappedSammiExplanation(
-                _SammiExplanationType.needsSetup, studentClass.id);
+                SammiExplanationType.needsSetup, studentClass.id);
       },
       child: Container(
         decoration: BoxDecoration(
@@ -393,7 +437,7 @@ class _ClassesState extends State<ClassesView> {
         setState(() {
           selectedIndex = null;
         });
-        tappedSammiExplanation(_SammiExplanationType.diy, studentClass.id);
+        tappedSammiExplanation(SammiExplanationType.diy, studentClass.id);
       },
       child: Container(
         decoration: BoxDecoration(
@@ -465,7 +509,7 @@ class _ClassesState extends State<ClassesView> {
           selectedIndex = null;
         });
 
-        tappedSammiExplanation(_SammiExplanationType.inReview, studentClass.id);
+        tappedSammiExplanation(SammiExplanationType.inReview, studentClass.id);
       },
       child: Container(
         decoration: BoxDecoration(
@@ -528,384 +572,18 @@ class _ClassesState extends State<ClassesView> {
     );
   }
 
-  void tappedSammiExplanation(_SammiExplanationType type, int classId) async {
+  void tappedSammiExplanation(SammiExplanationType type, int classId) async {
     showDialog(
-        context: context,
-        builder: (context) => generateSyllabusDialog(type, classId, context));
-  }
-
-  Widget generateSyllabusDialog(
-      _SammiExplanationType type, int classId, BuildContext context) {
-    Text sammiText;
-    Widget body = Text('');
-
-    switch (type) {
-      case _SammiExplanationType.diy:
-        sammiText = Text.rich(
-          TextSpan(
-            text: 'I received the syllabus but ',
-            children: [
-              TextSpan(
-                  text: 'there wasn\'t enough info ',
-                  style: TextStyle(fontWeight: FontWeight.bold)),
-              TextSpan(
-                  text:
-                      'on it to set up the class. Knock it out in a few minutes!'),
-            ],
-          ),
-          style: TextStyle(fontWeight: FontWeight.normal, fontSize: 14),
-        );
-
-        body = Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          mainAxisSize: MainAxisSize.min,
-          children: <Widget>[
-            Container(
-              padding: EdgeInsets.fromLTRB(12, 12, 12, 8),
-              margin: EdgeInsets.only(bottom: 8),
-              decoration: BoxDecoration(
-                color: SKColors.selected_gray,
-                borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(10),
-                  topRight: Radius.circular(10),
-                ),
-              ),
-              child: Row(children: [
-                Padding(
-                  padding: EdgeInsets.only(right: 8),
-                  child: Image.asset(ImageNames.peopleImages.people_gray),
-                ),
-                Text(
-                  'Set up this class',
-                  style: TextStyle(fontSize: 17),
-                ),
-              ]),
-            ),
-            Padding(
-              padding: EdgeInsets.symmetric(vertical: 4),
-              child: Text(
-                'Instant setup',
-                textAlign: TextAlign.center,
-              ),
-            ),
-            Padding(
-              padding: EdgeInsets.only(bottom: 4),
-              child: Text(
-                'Do it yourself!',
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                    color: SKColors.light_gray,
-                    fontSize: 14,
-                    fontWeight: FontWeight.normal),
-              ),
-            ),
-            GestureDetector(
-              onTapUp: (details) => Navigator.pushReplacement(
-                context,
-                CupertinoPageRoute(
-                    builder: (context) => WeightExtractionView(classId)),
-              ),
-              child: Container(
-                alignment: Alignment.center,
-                padding: EdgeInsets.symmetric(vertical: 8),
-                margin: EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-                decoration: BoxDecoration(
-                  color: SKColors.skoller_blue,
-                  borderRadius: BorderRadius.circular(5),
-                  boxShadow: [UIAssets.boxShadow],
-                ),
-                child: Text(
-                  'Start',
-                  style: TextStyle(color: Colors.white),
-                ),
-              ),
-            ),
-          ],
-        );
-        break;
-      case _SammiExplanationType.inReview:
-        sammiText = Text.rich(
-          TextSpan(
-            text: 'I\'ve got the syllabus... ',
-            children: [
-              TextSpan(
-                  text: 'You will get a notification ',
-                  style: TextStyle(fontWeight: FontWeight.bold)),
-              TextSpan(text: 'when I\'m done setting up the class!'),
-            ],
-          ),
-          style: TextStyle(fontWeight: FontWeight.normal, fontSize: 14),
-        );
-
-        body = Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          mainAxisSize: MainAxisSize.min,
-          children: <Widget>[
-            Container(
-              padding: EdgeInsets.fromLTRB(12, 12, 12, 8),
-              margin: EdgeInsets.only(bottom: 8),
-              decoration: BoxDecoration(
-                color: SKColors.selected_gray,
-                borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(10),
-                  topRight: Radius.circular(10),
-                ),
-              ),
-              child: Row(children: [
-                Padding(
-                  padding: EdgeInsets.only(right: 8),
-                  child: Image.asset(ImageNames.peopleImages.people_gray),
-                ),
-                Text(
-                  'Set up this class',
-                  style: TextStyle(fontSize: 17),
-                ),
-              ]),
-            ),
-            Padding(
-              padding: EdgeInsets.symmetric(vertical: 4),
-              child: Text(
-                'The syllabus is in review 👍',
-                textAlign: TextAlign.center,
-              ),
-            ),
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 24, vertical: 8),
-              child: Row(
-                children: <Widget>[
-                  Expanded(
-                      child: Container(color: SKColors.light_gray, height: 1)),
-                  Padding(
-                    padding: EdgeInsets.symmetric(vertical: 4, horizontal: 4),
-                    child: Text(
-                      'Don\'t want to wait?',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                          color: SKColors.light_gray,
-                          fontWeight: FontWeight.normal,
-                          fontStyle: FontStyle.italic),
-                    ),
-                  ),
-                  Expanded(
-                      child: Container(color: SKColors.light_gray, height: 1)),
-                ],
-              ),
-            ),
-            Padding(
-              padding: EdgeInsets.symmetric(vertical: 4),
-              child: Text(
-                'Instant setup',
-                textAlign: TextAlign.center,
-              ),
-            ),
-            Padding(
-              padding: EdgeInsets.only(bottom: 4),
-              child: Text(
-                'Do it yourself! ',
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                    color: SKColors.light_gray,
-                    fontSize: 14,
-                    fontWeight: FontWeight.normal),
-              ),
-            ),
-            GestureDetector(
-              onTapUp: (details) => Navigator.pushReplacement(
-                context,
-                CupertinoPageRoute(
-                    builder: (context) => WeightExtractionView(classId)),
-              ),
-              child: Container(
-                alignment: Alignment.center,
-                padding: EdgeInsets.symmetric(vertical: 8),
-                margin: EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-                decoration: BoxDecoration(
-                  color: SKColors.skoller_blue,
-                  borderRadius: BorderRadius.circular(5),
-                  boxShadow: [UIAssets.boxShadow],
-                ),
-                child: Text(
-                  'Start',
-                  style: TextStyle(color: Colors.white),
-                ),
-              ),
-            ),
-          ],
-        );
-        break;
-      case _SammiExplanationType.needsSetup:
-        sammiText = Text.rich(
-          TextSpan(
-            text: 'Send us the syllabus and ',
-            children: [
-              TextSpan(
-                  text: 'WE will set up the class',
-                  style: TextStyle(fontWeight: FontWeight.bold)),
-            ],
-          ),
-          style: TextStyle(fontWeight: FontWeight.normal, fontSize: 15),
-        );
-
-        body = Padding(
-          padding: EdgeInsets.all(24),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-              Row(
-                children: <Widget>[
-                  Image.asset(ImageNames.statusImages.computer_monitor),
-                  Expanded(
-                    child: Padding(
-                      padding: EdgeInsets.only(left: 16),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        mainAxisSize: MainAxisSize.min,
-                        children: <Widget>[
-                          Text('Syllabus Online?'),
-                          Text.rich(
-                            TextSpan(
-                                text: 'Hop on your computer and ',
-                                children: [
-                                  TextSpan(
-                                    text: 'login at skoller.co',
-                                    style:
-                                        TextStyle(fontWeight: FontWeight.bold),
-                                  ),
-                                  TextSpan(text: ' to '),
-                                  TextSpan(
-                                    text: 'drag-and-drop ',
-                                    style:
-                                        TextStyle(fontWeight: FontWeight.bold),
-                                  ),
-                                  TextSpan(text: 'your syllabus'),
-                                ],
-                                style: TextStyle(
-                                    fontWeight: FontWeight.normal,
-                                    fontSize: 14)),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-              Padding(
-                padding: EdgeInsets.symmetric(vertical: 12),
-                child: Row(
-                  children: <Widget>[
-                    Expanded(
-                        child:
-                            Container(color: SKColors.light_gray, height: 1)),
-                    Padding(
-                      padding: EdgeInsets.symmetric(vertical: 4, horizontal: 4),
-                      child: Text(
-                        'OR',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                            color: SKColors.light_gray,
-                            fontWeight: FontWeight.normal,
-                            fontStyle: FontStyle.italic),
-                      ),
-                    ),
-                    Expanded(
-                        child:
-                            Container(color: SKColors.light_gray, height: 1)),
-                  ],
-                ),
-              ),
-              GestureDetector(
-                onTapUp: (details) => Navigator.pushReplacement(
-                  context,
-                  CupertinoPageRoute(
-                      builder: (context) => WeightExtractionView(classId)),
-                ),
-                child: Row(
-                  children: <Widget>[
-                    Container(
-                      width: 40,
-                      alignment: Alignment.center,
-                      margin: EdgeInsets.only(right: 16),
-                      child:
-                          Image.asset(ImageNames.statusImages.check_clipboard),
-                    ),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        mainAxisSize: MainAxisSize.min,
-                        children: <Widget>[
-                          Text(
-                            'Ready to go?',
-                            style: TextStyle(color: SKColors.skoller_blue),
-                          ),
-                          Text.rich(
-                            TextSpan(
-                                text: 'Set up your class ',
-                                children: [
-                                  TextSpan(
-                                    text: 'NOW!',
-                                    style:
-                                        TextStyle(fontWeight: FontWeight.bold),
-                                  ),
-                                ],
-                                style: TextStyle(
-                                    fontWeight: FontWeight.normal,
-                                    fontSize: 14)),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              GestureDetector(
-                onTapUp: (details) => Navigator.pushReplacement(
-                  context,
-                  CupertinoPageRoute(
-                      builder: (context) => WeightExtractionView(classId)),
-                ),
-                child: Container(
-                  padding: EdgeInsets.symmetric(vertical: 8),
-                  margin: EdgeInsets.only(top: 16),
-                  alignment: Alignment.center,
-                  decoration: BoxDecoration(
-                    color: SKColors.skoller_blue,
-                    borderRadius: BorderRadius.circular(5),
-                    boxShadow: [UIAssets.boxShadow],
-                  ),
-                  child: Text(
-                    'Get started',
-                    style: TextStyle(color: Colors.white),
-                  ),
-                ),
-              )
-            ],
-          ),
-        );
-        break;
-    }
-    return Column(
-      children: [
-        Spacer(flex: 1),
-        Material(
-          color: Colors.white.withAlpha(0),
-          child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: 24),
-            child: SammiSpeechBubble(
-                sammiPersonality: SammiPersonality.smile,
-                speechBubbleContents: sammiText),
+      context: context,
+      builder: (context) => SyllabusInstructionsModal(
+        type,
+        () => Navigator.pushReplacement(
+          context,
+          CupertinoPageRoute(
+            builder: (context) => WeightExtractionView(classId),
           ),
         ),
-        Dialog(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10),
-            side: BorderSide(color: SKColors.border_gray),
-          ),
-          backgroundColor: Colors.white,
-          child: body,
-        ),
-        Spacer(flex: 2)
-      ],
+      ),
     );
   }
 }

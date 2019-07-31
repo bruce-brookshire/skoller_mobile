@@ -8,7 +8,7 @@ import 'package:skoller/tools.dart';
 import 'dart:async';
 import 'tab_bar.dart';
 import 'menu_view.dart';
-import 'primary_school_view.dart';
+import 'primary_school_modal.dart';
 
 class MainView extends StatefulWidget {
   @override
@@ -30,8 +30,15 @@ class _MainState extends State<MainView> {
   @override
   void initState() {
     if (SKUser.current.student.primarySchool == null) {
-      Timer(Duration(milliseconds: 50),
-          () => {this.presentWidgetOverMainView(PrimarySchoolView())});
+      Timer(
+          Duration(milliseconds: 50),
+          () => {
+                showDialog(
+                  barrierDismissible: false,
+                  context: context,
+                  builder: (context) => PrimarySchoolModal(),
+                )
+              });
     }
 
     SKCacheManager.restoreCachedData();

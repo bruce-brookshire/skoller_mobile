@@ -285,6 +285,8 @@ class _AssignmentInfoState extends State<AssignmentInfoView> {
         builder: (context) => _AssignmentEditModal(assignment.id));
 
     if (results != null && results is List<Map>) {
+      final loader = SKLoadingScreen.fadeIn(context);
+
       for (final modAction in results) {
         //If we are deleting the assignment, no need to refetch it, so we just pop it if the request is successful
         if (modAction['mod_type'] == 'delete') {
@@ -292,20 +294,27 @@ class _AssignmentInfoState extends State<AssignmentInfoView> {
           if (result != null && result) {
             DartNotificationCenter.post(
                 channel: NotificationChannels.classChanged);
+
+            loader.dismiss();
             Navigator.pop(context);
             return;
           }
+        } else {
+          await modAction['request'];
         }
-        DartNotificationCenter.post(channel: NotificationChannels.classChanged);
       }
-    }
 
-    bool response = await assignment.refetchSelf();
+      DartNotificationCenter.post(
+          channel: NotificationChannels.assignmentChanged);
 
-    if (response != null && response) {
-      setState(() {
-        assignment = Assignment.currentAssignments[widget.assignment_id];
-      });
+      bool response = await assignment.refetchSelf();
+
+      if (response != null && response) {
+        setState(() {
+          assignment = Assignment.currentAssignments[widget.assignment_id];
+        });
+      }
+      loader.dismiss();
     }
   }
 
@@ -1404,7 +1413,7 @@ class _AssignmentEditModalState extends State<_AssignmentEditModal> {
         title: 'Due date',
         subtitle: 'When is this assignment due?',
         context: context,
-        startDate: selectedDate);
+        startDate: selectedDate ?? DateTime.now());
 
     if (result != null && result is DateTime) {
       setState(() {
@@ -1463,7 +1472,8 @@ class _AssignmentEditModalState extends State<_AssignmentEditModal> {
         'mod_type': 'delete',
       });
     } else {
-      if (!selectedDate.isAtSameMomentAs(assignment.due)) {
+      if ((assignment.due == null && selectedDate != null) ||
+          !selectedDate.isAtSameMomentAs(assignment.due)) {
         requests.add({
           'request': assignment.updateDueDate(
             isPrivate,
@@ -1662,7 +1672,11 @@ class _AssignmentEditModalState extends State<_AssignmentEditModal> {
           )
         ],
       );
-    } else if (selectedDate.isAtSameMomentAs(assignment.due) &&
+    } else if (((selectedDate == null && assignment.due == null)
+            ? true
+            : (assignment.due == null
+                ? false
+                : (selectedDate?.isAtSameMomentAs(assignment.due) ?? true))) &&
         selectedWeight.id == assignment.weight_id)
     //Basically, show a gray button if the user has not changed any of the assignment details
     {

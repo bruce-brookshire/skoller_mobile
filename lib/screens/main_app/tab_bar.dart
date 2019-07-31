@@ -60,7 +60,8 @@ class _SKTabBarState extends State<SKTabBar> {
     SchedulerBinding.instance.addPostFrameCallback(afterFirstLayout);
   }
 
-  @override void dispose() {
+  @override
+  void dispose() {
     DartNotificationCenter.unsubscribe(observer: this);
     super.dispose();
   }
@@ -81,8 +82,11 @@ class _SKTabBarState extends State<SKTabBar> {
         false,
         (val, elem) => val
             ? val
-            : ![ClassStatuses.class_setup, ClassStatuses.class_issue, ClassStatuses.syllabus_submitted]
-                .contains(elem.status.id));
+            : ![
+                ClassStatuses.class_setup,
+                ClassStatuses.class_issue,
+                ClassStatuses.syllabus_submitted
+              ].contains(elem.status.id));
   }
 
   @override

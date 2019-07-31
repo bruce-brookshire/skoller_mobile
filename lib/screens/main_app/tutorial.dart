@@ -160,7 +160,7 @@ class _ViewOne extends StatelessWidget {
                     ),
                     child: Text(
                       'Join your first class 👌',
-                      style: TextStyle(color: Colors.white),
+                      style: TextStyle(color: Colors.white, fontSize: 16),
                     ),
                   ),
                 ),
@@ -346,7 +346,7 @@ class _ViewTwo extends StatelessWidget {
                     ),
                     child: Text(
                       'Join your first class 👌',
-                      style: TextStyle(color: Colors.white),
+                      style: TextStyle(color: Colors.white, fontSize: 16),
                     ),
                   ),
                 ),
@@ -602,7 +602,7 @@ class _ViewThree extends StatelessWidget {
                     ),
                     child: Text(
                       'Join your first class 👌',
-                      style: TextStyle(color: Colors.white),
+                      style: TextStyle(color: Colors.white, fontSize: 16),
                     ),
                   ),
                 ),
@@ -825,7 +825,7 @@ class _ViewFour extends StatelessWidget {
                     ),
                     child: Text(
                       'Join your first class 👌',
-                      style: TextStyle(color: Colors.white),
+                      style: TextStyle(color: Colors.white, fontSize: 16),
                     ),
                   ),
                 ),
@@ -1031,7 +1031,7 @@ class _ViewFive extends StatelessWidget {
                     ),
                     child: Text(
                       'Join your first class 👌',
-                      style: TextStyle(color: Colors.white),
+                      style: TextStyle(color: Colors.white, fontSize: 16),
                     ),
                   ),
                 ),

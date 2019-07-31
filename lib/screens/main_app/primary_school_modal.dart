@@ -1,15 +1,14 @@
 import 'package:dart_notification_center/dart_notification_center.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:skoller/tools.dart';
 import './menu/school_search_view.dart';
 
-class PrimarySchoolView extends StatefulWidget {
+class PrimarySchoolModal extends StatefulWidget {
   @override
-  State<StatefulWidget> createState() => _PrimarySchoolState();
+  State createState() => _PrimarySchoolState();
 }
 
-class _PrimarySchoolState extends State<PrimarySchoolView> {
+class _PrimarySchoolState extends State<PrimarySchoolModal> {
   List<School> eligibleSchools;
   // List<Period> eligiblePeriods;
 
@@ -32,10 +31,10 @@ class _PrimarySchoolState extends State<PrimarySchoolView> {
         //               ? (period1.startDate?.compareTo(period2.startDate) ?? -1)
         //               : 1;
         //         });
-          // await SKUser.current.update(primarySchool: obj.first);
-          // Navigator.pop(context);
-          // DartNotificationCenter.post(
-          //     channel: NotificationChannels.userChanged, options: obj.first);
+        // await SKUser.current.update(primarySchool: obj.first);
+        // Navigator.pop(context);
+        // DartNotificationCenter.post(
+        //     channel: NotificationChannels.userChanged, options: obj.first);
         // }
         setState(() {
           eligibleSchools = obj;
@@ -70,30 +69,36 @@ class _PrimarySchoolState extends State<PrimarySchoolView> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: SKColors.background_gray,
-      body: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 24),
-        child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Spacer(flex: 1),
-              if (eligibleSchools == null)
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    SizedBox(
-                        width: 40,
-                        height: 40,
-                        child: CircularProgressIndicator()),
-                  ],
-                ),
-              if ((eligibleSchools?.length ?? -1) == 0) ...buildSearch(),
-              if ((eligibleSchools?.length ?? -1) == 1) ...buildSingle(),
-              if ((eligibleSchools?.length ?? -1) > 1) ...buildMultiple(),
-              Spacer(flex: 2),
-            ]),
+    return Container(
+      alignment: Alignment.center,
+      padding: EdgeInsets.fromLTRB(24, 0, 24, 64),
+      child: Material(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10),
+          side: BorderSide(color: SKColors.border_gray),
+        ),
+        color: SKColors.background_gray,
+        child: Padding(
+          padding: EdgeInsets.all(12),
+          child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                if (eligibleSchools == null)
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      SizedBox(
+                          width: 40,
+                          height: 40,
+                          child: CircularProgressIndicator()),
+                    ],
+                  ),
+                if ((eligibleSchools?.length ?? -1) == 0) ...buildSearch(),
+                if ((eligibleSchools?.length ?? -1) == 1) ...buildSingle(),
+                if ((eligibleSchools?.length ?? -1) > 1) ...buildMultiple(),
+              ]),
+        ),
       ),
     );
   }

@@ -58,7 +58,12 @@ class _ManageClassesState extends State<ManageClassesView> {
           fullscreenDialog: true,
           builder: (context) => AddClassesView(),
         ),
-      ),
+      ).then((val) {
+        //Should we propogate pop?
+        if (val is bool) {
+          Navigator.pop(context, val);
+        }
+      }),
       children: <Widget>[
         Expanded(
           child: RefreshIndicator(

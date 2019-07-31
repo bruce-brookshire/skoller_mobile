@@ -67,7 +67,7 @@ class _AddClassesState extends State<AddClassesView> {
             ).then((response) {
               _currentTimer = null;
 
-              if (response.wasSuccessful()) {
+              if (response.wasSuccessful() && mounted) {
                 setState(() {
                   searchedClasses = response.obj;
                 });
@@ -120,7 +120,7 @@ class _AddClassesState extends State<AddClassesView> {
         ).then((response) {
           _currentTimer = null;
 
-          if (response.wasSuccessful()) {
+          if (response.wasSuccessful() && mounted) {
             setState(() {
               searchedClasses = response.obj;
               isSearching = false;
@@ -139,7 +139,7 @@ class _AddClassesState extends State<AddClassesView> {
 
     await showDialog(
       context: context,
-      builder: (context) => Dialog(
+      builder: (newContext) => Dialog(
         backgroundColor: Colors.white,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(10),
@@ -230,6 +230,8 @@ class _AddClassesState extends State<AddClassesView> {
                       ? StudentClass.currentClasses[schoolClass.id].dropClass
                       : schoolClass.enrollInClass;
 
+                  final loader = SKLoadingScreen.fadeIn(newContext);
+
                   requestFunc().then((response) {
                     if (response is bool) {
                       return response;
@@ -242,20 +244,27 @@ class _AddClassesState extends State<AddClassesView> {
                     if (success) {
                       await StudentClass.getStudentClasses();
 
+                      loader.dismiss();
+
                       if (isEnrolled)
-                        Navigator.pop(context);
+                        Navigator.pop(newContext);
                       else
                         Navigator.pushReplacement(
-                          context,
+                          newContext,
                           SKNavOverlayRoute(
                             builder: (context) =>
                                 ClassStatusModal(schoolClass.id),
                           ),
-                        );
+                        ).then((val) {
+                          //Should we propogate pop?
+                          if (val is bool) {
+                            Navigator.pop(context, val);
+                          }
+                        });
                       DartNotificationCenter.post(
                           channel: NotificationChannels.classChanged);
                     } else {
-                      Navigator.pop(context);
+                      Navigator.pop(newContext);
                       DropdownBanner.showBanner(
                         text:
                             'Failed to ${isEnrolled ? 'enroll in' : 'drop'} class',
@@ -515,6 +524,7 @@ class _AddClassesState extends State<AddClassesView> {
                     placeholder: 'Search a class name',
                     style: TextStyle(fontSize: 15, color: SKColors.dark_gray),
                     textCapitalization: TextCapitalization.words,
+                    autofocus: true,
                   ),
                 ),
                 Padding(

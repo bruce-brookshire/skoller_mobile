@@ -145,7 +145,7 @@ class _CreateClassModalState extends State<CreateClassModal> {
   Widget build(BuildContext context) {
     return Center(
       child: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 16),
+        padding: EdgeInsets.fromLTRB(24, 0, 24, 0),
         child: Material(
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(10),
@@ -182,10 +182,19 @@ class _CreateClassScreenOne extends StatefulWidget {
 class _CreateClassScreenOneState extends State<_CreateClassScreenOne> {
   bool isValid = false;
 
+  final nodes = [FocusNode(), FocusNode(), FocusNode(), FocusNode()];
+
   @override
   void initState() {
     checkValid();
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+
+    nodes.forEach((node) => node.dispose());
   }
 
   void checkValid([String _str]) {
@@ -254,7 +263,10 @@ class _CreateClassScreenOneState extends State<_CreateClassScreenOne> {
                 decoration: BoxDecoration(border: null),
                 controller: parent.classNameController,
                 textCapitalization: TextCapitalization.words,
+                focusNode: nodes[0],
                 onChanged: checkValid,
+                onEditingComplete: () => nodes[0].nextFocus(),
+                textInputAction: TextInputAction.next,
                 autofocus: true,
               ),
             ],
@@ -292,6 +304,9 @@ class _CreateClassScreenOneState extends State<_CreateClassScreenOne> {
                       decoration: BoxDecoration(border: null),
                       textCapitalization: TextCapitalization.characters,
                       controller: parent.subjectController,
+                      focusNode: nodes[1],
+                      onEditingComplete: () => nodes[1].nextFocus(),
+                      textInputAction: TextInputAction.next,
                       onChanged: checkValid,
                     ),
                   ],
@@ -327,6 +342,7 @@ class _CreateClassScreenOneState extends State<_CreateClassScreenOne> {
                       decoration: BoxDecoration(border: null),
                       controller: parent.codeController,
                       onChanged: checkValid,
+                      focusNode: nodes[2],
                       keyboardType: TextInputType.number,
                     ),
                   ],
@@ -362,6 +378,7 @@ class _CreateClassScreenOneState extends State<_CreateClassScreenOne> {
                       decoration: BoxDecoration(border: null),
                       controller: parent.sectionController,
                       keyboardType: TextInputType.number,
+                      focusNode: nodes[3],
                       onChanged: checkValid,
                     ),
                   ],
@@ -371,8 +388,14 @@ class _CreateClassScreenOneState extends State<_CreateClassScreenOne> {
           ],
         ),
         GestureDetector(
-          onTapUp: (details) =>
-              isValid ? widget.subviewParent.advanceController() : null,
+          onTapUp: (details) {
+            if (isValid) {
+              widget.subviewParent.advanceController();
+              nodes.forEach((n) {
+                if (n.hasPrimaryFocus) n.unfocus();
+              });
+            }
+          },
           child: Container(
             decoration: BoxDecoration(
               color: isValid ? SKColors.skoller_blue : SKColors.inactive_gray,

@@ -19,6 +19,7 @@ class _TasksState extends State<TasksView> {
   List<_TaskLikeItem> _taskItems = [];
   Forecast forecast = Forecast.tenDay;
   bool showingCompletedTasks = false;
+  bool completedTasksAvailable = false;
 
   int _tappedIndex;
 
@@ -65,12 +66,23 @@ class _TasksState extends State<TasksView> {
     final now = DateTime.now();
     final today = DateTime(now.year, now.month, now.day);
 
+    int minDaysOutCompleted;
+    bool newCompletedTasksAvailable = false;
     List<_TaskLikeItem> tasks = (Assignment.currentAssignments.values.toList()
           ..removeWhere((a) =>
               (a.due?.isBefore(today) ?? true) ||
               a.parentClass == null ||
-              a.weight_id == null ||
-              (!showingCompletedTasks && a.completed))
+              a.weight_id == null)
+          ..removeWhere((a) {
+            if (a.completed) {
+              newCompletedTasksAvailable = true;
+
+              int daysOut = a.due.difference(today).inDays;
+              if (daysOut < (minDaysOutCompleted ?? 1000))
+                minDaysOutCompleted = daysOut;
+            }
+            return !showingCompletedTasks && a.completed;
+          })
           ..sort((a1, a2) {
             return -1;
           }))
@@ -100,17 +112,20 @@ class _TasksState extends State<TasksView> {
       tasks.addAll(temp);
     }
 
+    int outlook;
+    if (forecast == Forecast.all)
+      outlook = 365;
+    else if (forecast == Forecast.thirtyDay)
+      outlook = 30;
+    else
+      outlook = 10;
+
+    if (newCompletedTasksAvailable && outlook < minDaysOutCompleted)
+      newCompletedTasksAvailable = false;
+
     tasks
       ..removeWhere((task) {
         if (task.getParent == null) return true;
-
-        int outlook;
-        if (forecast == Forecast.all)
-          outlook = 365;
-        else if (forecast == Forecast.thirtyDay)
-          outlook = 30;
-        else
-          outlook = 10;
 
         return task.dueDate.difference(today).inDays > outlook;
       })
@@ -126,9 +141,9 @@ class _TasksState extends State<TasksView> {
         }
       });
 
-    setState(() {
-      _taskItems = tasks;
-    });
+    _taskItems = tasks;
+    completedTasksAvailable = newCompletedTasksAvailable;
+    if (mounted) setState(() {});
   }
 
   void tappedAdd(BuildContext context) async {
@@ -287,7 +302,8 @@ class _TasksState extends State<TasksView> {
               children: [
                 ListView.builder(
                   padding: EdgeInsets.only(top: 4, bottom: 64),
-                  itemCount: _taskItems.length + 2,
+                  itemCount:
+                      _taskItems.length + (completedTasksAvailable ? 2 : 1),
                   itemBuilder: (context, index) {
                     if (index == 0) {
                       final day = DateFormat('EEEE').format(DateTime.now());

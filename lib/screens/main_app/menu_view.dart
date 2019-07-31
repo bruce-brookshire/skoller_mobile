@@ -54,7 +54,8 @@ class MenuView extends StatelessWidget {
           'Manage classes',
           style: TextStyle(fontWeight: FontWeight.normal, fontSize: 16),
         ),
-        'builder': () => ManageClassesView()
+        'builder': () => ManageClassesView(),
+        'image': Image.asset('image_assets/tab_bar_assets/classes_blue.png')
       },
     ],
     [
