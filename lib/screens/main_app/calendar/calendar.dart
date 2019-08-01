@@ -47,7 +47,6 @@ class _CalendarState extends State<CalendarView> {
     controller.dispose();
   }
 
-
   void updateAssignments(Iterable<Assignment> new_assignments) {
     assignments = {};
     //Add assignments to the day hash map
@@ -139,6 +138,7 @@ class _CalendarState extends State<CalendarView> {
         context,
         CupertinoPageRoute(
           builder: (context) => AssignmentWeightView(class_id),
+          settings: RouteSettings(name: 'AssignmentWeightView'),
         ),
       );
     }
@@ -280,9 +280,8 @@ class _CalendarState extends State<CalendarView> {
       Navigator.push(
         context,
         CupertinoPageRoute(
-          builder: (context) => AssignmentInfoView(
-            assignment_id: result.id,
-          ),
+          builder: (context) => AssignmentInfoView(assignment_id: result.id),
+          settings: RouteSettings(name: 'AssignmentInfoView'),
         ),
       );
     }

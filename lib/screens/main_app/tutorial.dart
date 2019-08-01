@@ -4,9 +4,10 @@ import 'package:intl/intl.dart';
 import 'package:skoller/tools.dart';
 
 class TutorialTab extends StatefulWidget {
-  final VoidCallback onTapDismiss;
+  final ContextCallback onTapDismiss;
+  final String promptMsg;
 
-  TutorialTab(this.onTapDismiss);
+  TutorialTab(this.onTapDismiss, this.promptMsg);
 
   @override
   State createState() => _TutorialTabState();
@@ -28,11 +29,11 @@ class _TutorialTabState extends State<TutorialTab> {
   @override
   void initState() {
     views = [
-      _ViewOne(widget.onTapDismiss),
-      _ViewTwo(widget.onTapDismiss),
-      _ViewThree(widget.onTapDismiss),
-      _ViewFour(widget.onTapDismiss),
-      _ViewFive(widget.onTapDismiss),
+      _ViewOne(() => widget.onTapDismiss(context), widget.promptMsg),
+      _ViewTwo(() => widget.onTapDismiss(context), widget.promptMsg),
+      _ViewThree(() => widget.onTapDismiss(context), widget.promptMsg),
+      _ViewFour(() => widget.onTapDismiss(context), widget.promptMsg),
+      _ViewFive(() => widget.onTapDismiss(context), widget.promptMsg),
     ];
 
     super.initState();
@@ -87,8 +88,9 @@ class _TaskCellItem {
 
 class _ViewOne extends StatelessWidget {
   final VoidCallback onTapDismiss;
+  final String promptMsg;
 
-  _ViewOne(this.onTapDismiss);
+  _ViewOne(this.onTapDismiss, this.promptMsg);
 
   final items = [
     _TaskCellItem('Reading Quiz', 'World Religions', 6, 'Today', 0.3),
@@ -159,7 +161,7 @@ class _ViewOne extends StatelessWidget {
                       boxShadow: [UIAssets.boxShadow],
                     ),
                     child: Text(
-                      'Join your first class 👌',
+                      promptMsg,
                       style: TextStyle(color: Colors.white, fontSize: 16),
                     ),
                   ),
@@ -236,8 +238,9 @@ class _CalendarItem {
 
 class _ViewTwo extends StatelessWidget {
   final VoidCallback onTapDismiss;
+  final String promptMsg;
 
-  _ViewTwo(this.onTapDismiss);
+  _ViewTwo(this.onTapDismiss, this.promptMsg);
 
   final firstOfMonth = DateTime(2019, 10, 1);
   final startDate = DateTime(2019, 9, 29);
@@ -345,7 +348,7 @@ class _ViewTwo extends StatelessWidget {
                       boxShadow: [UIAssets.boxShadow],
                     ),
                     child: Text(
-                      'Join your first class 👌',
+                      promptMsg,
                       style: TextStyle(color: Colors.white, fontSize: 16),
                     ),
                   ),
@@ -502,8 +505,9 @@ class _ChatCellItem {
 
 class _ViewThree extends StatelessWidget {
   final VoidCallback onTapDismiss;
+  final String promptMsg;
 
-  _ViewThree(this.onTapDismiss);
+  _ViewThree(this.onTapDismiss, this.promptMsg);
 
   final chats = [
     _ChatCellItem(
@@ -601,7 +605,7 @@ class _ViewThree extends StatelessWidget {
                       boxShadow: [UIAssets.boxShadow],
                     ),
                     child: Text(
-                      'Join your first class 👌',
+                      promptMsg,
                       style: TextStyle(color: Colors.white, fontSize: 16),
                     ),
                   ),
@@ -760,8 +764,9 @@ class _GradesCellItem {
 
 class _ViewFour extends StatelessWidget {
   final VoidCallback onTapDismiss;
+  final String promptMsg;
 
-  _ViewFour(this.onTapDismiss);
+  _ViewFour(this.onTapDismiss, this.promptMsg);
 
   final classes = [
     _GradesCellItem('Calculus I', 89, 9, 0.13, 0),
@@ -824,7 +829,7 @@ class _ViewFour extends StatelessWidget {
                       boxShadow: [UIAssets.boxShadow],
                     ),
                     child: Text(
-                      'Join your first class 👌',
+                      promptMsg,
                       style: TextStyle(color: Colors.white, fontSize: 16),
                     ),
                   ),
@@ -951,8 +956,9 @@ class _ActivityCellItem {
 
 class _ViewFive extends StatelessWidget {
   final VoidCallback onTapDismiss;
+  final String promptMsg;
 
-  _ViewFive(this.onTapDismiss);
+  _ViewFive(this.onTapDismiss, this.promptMsg);
 
   final items = [
     _ActivityCellItem(0, '48 min.', true, 'Calculus I', 'Exam 2 added',
@@ -1030,7 +1036,7 @@ class _ViewFive extends StatelessWidget {
                       boxShadow: [UIAssets.boxShadow],
                     ),
                     child: Text(
-                      'Join your first class 👌',
+                      promptMsg,
                       style: TextStyle(color: Colors.white, fontSize: 16),
                     ),
                   ),

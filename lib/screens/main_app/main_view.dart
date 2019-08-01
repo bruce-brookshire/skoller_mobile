@@ -88,6 +88,7 @@ class _MainState extends State<MainView> {
       CupertinoPageRoute(
         fullscreenDialog: true,
         builder: (context) => viewToPresent,
+        settings: RouteSettings(name: viewToPresent.runtimeType.toString()),
       ),
     );
   }
@@ -95,9 +96,9 @@ class _MainState extends State<MainView> {
   @override
   Widget build(BuildContext context) {
     if (StudentClass.currentClasses.length == 0) {
-      return TutorialTab(() {
+      return TutorialTab((context) {
         presentWidgetOverMainView(AddClassesView());
-      });
+      }, 'Join your first class 👌');
     } else {
       if (!constraintsSetup) {
         constraintsSetup = true;
@@ -124,8 +125,11 @@ class _MainState extends State<MainView> {
               behavior: HitTestBehavior.opaque,
               onTapUp: toggleMenu,
               onHorizontalDragStart: toggleMenu,
-              child: Container(
-                color: menuShowing ? Colors.black.withOpacity(0.3) : null,
+              child: AnimatedContainer(
+                color: menuShowing
+                    ? Colors.black.withOpacity(0.3)
+                    : Colors.transparent,
+                duration: Duration(milliseconds: 300),
               ),
             ),
             duration: Duration(milliseconds: 300),

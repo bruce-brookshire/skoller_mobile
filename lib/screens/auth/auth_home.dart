@@ -9,6 +9,7 @@ class AuthHome extends StatelessWidget {
     Navigator.push(
       context,
       CupertinoPageRoute(builder: (context) => SignIn()),
+      
     );
   }
 

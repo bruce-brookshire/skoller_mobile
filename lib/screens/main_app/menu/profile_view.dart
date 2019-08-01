@@ -31,11 +31,12 @@ class _ProfileState extends State<ProfileView> {
                   ),
                   GestureDetector(
                     onTapUp: (details) => Navigator.push(
-                          context,
-                          CupertinoPageRoute(
-                            builder: (context) => EditProfileView(),
-                          ),
-                        ),
+                      context,
+                      CupertinoPageRoute(
+                        builder: (context) => EditProfileView(),
+                        settings: RouteSettings(name: 'EditProfileView'),
+                      ),
+                    ),
                     child: Container(
                       height: 32,
                       width: 32,
@@ -105,10 +106,13 @@ class _ProfileState extends State<ProfileView> {
                                 borderRadius: BorderRadius.circular(5),
                               ),
                               child: Text(
-                                SKUser.current.student.bio ?? 'nothing to see here...',
+                                SKUser.current.student.bio ??
+                                    'nothing to see here...',
                                 style: TextStyle(
                                     fontWeight: FontWeight.normal,
-                                    color:SKUser.current.student.bio == null ? SKColors.light_gray : SKColors.dark_gray,
+                                    color: SKUser.current.student.bio == null
+                                        ? SKColors.light_gray
+                                        : SKColors.dark_gray,
                                     fontSize: 14),
                               ),
                             ),
@@ -155,7 +159,11 @@ class _ProfileState extends State<ProfileView> {
                                     'nothing to see here...',
                                 style: TextStyle(
                                     fontWeight: FontWeight.normal,
-                                    color:SKUser.current.student.organizations == null ? SKColors.light_gray : SKColors.dark_gray,
+                                    color:
+                                        SKUser.current.student.organizations ==
+                                                null
+                                            ? SKColors.light_gray
+                                            : SKColors.dark_gray,
                                     fontSize: 14),
                               ),
                             ),

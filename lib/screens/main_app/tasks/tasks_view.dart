@@ -237,6 +237,7 @@ class _TasksState extends State<TasksView> {
         context,
         CupertinoPageRoute(
           builder: (context) => AssignmentWeightView(class_id),
+          settings: RouteSettings(name: 'AssignmentWeightView'),
         ),
       );
     }
@@ -457,7 +458,9 @@ class _TasksState extends State<TasksView> {
         Navigator.push(
           context,
           CupertinoPageRoute(
-              builder: (context) => AssignmentInfoView(assignment_id: task.id)),
+            builder: (context) => AssignmentInfoView(assignment_id: task.id),
+            settings: RouteSettings(name: 'AssignmentInfoView'),
+          ),
         );
       },
       // child: Slidable(
@@ -554,6 +557,7 @@ class _TasksState extends State<TasksView> {
           context,
           CupertinoPageRoute(
             builder: (context) => UpdateInfoView([mod]),
+            settings: RouteSettings(name: 'UpdateInfoView'),
           ),
         );
       },

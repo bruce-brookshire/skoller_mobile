@@ -85,6 +85,7 @@ class ClassStatusModal extends StatelessWidget {
           context,
           CupertinoPageRoute(
             builder: (context) => AssignmentWeightView(classId),
+            settings: RouteSettings(name: 'AssignmentWeightView'),
           ),
         ),
         secondaryAction: () => Navigator.pop(context),
@@ -105,6 +106,7 @@ class ClassStatusModal extends StatelessWidget {
                 context,
                 CupertinoPageRoute(
                   builder: (context) => WeightExtractionView(classId),
+                  settings: RouteSettings(name: 'WeightExtractionView'),
                 ),
               ),
             ),

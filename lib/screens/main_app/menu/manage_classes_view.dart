@@ -57,6 +57,7 @@ class _ManageClassesState extends State<ManageClassesView> {
         CupertinoPageRoute(
           fullscreenDialog: true,
           builder: (context) => AddClassesView(),
+          settings: RouteSettings(name: 'AddClassesView'),
         ),
       ).then((val) {
         //Should we propogate pop?
@@ -77,10 +78,9 @@ class _ManageClassesState extends State<ManageClassesView> {
                   Navigator.push(
                     context,
                     CupertinoPageRoute(
-                      builder: (context) => ClassInfoView(
-                        classes[index].id,
-                        isClassesTab: false,
-                      ),
+                      builder: (context) =>
+                          ClassInfoView(classes[index].id, isClassesTab: false),
+                      settings: RouteSettings(name: 'ClassInfoView'),
                     ),
                   );
                 },

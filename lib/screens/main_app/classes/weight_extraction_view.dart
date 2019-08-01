@@ -541,6 +541,7 @@ class _SubviewThreeState extends State<_SubviewThree> {
           context,
           CupertinoPageRoute(
             builder: (context) => AssignmentWeightView(studentClass.id),
+            settings: RouteSettings(name: 'AssignmentWeightView'),
           ),
         );
       } else {

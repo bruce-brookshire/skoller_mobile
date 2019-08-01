@@ -43,8 +43,8 @@ class _ActivityState extends State<ActivityView> {
       if (mod.modType == ModType.newAssignment) {
         modHash['${mod.id} new'] = [mod];
       } else {
-
-        String key = '${mod.parentAssignment?.id ?? mod.id} ${mod.modType.index}';
+        String key =
+            '${mod.parentAssignment?.id ?? mod.id} ${mod.modType.index}';
 
         if (modHash[key] == null) {
           modHash[key] = [mod];
@@ -118,6 +118,7 @@ class _ActivityState extends State<ActivityView> {
           context,
           CupertinoPageRoute(
             builder: (context) => UpdateInfoView(stackedMods[index]),
+            settings: RouteSettings(name: 'UpdateInfoView'),
           ),
         );
       },

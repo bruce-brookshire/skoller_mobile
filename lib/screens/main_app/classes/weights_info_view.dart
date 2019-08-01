@@ -99,6 +99,7 @@ class _WeightsInfoState extends State<WeightsInfoView> {
         context,
         CupertinoPageRoute(
           builder: (context) => WeightsChangeRequestView(widget.classId),
+          settings: RouteSettings(name: 'WeightsChangeRequestView'),
           fullscreenDialog: true,
         ),
       ),
@@ -146,6 +147,7 @@ class _WeightsInfoState extends State<WeightsInfoView> {
                     CupertinoPageRoute(
                       builder: (context) =>
                           AssignmentWeightView(studentClass.id),
+                      settings: RouteSettings(name: 'AssignmentWeightView'),
                     ),
                   );
                 },

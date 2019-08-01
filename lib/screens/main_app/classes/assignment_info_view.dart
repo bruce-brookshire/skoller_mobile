@@ -323,6 +323,7 @@ class _AssignmentInfoState extends State<AssignmentInfoView> {
       context,
       CupertinoPageRoute(
         builder: (context) => UpdateInfoView(mods),
+        settings: RouteSettings(name: 'UpdateInfoView'),
       ),
     );
   }
@@ -426,9 +427,9 @@ class _AssignmentInfoState extends State<AssignmentInfoView> {
         Navigator.push(
           context,
           CupertinoPageRoute(
-            builder: (context) => ClassDetailView(
-              classId: assignment.parentClass.id,
-            ),
+            builder: (context) =>
+                ClassDetailView(classId: assignment.parentClass.id),
+            settings: RouteSettings(name: 'ClassDetailView'),
           ),
         );
       },

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:skoller/screens/main_app/menu/skoller_jobs_view.dart';
+import 'package:skoller/screens/main_app/tutorial.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:dart_notification_center/dart_notification_center.dart';
 import 'package:skoller/tools.dart';
@@ -96,7 +97,10 @@ class MenuView extends StatelessWidget {
           'Tutorial',
           style: TextStyle(fontWeight: FontWeight.normal, fontSize: 16),
         ),
-        'builder': () => ProfileView()
+        'builder': () => TutorialTab(
+              (newContext) => Navigator.of(newContext).pop(),
+              'Dismiss',
+            ),
       },
     ]
   ]
@@ -219,7 +223,6 @@ class MenuView extends StatelessWidget {
                       children: menuOptions,
                     ),
                   ),
-
                   Text(
                     'v${UIAssets.versionNumber ?? '-'}',
                     textAlign: TextAlign.center,

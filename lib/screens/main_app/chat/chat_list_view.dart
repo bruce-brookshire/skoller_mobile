@@ -60,6 +60,7 @@ class _ChatListState extends State<ChatListView> {
       CupertinoPageRoute(
         fullscreenDialog: true,
         builder: (context) => ChatInboxView(),
+        settings: RouteSettings(name: 'ChatInboxView'),
       ),
     );
 
@@ -70,6 +71,7 @@ class _ChatListState extends State<ChatListView> {
         context,
         CupertinoPageRoute(
           builder: (context) => ChatInfoView(chatId),
+          settings: RouteSettings(name: 'ChatInfoView'),
         ),
       );
     }
@@ -423,6 +425,7 @@ class _ChatListState extends State<ChatListView> {
           context,
           CupertinoPageRoute(
             builder: (context) => ChatInfoView(chat.id),
+            settings: RouteSettings(name: 'ChatInfoView'),
           ),
         );
       },

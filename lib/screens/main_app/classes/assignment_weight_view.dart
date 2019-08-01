@@ -119,6 +119,7 @@ class _AssignmentWeightState extends State<AssignmentWeightView> {
                                   CupertinoPageRoute(
                                     builder: (context) => AssignmentAddView(
                                         widget.class_id, null),
+                                    settings: RouteSettings(name: 'AssignmentAddView'),
                                   ),
                                 );
                               },
@@ -181,6 +182,7 @@ class _AssignmentWeightState extends State<AssignmentWeightView> {
                                         widget.class_id,
                                         weights[index],
                                       ),
+                                      settings: RouteSettings(name: 'AssignmentAddView'),
                                     ),
                                   );
                                 } else {
@@ -192,6 +194,7 @@ class _AssignmentWeightState extends State<AssignmentWeightView> {
                                         class_id: widget.class_id,
                                         weight: weight,
                                       ),
+                                      settings: RouteSettings(name: 'AssignmentBatchAddView'),
                                     ),
                                   );
                                 }

@@ -249,8 +249,10 @@ class _ClassDetailState extends State<ClassDetailView> {
                                   Navigator.push(
                                       context,
                                       CupertinoPageRoute(
-                                          builder: (context) =>
-                                              ClassInfoView(studentClass.id)));
+                                        builder: (context) =>
+                                            ClassInfoView(studentClass.id),
+                                        settings: RouteSettings(name: 'ClassInfoView'),
+                                      ));
                                 },
                                 child: SizedBox(
                                   child: Image.asset(
@@ -266,6 +268,7 @@ class _ClassDetailState extends State<ClassDetailView> {
                                   CupertinoPageRoute(
                                     builder: (context) =>
                                         AssignmentWeightView(studentClass.id),
+                                    settings: RouteSettings(name: 'AssignmentWeightView'),
                                   ),
                                 ),
                                 child: SizedBox(
@@ -337,6 +340,7 @@ class _ClassDetailState extends State<ClassDetailView> {
                                     CupertinoPageRoute(
                                       builder: (context) =>
                                           WeightsInfoView(studentClass.id),
+                                      settings: RouteSettings(name: 'WeightsInfoView'),
                                     ),
                                   );
                                 },
@@ -379,7 +383,9 @@ class _ClassDetailState extends State<ClassDetailView> {
                 Navigator.push(
                   context,
                   CupertinoPageRoute(
-                      builder: (context) => ClassmatesView(widget.classId)),
+                    builder: (context) => ClassmatesView(widget.classId),
+                    settings: RouteSettings(name: 'ClassmatesView'),
+                  ),
                 );
               },
               child: Container(
@@ -458,8 +464,10 @@ class _ClassDetailState extends State<ClassDetailView> {
         Navigator.push(
           context,
           CupertinoPageRoute(
-              builder: (context) =>
-                  AssignmentInfoView(assignment_id: assignment.id)),
+            builder: (context) =>
+                AssignmentInfoView(assignment_id: assignment.id),
+            settings: RouteSettings(name: 'AssignmentInfoView'),
+          ),
         );
       },
       child: Container(

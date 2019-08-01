@@ -237,9 +237,9 @@ class _ClassesState extends State<ClassesView> {
         Navigator.push(
             context,
             CupertinoPageRoute(
-                title: 'class_detail',
-                builder: (context) =>
-                    ClassDetailView(classId: studentClass.id)));
+              builder: (context) => ClassDetailView(classId: studentClass.id),
+              settings: RouteSettings(name: 'ClassDetailView'),
+            ));
       },
       child: Container(
         decoration: BoxDecoration(
@@ -568,6 +568,7 @@ class _ClassesState extends State<ClassesView> {
       context,
       CupertinoPageRoute(
         builder: (context) => AssignmentWeightView(classId),
+        settings: RouteSettings(name: 'AssignmentWeightView'),
       ),
     );
   }
@@ -581,6 +582,7 @@ class _ClassesState extends State<ClassesView> {
           context,
           CupertinoPageRoute(
             builder: (context) => WeightExtractionView(classId),
+            settings: RouteSettings(name: 'WeightExtractionView'),
           ),
         ),
       ),

@@ -190,8 +190,10 @@ class _ClassInfoState extends State<ClassInfoView> {
                         context,
                         CupertinoPageRoute(
                           fullscreenDialog: true,
-                            builder: (context) =>
-                                ClassChangeRequestView(studentClass.id)),
+                          builder: (context) =>
+                              ClassChangeRequestView(studentClass.id),
+                          settings: RouteSettings(name: 'ClassChangeRequestView'),
+                        ),
                       ),
                       child: Text(
                         'Edit',
@@ -378,6 +380,7 @@ class _ClassInfoState extends State<ClassInfoView> {
                       context,
                       CupertinoPageRoute(
                         builder: (context) => WeightsInfoView(studentClass.id),
+                        settings: RouteSettings(name: 'WeightsInfoView'),
                       ),
                     );
                   },
