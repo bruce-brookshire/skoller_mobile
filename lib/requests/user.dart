@@ -114,6 +114,7 @@ class Student {
   String enrollmentLink;
 
   List<School> schools;
+  List<FieldsOfStudy> fieldsOfStudy;
 
   School primarySchool;
 
@@ -196,6 +197,27 @@ class Student {
 
     notificationDays = content['notification_days_notice'];
     isAssignPostNotifications = content['is_assign_post_notifications'];
+
+    fieldsOfStudy = JsonListMaker.convert(
+      FieldsOfStudy._fromJsonObj,
+      content['fields_of_study'],
+    );
+  }
+}
+
+class FieldsOfStudy {
+  final int id;
+  final String field;
+
+  FieldsOfStudy(this.id, this.field);
+
+  static FieldsOfStudy _fromJsonObj(Map content) => FieldsOfStudy(
+        content['id'],
+        content['field'],
+      );
+
+  static Future<RequestResponse> getFieldsOfStudy() {
+    return SKRequests.get('/fields-of-study/list', _fromJsonObj);
   }
 }
 

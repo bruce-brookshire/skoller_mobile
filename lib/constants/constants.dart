@@ -6,6 +6,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:intl/intl.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
 import '../requests/requests_core.dart';
 import 'dart:ui' as dartUI;
 import 'dart:async';
@@ -28,6 +29,10 @@ class SKColors {
   static const success = Color(0xFF4ADD58);
   static const alert_orange = Color(0xFFFF6D00);
   static const warning_red = Color(0xFFFF4159);
+}
+
+class Analytics {
+  static FirebaseAnalytics analytics = FirebaseAnalytics();
 }
 
 class UIAssets {

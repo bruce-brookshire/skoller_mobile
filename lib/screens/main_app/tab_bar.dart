@@ -1,18 +1,27 @@
 import 'package:dart_notification_center/dart_notification_center.dart';
-import 'package:flutter/material.dart';
+import 'package:skoller/requests/requests_core.dart';
+import 'package:firebase_analytics/observer.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/scheduler.dart';
-import 'package:skoller/requests/requests_core.dart';
-import 'package:skoller/tools.dart';
-import 'chat/chat_list_view.dart';
-import 'tasks/tasks_view.dart';
-import 'classes/classes_view.dart';
-import 'calendar/calendar.dart';
+import 'package:flutter/material.dart';
 import 'activity/activity_view.dart';
+import 'package:skoller/tools.dart';
+import 'classes/classes_view.dart';
+import 'chat/chat_list_view.dart';
+import 'calendar/calendar.dart';
+import 'tasks/tasks_view.dart';
 
 class SKTabBar extends StatefulWidget {
   @override
   _SKTabBarState createState() => _SKTabBarState();
+}
+
+class OBS extends RouteObserver<PageRoute<dynamic>> {
+  @override
+  void didPush(Route route, Route previousRoute) {
+    super.didPush(route, previousRoute);
+    print(route.settings.name);
+  }
 }
 
 class _SKTabBarState extends State<SKTabBar> {
@@ -30,6 +39,14 @@ class _SKTabBarState extends State<SKTabBar> {
     GlobalKey<NavigatorState>(),
     GlobalKey<NavigatorState>(),
     GlobalKey<NavigatorState>(),
+  ];
+
+  final List<NavigatorObserver> _navigatorObservers = [
+    FirebaseAnalyticsObserver(analytics: Analytics.analytics),
+    FirebaseAnalyticsObserver(analytics: Analytics.analytics),
+    FirebaseAnalyticsObserver(analytics: Analytics.analytics),
+    FirebaseAnalyticsObserver(analytics: Analytics.analytics),
+    FirebaseAnalyticsObserver(analytics: Analytics.analytics),
   ];
 
   final List<String> _indexIconPartialPaths = [
@@ -107,6 +124,7 @@ class _SKTabBarState extends State<SKTabBar> {
         tabBuilder: (context, index) {
           return CupertinoTabView(
               navigatorKey: _navigatorKeys[index],
+              navigatorObservers: [_navigatorObservers[index]],
               builder: (context) {
                 return CupertinoPageScaffold(child: _widgetOptions[index]);
               });

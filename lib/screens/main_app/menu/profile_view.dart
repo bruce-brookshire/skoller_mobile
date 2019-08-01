@@ -11,6 +11,8 @@ class ProfileView extends StatefulWidget {
 class _ProfileState extends State<ProfileView> {
   @override
   Widget build(BuildContext context) {
+    final fields = SKUser.current.student.fieldsOfStudy ?? [];
+
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
@@ -179,6 +181,56 @@ class _ProfileState extends State<ProfileView> {
                         padding: EdgeInsets.symmetric(horizontal: 6),
                         child: Text(
                           'Organizations',
+                          style: TextStyle(fontSize: 14),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Padding(
+                padding: EdgeInsets.only(bottom: 16),
+                child: Stack(
+                  children: <Widget>[
+                    Align(
+                      alignment: Alignment.centerLeft,
+                      child: Row(
+                        children: <Widget>[
+                          Expanded(
+                            child: Container(
+                              margin:
+                                  EdgeInsets.only(top: 9, left: 12, right: 12),
+                              padding: EdgeInsets.all(12),
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                boxShadow: [UIAssets.boxShadow],
+                                border: Border.all(color: SKColors.dark_gray),
+                                borderRadius: BorderRadius.circular(5),
+                              ),
+                              child: Text(
+                                fields.length == 0
+                                    ? 'Nothing to see here...'
+                                    : fields.map((f) => f.field).join(', '),
+                                style: TextStyle(
+                                    fontWeight: FontWeight.normal,
+                                    color: fields.length == 0
+                                        ? SKColors.light_gray
+                                        : SKColors.dark_gray,
+                                    fontSize: 14),
+                              ),
+                            ),
+                          )
+                        ],
+                      ),
+                    ),
+                    Align(
+                      alignment: Alignment.centerLeft,
+                      child: Container(
+                        color: Colors.white,
+                        margin: EdgeInsets.only(left: 20),
+                        padding: EdgeInsets.symmetric(horizontal: 6),
+                        child: Text(
+                          'Majors and minors',
                           style: TextStyle(fontSize: 14),
                         ),
                       ),

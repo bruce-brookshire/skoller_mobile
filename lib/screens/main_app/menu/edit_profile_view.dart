@@ -18,8 +18,6 @@ class _EditProfileState extends State<EditProfileView> {
   final organizationsController =
       TextEditingController(text: SKUser.current.student.organizations);
 
-
-
   @override
   void dispose() {
     super.dispose();
@@ -53,6 +51,20 @@ class _EditProfileState extends State<EditProfileView> {
         text: 'You must have a first and last name',
         color: SKColors.warning_red,
         textStyle: TextStyle(color: Colors.white),
+      );
+    }
+  }
+
+  void tappedSelectMajors(TapUpDetails details) async {
+    final loader = SKLoadingScreen.fadeIn(context);
+    final result = await FieldsOfStudy.getFieldsOfStudy();
+    loader.dismiss();
+
+    if (result.wasSuccessful()) {
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (context) => _MajorSelector(result.obj),
       );
     }
   }
@@ -232,6 +244,16 @@ class _EditProfileState extends State<EditProfileView> {
             ],
           ),
         ),
+        GestureDetector(
+          onTapUp: tappedSelectMajors,
+          child: Padding(
+            padding: EdgeInsets.symmetric(vertical: 16),
+            child: Text(
+              'Select majors and minors',
+              style: TextStyle(color: SKColors.skoller_blue),
+            ),
+          ),
+        ),
         Spacer(),
         SafeArea(
           top: false,
@@ -295,6 +317,145 @@ class _EditProfileState extends State<EditProfileView> {
           ),
         )
       ],
+    );
+  }
+}
+
+class _MajorSelector extends StatefulWidget {
+  final List<FieldsOfStudy> availableFields;
+
+  _MajorSelector(this.availableFields);
+
+  @override
+  State createState() => _MajorSelectorState();
+}
+
+class _MajorSelectorState extends State<_MajorSelector> {
+  Map<int, FieldsOfStudy> selectedFields = {};
+
+  List<FieldsOfStudy> searchedFields = [];
+
+  @override
+  void initState() {
+    super.initState();
+    (SKUser.current.student.fieldsOfStudy ?? [])
+        .forEach((f) => selectedFields[f.id] = f);
+  }
+
+  void processSearch(String search) {
+    final searchText = search.trim();
+    if (searchText == '')
+      searchedFields = [];
+    else
+      searchedFields = widget.availableFields.toList()
+        ..removeWhere((field) =>
+            !field.field.toLowerCase().contains(search.toLowerCase()));
+    setState(() {});
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return SafeArea(
+      child: Padding(
+        padding: EdgeInsets.symmetric(horizontal: 24),
+        child: Material(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+            side: BorderSide(color: SKColors.border_gray),
+          ),
+          child: Padding(
+            padding: EdgeInsets.fromLTRB(12, 12, 12, 0),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Row(
+                  children: <Widget>[
+                    GestureDetector(
+                      child: Container(
+                        alignment: Alignment.centerLeft,
+                        padding: EdgeInsets.only(left: 4),
+                        width: 44,
+                        height: 28,
+                        child: Image.asset(ImageNames.navArrowImages.down),
+                      ),
+                    ),
+                    Expanded(
+                      child: Text(
+                        'Search Majors and Minors',
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                    GestureDetector(
+                      child: Container(
+                        alignment: Alignment.centerRight,
+                        padding: EdgeInsets.only(left: 4),
+                        width: 44,
+                        height: 28,
+                        child: Text(
+                          'Save',
+                          style: TextStyle(color: SKColors.skoller_blue),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                Text(
+                  '${selectedFields.length} selected',
+                  style: TextStyle(fontWeight: FontWeight.normal, fontSize: 13),
+                ),
+                Padding(
+                  padding: EdgeInsets.symmetric(vertical: 8),
+                  child: CupertinoTextField(
+                    autofocus: true,
+                    onChanged: processSearch,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(5),
+                      border: Border.all(color: SKColors.border_gray),
+                    ),
+                    placeholder: 'Search...',
+                    placeholderStyle: TextStyle(
+                      color: SKColors.text_light_gray,
+                      fontSize: 15,
+                    ),
+                    padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                    style: TextStyle(
+                      color: SKColors.dark_gray,
+                      fontSize: 15,
+                    ),
+                    cursorColor: SKColors.skoller_blue,
+                  ),
+                ),
+                Expanded(
+                  child: ListView.builder(
+                      itemCount: searchedFields.length,
+                      itemBuilder: (context, index) {
+                        final field = searchedFields[index];
+                        return GestureDetector(
+                          onTapUp: (details) => setState(
+                            () => selectedFields.containsKey(field.id)
+                                ? selectedFields.remove(field.id)
+                                : (selectedFields[field.id] = field),
+                          ),
+                          child: Padding(
+                            padding: EdgeInsets.symmetric(vertical: 4),
+                            child: Text(
+                              field.field,
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                color: selectedFields[field.id] == null
+                                    ? SKColors.dark_gray
+                                    : SKColors.skoller_blue,
+                              ),
+                            ),
+                          ),
+                        );
+                      }),
+                )
+              ],
+            ),
+          ),
+        ),
+      ),
     );
   }
 }

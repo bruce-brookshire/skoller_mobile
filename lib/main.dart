@@ -8,8 +8,6 @@ import 'package:skoller/tools.dart';
 import 'screens/auth/auth_home.dart';
 import 'constants/constants.dart';
 import 'constants/timezone_manager.dart';
-import 'package:firebase_analytics/firebase_analytics.dart';
-import 'package:firebase_analytics/observer.dart';
 
 void main() {
   runApp(SkollerApp());
@@ -25,10 +23,6 @@ void main() {
 }
 
 class SkollerApp extends StatefulWidget {
-  static FirebaseAnalytics analytics = FirebaseAnalytics();
-  static FirebaseAnalyticsObserver observer =
-      FirebaseAnalyticsObserver(analytics: analytics);
-
   @override
   State createState() => _SkollerAppState();
 }
@@ -118,7 +112,6 @@ class _SkollerAppState extends State<SkollerApp> {
     }
 
     return MaterialApp(
-      navigatorObservers: [SkollerApp.observer],
       builder: (context, widget) => Theme(data: currentTheme, child: widget),
       theme: currentTheme,
       home: DropdownBanner(
