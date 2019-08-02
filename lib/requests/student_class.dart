@@ -27,6 +27,7 @@ class StudentClass {
   List<Weight> weights;
   List<Assignment> assignments;
   List<PublicStudent> students;
+  List<ClassDocument> documents;
 
   Map<String, dynamic> gradeScale;
 
@@ -69,6 +70,7 @@ class StudentClass {
     this.gradeScale,
     this.isPoints,
     this.isNotifications,
+    this.documents,
   );
 
   School getSchool() => School.currentSchools[classPeriod.schoolId];
@@ -435,6 +437,10 @@ class StudentClass {
       content['grade_scale'],
       content['is_points'],
       content['is_notifications'],
+      JsonListMaker.convert(
+        ClassDocument._fromJsonObj,
+        content['documents'] ?? [],
+      ),
     );
 
     StudentClass.currentClasses[studentClass.id] = studentClass;
@@ -638,4 +644,16 @@ class Professor {
       content['office_location'],
     );
   }
+}
+
+class ClassDocument {
+  final String name;
+  final String path;
+
+  ClassDocument(this.name, this.path);
+
+  static ClassDocument _fromJsonObj(Map content) => ClassDocument(
+        content['name'],
+        content['path'],
+      );
 }

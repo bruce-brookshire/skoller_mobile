@@ -27,7 +27,7 @@ class ClassLinkSharingModal extends StatelessWidget {
               style: TextStyle(fontSize: 17),
               textAlign: TextAlign.center,
             ),
-            if (studentClass.enrollment < 5)
+            if (studentClass.enrollment < 4)
               Container(
                 margin: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                 child: Text.rich(
@@ -38,7 +38,7 @@ class ClassLinkSharingModal extends StatelessWidget {
                           style: TextStyle(fontWeight: FontWeight.normal)),
                       TextSpan(
                           text:
-                              '${5 - studentClass.enrollment} classmate${(5 - studentClass.enrollment) == 1 ? '' : 's'}',
+                              '${4 - studentClass.enrollment} classmate${(4 - studentClass.enrollment) == 1 ? '' : 's'}',
                           style: TextStyle(color: studentClass.getColor())),
                       TextSpan(
                           text: ' away from a ',

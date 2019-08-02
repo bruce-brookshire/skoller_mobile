@@ -256,7 +256,7 @@ class _ClassChangeRequestState extends State<ClassChangeRequestView> {
                     topRight: Radius.circular(10),
                   ),
                 ),
-                child: Text('Change request', style: TextStyle(fontSize: 17)),
+                child: Text('Edit class info', style: TextStyle(fontSize: 17)),
               ),
               Container(
                 margin: EdgeInsets.fromLTRB(12, 4, 12, 4),
@@ -285,7 +285,7 @@ class _ClassChangeRequestState extends State<ClassChangeRequestView> {
                       decoration: BoxDecoration(border: null),
                       controller: nameController,
                       // onChanged: checkValid,
-                      keyboardType: TextInputType.number,
+                      keyboardType: TextInputType.text,
                     ),
                   ],
                 ),

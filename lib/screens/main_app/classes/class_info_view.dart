@@ -1,6 +1,7 @@
 import 'package:dart_notification_center/dart_notification_center.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:skoller/screens/main_app/classes/class_document_view.dart';
 import 'package:skoller/screens/main_app/classes/weights_info_view.dart';
 import 'package:skoller/tools.dart';
 import 'class_change_request_view.dart';
@@ -152,6 +153,25 @@ class _ClassInfoState extends State<ClassInfoView> {
     }
   }
 
+  void tappedViewDocuments(TapUpDetails details) async {
+    final docs = StudentClass.currentClasses[widget.classId].documents;
+
+    showDialog(
+      context: context,
+      builder: (context) => SKPickerModal(
+        title: 'Class documents',
+        subtitle: 'Which would you like to view?',
+        onSelect: (index) => Navigator.push(
+          context,
+          CupertinoPageRoute(
+            builder: (context) => ClassDocumentView(docs[index]),
+          ),
+        ),
+        items: docs.map((d) => d.name).toList(),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final studentClass = StudentClass.currentClasses[widget.classId];
@@ -192,7 +212,8 @@ class _ClassInfoState extends State<ClassInfoView> {
                           fullscreenDialog: true,
                           builder: (context) =>
                               ClassChangeRequestView(studentClass.id),
-                          settings: RouteSettings(name: 'ClassChangeRequestView'),
+                          settings:
+                              RouteSettings(name: 'ClassChangeRequestView'),
                         ),
                       ),
                       child: Text(
@@ -369,7 +390,7 @@ class _ClassInfoState extends State<ClassInfoView> {
           ),
         ),
         Container(
-          margin: EdgeInsets.symmetric(horizontal: 16, vertical: 24),
+          margin: EdgeInsets.symmetric(horizontal: 16, vertical: 18),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
@@ -386,8 +407,7 @@ class _ClassInfoState extends State<ClassInfoView> {
                   },
                   child: Container(
                     alignment: Alignment.center,
-                    height: 40,
-                    padding: EdgeInsets.symmetric(horizontal: 32),
+                    padding: EdgeInsets.symmetric(vertical: 8),
                     margin: EdgeInsets.only(right: 6),
                     decoration: BoxDecoration(
                       color: Colors.white,
@@ -406,9 +426,8 @@ class _ClassInfoState extends State<ClassInfoView> {
                 child: GestureDetector(
                   onTapUp: tappedGradeScale,
                   child: Container(
-                    height: 40,
                     alignment: Alignment.center,
-                    // padding: EdgeInsets.symmetric(horizontal: 32),
+                    padding: EdgeInsets.symmetric(vertical: 8),
                     margin: EdgeInsets.only(left: 6),
                     decoration: BoxDecoration(
                       color: Colors.white,
@@ -435,9 +454,23 @@ class _ClassInfoState extends State<ClassInfoView> {
             ],
           ),
         ),
-        Spacer(
-          flex: 1,
-        ),
+        if (studentClass.documents.length > 0)
+          GestureDetector(
+            behavior: HitTestBehavior.opaque,
+            onTapUp: tappedViewDocuments,
+            child: Container(
+              margin: EdgeInsets.symmetric(horizontal: 16),
+              padding: EdgeInsets.symmetric(vertical: 8),
+              alignment: Alignment.center,
+              child: Text(
+                'Class Documents (${studentClass.documents.length})',
+                style: TextStyle(
+                    color: SKColors.skoller_blue,
+                    fontWeight: FontWeight.normal),
+              ),
+            ),
+          ),
+        Spacer(flex: 1),
         GestureDetector(
           onTapUp: tappedDropClass,
           child: Container(

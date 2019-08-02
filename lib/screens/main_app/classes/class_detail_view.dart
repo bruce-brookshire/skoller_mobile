@@ -32,6 +32,7 @@ class _ClassDetailState extends State<ClassDetailView> {
     super.initState();
 
     loadClass();
+    fetchClass();
 
     DartNotificationCenter.subscribe(
         observer: this,

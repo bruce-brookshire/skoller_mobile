@@ -63,7 +63,7 @@ class _ClassmatesState extends State<ClassmatesView> {
         ),
         Expanded(
           child: ListView.builder(
-            itemCount: classmates < 5 ? classmates + 1 : classmates,
+            itemCount: classmates < 4 ? classmates + 1 : classmates,
             itemBuilder: (context, index) {
               if (index < classmates) {
                 final student = students[index];
@@ -114,7 +114,7 @@ class _ClassmatesState extends State<ClassmatesView> {
                                     fontSize: 17)),
                             TextSpan(
                                 text:
-                                    '${5 - studentClass.enrollment} classmate${(5 - studentClass.enrollment) == 1 ? '' : 's'}',
+                                    '${4 - studentClass.enrollment} classmate${(4 - studentClass.enrollment) == 1 ? '' : 's'}',
                                 style: TextStyle(
                                     color: studentClass.getColor(),
                                     fontSize: 17)),
@@ -140,7 +140,7 @@ class _ClassmatesState extends State<ClassmatesView> {
                                   style:
                                       TextStyle(fontWeight: FontWeight.normal)),
                               TextSpan(
-                                text: '5 or more classmates',
+                                text: '4 or more classmates',
                               ),
                               TextSpan(
                                   text: ' are conquering school... ',

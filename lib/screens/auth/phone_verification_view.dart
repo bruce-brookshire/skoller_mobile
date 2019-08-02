@@ -70,6 +70,7 @@ class _PhoneVerificationState extends State<PhoneVerificationView> {
 
   void checkPinValidity() {
     String code = '';
+
     for (final controller in pinControllers) {
       String digit = controller.text.trim();
       if (digit.length != 1) {
@@ -80,9 +81,7 @@ class _PhoneVerificationState extends State<PhoneVerificationView> {
       }
     }
 
-    setState(() {
-      loading = true;
-    });
+    setState(() => loading = true);
 
     final trimStr = widget.phoneNumber.replaceAll(RegExp(r'[\(\) \-]+'), '');
 
@@ -150,6 +149,8 @@ class _PhoneVerificationState extends State<PhoneVerificationView> {
                       child: CircularProgressIndicator()))
               : GestureDetector(
                   onTapDown: (details) {
+                    setState(() => loading = true);
+
                     Clipboard.getData('text/plain').then((response) {
                       final code = response.text;
                       if (code.length == 5 && int.tryParse(code) != null) {

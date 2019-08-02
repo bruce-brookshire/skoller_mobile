@@ -99,6 +99,19 @@ class _SignUpState extends State<SignUp> {
             textStyle: TextStyle(color: Colors.white),
           );
         }
+      } else {
+        if ([422, 401].contains(response.status)) {
+          DropdownBanner.showBanner(
+              text: 'A user already exists with that phone number or email. Try logging in!',
+              color: SKColors.warning_red,
+              textStyle: TextStyle(color: Colors.white));
+        } else {
+          DropdownBanner.showBanner(
+              text:
+                  'Failed to create account. Try again later, or visit skoller.co',
+              color: SKColors.warning_red,
+              textStyle: TextStyle(color: Colors.white));
+        }
       }
     });
   }
