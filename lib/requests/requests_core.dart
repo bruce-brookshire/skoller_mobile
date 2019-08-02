@@ -22,6 +22,8 @@ part 'chat.dart';
 part 'user.dart';
 part 'mod.dart';
 
+const bool isProd = false;
+
 class RequestResponse<T> {
   int status;
   dynamic obj;
@@ -65,9 +67,9 @@ class JsonListMaker {
 }
 
 class SKRequests {
-  // static const String _environment = 'http://127.0.0.1:4000'; //LOCAL
-  static final String _environment = 'https://api-staging.skoller.co'; //STAGING
-  // static final String _environment = 'https://api.skoller.co'; //PRODUCTION
+  static const String _environment =  isProd ? 'https://api.skoller.co' : 'https://api-staging.skoller.co'; //STAGING
+  // static const String _environment =  isProd ? 'https://api.skoller.co' : 'http://127.0.0.1:4000'; //STAGING
+
   static final String _baseUrl = '$_environment/api/v1';
 
   static Map<String, String> _headers = {

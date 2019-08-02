@@ -299,120 +299,173 @@ class _ChatListState extends State<ChatListView> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      body: SafeArea(
-        bottom: false,
-        child: Stack(
-          children: <Widget>[
-            Align(
-              alignment: Alignment.center,
-              child: Container(
-                margin: EdgeInsets.only(top: 44),
-                color: SKColors.background_gray,
-                child: Center(
-                  child: Column(
-                    children: [
-                      Expanded(
-                        child: ListView.builder(
-                          padding: EdgeInsets.only(top: 4),
-                          itemCount: chats.length,
-                          itemBuilder: buildCard,
+    // return Scaffold(
+    //   backgroundColor: Colors.white,
+    //   body: SafeArea(
+    //     bottom: false,
+    //     child: Stack(
+    //       children: <Widget>[
+    //         Align(
+    //           alignment: Alignment.center,
+    //           child: Container(
+    //             margin: EdgeInsets.only(top: 44),
+    //             color: SKColors.background_gray,
+    //             child: Center(
+    //               child: Column(
+    //                 children: [
+    //                   Expanded(
+    //                     child: ListView.builder(
+    //                       padding: EdgeInsets.only(top: 4),
+    //                       itemCount: chats.length,
+    //                       itemBuilder: buildCard,
+    //                     ),
+    //                   )
+    //                 ],
+    //               ),
+    //             ),
+    //           ),
+    //         ),
+    //         Align(
+    //           child: Container(
+    //             height: 44,
+    //             decoration: BoxDecoration(boxShadow: [
+    //               BoxShadow(
+    //                 color: Color(0x1C000000),
+    //                 offset: Offset(0, 3.5),
+    //                 blurRadius: 2,
+    //               )
+    //             ], color: Colors.white),
+    //             child: Row(
+    //               mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    //               children: <Widget>[
+    //                 Container(
+    //                   margin: EdgeInsets.only(right: 52, left: 8),
+    //                   child: GestureDetector(
+    //                     onTapUp: (details) => DartNotificationCenter.post(
+    //                         channel: NotificationChannels.toggleMenu),
+    //                     child: SKHeaderProfilePhoto(),
+    //                   ),
+    //                 ),
+    //                 Expanded(
+    //                   child: Container(
+    //                     child: Text(
+    //                       'Chat',
+    //                       textAlign: TextAlign.center,
+    //                       style: TextStyle(
+    //                           fontSize: 18, fontWeight: FontWeight.bold),
+    //                     ),
+    //                   ),
+    //                 ),
+    //                 Row(
+    //                   children: <Widget>[
+    //                     GestureDetector(
+    //                       behavior: HitTestBehavior.opaque,
+    //                       onTapUp: tappedCheckInbox,
+    //                       child: Container(
+    //                         width: 44,
+    //                         height: 44,
+    //                         child: Center(
+    //                           child: Image(
+    //                             image: AssetImage(
+    //                               this.unreadInbox
+    //                                   ? ImageNames.chatImages.inbox_unread
+    //                                   : ImageNames.chatImages.inbox,
+    //                             ),
+    //                           ),
+    //                         ),
+    //                       ),
+    //                     ),
+    //                     GestureDetector(
+    //                       behavior: HitTestBehavior.opaque,
+    //                       onTapUp: (details) {
+    //                         tappedCreatePost();
+    //                       },
+    //                       child: Container(
+    //                         padding: EdgeInsets.only(right: 4),
+    //                         child: Center(
+    //                           child: Image(
+    //                             image:
+    //                                 AssetImage(ImageNames.chatImages.compose),
+    //                           ),
+    //                         ),
+    //                         width: 44,
+    //                         height: 44,
+    //                       ),
+    //                     ),
+    //                   ],
+    //                 )
+    //               ],
+    //             ),
+    //           ),
+    //           alignment: Alignment.topCenter,
+    //         ),
+    //       ],
+    //     ),
+    //   ),
+    // );
+//
+    return SKNavView(
+      title: 'Chat',
+      rightBtn: Image.asset(ImageNames.chatImages.compose),
+      callbackRight: tappedCreatePost,
+      leftBtn: SKHeaderProfilePhoto(),
+      callbackLeft: () =>
+          DartNotificationCenter.post(channel: NotificationChannels.toggleMenu),
+      children: chats.length == 0
+          ? [
+              Padding(
+                padding: EdgeInsets.symmetric(vertical: 8, horizontal: 4),
+                child: SammiSpeechBubble(
+                  sammiPersonality: SammiPersonality.ooo,
+                  speechBubbleContents: Text.rich(
+                    TextSpan(
+                      text: 'No chats yet!',
+                      children: [
+                        TextSpan(
+                          text: ' Strike one up with your classmates by ',
+                          style: TextStyle(fontWeight: FontWeight.normal),
                         ),
-                      )
-                    ],
+                        TextSpan(
+                          text: 'tapping the plus sign ',
+                        ),
+                        TextSpan(
+                          text: 'below!',
+                          style: TextStyle(fontWeight: FontWeight.normal),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),
-            ),
-            Align(
-              child: Container(
-                height: 44,
-                decoration: BoxDecoration(boxShadow: [
-                  BoxShadow(
-                    color: Color(0x1C000000),
-                    offset: Offset(0, 3.5),
-                    blurRadius: 2,
-                  )
-                ], color: Colors.white),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: <Widget>[
-                    Container(
-                      margin: EdgeInsets.only(right: 52, left: 8),
-                      child: GestureDetector(
-                        onTapUp: (details) => DartNotificationCenter.post(
-                            channel: NotificationChannels.toggleMenu),
-                        child: SKHeaderProfilePhoto(),
-                      ),
-                    ),
-                    Expanded(
+              GestureDetector(
+                behavior: HitTestBehavior.opaque,
+                onTapUp: (details) => tappedCreatePost(),
+                child: Padding(
+                  padding: EdgeInsets.fromLTRB(16, 44, 16, 16),
+                  child: SizedBox(
+                    width: 44,
+                    height: 44,
+                    child: CustomPaint(
+                      painter: _PlusPainter(),
                       child: Container(
-                        child: Text(
-                          'Chat',
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                              fontSize: 18, fontWeight: FontWeight.bold),
-                        ),
+                        width: 14,
+                        height: 16,
                       ),
                     ),
-                    Row(
-                      children: <Widget>[
-                        GestureDetector(
-                          behavior: HitTestBehavior.opaque,
-                          onTapUp: tappedCheckInbox,
-                          child: Container(
-                            width: 44,
-                            height: 44,
-                            child: Center(
-                              child: Image(
-                                image: AssetImage(
-                                  this.unreadInbox
-                                      ? ImageNames.chatImages.inbox_unread
-                                      : ImageNames.chatImages.inbox,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                        GestureDetector(
-                          behavior: HitTestBehavior.opaque,
-                          onTapUp: (details) {
-                            tappedCreatePost();
-                          },
-                          child: Container(
-                            padding: EdgeInsets.only(right: 4),
-                            child: Center(
-                              child: Image(
-                                image:
-                                    AssetImage(ImageNames.chatImages.compose),
-                              ),
-                            ),
-                            width: 44,
-                            height: 44,
-                          ),
-                        ),
-                      ],
-                    )
-                  ],
+                  ),
                 ),
               ),
-              alignment: Alignment.topCenter,
-            ),
-          ],
-        ),
-      ),
+            ]
+          : [
+              Expanded(
+                child: ListView.builder(
+                  padding: EdgeInsets.only(top: 4),
+                  itemCount: chats.length,
+                  itemBuilder: buildCard,
+                ),
+              )
+            ],
     );
-
-    // SKNavView(
-    //   isBack: false,
-    //   title: 'Chat',
-    //   rightBtnImage: ImageNames.chatImages.compose,
-    //   callbackRight: tappedCreatePost,
-    //   children: <Widget>[
-
-    //   ],
-    // );
   }
 
   Widget buildCard(BuildContext context, int index) {
@@ -573,4 +626,55 @@ class _ChatListState extends State<ChatListView> {
       ),
     );
   }
+}
+
+class _PlusPainter extends CustomPainter {
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()
+      ..color = SKColors.skoller_blue
+      ..style = PaintingStyle.fill
+      // ..strokeWidth = 1
+      ..isAntiAlias = true;
+
+    const double radius = 2.5;
+
+    final centerX = size.width / 2;
+    final centerY = size.height / 2;
+
+    var path = Path();
+
+    path.moveTo(centerX + radius, centerY - radius);
+
+    //Right
+    path.lineTo(size.width - radius, centerY - radius);
+    path.arcToPoint(Offset(size.width - radius, centerY + radius),
+        radius: Radius.circular(radius));
+    path.lineTo(centerX + radius, centerY + radius);
+
+    //Bottom
+    path.lineTo(centerX + radius, size.height - radius);
+    path.arcToPoint(Offset(centerX - radius, size.height - radius),
+        radius: Radius.circular(radius));
+    path.lineTo(centerX - radius, centerY + radius);
+
+    //Left
+    path.lineTo(radius, centerY + radius);
+    path.arcToPoint(Offset(radius, centerY - radius),
+        radius: Radius.circular(radius));
+    path.lineTo(centerX - radius, centerY - radius);
+
+    //Top
+    path.lineTo(centerX - radius, radius);
+    path.arcToPoint(Offset(centerX + radius, radius),
+        radius: Radius.circular(radius));
+    path.lineTo(centerX + radius, centerY - radius);
+
+    path.close();
+
+    canvas.drawPath(path, paint);
+  }
+
+  @override
+  bool shouldRepaint(CustomPainter oldDelegate) => false;
 }

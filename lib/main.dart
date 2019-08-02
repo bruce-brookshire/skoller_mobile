@@ -13,8 +13,8 @@ void main() {
   runApp(SkollerApp());
   //Allow currentTZ to cache through heuristic exploration before we need it
   TimeZoneManager.verifyTzDbActive();
-
-  // ErrorWidget.builder = (details) => Container();
+  
+  if (isProd) ErrorWidget.builder = (details) => Container();
 
   PackageInfo.fromPlatform()
       .then((info) => UIAssets.versionNumber = info.version);

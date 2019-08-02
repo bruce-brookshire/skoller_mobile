@@ -102,7 +102,8 @@ class _SignUpState extends State<SignUp> {
       } else {
         if ([422, 401].contains(response.status)) {
           DropdownBanner.showBanner(
-              text: 'A user already exists with that phone number or email. Try logging in!',
+              text:
+                  'A user already exists with that phone number or email. Try logging in!',
               color: SKColors.warning_red,
               textStyle: TextStyle(color: Colors.white));
         } else {
@@ -178,150 +179,181 @@ class _SignUpState extends State<SignUp> {
                     Row(
                       children: <Widget>[
                         Expanded(
-                          child: Container(
-                            margin: EdgeInsets.only(
-                                right: 4, bottom: 6, top: 24, left: 24),
-                            padding: EdgeInsets.symmetric(
-                                vertical: 4, horizontal: 8),
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(5),
-                              border: Border.all(color: SKColors.border_gray),
-                              boxShadow: [UIAssets.boxShadow],
-                            ),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              mainAxisSize: MainAxisSize.min,
-                              children: <Widget>[
-                                Text(
-                                  'First name',
-                                  style: TextStyle(
-                                      color: SKColors.skoller_blue,
-                                      fontSize: 12,
-                                      fontWeight: FontWeight.normal),
-                                ),
-                                CupertinoTextField(
-                                  padding: EdgeInsets.all(1),
-                                  controller: firstNameController,
-                                  style: TextStyle(
-                                      fontSize: 15, color: SKColors.dark_gray),
-                                  decoration: BoxDecoration(border: null),
-                                  textCapitalization: TextCapitalization.words,
-                                  autofocus: true,
-                                  onChanged: verifyState,
-                                  focusNode: firstNameFocus,
-                                ),
-                              ],
+                          child: GestureDetector(
+                            onTapUp: (details) => firstNameFocus.requestFocus(),
+                            child: Container(
+                              margin: EdgeInsets.only(
+                                  right: 4, bottom: 6, top: 24, left: 24),
+                              padding: EdgeInsets.symmetric(
+                                  vertical: 4, horizontal: 8),
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(5),
+                                border: Border.all(color: SKColors.border_gray),
+                                boxShadow: [UIAssets.boxShadow],
+                              ),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisSize: MainAxisSize.min,
+                                children: <Widget>[
+                                  Text(
+                                    'First name',
+                                    style: TextStyle(
+                                        color: SKColors.skoller_blue,
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.normal),
+                                  ),
+                                  CupertinoTextField(
+                                    padding: EdgeInsets.all(1),
+                                    controller: firstNameController,
+                                    style: TextStyle(
+                                        fontSize: 15,
+                                        color: SKColors.dark_gray),
+                                    decoration: BoxDecoration(border: null),
+                                    textCapitalization:
+                                        TextCapitalization.words,
+                                    textInputAction: TextInputAction.next,
+                                    onSubmitted: (_) =>
+                                        firstNameFocus.nextFocus(),
+                                    autofocus: true,
+                                    onChanged: verifyState,
+                                    focusNode: firstNameFocus,
+                                  ),
+                                ],
+                              ),
                             ),
                           ),
                         ),
                         Expanded(
-                          child: Container(
-                            margin: EdgeInsets.only(
-                                left: 4, bottom: 6, top: 24, right: 24),
-                            padding: EdgeInsets.symmetric(
-                                vertical: 4, horizontal: 8),
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(5),
-                              border: Border.all(color: SKColors.border_gray),
-                              boxShadow: [UIAssets.boxShadow],
-                            ),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              mainAxisSize: MainAxisSize.min,
-                              children: <Widget>[
-                                Text(
-                                  'Last name',
-                                  style: TextStyle(
-                                      color: SKColors.skoller_blue,
-                                      fontSize: 12,
-                                      fontWeight: FontWeight.normal),
-                                ),
-                                CupertinoTextField(
-                                  padding: EdgeInsets.all(1),
-                                  controller: lastNameController,
-                                  style: TextStyle(
-                                      fontSize: 15, color: SKColors.dark_gray),
-                                  decoration: BoxDecoration(border: null),
-                                  textCapitalization: TextCapitalization.words,
-                                  onChanged: verifyState,
-                                  focusNode: lastNameFocus,
-                                ),
-                              ],
+                          child: GestureDetector(
+                            onTapUp: (details) => lastNameFocus.requestFocus(),
+                            child: Container(
+                              margin: EdgeInsets.only(
+                                  left: 4, bottom: 6, top: 24, right: 24),
+                              padding: EdgeInsets.symmetric(
+                                  vertical: 4, horizontal: 8),
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(5),
+                                border: Border.all(color: SKColors.border_gray),
+                                boxShadow: [UIAssets.boxShadow],
+                              ),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisSize: MainAxisSize.min,
+                                children: <Widget>[
+                                  Text(
+                                    'Last name',
+                                    style: TextStyle(
+                                        color: SKColors.skoller_blue,
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.normal),
+                                  ),
+                                  CupertinoTextField(
+                                    padding: EdgeInsets.all(1),
+                                    controller: lastNameController,
+                                    style: TextStyle(
+                                        fontSize: 15,
+                                        color: SKColors.dark_gray),
+                                    decoration: BoxDecoration(border: null),
+                                    textCapitalization:
+                                        TextCapitalization.words,
+                                    textInputAction: TextInputAction.next,
+                                    onSubmitted: (_) =>
+                                        lastNameFocus.nextFocus(),
+                                    onChanged: verifyState,
+                                    focusNode: lastNameFocus,
+                                  ),
+                                ],
+                              ),
                             ),
                           ),
                         ),
                       ],
                     ),
-                    Container(
-                      margin: EdgeInsets.symmetric(vertical: 6, horizontal: 24),
-                      padding: EdgeInsets.symmetric(vertical: 4, horizontal: 8),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(5),
-                        border: Border.all(color: SKColors.border_gray),
-                        boxShadow: [UIAssets.boxShadow],
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisSize: MainAxisSize.min,
-                        children: <Widget>[
-                          Text(
-                            'Email',
-                            style: TextStyle(
-                                color: SKColors.skoller_blue,
-                                fontSize: 12,
-                                fontWeight: FontWeight.normal),
-                          ),
-                          CupertinoTextField(
-                            padding: EdgeInsets.all(1),
-                            controller: emailController,
-                            style: TextStyle(
-                                fontSize: 15, color: SKColors.dark_gray),
-                            placeholder: 'School email recommended',
-                            placeholderStyle: TextStyle(
-                                fontSize: 14, color: SKColors.text_light_gray),
-                            decoration: BoxDecoration(border: null),
-                            textCapitalization: TextCapitalization.none,
-                            onChanged: verifyState,
-                            focusNode: emailFocus,
-                          ),
-                        ],
+                    GestureDetector(
+                      onTapUp: (details) => emailFocus.requestFocus(),
+                      child: Container(
+                        margin:
+                            EdgeInsets.symmetric(vertical: 6, horizontal: 24),
+                        padding:
+                            EdgeInsets.symmetric(vertical: 4, horizontal: 8),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(5),
+                          border: Border.all(color: SKColors.border_gray),
+                          boxShadow: [UIAssets.boxShadow],
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisSize: MainAxisSize.min,
+                          children: <Widget>[
+                            Text(
+                              'Email',
+                              style: TextStyle(
+                                  color: SKColors.skoller_blue,
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.normal),
+                            ),
+                            CupertinoTextField(
+                              padding: EdgeInsets.all(1),
+                              controller: emailController,
+                              style: TextStyle(
+                                  fontSize: 15, color: SKColors.dark_gray),
+                              placeholder: 'School email recommended',
+                              placeholderStyle: TextStyle(
+                                  fontSize: 14,
+                                  color: SKColors.text_light_gray),
+                              decoration: BoxDecoration(border: null),
+                              textCapitalization: TextCapitalization.none,
+                              textInputAction: TextInputAction.next,
+                              onSubmitted: (_) => emailFocus.nextFocus(),
+                              onChanged: verifyState,
+                              focusNode: emailFocus,
+                            ),
+                          ],
+                        ),
                       ),
                     ),
-                    Container(
-                      margin: EdgeInsets.symmetric(vertical: 6, horizontal: 24),
-                      padding: EdgeInsets.symmetric(vertical: 4, horizontal: 8),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(5),
-                        border: Border.all(color: SKColors.border_gray),
-                        boxShadow: [UIAssets.boxShadow],
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisSize: MainAxisSize.min,
-                        children: <Widget>[
-                          Text(
-                            'Phone',
-                            style: TextStyle(
-                                color: SKColors.skoller_blue,
-                                fontSize: 12,
-                                fontWeight: FontWeight.normal),
-                          ),
-                          CupertinoTextField(
-                            padding: EdgeInsets.all(1),
-                            controller: phoneController,
-                            inputFormatters: [USNumberTextInputFormatter()],
-                            style: TextStyle(
-                                fontSize: 15, color: SKColors.dark_gray),
-                            decoration: BoxDecoration(border: null),
-                            keyboardType: TextInputType.phone,
-                            onChanged: verifyState,
-                            focusNode: phoneFocus,
-                          ),
-                        ],
+                    GestureDetector(
+                      onTapUp: (details) => phoneFocus.requestFocus(),
+                      child: Container(
+                        margin:
+                            EdgeInsets.symmetric(vertical: 6, horizontal: 24),
+                        padding:
+                            EdgeInsets.symmetric(vertical: 4, horizontal: 8),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(5),
+                          border: Border.all(color: SKColors.border_gray),
+                          boxShadow: [UIAssets.boxShadow],
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisSize: MainAxisSize.min,
+                          children: <Widget>[
+                            Text(
+                              'Phone',
+                              style: TextStyle(
+                                  color: SKColors.skoller_blue,
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.normal),
+                            ),
+                            CupertinoTextField(
+                              padding: EdgeInsets.all(1),
+                              controller: phoneController,
+                              inputFormatters: [USNumberTextInputFormatter()],
+                              style: TextStyle(
+                                  fontSize: 15, color: SKColors.dark_gray),
+                              decoration: BoxDecoration(border: null),
+                              keyboardType: TextInputType.phone,
+                              textInputAction: TextInputAction.next,
+                              onSubmitted: (_) => phoneFocus.unfocus(),
+                              onChanged: verifyState,
+                              focusNode: phoneFocus,
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                     Padding(
