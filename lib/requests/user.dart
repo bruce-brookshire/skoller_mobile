@@ -36,6 +36,7 @@ class SKUser {
     int notificationDays,
     bool isAssignmentPostNotifications,
     School primarySchool,
+    List<int> fieldsOfStudy,
   }) {
     Map<String, dynamic> params = {'id': this.student.id};
 
@@ -74,6 +75,8 @@ class SKUser {
     if (primarySchool != null &&
         primarySchool.id != this.student.primarySchool?.id)
       params['primary_school_id'] = primarySchool.id;
+
+    if (fieldsOfStudy != null) params['fields_of_study'] = fieldsOfStudy;
 
     if (params.length == 1) {
       return Future.value(true);

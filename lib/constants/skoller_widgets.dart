@@ -804,115 +804,102 @@ class SKAlertDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    List<Widget> children = [];
-
-    children.add(
-      Padding(
-        padding: EdgeInsets.only(top: 12, left: 4, right: 4),
-        child: Text(
-          title,
-          textAlign: TextAlign.center,
-          style: TextStyle(fontSize: 16),
-        ),
-      ),
-    );
-
-    if (subTitle != null) {
-      children.add(
-        Padding(
-          padding: EdgeInsets.symmetric(vertical: 4, horizontal: 12),
-          child: Text(
-            subTitle,
-            textAlign: TextAlign.center,
-            style: TextStyle(
-                fontWeight: FontWeight.normal,
-                fontSize: 12,
-                color: SKColors.light_gray),
-          ),
-        ),
-      );
-    }
-
-    if (child != null) {
-      children.add(
-        Container(
-          child: null,
-          margin: EdgeInsets.only(top: 4, bottom: 12),
-          height: 1,
-          color: SKColors.border_gray,
-        ),
-      );
-
-      children.add(child);
-    }
-
-    children.add(
-      Row(
-        children: <Widget>[
-          Expanded(
-            child: GestureDetector(
-              behavior: HitTestBehavior.opaque,
-              onTapUp: (details) => Navigator.pop(context, false),
-              child: Container(
-                decoration: BoxDecoration(
-                  // borderRadius: BorderRadius.only(
-                  //   bottomLeft: Radius.circular(0),
-                  //   bottomRight: Radius.circular(0),
-                  //   topLeft: Radius.circular(0),
-                  //   topRight: Radius.circular(0),
-                  // ),
-                  border: Border(
-                    right: BorderSide(color: SKColors.border_gray, width: 0.5),
-                    top: BorderSide(color: SKColors.border_gray, width: 1),
-                  ),
-                ),
-                padding: EdgeInsets.symmetric(vertical: 12),
-                child: Text(
-                  cancelText ?? 'Cancel',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                      color: SKColors.skoller_blue,
-                      fontWeight: FontWeight.normal),
-                ),
-              ),
-            ),
-          ),
-          Expanded(
-            child: GestureDetector(
-              onTapUp: (details) => Navigator.pop(
-                context,
-                getResults == null ? true : getResults(),
-              ),
-              child: Container(
-                decoration: BoxDecoration(
-                  // borderRadius: BorderRadius.only(
-                  //   bottomRight: Radius.circular(10),
-                  // ),
-                  border: Border(
-                    left: BorderSide(color: SKColors.border_gray, width: 0.5),
-                    top: BorderSide(color: SKColors.border_gray, width: 1),
-                  ),
-                ),
-                padding: EdgeInsets.symmetric(vertical: 12),
-                child: Text(
-                  confirmText ?? 'Select',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(color: SKColors.skoller_blue, fontSize: 15),
-                ),
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-
     return Dialog(
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.all(Radius.circular(10)),
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
-        children: children,
+        children: [
+          Padding(
+            padding: EdgeInsets.only(top: 12, left: 4, right: 4),
+            child: Text(
+              title,
+              textAlign: TextAlign.center,
+              style: TextStyle(fontSize: 16),
+            ),
+          ),
+          if (subTitle != null)
+            Padding(
+              padding: EdgeInsets.symmetric(vertical: 4, horizontal: 12),
+              child: Text(
+                subTitle,
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                    fontWeight: FontWeight.normal,
+                    fontSize: 12,
+                    color: SKColors.light_gray),
+              ),
+            ),
+          if (child != null)
+            Container(
+              child: null,
+              margin: EdgeInsets.only(top: 4, bottom: 12),
+              height: 1,
+              color: SKColors.border_gray,
+            ),
+          if (child != null) child,
+          Row(
+            children: <Widget>[
+              Expanded(
+                child: GestureDetector(
+                  behavior: HitTestBehavior.opaque,
+                  onTapUp: (details) => Navigator.pop(context, false),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      // borderRadius: BorderRadius.only(
+                      //   bottomLeft: Radius.circular(0),
+                      //   bottomRight: Radius.circular(0),
+                      //   topLeft: Radius.circular(0),
+                      //   topRight: Radius.circular(0),
+                      // ),
+                      border: Border(
+                        right:
+                            BorderSide(color: SKColors.border_gray, width: 0.5),
+                        top: BorderSide(color: SKColors.border_gray, width: 1),
+                      ),
+                    ),
+                    padding: EdgeInsets.symmetric(vertical: 12),
+                    child: Text(
+                      cancelText ?? 'Cancel',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                          color: SKColors.skoller_blue,
+                          fontWeight: FontWeight.normal),
+                    ),
+                  ),
+                ),
+              ),
+              Expanded(
+                child: GestureDetector(
+                  onTapUp: (details) => Navigator.pop(
+                    context,
+                    getResults == null ? true : getResults(),
+                  ),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      // borderRadius: BorderRadius.only(
+                      //   bottomRight: Radius.circular(10),
+                      // ),
+                      border: Border(
+                        left:
+                            BorderSide(color: SKColors.border_gray, width: 0.5),
+                        top: BorderSide(color: SKColors.border_gray, width: 1),
+                      ),
+                    ),
+                    padding: EdgeInsets.symmetric(vertical: 12),
+                    child: Text(
+                      confirmText ?? 'Select',
+                      textAlign: TextAlign.center,
+                      style:
+                          TextStyle(color: SKColors.skoller_blue, fontSize: 15),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ],
       ),
     );
   }

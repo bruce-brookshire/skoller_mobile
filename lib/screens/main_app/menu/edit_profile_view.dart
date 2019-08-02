@@ -75,8 +75,7 @@ class _EditProfileState extends State<EditProfileView> {
       title: 'Edit Profile',
       rightBtn: Text(
         'Save',
-        style: TextStyle(
-            color: SKColors.skoller_blue, fontWeight: FontWeight.normal),
+        style: TextStyle(color: SKColors.skoller_blue),
       ),
       callbackRight: tappedSave,
       children: <Widget>[
@@ -353,6 +352,39 @@ class _MajorSelectorState extends State<_MajorSelector> {
     setState(() {});
   }
 
+  void tappedSave(TapUpDetails details) async {
+    final loader = SKLoadingScreen.fadeIn(context);
+
+    final success = await SKUser.current.update(
+      fieldsOfStudy: selectedFields.keys.toList(),
+    );
+
+    loader.dismiss();
+
+    if (success) {
+      DropdownBanner.showBanner(
+          text: 'Saved your new fields of study!', color: SKColors.success);
+      Navigator.pop(context);
+    } else
+      DropdownBanner.showBanner(
+          text: 'Unable to save your updated information. Tap to try again.',
+          color: SKColors.warning_red,
+          tapCallback: () => tappedSave(null));
+  }
+
+  void tappedDismiss(TapUpDetails details) async {
+    final shouldDismiss = await showDialog(
+      context: context,
+      builder: (newContext) => SKAlertDialog(
+        title: 'Are your sure?',
+        subTitle: 'Your changes have not been saved yet and will be lost.',
+        confirmText: 'Dismiss',
+      ),
+    );
+
+    if (shouldDismiss is bool && shouldDismiss) Navigator.pop(context);
+  }
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -371,6 +403,7 @@ class _MajorSelectorState extends State<_MajorSelector> {
                 Row(
                   children: <Widget>[
                     GestureDetector(
+                      onTapUp: tappedDismiss,
                       child: Container(
                         alignment: Alignment.centerLeft,
                         padding: EdgeInsets.only(left: 4),
@@ -386,9 +419,9 @@ class _MajorSelectorState extends State<_MajorSelector> {
                       ),
                     ),
                     GestureDetector(
+                      onTapUp: tappedSave,
                       child: Container(
                         alignment: Alignment.centerRight,
-                        padding: EdgeInsets.only(left: 4),
                         width: 44,
                         height: 28,
                         child: Text(

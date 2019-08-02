@@ -1,5 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.skoller">
+    package="com.skoller">
 
     <!-- io.flutter.app.FlutterApplication is an android.app.Application that
          calls FlutterMain.startInitialization(this); in its onCreate method.
@@ -11,6 +11,9 @@
         android:name="io.flutter.app.FlutterApplication"
         android:label="Skoller"
         android:icon="@mipmap/ic_launcher">
+
+        <meta-data android:name="com.facebook.sdk.ApplicationId" android:value="@string/facebook_app_id"/>
+        
         <activity
             android:name=".MainActivity"
             android:launchMode="singleTop"

@@ -44,10 +44,7 @@ class _ProfileState extends State<ProfileView> {
                       width: 32,
                       child: Text(
                         'Edit',
-                        style: TextStyle(
-                          color: SKColors.skoller_blue,
-                          fontWeight: FontWeight.normal,
-                        ),
+                        style: TextStyle(color: SKColors.skoller_blue),
                       ),
                     ),
                   )
