@@ -87,7 +87,7 @@ class _EditProfileState extends State<EditProfileView> {
               decoration: BoxDecoration(
                 color: SKColors.light_gray,
                 shape: BoxShape.circle,
-                image: SKUser.current.avatarUrl == null
+                image: SKUser.current?.avatarUrl == null
                     ? null
                     : DecorationImage(
                         fit: BoxFit.fill,

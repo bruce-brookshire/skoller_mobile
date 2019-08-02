@@ -67,8 +67,9 @@ class JsonListMaker {
 }
 
 class SKRequests {
-  static const String _environment =  isProd ? 'https://api.skoller.co' : 'https://api-staging.skoller.co'; //STAGING
-  // static const String _environment =  isProd ? 'https://api.skoller.co' : 'http://127.0.0.1:4000'; //STAGING
+  // static const String _environment =  isProd ? 'https://api.skoller.co' : 'https://api-staging.skoller.co'; //STAGING
+  static const String _environment =
+      isProd ? 'https://api.skoller.co' : 'http://127.0.0.1:4000'; //LOCAL
 
   static final String _baseUrl = '$_environment/api/v1';
 
@@ -306,11 +307,13 @@ class Auth {
       //Token is invalid, do we have the phone number?
       else if (userPhone != null) {
         //We do. Request the user to sign in again
-        final successfullyRequested = await requestLogin(userPhone);
+        final status = await requestLogin(userPhone);
         //Did the request complete correctly?
-        if (successfullyRequested)
+        if ([200, 204].contains(status))
           return LogInResponse.needsVerification;
         //Request failed, just have the user sign in again
+        else if (status == 404)
+          return LogInResponse.failed;
         else
           return LogInResponse.internetError;
       }
@@ -323,13 +326,13 @@ class Auth {
       return LogInResponse.failed;
   }
 
-  static Future<bool> requestLogin(String phone) {
+  static Future<int> requestLogin(String phone) {
     return SKRequests.post(
       '/students/login',
       {"phone": phone},
       null,
     ).then((onValue) {
-      return onValue.wasSuccessful();
+      return onValue.status;
     });
   }
 

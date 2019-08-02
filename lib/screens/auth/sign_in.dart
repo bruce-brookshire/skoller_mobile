@@ -16,14 +16,11 @@ class SignIn extends StatefulWidget {
 class _SignInState extends State<SignIn> {
   final phoneNumberController = TextEditingController();
 
-
-
   @override
   void dispose() {
     super.dispose();
     phoneNumberController.dispose();
   }
-
 
   void tappedLogIn(BuildContext context) async {
     final trimStr =
@@ -37,9 +34,9 @@ class _SignInState extends State<SignIn> {
       return;
     }
 
-    final success = await Auth.requestLogin(trimStr);
+    final status = await Auth.requestLogin(trimStr);
 
-    if (success) {
+    if ([200, 204].contains(status)) {
       final bool result = await showDialog(
         context: context,
         builder: (context) => PhoneVerificationView(phoneNumberController.text),
@@ -54,12 +51,26 @@ class _SignInState extends State<SignIn> {
           options: AppState.main,
         );
       }
-    } else {
+    } else if (status == 404) {
+      DropdownBanner.showBanner(
+          text: 'User does not exist. Tap to sign up!',
+          color: SKColors.warning_red,
+          tapCallback: () => tappedSignUp(null),
+          textStyle: TextStyle(color: Colors.white));
+    } else
       DropdownBanner.showBanner(
           text: 'Failed to log in',
           color: SKColors.warning_red,
           textStyle: TextStyle(color: Colors.white));
-    }
+  }
+
+  void tappedSignUp(TapUpDetails details) {
+    Navigator.pushReplacement(
+      context,
+      CupertinoPageRoute(
+        builder: (context) => SignUp(),
+      ),
+    );
   }
 
   @override
@@ -123,12 +134,7 @@ class _SignInState extends State<SignIn> {
                             style: TextStyle(color: SKColors.dark_gray),
                           ),
                           GestureDetector(
-                            onTapUp: (details) => Navigator.pushReplacement(
-                              context,
-                              CupertinoPageRoute(
-                                builder: (context) => SignUp(),
-                              ),
-                            ),
+                            onTapUp: tappedSignUp,
                             child: Text(
                               ' Sign Up',
                               style: TextStyle(
