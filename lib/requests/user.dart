@@ -36,6 +36,7 @@ class SKUser {
     int notificationDays,
     bool isAssignmentPostNotifications,
     School primarySchool,
+    Period primaryPeriod,
     List<int> fieldsOfStudy,
   }) {
     Map<String, dynamic> params = {'id': this.student.id};
@@ -75,6 +76,10 @@ class SKUser {
     if (primarySchool != null &&
         primarySchool.id != this.student.primarySchool?.id)
       params['primary_school_id'] = primarySchool.id;
+
+    if (primaryPeriod != null &&
+        primaryPeriod.id != this.student.primaryPeriod?.id)
+      params['primary_period_id'] = primaryPeriod.id;
 
     if (fieldsOfStudy != null) params['fields_of_study'] = fieldsOfStudy;
 
@@ -120,6 +125,7 @@ class Student {
   List<FieldsOfStudy> fieldsOfStudy;
 
   School primarySchool;
+  Period primaryPeriod;
 
   DateTime notificationTime;
   DateTime futureNotificationTime;
@@ -162,8 +168,13 @@ class Student {
     bio = content['bio'];
     organizations = content['organization'];
     enrollmentLink = content['enrollment_link'];
+
     primarySchool = content['primary_school'] != null
         ? School._fromJsonObj(content['primary_school'])
+        : null;
+
+    primaryPeriod = content['primary_period'] != null
+        ? Period._fromJsonObj(content['primary_period'])
         : null;
 
     final utcNow = DateTime.now().toUtc();

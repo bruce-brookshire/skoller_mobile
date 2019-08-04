@@ -28,51 +28,27 @@ class _AddClassesState extends State<AddClassesView> {
   void initState() {
     super.initState();
 
-    List<Period> periods = (SKUser.current.student.primarySchool.periods ?? [])
-      ..sort(
-        (p1, p2) {
-          if (p1.startDate == null && p2.startDate == null) {
-            return p1.name.compareTo(p2.name);
-          } else if (p1.startDate == null) {
-            return 1;
-          } else if (p2.startDate == null) {
-            return -1;
-          } else {
-            return p1.startDate.compareTo(p2.startDate);
-          }
-        },
-      );
-
-    final findSemester = (int status) {
-      for (final Period period in periods) {
-        if (period.periodStatusId == status && period.isMainPeriod) {
-          return period;
-        }
-      }
-      return null;
-    };
-
-    activePeriod = findSemester(200);
-
-    if (activePeriod == null) {
-      activePeriod = findSemester(400);
-    }
+    activePeriod = SKUser.current.student.primaryPeriod ??
+        SKUser.current.student.primarySchool?.getBestCurrentPeriod();
 
     DartNotificationCenter.subscribe(
-        observer: this,
-        channel: NotificationChannels.classChanged,
-        onNotification: (options) => SchoolClass.searchSchoolClasses(
-              searchController.text.trim(),
-              activePeriod,
-            ).then((response) {
-              _currentTimer = null;
+      observer: this,
+      channel: NotificationChannels.classChanged,
+      onNotification: (options) => SchoolClass.searchSchoolClasses(
+        searchController.text.trim(),
+        activePeriod,
+      ).then(
+        (response) {
+          _currentTimer = null;
 
-              if (response.wasSuccessful() && mounted) {
-                setState(() {
-                  searchedClasses = response.obj;
-                });
-              }
-            }));
+          if (response.wasSuccessful() && mounted) {
+            setState(() {
+              searchedClasses = response.obj;
+            });
+          }
+        },
+      ),
+    );
   }
 
   @override

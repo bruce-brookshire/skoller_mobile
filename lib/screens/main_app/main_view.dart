@@ -29,7 +29,8 @@ class _MainState extends State<MainView> {
 
   @override
   void initState() {
-    if (SKUser.current.student.primarySchool == null) {
+    if (SKUser.current.student.primarySchool == null ||
+        SKUser.current.student.primaryPeriod == null) {
       Timer(
           Duration(milliseconds: 50),
           () => {

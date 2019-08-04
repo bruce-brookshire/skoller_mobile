@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:dart_notification_center/dart_notification_center.dart';
 import 'package:skoller/requests/requests_core.dart';
 import 'package:firebase_analytics/observer.dart';
@@ -14,14 +16,6 @@ import 'tasks/tasks_view.dart';
 class SKTabBar extends StatefulWidget {
   @override
   _SKTabBarState createState() => _SKTabBarState();
-}
-
-class OBS extends RouteObserver<PageRoute<dynamic>> {
-  @override
-  void didPush(Route route, Route previousRoute) {
-    super.didPush(route, previousRoute);
-    print(route.settings.name);
-  }
 }
 
 class _SKTabBarState extends State<SKTabBar> {
@@ -58,7 +52,10 @@ class _SKTabBarState extends State<SKTabBar> {
   ];
 
   List<bool> _indexNeedsDot = [false, false, false, false, false];
-  int _selectedIndex;
+
+  var controller = CupertinoTabController(
+      initialIndex: StudentClass.currentClasses.length == 0 ? 3 : 0);
+  // int currentIndex = StudentClass.currentClasses.length == 0 ? 3 : 0;
 
   @override
   void initState() {
@@ -74,12 +71,22 @@ class _SKTabBarState extends State<SKTabBar> {
       },
     );
 
+    DartNotificationCenter.subscribe(
+      observer: this,
+      channel: NotificationChannels.selectTab,
+      onNotification: (index) {
+        controller.index = index;
+        // currentIndex = index;
+      },
+    );
+
     SchedulerBinding.instance.addPostFrameCallback(afterFirstLayout);
   }
 
   @override
   void dispose() {
     DartNotificationCenter.unsubscribe(observer: this);
+    controller.dispose();
     super.dispose();
   }
 
@@ -108,19 +115,14 @@ class _SKTabBarState extends State<SKTabBar> {
 
   @override
   Widget build(BuildContext context) {
-    if (_selectedIndex == null) {
-      if (StudentClass.currentClasses.length == 0) {
-        _selectedIndex = 3;
-      } else {
-        _selectedIndex = 0;
-      }
-    }
+    print('building');
     return WillPopScope(
       onWillPop: () async {
-        _navigatorKeys[_selectedIndex].currentState.maybePop();
+        _navigatorKeys[controller.index].currentState.maybePop();
         return false;
       },
       child: CupertinoTabScaffold(
+        controller: controller,
         tabBuilder: (context, index) {
           return CupertinoTabView(
               navigatorKey: _navigatorKeys[index],
@@ -132,8 +134,8 @@ class _SKTabBarState extends State<SKTabBar> {
         tabBar: CupertinoTabBar(
           backgroundColor: Colors.white,
           items: List.generate(5, createTabIndex),
-          currentIndex: _selectedIndex,
           onTap: _onItemTapped,
+          currentIndex: controller.index,
         ),
       ),
     );
@@ -143,7 +145,7 @@ class _SKTabBarState extends State<SKTabBar> {
     if (!_indexNeedsDot[index])
       return BottomNavigationBarItem(
         icon: Image.asset(
-            'image_assets/tab_bar_assets/${_indexIconPartialPaths[index]}${_selectedIndex == index ? 'blue' : 'gray'}.png'),
+            'image_assets/tab_bar_assets/${_indexIconPartialPaths[index]}${controller.index == index ? 'blue' : 'gray'}.png'),
       );
     else
       return BottomNavigationBarItem(
@@ -153,7 +155,7 @@ class _SKTabBarState extends State<SKTabBar> {
               alignment: Alignment.center,
               child: Container(
                 child: Image.asset(
-                    'image_assets/tab_bar_assets/${_indexIconPartialPaths[index]}${_selectedIndex == index ? 'blue' : 'gray'}.png'),
+                    'image_assets/tab_bar_assets/${_indexIconPartialPaths[index]}${controller.index == index ? 'blue' : 'gray'}.png'),
               ),
             ),
             Align(
@@ -174,8 +176,10 @@ class _SKTabBarState extends State<SKTabBar> {
   }
 
   void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
+    _navigatorKeys[controller.index]
+        .currentState
+        ?.popUntil((route) => route.settings.isInitialRoute);
+
+    if (mounted) setState(() {});
   }
 }

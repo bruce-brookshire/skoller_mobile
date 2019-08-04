@@ -1,5 +1,6 @@
 import 'package:dart_notification_center/dart_notification_center.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:skoller/tools.dart';
 import './menu/school_search_view.dart';
 
@@ -10,38 +11,34 @@ class PrimarySchoolModal extends StatefulWidget {
 
 class _PrimarySchoolState extends State<PrimarySchoolModal> {
   List<School> eligibleSchools;
-  // List<Period> eligiblePeriods;
 
   int selectedSchoolId;
-  // int selectedPeriodId;
+  Period selectedPeriod;
 
   @override
   void initState() {
-    SKUser.current.checkEmailDomain().then((response) async {
-      if (response.wasSuccessful()) {
-        final List<School> obj = response.obj;
-
-        // if (obj.length == 1) {
-        //   final now = DateTime.now();
-        //   eligiblePeriods =
-        //       obj[0].periods == null ? null : obj[0].periods.toList()
-        //         ..removeWhere((period) => now.isAfter(period.endDate))
-        //         ..sort((period1, period2) {
-        //           return period2.startDate != null
-        //               ? (period1.startDate?.compareTo(period2.startDate) ?? -1)
-        //               : 1;
-        //         });
-        // await SKUser.current.update(primarySchool: obj.first);
-        // Navigator.pop(context);
-        // DartNotificationCenter.post(
-        //     channel: NotificationChannels.userChanged, options: obj.first);
-        // }
-        setState(() {
-          eligibleSchools = obj;
-        });
-      }
-    });
     super.initState();
+
+    if (SKUser.current.student.primarySchool != null) {
+      eligibleSchools = [SKUser.current.student.primarySchool];
+      selectedPeriod = eligibleSchools.first.getBestCurrentPeriod();
+    } else {
+      SKUser.current.checkEmailDomain().then((response) async {
+        if (response.wasSuccessful()) {
+          final List<School> obj = response.obj;
+
+          if (obj.length == 1) {
+            await SKUser.current.update(primarySchool: obj.first);
+            selectedSchoolId = obj.first.id;
+            selectedPeriod = obj.first.getBestCurrentPeriod();
+          }
+
+          setState(() {
+            eligibleSchools = obj;
+          });
+        }
+      });
+    }
   }
 
   void tappedSearch(TapUpDetails details) async {
@@ -50,21 +47,66 @@ class _PrimarySchoolState extends State<PrimarySchoolModal> {
       SKNavFadeUpRoute(builder: (context) => SchoolSearchView()),
     );
 
-    if (SKUser.current.student.primarySchool != null) {
+    if (SKUser.current.student.primarySchool != null &&
+        SKUser.current.student.primaryPeriod != null)
       Navigator.pop(context);
-    }
+    else if (SKUser.current.student.primarySchool != null)
+      setState(() {
+        eligibleSchools = [SKUser.current.student.primarySchool];
+        selectedPeriod = eligibleSchools.first.getBestCurrentPeriod();
+      });
   }
 
-  void tappedSelect(TapUpDetails details) async {
-    if (selectedSchoolId == null) return;
+  void tappedPeriodSelect(TapUpDetails detail) {
+    final now = DateTime.now();
 
-    final school =
-        eligibleSchools.firstWhere((school) => school.id == selectedSchoolId);
+    final eligiblePeriods = eligibleSchools.first.periods == null
+        ? null
+        : eligibleSchools.first.periods.toList()
+      ..removeWhere((period) => now.isAfter(period.endDate))
+      ..sort(
+        (period1, period2) {
+          return period2.startDate != null
+              ? (period1.startDate?.compareTo(period2.startDate) ?? -1)
+              : 1;
+        },
+      );
 
-    await SKUser.current.update(primarySchool: school);
-    Navigator.pop(context);
-    DartNotificationCenter.post(
-        channel: NotificationChannels.userChanged, options: school);
+    showDialog(
+      barrierDismissible: false,
+      context: context,
+      builder: (context) => SKPickerModal(
+        title: 'Active term',
+        subtitle: 'Which term are you using Skoller for right now?',
+        onSelect: (index) =>
+            setState(() => selectedPeriod = eligiblePeriods[index]),
+        items: eligiblePeriods.toList().map((p) => p.name).toList(),
+      ),
+    );
+  }
+
+  void tappedSchoolSelect(TapUpDetails details) async {
+    if (selectedPeriod != null) {
+      final loader = SKLoadingScreen.fadeIn(context);
+      await SKUser.current.update(primaryPeriod: selectedPeriod);
+      loader.dismiss();
+
+      Navigator.pop(context);
+    } else if (selectedSchoolId != null) {
+      final school =
+          eligibleSchools.firstWhere((school) => school.id == selectedSchoolId);
+
+      await SKUser.current.update(primarySchool: school);
+
+      if (SKUser.current.student.primaryPeriod != null &&
+          SKUser.current.student.primarySchool != null)
+        Navigator.pop(context);
+      else
+        setState(() {
+          eligibleSchools = [SKUser.current.student.primarySchool];
+          selectedPeriod = eligibleSchools.first.getBestCurrentPeriod();
+        });
+    }
   }
 
   @override
@@ -184,20 +226,13 @@ class _PrimarySchoolState extends State<PrimarySchoolModal> {
 
   List<Widget> buildSingle() {
     final school = eligibleSchools[0];
-    // final period = eligiblePeriods.length == 0
-    //     ? null
-    //     : (selectedPeriodId == null
-    //         ? eligiblePeriods.first
-    //         : (eligiblePeriods.firstWhere((p) => p.id == selectedPeriodId) ??
-    //             eligiblePeriods.first));
+    final period = selectedPeriod;
 
-    if (selectedSchoolId != school.id) selectedSchoolId = school.id;
-
-    // final formatter = DateFormat('MMMM');
-    // final start =
-    //     period?.startDate == null ? null : formatter.format(period.startDate);
-    // final end =
-    //     period?.endDate == null ? null : formatter.format(period.endDate);
+    final formatter = DateFormat('MMMM');
+    final start =
+        period?.startDate == null ? null : formatter.format(period.startDate);
+    final end =
+        period?.endDate == null ? null : formatter.format(period.endDate);
 
     return [
       Padding(
@@ -234,7 +269,7 @@ class _PrimarySchoolState extends State<PrimarySchoolModal> {
               ),
             ),
             GestureDetector(
-              onTapUp: (details) => setState(() => eligibleSchools = []),
+              onTapUp: tappedSearch,
               child: Container(
                 margin: EdgeInsets.symmetric(vertical: 4, horizontal: 4),
                 padding: EdgeInsets.all(8),
@@ -273,74 +308,58 @@ class _PrimarySchoolState extends State<PrimarySchoolModal> {
                 ),
               ),
             ),
-            // if (period != null)
-            //   Padding(
-            //     padding: EdgeInsets.only(left: 6, top: 8),
-            //     child: Text(
-            //       'Term',
-            //       style: TextStyle(fontSize: 14),
-            //     ),
-            //   ),
-            // if (period != null)
-            //   GestureDetector(
-            //     onTapUp: (details) {
-            //       showDialog(
-            //         barrierDismissible: false,
-            //         context: context,
-            //         builder: (context) => SKPickerModal(
-            //           title: 'Active term',
-            //           subtitle:
-            //               'Which term are you using Skoller for right now?',
-            //           onSelect: (index) => setState(
-            //               () => selectedPeriodId = eligiblePeriods[index].id),
-            //           items: eligiblePeriods.toList().map((p) => p.name),
-            //         ),
-            //       );
-            //     },
-            //     child: Container(
-            //       margin: EdgeInsets.symmetric(vertical: 4, horizontal: 4),
-            //       padding: EdgeInsets.all(8),
-            //       decoration: BoxDecoration(
-            //           color: Colors.white,
-            //           borderRadius: BorderRadius.circular(5),
-            //           border: Border.all(color: SKColors.border_gray),
-            //           boxShadow: [UIAssets.boxShadow]),
-            //       child: Row(
-            //         children: [
-            //           Expanded(
-            //             child: Column(
-            //               mainAxisSize: MainAxisSize.min,
-            //               crossAxisAlignment: CrossAxisAlignment.start,
-            //               children: [
-            //                 Text(
-            //                   eligiblePeriods[0].name,
-            //                   style: TextStyle(color: school.color),
-            //                 ),
-            //                 Text(
-            //                   '${start ?? ''} to ${end ?? 'N/A'}',
-            //                   style: TextStyle(
-            //                       color: SKColors.light_gray,
-            //                       fontSize: 14,
-            //                       fontWeight: FontWeight.normal),
-            //                 ),
-            //               ],
-            //             ),
-            //           ),
-            //           Padding(
-            //             padding: EdgeInsets.symmetric(horizontal: 4),
-            //             child: Image.asset(
-            //                 ImageNames.navArrowImages.dropdown_blue),
-            //           )
-            //         ],
-            //       ),
-            //     ),
-            //   ),
+            if (period != null)
+              Padding(
+                padding: EdgeInsets.only(left: 6, top: 8),
+                child: Text(
+                  'Term',
+                  style: TextStyle(fontSize: 14),
+                ),
+              ),
+            if (period != null)
+              GestureDetector(
+                onTapUp: tappedPeriodSelect,
+                child: Container(
+                  margin: EdgeInsets.symmetric(vertical: 4, horizontal: 4),
+                  padding: EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(5),
+                      border: Border.all(color: SKColors.border_gray),
+                      boxShadow: [UIAssets.boxShadow]),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(period.name),
+                            Text(
+                              '${start ?? ''} to ${end ?? 'N/A'}',
+                              style: TextStyle(
+                                  color: SKColors.light_gray,
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.normal),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 4),
+                        child: Image.asset(
+                            ImageNames.navArrowImages.dropdown_blue),
+                      )
+                    ],
+                  ),
+                ),
+              ),
           ],
         ),
       ),
       GestureDetector(
         onTapUp: (details) {
-          tappedSelect(null);
+          tappedSchoolSelect(null);
         },
         child: Container(
           alignment: Alignment.center,
@@ -426,10 +445,21 @@ class _PrimarySchoolState extends State<PrimarySchoolModal> {
         ),
       ),
       GestureDetector(
-        onTapUp: tappedSelect,
+        onTapUp: tappedSearch,
+        child: Padding(
+          padding: EdgeInsets.only(top: 8, bottom: 4),
+          child: Text(
+            'Search for your school',
+            textAlign: TextAlign.center,
+            style: TextStyle(color: SKColors.skoller_blue),
+          ),
+        ),
+      ),
+      GestureDetector(
+        onTapUp: tappedSchoolSelect,
         child: Container(
           alignment: Alignment.center,
-          margin: EdgeInsets.fromLTRB(24, 24, 24, 16),
+          margin: EdgeInsets.fromLTRB(24, 12, 24, 4),
           padding: EdgeInsets.symmetric(vertical: 8),
           decoration: BoxDecoration(
             color: selectedSchoolId == null
@@ -447,14 +477,6 @@ class _PrimarySchoolState extends State<PrimarySchoolModal> {
           ),
         ),
       ),
-      GestureDetector(
-        onTapUp: (details) => setState(() => eligibleSchools = []),
-        child: Text(
-          'Search for your school',
-          textAlign: TextAlign.center,
-          style: TextStyle(color: SKColors.skoller_blue),
-        ),
-      )
     ];
   }
 }
