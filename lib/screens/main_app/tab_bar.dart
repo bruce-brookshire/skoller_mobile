@@ -115,7 +115,6 @@ class _SKTabBarState extends State<SKTabBar> {
 
   @override
   Widget build(BuildContext context) {
-    print('building');
     return WillPopScope(
       onWillPop: () async {
         _navigatorKeys[controller.index].currentState.maybePop();
@@ -135,7 +134,6 @@ class _SKTabBarState extends State<SKTabBar> {
           backgroundColor: Colors.white,
           items: List.generate(5, createTabIndex),
           onTap: _onItemTapped,
-          currentIndex: controller.index,
         ),
       ),
     );

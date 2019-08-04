@@ -143,29 +143,34 @@ class _CreateClassModalState extends State<CreateClassModal> {
 
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: Padding(
-        padding: EdgeInsets.fromLTRB(24, 0, 24, 0),
-        child: Material(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10),
-            side: BorderSide(color: SKColors.border_gray),
-          ),
-          child: Container(
-            decoration: BoxDecoration(borderRadius: BorderRadius.circular(10)),
-            height: 360,
-            child: PageView(
-              controller: pageController,
-              physics: NeverScrollableScrollPhysics(),
-              children: <Widget>[
-                _CreateClassScreenOne(this),
-                _CreateClassScreenTwo(this),
-                _CreateClassScreenThree(this),
-              ],
+    return Column(
+      children: [
+        SafeArea(
+          child: Padding(
+            padding: EdgeInsets.fromLTRB(24, 48, 24, 0),
+            child: Material(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10),
+                side: BorderSide(color: SKColors.border_gray),
+              ),
+              child: Container(
+                decoration:
+                    BoxDecoration(borderRadius: BorderRadius.circular(10)),
+                height: 360,
+                child: PageView(
+                  controller: pageController,
+                  physics: NeverScrollableScrollPhysics(),
+                  children: <Widget>[
+                    _CreateClassScreenOne(this),
+                    _CreateClassScreenTwo(this),
+                    _CreateClassScreenThree(this),
+                  ],
+                ),
+              ),
             ),
           ),
         ),
-      ),
+      ],
     );
   }
 }
