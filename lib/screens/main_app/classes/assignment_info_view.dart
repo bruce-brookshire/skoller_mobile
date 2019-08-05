@@ -6,6 +6,7 @@ import 'package:flutter/widgets.dart';
 import 'package:intl/intl.dart';
 import 'package:share/share.dart';
 import 'package:skoller/constants/constants.dart';
+import 'package:skoller/screens/main_app/classes/assignment_notes_modal.dart';
 import 'package:skoller/screens/main_app/classes/class_detail_view.dart';
 import 'package:skoller/screens/main_app/classes/student_profile_modal.dart';
 import 'package:skoller/screens/main_app/activity/update_info_view.dart';
@@ -72,127 +73,29 @@ class _AssignmentInfoState extends State<AssignmentInfoView> {
     });
   }
 
-  void tappedEditNotes(TapUpDetails details) async {
-    TextEditingController controller =
-        TextEditingController(text: assignment.notes);
-
-    final successful = await showDialog(
-      barrierDismissible: false,
-      context: context,
-      builder: (context) => Dialog(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.all(Radius.circular(10)),
+  void tappedEditNotes(TapUpDetails details) => showDialog(
+        barrierDismissible: false,
+        context: context,
+        builder: (context) => AssignmentNotesModal(
+          assignment.id,
+          (notes) {
+            assignment.saveNotes(notes == '' ? null : notes).then((success) {
+              if (success) {
+                setState(() {
+                  assignment.notes =
+                      Assignment.currentAssignments[assignment.id].notes;
+                });
+              } else {
+                DropdownBanner.showBanner(
+                  text: 'Failed to save notes',
+                  color: SKColors.warning_red,
+                  textStyle: TextStyle(color: Colors.white),
+                );
+              }
+            });
+          },
         ),
-        child: Container(
-          height: MediaQuery.of(context).size.height / 2,
-          decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(10),
-              border: Border.all(color: SKColors.border_gray)),
-          child: Column(
-            mainAxisSize: MainAxisSize.max,
-            children: [
-              Container(
-                padding: EdgeInsets.only(top: 16, bottom: 4),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    Expanded(
-                      flex: 1,
-                      child: GestureDetector(
-                        onTapUp: (details) {
-                          Navigator.pop(context, false);
-                        },
-                        child: Container(
-                          padding: EdgeInsets.only(left: 8),
-                          alignment: Alignment.centerLeft,
-                          child: Text(
-                            'Cancel',
-                            style: TextStyle(
-                              color: SKColors.warning_red,
-                              fontWeight: FontWeight.normal,
-                              fontSize: 14,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                    Expanded(
-                      flex: 2,
-                      child: Text(
-                        'Personal Notes',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(fontSize: 17),
-                      ),
-                    ),
-                    Expanded(
-                      flex: 1,
-                      child: GestureDetector(
-                        onTapUp: (details) {
-                          Navigator.pop(context, true);
-                        },
-                        child: Container(
-                          padding: EdgeInsets.only(right: 8),
-                          alignment: Alignment.centerRight,
-                          child: Text(
-                            'Save',
-                            style: TextStyle(
-                              color: SKColors.skoller_blue,
-                              fontWeight: FontWeight.normal,
-                              fontSize: 14,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              Expanded(
-                child: Container(
-                  alignment: Alignment.topLeft,
-                  margin: EdgeInsets.all(8),
-                  child: CupertinoTextField(
-                    decoration: BoxDecoration(border: null),
-                    maxLength: 2000,
-                    maxLengthEnforced: true,
-                    autofocus: true,
-                    maxLines: null,
-                    keyboardType: TextInputType.multiline,
-                    controller: controller,
-                    placeholder: 'Add a note...',
-                    style: TextStyle(
-                        color: SKColors.dark_gray,
-                        fontSize: 15,
-                        fontWeight: FontWeight.normal),
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-
-    if (successful != null && successful) {
-      String notes = controller.text.trim();
-      assignment.saveNotes(notes == '' ? null : notes).then((success) {
-        if (success) {
-          setState(() {
-            assignment.notes =
-                Assignment.currentAssignments[assignment.id].notes;
-          });
-        } else {
-          DropdownBanner.showBanner(
-            text: 'Failed to save notes',
-            color: SKColors.warning_red,
-            textStyle: TextStyle(color: Colors.white),
-          );
-        }
-      });
-    }
-
-    controller.dispose();
-  }
+      );
 
   void tappedGradeSelector() async {
     final results = await showDialog(
@@ -929,9 +832,15 @@ class _AssignmentInfoState extends State<AssignmentInfoView> {
                       color: SKColors.skoller_blue,
                       borderRadius: BorderRadius.circular(5),
                       boxShadow: [UIAssets.boxShadow]),
-                  child: Text(
-                    assignment.parentClass.enrollmentLink,
-                    style: TextStyle(color: Colors.white),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Padding(padding: EdgeInsets.only(right: 4), child: Image.asset(ImageNames.peopleImages.people_white),),
+                      Text(
+                        'Share this class',
+                        style: TextStyle(color: Colors.white),
+                      ),
+                    ],
                   ),
                 ),
               )

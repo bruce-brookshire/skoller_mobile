@@ -17,3 +17,5 @@ typedef void IntCallback(int index);
 typedef void ProfessorCallback(Professor professor);
 
 typedef dynamic DynamicCallback();
+
+typedef StringCallback(String string);

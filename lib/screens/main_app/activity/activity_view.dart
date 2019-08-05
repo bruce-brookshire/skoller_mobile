@@ -3,6 +3,7 @@ import 'package:dropdown_banner/dropdown_banner.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:skoller/screens/main_app/activity/update_info_view.dart';
+import 'package:skoller/screens/main_app/tutorial/activity_tutorial_view.dart';
 import '../../../requests/requests_core.dart';
 import 'package:skoller/constants/constants.dart';
 
@@ -92,6 +93,13 @@ class _ActivityState extends State<ActivityView> {
 
   @override
   Widget build(BuildContext context) {
+    if (!StudentClass.liveClassesAvailable)
+      return ActivityTutorialView(
+        () => DartNotificationCenter.post(
+            channel: NotificationChannels.selectTab, options: 3),
+        'Setup class',
+      );
+
     return SKNavView(
       title: 'Activity',
       leftBtn: SKHeaderProfilePhoto(),

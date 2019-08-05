@@ -6,6 +6,7 @@ import 'package:flutter/rendering.dart';
 import 'package:intl/intl.dart';
 import 'package:skoller/screens/main_app/classes/assignment_info_view.dart';
 import 'package:skoller/screens/main_app/classes/assignment_weight_view.dart';
+import 'package:skoller/screens/main_app/tutorial/calendar_tutorial_view.dart';
 import 'package:skoller/tools.dart';
 
 class CalendarView extends StatefulWidget {
@@ -146,6 +147,13 @@ class _CalendarState extends State<CalendarView> {
 
   @override
   Widget build(BuildContext context) {
+    if (!StudentClass.liveClassesAvailable)
+      return CalendarTutorialView(
+        () => DartNotificationCenter.post(
+            channel: NotificationChannels.selectTab, options: 3),
+        'Setup class',
+      );
+
     return SKNavView(
       leftBtn: SKHeaderProfilePhoto(),
       callbackLeft: () =>

@@ -43,7 +43,9 @@ class _AddClassesState extends State<AddClassesView> {
 
           if (response.wasSuccessful() && mounted) {
             setState(() {
-              searchedClasses = response.obj;
+              searchedClasses = (response.obj as List<SchoolClass>)
+                ..sort((s1, s2) =>
+                    (s2.enrollment ?? 0).compareTo(s1.enrollment ?? 0));
             });
           }
         },
@@ -98,7 +100,9 @@ class _AddClassesState extends State<AddClassesView> {
 
           if (response.wasSuccessful() && mounted) {
             setState(() {
-              searchedClasses = response.obj;
+              searchedClasses = (response.obj as List<SchoolClass>)
+                ..sort((s1, s2) =>
+                    (s2.enrollment ?? 0).compareTo(s1.enrollment ?? 0));
               isSearching = false;
             });
           }

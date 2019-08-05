@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:skoller/screens/main_app/chat/chat_inbox_view.dart';
 import 'package:skoller/screens/main_app/chat/chat_info_view.dart';
+import 'package:skoller/screens/main_app/tutorial/chat_tutorial_view.dart';
 import 'package:skoller/tools.dart';
 
 class ChatListView extends StatefulWidget {
@@ -299,6 +300,13 @@ class _ChatListState extends State<ChatListView> {
 
   @override
   Widget build(BuildContext context) {
+    if (!StudentClass.liveClassesAvailable)
+      return ChatTutorialView(
+        () => DartNotificationCenter.post(
+            channel: NotificationChannels.selectTab, options: 3),
+        'Setup class',
+      );
+
     // return Scaffold(
     //   backgroundColor: Colors.white,
     //   body: SafeArea(

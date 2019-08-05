@@ -12,8 +12,11 @@ class _SyllabusAction {
   final String imageName;
   final String primaryActionStr;
   final String secondaryActionStr;
+
   final VoidCallback primaryAction;
   final VoidCallback secondaryAction;
+
+  final String primaryActionImageName;
 
   _SyllabusAction({
     @required this.header,
@@ -24,6 +27,7 @@ class _SyllabusAction {
     this.secondaryActionStr,
     @required this.primaryAction,
     this.secondaryAction,
+    this.primaryActionImageName,
   });
 }
 
@@ -41,13 +45,14 @@ class ClassStatusModal extends StatelessWidget {
 
     if (statusId == ClassStatuses.syllabus_submitted) {
       status = _SyllabusAction(
-        header: 'You\'re in!',
-        subHeader: 'The syllabus is currently in review 🕙',
-        prompt: 'Check back in a few hours to find the class setup',
-        imageName: ImageNames.statusImages.in_review,
-        primaryActionStr: 'Enter Skoller',
-        primaryAction: () => Navigator.pop(context),
-      );
+          header: 'You\'re in!',
+          subHeader: 'The syllabus is currently in review 🕙',
+          prompt: 'Check back in a few hours to find the class setup',
+          imageName: ImageNames.statusImages.in_review,
+          primaryActionStr: 'Enter Skoller',
+          primaryAction: () => Navigator.pop(context, true),
+          secondaryActionStr: 'Join another class',
+          secondaryAction: () => Navigator.pop(context));
     } else if ([ClassStatuses.class_setup, ClassStatuses.class_issue]
             .contains(statusId) &&
         studentClass.enrollment < 4) {
@@ -56,8 +61,9 @@ class ClassStatusModal extends StatelessWidget {
         subHeader: 'And this class is already set up 🙌',
         prompt: 'Invite classmates using your class link 👇',
         imageName: ImageNames.statusImages.setup_community,
-        primaryActionStr: studentClass.enrollmentLink,
-        secondaryActionStr: 'Enter Skoller',
+        primaryActionImageName: ImageNames.peopleImages.people_white,
+        primaryActionStr: 'Share with classmates',
+        secondaryActionStr: 'Join another class',
         primaryAction: () {
           Share.share(
               'School is hard. But this new app called Skoller makes it easy! Our class ${studentClass.name ?? ''} is already in the app. Download so we can keep up together!\n\n${studentClass.enrollmentLink}');
@@ -73,6 +79,8 @@ class ClassStatusModal extends StatelessWidget {
         imageName: ImageNames.statusImages.setup_live,
         primaryActionStr: 'Enter Skoller',
         primaryAction: () => Navigator.pop(context, true),
+        secondaryActionStr: 'Join another class',
+        secondaryAction: () => Navigator.pop(context),
       );
     } else if ((studentClass.weights ?? []).length > 0) {
       status = _SyllabusAction(
@@ -163,10 +171,19 @@ class ClassStatusModal extends StatelessWidget {
                   color: SKColors.skoller_blue,
                   boxShadow: [UIAssets.boxShadow],
                 ),
-                child: Text(
-                  status.primaryActionStr,
-                  textAlign: TextAlign.center,
-                  style: TextStyle(color: Colors.white),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    if (status.primaryActionImageName != null)
+                    Padding(
+                      padding: EdgeInsets.only(right: 4),
+                      child: Image.asset(status.primaryActionImageName),),
+                    Text(
+                      status.primaryActionStr,
+                      textAlign: TextAlign.center,
+                      style: TextStyle(color: Colors.white),
+                    ),
+                  ],
                 ),
               ),
             ),

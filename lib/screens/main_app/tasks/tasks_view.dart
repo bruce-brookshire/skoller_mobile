@@ -5,6 +5,8 @@ import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:intl/intl.dart';
 import 'package:skoller/constants/constants.dart';
 import 'package:skoller/screens/main_app/activity/update_info_view.dart';
+import 'package:skoller/screens/main_app/menu/add_classes_view.dart';
+import 'package:skoller/screens/main_app/tutorial/tasks_tutorial_view.dart';
 import 'package:skoller/tools.dart';
 import '../classes/assignment_info_view.dart';
 import '../classes/assignment_weight_view.dart';
@@ -271,6 +273,14 @@ class _TasksState extends State<TasksView> {
 
   @override
   Widget build(BuildContext context) {
+    if (!StudentClass.liveClassesAvailable)
+      return TasksTutorialView(
+        () => DartNotificationCenter.post(
+            channel: NotificationChannels.selectTab,
+            options: 3),
+        'Setup class',
+      );
+
     String forecastStr;
     switch (forecast) {
       case Forecast.tenDay:

@@ -3,7 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:skoller/constants/constants.dart';
 import 'package:dart_notification_center/dart_notification_center.dart';
 import 'package:skoller/screens/main_app/menu/add_classes_view.dart';
-import 'package:skoller/screens/main_app/tutorial.dart';
+import 'package:skoller/screens/main_app/tutorial/tutorial.dart';
 import 'package:skoller/tools.dart';
 import 'dart:async';
 import 'tab_bar.dart';

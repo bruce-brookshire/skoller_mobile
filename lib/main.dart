@@ -13,8 +13,14 @@ void main() {
   runApp(SkollerApp());
   //Allow currentTZ to cache through heuristic exploration before we need it
   TimeZoneManager.verifyTzDbActive();
-  
-  if (isProd) ErrorWidget.builder = (details) => Container();
+
+  if (isProd)
+    ErrorWidget.builder = (details) => Container(
+          child: Text(
+            'Sorry, something wen\'t wrong 😔',
+            style: TextStyle(color: SKColors.dark_gray, fontWeight: FontWeight.bold, fontSize: 15),
+          ),
+        );
 
   PackageInfo.fromPlatform()
       .then((info) => UIAssets.versionNumber = info.version);

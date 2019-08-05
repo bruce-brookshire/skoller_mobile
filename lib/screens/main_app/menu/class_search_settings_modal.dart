@@ -65,9 +65,12 @@ class _ClassSearchSettingsModalState extends State<ClassSearchSettingsModal> {
       builder: (context) => SKPickerModal(
         title: 'Select semester',
         items: possiblePeriods.map((period) => period.name).toList(),
-        onSelect: (index) => setState(() {
-          period = possiblePeriods[index];
-        }),
+        onSelect: (index) async {
+          setState(() {
+            period = possiblePeriods[index];
+          });
+          SKUser.current.update(primaryPeriod: period);
+        },
       ),
     );
   }

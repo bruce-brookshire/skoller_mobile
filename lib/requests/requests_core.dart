@@ -67,9 +67,11 @@ class JsonListMaker {
 }
 
 class SKRequests {
-  // static const String _environment =  isProd ? 'https://api.skoller.co' : 'https://api-staging.skoller.co'; //STAGING
-  static const String _environment =
-      isProd ? 'https://api.skoller.co' : 'http://127.0.0.1:4000'; //LOCAL
+  static const String _environment = isProd
+      ? 'https://api.skoller.co'
+      : 'https://api-staging.skoller.co'; //STAGING
+  // static const String _environment =
+      // isProd ? 'https://api.skoller.co' : 'http://127.0.0.1:4000'; //LOCAL
 
   static final String _baseUrl = '$_environment/api/v1';
 

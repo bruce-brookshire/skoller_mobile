@@ -154,6 +154,8 @@ class _ClassDetailState extends State<ClassDetailView> {
   Widget build(BuildContext context) {
     final studentClass = this.studentClass;
 
+    if (studentClass == null) return Scaffold(backgroundColor: Colors.white);
+
     final grade = (studentClass.grade == null || studentClass.grade == 0)
         ? '-- %'
         : '${studentClass.grade}%';
@@ -252,7 +254,8 @@ class _ClassDetailState extends State<ClassDetailView> {
                                       CupertinoPageRoute(
                                         builder: (context) =>
                                             ClassInfoView(studentClass.id),
-                                        settings: RouteSettings(name: 'ClassInfoView'),
+                                        settings: RouteSettings(
+                                            name: 'ClassInfoView'),
                                       ));
                                 },
                                 child: SizedBox(
@@ -269,7 +272,8 @@ class _ClassDetailState extends State<ClassDetailView> {
                                   CupertinoPageRoute(
                                     builder: (context) =>
                                         AssignmentWeightView(studentClass.id),
-                                    settings: RouteSettings(name: 'AssignmentWeightView'),
+                                    settings: RouteSettings(
+                                        name: 'AssignmentWeightView'),
                                   ),
                                 ),
                                 child: SizedBox(
@@ -341,7 +345,8 @@ class _ClassDetailState extends State<ClassDetailView> {
                                     CupertinoPageRoute(
                                       builder: (context) =>
                                           WeightsInfoView(studentClass.id),
-                                      settings: RouteSettings(name: 'WeightsInfoView'),
+                                      settings: RouteSettings(
+                                          name: 'WeightsInfoView'),
                                     ),
                                   );
                                 },

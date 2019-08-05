@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:dart_notification_center/dart_notification_center.dart';
 import 'package:skoller/requests/requests_core.dart';
 import 'package:firebase_analytics/observer.dart';
@@ -55,7 +53,6 @@ class _SKTabBarState extends State<SKTabBar> {
 
   var controller = CupertinoTabController(
       initialIndex: StudentClass.currentClasses.length == 0 ? 3 : 0);
-  // int currentIndex = StudentClass.currentClasses.length == 0 ? 3 : 0;
 
   @override
   void initState() {
@@ -76,7 +73,7 @@ class _SKTabBarState extends State<SKTabBar> {
       channel: NotificationChannels.selectTab,
       onNotification: (index) {
         controller.index = index;
-        // currentIndex = index;
+        if (mounted) setState(() {});
       },
     );
 
@@ -102,15 +99,10 @@ class _SKTabBarState extends State<SKTabBar> {
   }
 
   void checkAlertDots() {
-    _indexNeedsDot[3] = StudentClass.currentClasses.values.fold(
-        false,
-        (val, elem) => val
-            ? val
-            : ![
-                ClassStatuses.class_setup,
-                ClassStatuses.class_issue,
-                ClassStatuses.syllabus_submitted
-              ].contains(elem.status.id));
+    _indexNeedsDot[3] = StudentClass.currentClasses.values.any(
+      (elem) => [ClassStatuses.needs_setup, ClassStatuses.needs_student_input]
+          .contains(elem.status.id),
+    );
   }
 
   @override

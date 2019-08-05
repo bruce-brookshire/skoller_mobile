@@ -468,6 +468,12 @@ class StudentClass {
       _fromJsonObj,
     );
   }
+
+  static bool get liveClassesAvailable =>
+      currentClasses.values.toList().any((studentClass) => [
+            ClassStatuses.class_setup,
+            ClassStatuses.class_issue
+          ].contains(studentClass.status.id));
 }
 
 class SchoolClass {

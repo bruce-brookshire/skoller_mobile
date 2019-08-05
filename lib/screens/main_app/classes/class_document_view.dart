@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:skoller/tools.dart';
 import 'package:webview_flutter/webview_flutter.dart';
@@ -15,12 +13,6 @@ class ClassDocumentView extends StatefulWidget {
 
 class _ClassDocumentState extends State<ClassDocumentView> {
   bool loading = true;
-
-  @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-  }
 
   @override
   Widget build(BuildContext context) {
