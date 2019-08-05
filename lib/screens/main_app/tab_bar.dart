@@ -54,6 +54,8 @@ class _SKTabBarState extends State<SKTabBar> {
   var controller = CupertinoTabController(
       initialIndex: StudentClass.currentClasses.length == 0 ? 3 : 0);
 
+  var prevIndex = StudentClass.currentClasses.length == 0 ? 3 : 0;
+
   @override
   void initState() {
     super.initState();
@@ -166,10 +168,12 @@ class _SKTabBarState extends State<SKTabBar> {
   }
 
   void _onItemTapped(int index) {
-    _navigatorKeys[controller.index]
-        .currentState
-        ?.popUntil((route) => route.settings.isInitialRoute);
+    if (prevIndex == index)
+      _navigatorKeys[index]
+          .currentState
+          ?.popUntil((route) => route.settings.isInitialRoute);
 
+    prevIndex = index;
     if (mounted) setState(() {});
   }
 }
