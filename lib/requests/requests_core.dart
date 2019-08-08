@@ -22,7 +22,7 @@ part 'chat.dart';
 part 'user.dart';
 part 'mod.dart';
 
-const bool isProd = false;
+const bool isProd = true;
 
 class RequestResponse<T> {
   int status;
