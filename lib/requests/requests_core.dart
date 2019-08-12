@@ -22,7 +22,8 @@ part 'chat.dart';
 part 'user.dart';
 part 'mod.dart';
 
-const bool isProd = true;
+const bool isProd = false;
+const bool isLocal = false;
 
 class RequestResponse<T> {
   int status;
@@ -69,9 +70,7 @@ class JsonListMaker {
 class SKRequests {
   static const String _environment = isProd
       ? 'https://api.skoller.co'
-      : 'https://api-staging.skoller.co'; //STAGING
-  // static const String _environment =
-      // isProd ? 'https://api.skoller.co' : 'http://127.0.0.1:4000'; //LOCAL
+      : (isLocal ? 'http://127.0.0.1:4000' : 'https://api-staging.skoller.co');
 
   static final String _baseUrl = '$_environment/api/v1';
 

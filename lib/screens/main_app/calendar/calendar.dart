@@ -6,6 +6,7 @@ import 'package:flutter/rendering.dart';
 import 'package:intl/intl.dart';
 import 'package:skoller/screens/main_app/classes/assignment_info_view.dart';
 import 'package:skoller/screens/main_app/classes/assignment_weight_view.dart';
+import 'package:skoller/screens/main_app/menu/add_classes_view.dart';
 import 'package:skoller/screens/main_app/tutorial/calendar_tutorial_view.dart';
 import 'package:skoller/tools.dart';
 
@@ -151,10 +152,10 @@ class _CalendarState extends State<CalendarView> {
       return CalendarTutorialView(
         () => DartNotificationCenter.post(
             channel: NotificationChannels.selectTab, options: 3),
-        'Setup class',
+        'Setup first class',
       );
 
-    return SKNavView(
+    final body = SKNavView(
       leftBtn: SKHeaderProfilePhoto(),
       callbackLeft: () =>
           DartNotificationCenter.post(channel: NotificationChannels.toggleMenu),
@@ -234,6 +235,44 @@ class _CalendarState extends State<CalendarView> {
         )
       ],
     );
+
+    if (StudentClass.currentClasses.length > 1)
+      return body;
+    else
+      return Stack(
+        children: <Widget>[
+          body,
+          Align(
+            alignment: Alignment.bottomCenter,
+            child: Material(
+              color: Colors.transparent,
+              shape: RoundedRectangleBorder(),
+              child: GestureDetector(
+                onTapUp: (details) => DartNotificationCenter.post(
+                  channel: NotificationChannels.presentViewOverTabBar,
+                  options: AddClassesView(),
+                ),
+                child: Container(
+                  padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                  margin: EdgeInsets.only(bottom: 7),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    boxShadow: [UIAssets.boxShadow],
+                    borderRadius: BorderRadius.circular(5),
+                    border: Border.all(color: SKColors.skoller_blue),
+                  ),
+                  child: Text(
+                    'Join your second class 👌',
+                    style: TextStyle(
+                      color: SKColors.skoller_blue,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
+      );
   }
 
   void detailModal(List<Assignment> dateAssignments) async {

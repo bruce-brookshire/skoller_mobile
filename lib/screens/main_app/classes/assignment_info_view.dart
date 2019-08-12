@@ -28,7 +28,8 @@ class _AssignmentInfoState extends State<AssignmentInfoView> {
   Assignment assignment;
   Map<int, List<Mod>> assignmentMods = {};
 
-  TextEditingController postFieldController = TextEditingController(text: '');
+  final postFieldController = TextEditingController();
+  final postFocusNode = FocusNode();
 
   @override
   void initState() {
@@ -58,6 +59,13 @@ class _AssignmentInfoState extends State<AssignmentInfoView> {
     }
 
     removalKeys.forEach((key) => assignmentMods.remove(key));
+  }
+
+  @override
+  void dispose() {
+    postFieldController.dispose();
+    postFocusNode.dispose();
+    super.dispose();
   }
 
   void toggleComplete() {
@@ -148,6 +156,7 @@ class _AssignmentInfoState extends State<AssignmentInfoView> {
 
   void tappedPost(TapUpDetails details) {
     String currentStr = postFieldController.text.trim();
+    postFocusNode.unfocus();
 
     if (currentStr.length > 0) {
       postFieldController.clear();
@@ -1086,6 +1095,7 @@ class _AssignmentInfoState extends State<AssignmentInfoView> {
                 placeholder: 'Write a post...',
                 decoration: BoxDecoration(border: null),
                 controller: postFieldController,
+                focusNode: postFocusNode,
                 style: TextStyle(fontSize: 14),
               ),
             ),

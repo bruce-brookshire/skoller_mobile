@@ -104,12 +104,9 @@ class _ClassesState extends State<ClassesView> {
 
     if (classes.length == 0)
       cardCount = 1;
-    else if (classes.length == 1) {
-      if (classes[0].status.id == ClassStatuses.needs_setup)
-        cardCount = 2;
-      else
-        cardCount = 1;
-    } else
+    else if (classes.length == 1)
+      cardCount = 2;
+    else
       cardCount = classes.length;
 
     return SKNavView(
@@ -171,12 +168,13 @@ class _ClassesState extends State<ClassesView> {
   Widget createClassCard(BuildContext context, int index) {
     StudentClass studentClass;
 
-    if (classes.length == 1 &&
-        ClassStatuses.needs_setup == classes[0].status.id) {
-      if (index == 0)
+    if (classes.length == 1) {
+      if (index == 0 && ClassStatuses.needs_setup == classes[0].status.id)
         return createSammiInstructionCard();
+      else if (index == 1 && ClassStatuses.class_setup == classes[0].status.id)
+        return createSammiSecondClassCard();
       else
-        studentClass = classes[index - 1];
+        studentClass = classes.first;
     } else
       studentClass = classes[index];
 
@@ -210,6 +208,37 @@ class _ClassesState extends State<ClassesView> {
                       style: TextStyle(fontWeight: FontWeight.normal)),
                 ]),
             style: TextStyle(fontSize: 14),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget createSammiSecondClassCard() {
+    return GestureDetector(
+      onTapUp: (details) => DartNotificationCenter.post(
+        channel: NotificationChannels.presentViewOverTabBar,
+        options: AddClassesView(),
+      ),
+      child: Padding(
+        padding: EdgeInsets.fromLTRB(12, 0, 0, 8),
+        child: SammiSpeechBubble(
+          sammiPersonality: SammiPersonality.cool,
+          speechBubbleContents: Text.rich(
+            TextSpan(
+                text: 'Hey ${SKUser.current.student.nameFirst},\n',
+                children: [
+                  TextSpan(
+                      text: 'You got your first class set up! Now, ',
+                      style: TextStyle(fontWeight: FontWeight.normal)),
+                  TextSpan(
+                      text: 'join your second class',
+                      style: TextStyle(color: SKColors.skoller_blue)),
+                  TextSpan(
+                      text: '.',
+                      style: TextStyle(fontWeight: FontWeight.normal)),
+                ]),
+            style: TextStyle(fontSize: 15),
           ),
         ),
       ),
@@ -271,54 +300,56 @@ class _ClassesState extends State<ClassesView> {
                     color: Colors.white, fontSize: 17, letterSpacing: -0.75),
               ),
             ),
-            Container(
-              padding: EdgeInsets.only(left: 8, right: 8, bottom: 1),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  Container(
-                    padding: EdgeInsets.only(bottom: 1),
-                    child: Text(
-                      studentClass.name,
-                      textScaleFactor: 1,
-                      style: TextStyle(
-                          fontSize: 17, color: studentClass.getColor()),
+            Expanded(
+              child: Container(
+                padding: EdgeInsets.only(left: 8, right: 8, bottom: 1),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Container(
+                      padding: EdgeInsets.only(bottom: 1),
+                      child: Text(
+                        studentClass.name,
+                        textScaleFactor: 1,
+                        style: TextStyle(
+                            fontSize: 17, color: studentClass.getColor()),
+                      ),
                     ),
-                  ),
-                  Row(
-                    children: <Widget>[
-                      Container(
-                        padding: EdgeInsets.only(right: 5, bottom: 2),
-                        child: Image.asset(
-                            ImageNames.peopleImages.person_dark_gray),
-                      ),
-                      Text(
-                        '${studentClass.enrollment - 1} classmate${(studentClass.enrollment - 1) == 1 ? '' : 's'}',
-                        textScaleFactor: 1,
-                        style: TextStyle(
-                            fontWeight: FontWeight.normal, fontSize: 14),
-                      ),
-                    ],
-                  ),
-                  Row(
-                    children: <Widget>[
-                      Padding(
-                        padding: EdgeInsets.only(bottom: 1, right: 4),
-                        child: ClassCompletionChart(
-                          studentClass.completion,
-                          SKColors.dark_gray,
+                    Row(
+                      children: <Widget>[
+                        Container(
+                          padding: EdgeInsets.only(right: 5, bottom: 2),
+                          child: Image.asset(
+                              ImageNames.peopleImages.person_dark_gray),
                         ),
-                      ),
-                      Text(
-                        '${(studentClass.completion * 100).round()}% complete',
-                        textScaleFactor: 1,
-                        style: TextStyle(
-                            fontWeight: FontWeight.normal, fontSize: 14),
-                      ),
-                    ],
-                  ),
-                ],
+                        Text(
+                          '${studentClass.enrollment - 1} classmate${(studentClass.enrollment - 1) == 1 ? '' : 's'}',
+                          textScaleFactor: 1,
+                          style: TextStyle(
+                              fontWeight: FontWeight.normal, fontSize: 14),
+                        ),
+                      ],
+                    ),
+                    Row(
+                      children: <Widget>[
+                        Padding(
+                          padding: EdgeInsets.only(bottom: 1, right: 4),
+                          child: ClassCompletionChart(
+                            studentClass.completion,
+                            SKColors.dark_gray,
+                          ),
+                        ),
+                        Text(
+                          '${(studentClass.completion * 100).round()}% complete',
+                          textScaleFactor: 1,
+                          style: TextStyle(
+                              fontWeight: FontWeight.normal, fontSize: 14),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
               ),
             ),
           ],
@@ -363,56 +394,59 @@ class _ClassesState extends State<ClassesView> {
         child: Row(
           children: <Widget>[
             Container(
-                height: 66,
-                width: 58,
-                alignment: Alignment.center,
-                decoration: BoxDecoration(
-                    color: needsAssignments ? studentClass.getColor() : null,
-                    borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(5),
-                        bottomLeft: Radius.circular(5))),
-                child: Image.asset(
-                  needsAssignments
-                      ? ImageNames.peopleImages.people_white
-                      : ImageNames.peopleImages.person_edit,
-                  fit: BoxFit.fitWidth,
-                )),
-            Container(
-              padding: EdgeInsets.only(left: 8, right: 8, bottom: 1),
+              height: 66,
+              width: 58,
+              alignment: Alignment.center,
               decoration: BoxDecoration(
-                  border: needsAssignments
-                      ? null
-                      : Border(
-                          left: BorderSide(
-                              color: SKColors.skoller_blue, width: 2))),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  Container(
-                    padding: EdgeInsets.only(bottom: 1),
-                    child: Text(
-                      studentClass.name,
+                  color: needsAssignments ? studentClass.getColor() : null,
+                  borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(5),
+                      bottomLeft: Radius.circular(5))),
+              child: Image.asset(
+                needsAssignments
+                    ? ImageNames.peopleImages.people_white
+                    : ImageNames.peopleImages.person_edit,
+                fit: BoxFit.fitWidth,
+              ),
+            ),
+            Expanded(
+              child: Container(
+                padding: EdgeInsets.only(left: 8, right: 8, bottom: 1),
+                decoration: BoxDecoration(
+                    border: needsAssignments
+                        ? null
+                        : Border(
+                            left: BorderSide(
+                                color: SKColors.skoller_blue, width: 2))),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Container(
+                      padding: EdgeInsets.only(bottom: 1),
+                      child: Text(
+                        studentClass.name,
+                        textScaleFactor: 1,
+                        style: TextStyle(
+                            fontSize: 17,
+                            color: needsAssignments
+                                ? studentClass.getColor()
+                                : SKColors.dark_gray),
+                      ),
+                    ),
+                    Text(
+                      needsAssignments
+                          ? 'Add your first assignment'
+                          : 'Set up this class',
                       textScaleFactor: 1,
                       style: TextStyle(
-                          fontSize: 17,
                           color: needsAssignments
-                              ? studentClass.getColor()
-                              : SKColors.dark_gray),
-                    ),
-                  ),
-                  Text(
-                    needsAssignments
-                        ? 'Add your first assignment'
-                        : 'Set up this class',
-                    textScaleFactor: 1,
-                    style: TextStyle(
-                        color: needsAssignments
-                            ? SKColors.dark_gray
-                            : SKColors.warning_red,
-                        fontSize: 14),
-                  )
-                ],
+                              ? SKColors.dark_gray
+                              : SKColors.warning_red,
+                          fontSize: 14),
+                    )
+                  ],
+                ),
               ),
             ),
           ],
@@ -452,38 +486,43 @@ class _ClassesState extends State<ClassesView> {
         child: Row(
           children: <Widget>[
             Container(
-                height: 66,
-                width: 58,
-                alignment: Alignment.center,
-                child: Image.asset(
-                  ImageNames.statusImages.diy,
-                  fit: BoxFit.fitWidth,
-                )),
-            Container(
-              padding: EdgeInsets.only(left: 8, right: 8, bottom: 1),
-              decoration: BoxDecoration(
+              height: 66,
+              width: 58,
+              alignment: Alignment.center,
+              child: Image.asset(
+                ImageNames.statusImages.diy,
+                fit: BoxFit.fitWidth,
+              ),
+            ),
+            Expanded(
+              child: Container(
+                padding: EdgeInsets.only(left: 8, right: 8, bottom: 1),
+                decoration: BoxDecoration(
                   border: Border(
-                      left:
-                          BorderSide(color: SKColors.alert_orange, width: 2))),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  Container(
-                    padding: EdgeInsets.only(bottom: 1),
-                    child: Text(
-                      studentClass.name,
-                      textScaleFactor: 1,
-                      style: TextStyle(fontSize: 17, color: SKColors.dark_gray),
-                    ),
+                    left: BorderSide(color: SKColors.alert_orange, width: 2),
                   ),
-                  Text(
-                    'DIY required',
-                    textScaleFactor: 1,
-                    style:
-                        TextStyle(color: SKColors.alert_orange, fontSize: 14),
-                  )
-                ],
+                ),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Container(
+                      padding: EdgeInsets.only(bottom: 1),
+                      child: Text(
+                        studentClass.name,
+                        textScaleFactor: 1,
+                        style:
+                            TextStyle(fontSize: 17, color: SKColors.dark_gray),
+                      ),
+                    ),
+                    Text(
+                      'DIY required',
+                      textScaleFactor: 1,
+                      style:
+                          TextStyle(color: SKColors.alert_orange, fontSize: 14),
+                    )
+                  ],
+                ),
               ),
             ),
           ],
@@ -531,30 +570,35 @@ class _ClassesState extends State<ClassesView> {
                   ImageNames.statusImages.clock,
                   fit: BoxFit.fitWidth,
                 )),
-            Container(
-              padding: EdgeInsets.only(left: 8, right: 8, bottom: 1),
-              decoration: BoxDecoration(
-                  border: Border(
-                      left: BorderSide(
-                          color: SKColors.text_light_gray, width: 2))),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  Container(
-                    padding: EdgeInsets.only(bottom: 1),
-                    child: Text(
-                      studentClass.name,
-                      textScaleFactor: 1,
-                      style: TextStyle(fontSize: 17, color: SKColors.dark_gray),
+            Expanded(
+              child: Container(
+                padding: EdgeInsets.only(left: 8, right: 8, bottom: 1),
+                decoration: BoxDecoration(
+                    border: Border(
+                        left: BorderSide(
+                            color: SKColors.text_light_gray, width: 2))),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Container(
+                      padding: EdgeInsets.only(bottom: 1),
+                      child: Text(
+                        studentClass.name,
+                        textScaleFactor: 1,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style:
+                            TextStyle(fontSize: 17, color: SKColors.dark_gray),
+                      ),
                     ),
-                  ),
-                  Text(
-                    'Syllabus in review',
-                    textScaleFactor: 1,
-                    style: TextStyle(color: SKColors.dark_gray, fontSize: 14),
-                  )
-                ],
+                    Text(
+                      'Syllabus in review',
+                      textScaleFactor: 1,
+                      style: TextStyle(color: SKColors.dark_gray, fontSize: 14),
+                    )
+                  ],
+                ),
               ),
             ),
           ],

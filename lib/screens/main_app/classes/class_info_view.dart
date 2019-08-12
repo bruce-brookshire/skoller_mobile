@@ -309,11 +309,11 @@ class _ClassInfoState extends State<ClassInfoView> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[
                     Text(
-                      studentClass.subject +
+                      (studentClass.subject ?? '') +
                           ' ' +
-                          studentClass.code +
+                         ( studentClass.code ?? '')+
                           '.' +
-                          studentClass.section,
+                          (studentClass.section ?? ''),
                       style: TextStyle(fontSize: 14),
                     ),
                     Text(

@@ -246,6 +246,14 @@ class _TasksState extends State<TasksView> {
   }
 
   void tappedChangeForecast(TapUpDetails details) async {
+    if (StudentClass.currentClasses.length == 1) {
+      DartNotificationCenter.post(
+        channel: NotificationChannels.presentViewOverTabBar,
+        options: AddClassesView(),
+      );
+      return;
+    }
+
     int selectedIndex;
 
     final results = await showDialog(
@@ -273,12 +281,12 @@ class _TasksState extends State<TasksView> {
 
   @override
   Widget build(BuildContext context) {
+    //If we do not have a setup class
     if (!StudentClass.liveClassesAvailable)
       return TasksTutorialView(
         () => DartNotificationCenter.post(
-            channel: NotificationChannels.selectTab,
-            options: 3),
-        'Setup class',
+            channel: NotificationChannels.selectTab, options: 3),
+        'Setup first class',
       );
 
     String forecastStr;
@@ -419,21 +427,28 @@ class _TasksState extends State<TasksView> {
                               borderRadius: BorderRadius.circular(5),
                               boxShadow: [UIAssets.boxShadow],
                               color: Colors.white),
-                          child: Row(
-                            children: <Widget>[
-                              Padding(
-                                child: Image.asset(
-                                    ImageNames.tasksImages.forecast),
-                                padding: EdgeInsets.only(right: 4),
-                              ),
-                              Text(
-                                forecast == Forecast.all
-                                    ? 'Semester outlook'
-                                    : '$forecastStr-day forecast',
-                                style: TextStyle(color: SKColors.skoller_blue),
-                              ),
-                            ],
-                          ),
+                          child: StudentClass.currentClasses.length == 1
+                              ? Text(
+                                  'Join your second class 👌',
+                                  style:
+                                      TextStyle(color: SKColors.skoller_blue),
+                                )
+                              : Row(
+                                  children: <Widget>[
+                                    Padding(
+                                      child: Image.asset(
+                                          ImageNames.tasksImages.forecast),
+                                      padding: EdgeInsets.only(right: 4),
+                                    ),
+                                    Text(
+                                      forecast == Forecast.all
+                                          ? 'Semester outlook'
+                                          : '$forecastStr-day forecast',
+                                      style: TextStyle(
+                                          color: SKColors.skoller_blue),
+                                    ),
+                                  ],
+                                ),
                         ),
                       ),
                     ],

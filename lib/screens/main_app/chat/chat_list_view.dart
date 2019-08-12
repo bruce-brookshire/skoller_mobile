@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:skoller/screens/main_app/chat/chat_inbox_view.dart';
 import 'package:skoller/screens/main_app/chat/chat_info_view.dart';
+import 'package:skoller/screens/main_app/menu/add_classes_view.dart';
 import 'package:skoller/screens/main_app/tutorial/chat_tutorial_view.dart';
 import 'package:skoller/tools.dart';
 
@@ -13,7 +14,7 @@ class ChatListView extends StatefulWidget {
 }
 
 class _ChatListState extends State<ChatListView> {
-  List<Chat> chats = [];
+  List<Chat> chats;
   bool unreadInbox = false;
 
   @override
@@ -167,112 +168,14 @@ class _ChatListState extends State<ChatListView> {
       return;
     }
 
-    TextEditingController controller = TextEditingController();
-
     final result = await showDialog(
-      context: context,
-      builder: (context) => Dialog(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.all(Radius.circular(10)),
-        ),
-        child: Container(
-          height: MediaQuery.of(context).size.height / 2,
-          decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(10),
-              border: Border.all(color: SKColors.border_gray)),
-          child: Column(
-            mainAxisSize: MainAxisSize.max,
-            children: [
-              Container(
-                padding: EdgeInsets.only(top: 16, bottom: 4),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    Expanded(
-                      flex: 1,
-                      child: GestureDetector(
-                        onTapUp: (details) {
-                          Navigator.pop(context, false);
-                        },
-                        child: Container(
-                          padding: EdgeInsets.only(left: 8),
-                          alignment: Alignment.centerLeft,
-                          child: Text(
-                            'Cancel',
-                            style: TextStyle(
-                              color: SKColors.warning_red,
-                              fontWeight: FontWeight.normal,
-                              fontSize: 14,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                    Expanded(
-                      flex: 2,
-                      child: Text(
-                        'Create a post',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(fontSize: 17),
-                      ),
-                    ),
-                    Expanded(
-                      flex: 1,
-                      child: GestureDetector(
-                        onTapUp: (details) {
-                          Navigator.pop(context, true);
-                        },
-                        child: Container(
-                          padding: EdgeInsets.only(right: 8),
-                          alignment: Alignment.centerRight,
-                          child: Text(
-                            'Save',
-                            style: TextStyle(
-                              color: SKColors.skoller_blue,
-                              fontWeight: FontWeight.normal,
-                              fontSize: 14,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              Expanded(
-                child: Container(
-                  alignment: Alignment.topLeft,
-                  margin: EdgeInsets.all(8),
-                  child: CupertinoTextField(
-                    decoration: BoxDecoration(border: null),
-                    maxLength: 2000,
-                    maxLengthEnforced: true,
-                    autofocus: true,
-                    maxLines: null,
-                    keyboardType: TextInputType.multiline,
-                    controller: controller,
-                    placeholder: 'What\'s on your mind?',
-                    style: TextStyle(
-                        color: SKColors.dark_gray,
-                        fontSize: 15,
-                        fontWeight: FontWeight.normal),
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
+        context: context, builder: (context) => _CreatePostModal());
 
-    String post = controller.text.trim();
-    controller.dispose();
-
-    if (result != null && result && post != '') {
+    if (result is String && result != '') {
       final loadingScreen = SKLoadingScreen.fadeIn(context);
 
       classes[selectedIndex]
-          .createStudentChat(post)
+          .createStudentChat(result)
           .then((response) {
             if (response.wasSuccessful()) {
               return (response.obj as Chat).refetch();
@@ -304,7 +207,7 @@ class _ChatListState extends State<ChatListView> {
       return ChatTutorialView(
         () => DartNotificationCenter.post(
             channel: NotificationChannels.selectTab, options: 3),
-        'Setup class',
+        'Setup first class',
       );
 
     // return Scaffold(
@@ -412,68 +315,113 @@ class _ChatListState extends State<ChatListView> {
     //   ),
     // );
 //
-    return SKNavView(
+    final body = SKNavView(
       title: 'Chat',
       rightBtn: Image.asset(ImageNames.chatImages.compose),
       callbackRight: tappedCreatePost,
       leftBtn: SKHeaderProfilePhoto(),
       callbackLeft: () =>
           DartNotificationCenter.post(channel: NotificationChannels.toggleMenu),
-      children: chats.length == 0
-          ? [
-              Padding(
-                padding: EdgeInsets.symmetric(vertical: 8, horizontal: 4),
-                child: SammiSpeechBubble(
-                  sammiPersonality: SammiPersonality.ooo,
-                  speechBubbleContents: Text.rich(
-                    TextSpan(
-                      text: 'No chats yet!',
-                      children: [
+      children: chats == null
+          ? []
+          : chats.length == 0
+              ? [
+                  Padding(
+                    padding: EdgeInsets.symmetric(vertical: 8, horizontal: 4),
+                    child: SammiSpeechBubble(
+                      sammiPersonality: SammiPersonality.ooo,
+                      speechBubbleContents: Text.rich(
                         TextSpan(
-                          text: ' Strike one up with your classmates by ',
-                          style: TextStyle(fontWeight: FontWeight.normal),
+                          text: '',
+                          children: [
+                            TextSpan(
+                              text: 'No chats yet!\n',
+                              style: TextStyle(fontSize: 17),
+                            ),
+                            TextSpan(
+                              text: 'Strike one up with your classmates by ',
+                              style: TextStyle(fontWeight: FontWeight.normal),
+                            ),
+                            TextSpan(
+                              text: 'tapping the plus sign ',
+                            ),
+                            TextSpan(
+                              text: 'below!',
+                              style: TextStyle(fontWeight: FontWeight.normal),
+                            ),
+                          ],
                         ),
-                        TextSpan(
-                          text: 'tapping the plus sign ',
-                        ),
-                        TextSpan(
-                          text: 'below!',
-                          style: TextStyle(fontWeight: FontWeight.normal),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-              GestureDetector(
-                behavior: HitTestBehavior.opaque,
-                onTapUp: (details) => tappedCreatePost(),
-                child: Padding(
-                  padding: EdgeInsets.fromLTRB(16, 44, 16, 16),
-                  child: SizedBox(
-                    width: 44,
-                    height: 44,
-                    child: CustomPaint(
-                      painter: _PlusPainter(),
-                      child: Container(
-                        width: 14,
-                        height: 16,
+                              style: TextStyle(fontSize: 14),
                       ),
                     ),
                   ),
+                  GestureDetector(
+                    behavior: HitTestBehavior.opaque,
+                    onTapUp: (details) => tappedCreatePost(),
+                    child: Padding(
+                      padding: EdgeInsets.fromLTRB(16, 44, 16, 16),
+                      child: SizedBox(
+                        width: 44,
+                        height: 44,
+                        child: CustomPaint(
+                          painter: _PlusPainter(),
+                          child: Container(
+                            width: 14,
+                            height: 16,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ]
+              : [
+                  Expanded(
+                    child: ListView.builder(
+                      padding: EdgeInsets.only(top: 4),
+                      itemCount: chats.length,
+                      itemBuilder: buildCard,
+                    ),
+                  )
+                ],
+    );
+
+    if (StudentClass.currentClasses.length > 1)
+      return body;
+    else
+      return Stack(
+        children: <Widget>[
+          body,
+          Align(
+            alignment: Alignment.bottomCenter,
+            child: Material(
+              color: Colors.transparent,
+              shape: RoundedRectangleBorder(),
+              child: GestureDetector(
+                onTapUp: (details) => DartNotificationCenter.post(
+                  channel: NotificationChannels.presentViewOverTabBar,
+                  options: AddClassesView(),
+                ),
+                child: Container(
+                  padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                  margin: EdgeInsets.only(bottom: 7),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    boxShadow: [UIAssets.boxShadow],
+                    borderRadius: BorderRadius.circular(5),
+                    border: Border.all(color: SKColors.skoller_blue),
+                  ),
+                  child: Text(
+                    'Join your second class 👌',
+                    style: TextStyle(
+                      color: SKColors.skoller_blue,
+                    ),
+                  ),
                 ),
               ),
-            ]
-          : [
-              Expanded(
-                child: ListView.builder(
-                  padding: EdgeInsets.only(top: 4),
-                  itemCount: chats.length,
-                  itemBuilder: buildCard,
-                ),
-              )
-            ],
-    );
+            ),
+          ),
+        ],
+      );
   }
 
   Widget buildCard(BuildContext context, int index) {
@@ -685,4 +633,120 @@ class _PlusPainter extends CustomPainter {
 
   @override
   bool shouldRepaint(CustomPainter oldDelegate) => false;
+}
+
+class _CreatePostModal extends StatefulWidget {
+  @override
+  State<StatefulWidget> createState() => _CreatePostState();
+}
+
+class _CreatePostState extends State<_CreatePostModal> {
+  final controller = TextEditingController();
+  final focusNode = FocusNode();
+
+  @override
+  void dispose() {
+    controller.dispose();
+    focusNode.dispose();
+
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) => Dialog(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.all(Radius.circular(10)),
+        ),
+        child: Container(
+          height: MediaQuery.of(context).size.height / 2,
+          decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(10),
+              border: Border.all(color: SKColors.border_gray)),
+          child: Column(
+            mainAxisSize: MainAxisSize.max,
+            children: [
+              Container(
+                padding: EdgeInsets.only(top: 16, bottom: 4),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    Expanded(
+                      flex: 1,
+                      child: GestureDetector(
+                        onTapUp: (details) {
+                          focusNode.unfocus();
+                          Navigator.pop(context);
+                        },
+                        child: Container(
+                          padding: EdgeInsets.only(left: 8),
+                          alignment: Alignment.centerLeft,
+                          child: Text(
+                            'Cancel',
+                            style: TextStyle(
+                              color: SKColors.warning_red,
+                              fontWeight: FontWeight.normal,
+                              fontSize: 14,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                    Expanded(
+                      flex: 2,
+                      child: Text(
+                        'Create a post',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(fontSize: 17),
+                      ),
+                    ),
+                    Expanded(
+                      flex: 1,
+                      child: GestureDetector(
+                        onTapUp: (details) {
+                          focusNode.unfocus();
+
+                          Navigator.pop(context, controller.text.trim());
+                        },
+                        child: Container(
+                          padding: EdgeInsets.only(right: 8),
+                          alignment: Alignment.centerRight,
+                          child: Text(
+                            'Save',
+                            style: TextStyle(
+                              color: SKColors.skoller_blue,
+                              fontWeight: FontWeight.normal,
+                              fontSize: 14,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Expanded(
+                child: Container(
+                  alignment: Alignment.topLeft,
+                  margin: EdgeInsets.all(8),
+                  child: CupertinoTextField(
+                    decoration: BoxDecoration(border: null),
+                    maxLength: 2000,
+                    maxLengthEnforced: true,
+                    autofocus: true,
+                    maxLines: null,
+                    keyboardType: TextInputType.multiline,
+                    controller: controller,
+                    focusNode: focusNode,
+                    placeholder: 'What\'s on your mind?',
+                    style: TextStyle(
+                        color: SKColors.dark_gray,
+                        fontSize: 15,
+                        fontWeight: FontWeight.normal),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
 }

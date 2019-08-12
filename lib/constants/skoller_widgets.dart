@@ -1393,7 +1393,7 @@ class SammiSpeechBubble extends StatelessWidget {
           padding: EdgeInsets.all(8),
           decoration: BoxDecoration(
             color: Colors.white,
-            borderRadius: BorderRadius.circular(10),
+            borderRadius: BorderRadius.circular(7),
             border: Border.all(color: SKColors.border_gray),
             boxShadow: [UIAssets.boxShadow],
           ),

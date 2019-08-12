@@ -3,6 +3,7 @@ import 'package:dropdown_banner/dropdown_banner.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:skoller/screens/main_app/activity/update_info_view.dart';
+import 'package:skoller/screens/main_app/menu/add_classes_view.dart';
 import 'package:skoller/screens/main_app/tutorial/activity_tutorial_view.dart';
 import '../../../requests/requests_core.dart';
 import 'package:skoller/constants/constants.dart';
@@ -97,24 +98,99 @@ class _ActivityState extends State<ActivityView> {
       return ActivityTutorialView(
         () => DartNotificationCenter.post(
             channel: NotificationChannels.selectTab, options: 3),
-        'Setup class',
+        'Setup first class',
       );
 
-    return SKNavView(
+    final body = SKNavView(
       title: 'Activity',
       leftBtn: SKHeaderProfilePhoto(),
       callbackLeft: () =>
           DartNotificationCenter.post(channel: NotificationChannels.toggleMenu),
       children: <Widget>[
-        Expanded(
-          child: ListView.builder(
-            padding: EdgeInsets.only(top: 4),
-            itemCount: stackedMods.length,
-            itemBuilder: buildListItem,
-          ),
-        )
+        stackedMods.length == 0
+            ? Padding(
+                padding: EdgeInsets.only(top: 8),
+                child: SammiSpeechBubble(
+                  sammiPersonality: SammiPersonality.wow,
+                  speechBubbleContents: Text.rich(
+                    TextSpan(
+                      text: '',
+                      children: [
+                        TextSpan(
+                          text: 'No activity yet!\n',
+                          style: TextStyle(fontSize: 17),
+                        ),
+                        TextSpan(
+                          text: 'When classmates ',
+                          style: TextStyle(fontWeight: FontWeight.normal),
+                        ),
+                        TextSpan(
+                          text: 'change the schedule',
+                        ),
+                        // TextSpan(
+                        //   text: ' or ',
+                        //   style: TextStyle(fontWeight: FontWeight.normal),
+                        // ),
+                        // TextSpan(
+                        //   text: 'chat with each other',
+                        // ),
+                        TextSpan(
+                          text: ', it will show up here!',
+                          style: TextStyle(fontWeight: FontWeight.normal),
+                        ),
+                      ],
+                    ),
+                    style: TextStyle(fontSize: 14),
+                  ),
+                ),
+              )
+            : Expanded(
+                child: ListView.builder(
+                  padding: EdgeInsets.only(top: 4),
+                  itemCount: stackedMods.length,
+                  itemBuilder: buildListItem,
+                ),
+              )
       ],
     );
+
+    if (StudentClass.currentClasses.length > 1)
+      return body;
+    else
+      return Stack(
+        children: <Widget>[
+          body,
+          Align(
+            alignment: Alignment.bottomCenter,
+            child: Material(
+              color: Colors.transparent,
+              shape: RoundedRectangleBorder(),
+              child: GestureDetector(
+                onTapUp: (details) => DartNotificationCenter.post(
+                  channel: NotificationChannels.presentViewOverTabBar,
+                  options: AddClassesView(),
+                ),
+                child: Container(
+                  padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                  margin: EdgeInsets.only(bottom: 7),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    boxShadow: [UIAssets.boxShadow],
+                    borderRadius: BorderRadius.circular(5),
+                    border: Border.all(color: SKColors.skoller_blue),
+                  ),
+                  child: Text(
+                    'Join your second class 👌',
+                    style: TextStyle(
+                      color: SKColors.skoller_blue,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
+      );
   }
 
   Widget buildListItem(BuildContext context, int index) {
