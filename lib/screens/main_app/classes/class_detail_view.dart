@@ -159,7 +159,7 @@ class _ClassDetailState extends State<ClassDetailView> {
     final grade = (studentClass.grade == null || studentClass.grade == 0)
         ? '-- %'
         : '${studentClass.grade}%';
-    final classmates = studentClass.enrollment - 1;
+    final classmates = studentClass.enrollment;
 
     return Scaffold(
       backgroundColor: Colors.white,

@@ -329,6 +329,7 @@ class _TasksState extends State<TasksView> {
                       final assignments = _taskItems.length;
 
                       return Padding(
+                        key: Key('top item'),
                         padding: EdgeInsets.fromLTRB(0, 0, 0, 4),
                         child: SammiSpeechBubble(
                           sammiPersonality: SammiPersonality.smile,
@@ -383,12 +384,38 @@ class _TasksState extends State<TasksView> {
                           ),
                         ),
                       );
-                    } else if (index <= _taskItems.length)
-                      return _taskItems[index - 1].isMod
-                          ? buildModCell(context, index - 1)
-                          : buildTaskCell(context, index - 1);
-                    else
+                    } else if (index <= _taskItems.length) {
+                      final item = _taskItems[index - 1];
+
+                      return Dismissible(
+                          key: Key('${item.parentObjectId} ${item.isMod}'),
+                          direction: DismissDirection.endToStart,
+                          background: Container(
+                            color: SKColors.skoller_blue,
+                            alignment: Alignment.centerRight,
+                            child: Padding(
+                              padding: EdgeInsets.only(right: 12),
+                              child: Text(
+                                item.isMod ? 'Accept' : 'Done',
+                                style: TextStyle(color: Colors.white),
+                              ),
+                            ),
+                          ),
+                          onDismissed: (direction) {
+                            if (item.isMod)
+                              (item.getParent as Mod).acceptMod();
+                            else
+                              (item.getParent as Assignment).toggleComplete();
+                            setState(() {
+                              _taskItems.removeAt(index - 1);
+                            });
+                          },
+                          child: item.isMod
+                              ? buildModCell(context, index - 1)
+                              : buildTaskCell(context, index - 1));
+                    } else
                       return GestureDetector(
+                        key: Key('bottom item'),
                         behavior: HitTestBehavior.opaque,
                         onTapUp: (details) {
                           setState(() =>

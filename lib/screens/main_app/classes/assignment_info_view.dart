@@ -844,7 +844,11 @@ class _AssignmentInfoState extends State<AssignmentInfoView> {
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Padding(padding: EdgeInsets.only(right: 4), child: Image.asset(ImageNames.peopleImages.people_white),),
+                      Padding(
+                        padding: EdgeInsets.only(right: 4),
+                        child:
+                            Image.asset(ImageNames.peopleImages.people_white),
+                      ),
                       Text(
                         'Share this class',
                         style: TextStyle(color: Colors.white),
@@ -1704,9 +1708,8 @@ class _GradeShakeAnimationState extends State<_GradeShakeAnimation>
 
   @override
   void dispose() {
-    super.dispose();
-
     _controller.dispose();
+    super.dispose();
   }
 
   ///Then you can get a shake type motion like so;

@@ -6,6 +6,7 @@ class StudentClass {
 
   bool isPoints;
   bool isNotifications;
+  bool isOnline;
 
   double grade;
   double completion;
@@ -71,6 +72,7 @@ class StudentClass {
     this.isPoints,
     this.isNotifications,
     this.documents,
+    this.isOnline,
   );
 
   School getSchool() => School.currentSchools[classPeriod.schoolId];
@@ -341,19 +343,19 @@ class StudentClass {
         .then((response) => response.wasSuccessful());
   }
 
-  Future<bool> classChangeRequest(
-      {TimeOfDay meetTime,
-      String meetDays,
-      String name,
-      String subject,
-      String code,
-      String section}) {
+  Future<bool> classChangeRequest({
+    TimeOfDay meetTime,
+    String meetDays,
+    String name,
+    String subject,
+    String code,
+    String section,
+    bool isOnline,
+  }) {
     Map<String, dynamic> body = {
       'id': id,
       'meet_days': meetDays,
-      'meet_start_time': meetTime == null
-          ? null
-          : '${meetTime.hour < 10 ? '0' : ''}${meetTime.hour}:${meetTime.minute < 10 ? '0' : ''}${meetTime.minute}:00',
+      'meet_start_time': isOnline ? 'online' : _startTimeString(meetTime),
       'name': name,
       'subject': subject,
       'code': code,
@@ -366,6 +368,10 @@ class StudentClass {
     return SKRequests.post('/classes/$id/changes/400', {'data': body}, null)
         .then((response) => response.wasSuccessful());
   }
+
+  String _startTimeString(TimeOfDay time) => time == null
+      ? 'online'
+      : '${time.hour < 10 ? '0' : ''}${time.hour}:${time.minute < 10 ? '0' : ''}${time.minute}:00';
 
   Future<bool> weightChangeRequest(bool isPoints, List<Map> weights) async {
     final body = weights.fold<Map<String, num>>(
@@ -402,46 +408,48 @@ class StudentClass {
             .split(':')
             .map((component) => int.parse(component))
             .toList();
-    final startTime = (startString == null || startComponents.length < 2)
+    final startTime = (startString == null ||
+            startString == 'online' ||
+            startComponents.length < 2)
         ? null
         : TimeOfDay(hour: startComponents[0], minute: startComponents[1]);
 
     StudentClass studentClass = StudentClass(
-      content['id'],
-      content['name'],
-      JsonListMaker.convert(
-        (content) => Assignment._fromJsonObj(content, shouldPersist: true),
-        content['assignments'] ?? [],
-      ),
-      content['color'],
-      content['grade'],
-      content['completion'],
-      content['enrollment'],
-      JsonListMaker.convert(
-        Weight._fromJsonObj,
-        content['weights'] ?? [],
-      ),
-      content['meet_days'],
-      startTime,
-      Status._fromJsonObj(content['status']),
-      content['subject'],
-      content['code'],
-      content['section'],
-      Professor._fromJsonObj(content['professor']),
-      Period._fromJsonObj(content['class_period']),
-      JsonListMaker.convert(
-        PublicStudent._fromJsonObj,
-        content['students'] ?? [],
-      ),
-      content['enrollment_link'],
-      content['grade_scale'],
-      content['is_points'],
-      content['is_notifications'],
-      JsonListMaker.convert(
-        ClassDocument._fromJsonObj,
-        content['documents'] ?? [],
-      ),
-    );
+        content['id'],
+        content['name'],
+        JsonListMaker.convert(
+          (content) => Assignment._fromJsonObj(content, shouldPersist: true),
+          content['assignments'] ?? [],
+        ),
+        content['color'],
+        content['grade'],
+        content['completion'],
+        content['enrollment'],
+        JsonListMaker.convert(
+          Weight._fromJsonObj,
+          content['weights'] ?? [],
+        ),
+        content['meet_days'],
+        startTime,
+        Status._fromJsonObj(content['status']),
+        content['subject'],
+        content['code'],
+        content['section'],
+        Professor._fromJsonObj(content['professor']),
+        Period._fromJsonObj(content['class_period']),
+        JsonListMaker.convert(
+          PublicStudent._fromJsonObj,
+          content['students'] ?? [],
+        ),
+        content['enrollment_link'],
+        content['grade_scale'],
+        content['is_points'],
+        content['is_notifications'],
+        JsonListMaker.convert(
+          ClassDocument._fromJsonObj,
+          content['documents'] ?? [],
+        ),
+        startString == 'online');
 
     StudentClass.currentClasses[studentClass.id] = studentClass;
 

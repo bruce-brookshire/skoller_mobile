@@ -324,7 +324,7 @@ class _ClassesState extends State<ClassesView> {
                               ImageNames.peopleImages.person_dark_gray),
                         ),
                         Text(
-                          '${studentClass.enrollment - 1} classmate${(studentClass.enrollment - 1) == 1 ? '' : 's'}',
+                          '${studentClass.enrollment - 1} classmate${studentClass.enrollment == 1 ? '' : 's'}',
                           textScaleFactor: 1,
                           style: TextStyle(
                               fontWeight: FontWeight.normal, fontSize: 14),

@@ -22,6 +22,7 @@ class _ClassChangeRequestState extends State<ClassChangeRequestView> {
 
   TimeOfDay startTime;
   bool isOnline;
+  bool wasEdited = false;
 
   Map<String, bool> selectedDays = LinkedHashMap.fromIterables(
     ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
@@ -79,7 +80,7 @@ class _ClassChangeRequestState extends State<ClassChangeRequestView> {
   @override
   void dispose() {
     super.dispose();
-    
+
     nameController.dispose();
     subjectController.dispose();
     codeController.dispose();
@@ -87,6 +88,8 @@ class _ClassChangeRequestState extends State<ClassChangeRequestView> {
   }
 
   void tappedSave() {
+    if (!wasEdited) return;
+
     final meetDays = isOnline
         ? 'online'
         : (selectedDays.keys.toList()..removeWhere((day) => !selectedDays[day]))
@@ -116,8 +119,8 @@ class _ClassChangeRequestState extends State<ClassChangeRequestView> {
       code: code == studentClass.code ? null : code,
       section: section == studentClass.section ? null : section,
       meetDays: meetDays == studentClass.meetDays ? null : meetDays,
-      meetTime:
-          (isOnline || startTime == studentClass.meetTime) ? null : startTime,
+      meetTime: (isOnline || startTime == studentClass.meetTime) ? null : startTime,
+      isOnline: isOnline,
     )
         .then((response) {
       loader.dismiss();
@@ -203,6 +206,7 @@ class _ClassChangeRequestState extends State<ClassChangeRequestView> {
                       setState(() {
                         startTime = TimeOfDay.fromDateTime(tempTime);
                       });
+                      checkValid(null);
                       Navigator.pop(context);
                     },
                     behavior: HitTestBehavior.opaque,
@@ -222,6 +226,39 @@ class _ClassChangeRequestState extends State<ClassChangeRequestView> {
         ),
       ),
     );
+  }
+
+  void checkValid(_) {
+    final name = nameController.text.trim();
+    final subject = subjectController.text.trim();
+    final code = codeController.text.trim();
+    final section = sectionController.text.trim();
+
+    final studentClass = StudentClass.currentClasses[widget.classId];
+
+    final meetDays = isOnline
+        ? 'online'
+        : (selectedDays.keys.toList()..removeWhere((day) => !selectedDays[day]))
+            .map((day) {
+            if (day == 'Sun') {
+              return 'U';
+            } else if (day == 'Thu') {
+              return 'R';
+            } else {
+              return day[0];
+            }
+          }).join();
+
+    final newValue = name != studentClass.name ||
+        subject != studentClass.subject ||
+        code != studentClass.code ||
+        section != studentClass.section ||
+        (isOnline
+            ? (!studentClass.isOnline)
+            : (studentClass.meetTime != startTime ||
+                studentClass.meetDays != meetDays));
+
+    if (newValue != wasEdited) setState(() => wasEdited = newValue);
   }
 
   @override
@@ -284,7 +321,7 @@ class _ClassChangeRequestState extends State<ClassChangeRequestView> {
                       style: TextStyle(fontSize: 15, color: SKColors.dark_gray),
                       decoration: BoxDecoration(border: null),
                       controller: nameController,
-                      // onChanged: checkValid,
+                      onChanged: checkValid,
                       keyboardType: TextInputType.text,
                     ),
                   ],
@@ -321,7 +358,7 @@ class _ClassChangeRequestState extends State<ClassChangeRequestView> {
                             decoration: BoxDecoration(border: null),
                             textCapitalization: TextCapitalization.characters,
                             controller: subjectController,
-                            // onChanged: checkValid,
+                            onChanged: checkValid,
                           ),
                         ],
                       ),
@@ -355,7 +392,7 @@ class _ClassChangeRequestState extends State<ClassChangeRequestView> {
                                 fontSize: 15, color: SKColors.dark_gray),
                             decoration: BoxDecoration(border: null),
                             controller: codeController,
-                            // onChanged: checkValid,
+                            onChanged: checkValid,
                             keyboardType: TextInputType.number,
                           ),
                         ],
@@ -391,7 +428,7 @@ class _ClassChangeRequestState extends State<ClassChangeRequestView> {
                             decoration: BoxDecoration(border: null),
                             controller: sectionController,
                             keyboardType: TextInputType.number,
-                            // onChanged: checkValid,
+                            onChanged: checkValid,
                           ),
                         ],
                       ),
@@ -423,7 +460,7 @@ class _ClassChangeRequestState extends State<ClassChangeRequestView> {
                           value: isOnline,
                           onChanged: (newVal) {
                             setState(() => isOnline = newVal);
-                            // checkValid();
+                            checkValid(null);
                           },
                         )
                       ],
@@ -496,12 +533,14 @@ class _ClassChangeRequestState extends State<ClassChangeRequestView> {
                   padding: EdgeInsets.symmetric(vertical: 8),
                   margin: EdgeInsets.only(left: 12, right: 12, bottom: 12),
                   decoration: BoxDecoration(
-                    color: SKColors.success,
+                    color:
+                        wasEdited ? SKColors.success : SKColors.inactive_gray,
                     borderRadius: BorderRadius.circular(5),
                   ),
                   child: Text(
                     'Submit',
-                    style: TextStyle(color: Colors.white),
+                    style: TextStyle(
+                        color: wasEdited ? Colors.white : SKColors.dark_gray),
                   ),
                 ),
               )
@@ -518,7 +557,7 @@ class _ClassChangeRequestState extends State<ClassChangeRequestView> {
         onTapUp: (details) {
           if (isOnline) return;
           setState(() => selectedDays[day] = !selectedDays[day]);
-          // checkValid();
+          checkValid(null);
         },
         child: Container(
           padding: EdgeInsets.symmetric(vertical: 7),
