@@ -99,7 +99,7 @@ class ChatTutorialView extends StatelessWidget {
           children: <Widget>[
             Expanded(
               child: ListView.builder(
-                padding: EdgeInsets.only(top: 88),
+                padding: EdgeInsets.only(top: 72),
                 itemCount: chats.length,
                 itemBuilder: buildCard,
               ),
@@ -121,7 +121,7 @@ class ChatTutorialView extends StatelessWidget {
                       TextSpan(text: 'Chat', children: [
                         TextSpan(
                             text:
-                                ' is our community feature that offers a direct line of communication with your classmates on Skoller!',
+                                ' enables classmates to tackle problems, together.',
                             style: TextStyle(fontWeight: FontWeight.normal))
                       ]),
                     ),

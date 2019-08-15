@@ -76,10 +76,10 @@ class TasksTutorialView extends StatelessWidget {
                   child: SammiSpeechBubble(
                     sammiPersonality: SammiPersonality.smile,
                     speechBubbleContents: Text.rich(
-                      TextSpan(text: 'Tasks', children: [
+                      TextSpan(text: 'Forecast', children: [
                         TextSpan(
                             text:
-                                ' lays out YOUR personal 10-day forecast, which updates every day!',
+                                ' snapshots YOUR upcoming assignments!',
                             style: TextStyle(fontWeight: FontWeight.normal))
                       ]),
                     ),

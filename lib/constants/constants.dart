@@ -151,6 +151,8 @@ class _SammiImages {
   final shocked = '${_base}/shocked_sammi.png';
   final wow = '${_base}/wow_sammi.png';
   final smile = '${_base}/smile_sammi.png';
+  final intro = '${_base}/intro_sammi.png';
+  final school = '${_base}/school_sammi.png';
 }
 
 class _RightNavImages {

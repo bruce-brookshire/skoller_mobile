@@ -202,9 +202,18 @@ class _SchoolSearchState extends State<SchoolSearchView> {
                 child: ListView.builder(
                   padding: EdgeInsets.only(top: 4),
                   itemCount: searchController.text.trim().length == 0
-                      ? 0
+                      ? 1
                       : (searchedSchools.length + (isSearching ? 0 : 1)),
                   itemBuilder: (context, index) {
+                    if (searchController.text.trim().length == 0)
+                      return Padding(
+                        padding: EdgeInsets.fromLTRB(18, 12, 0, 0),
+                        child: SammiSpeechBubble(
+                          sammiPersonality: SammiPersonality.ooo,
+                          speechBubbleContents:
+                              Text('First off... find your school!'),
+                        ),
+                      );
                     if (index < searchedSchools.length)
                       return GestureDetector(
                         onTapUp: (details) => tappedSchool(index),

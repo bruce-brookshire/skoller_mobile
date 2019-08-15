@@ -31,15 +31,8 @@ class _MainState extends State<MainView> {
   void initState() {
     if (SKUser.current.student.primarySchool == null ||
         SKUser.current.student.primaryPeriod == null) {
-      Timer(
-          Duration(milliseconds: 50),
-          () => {
-                showDialog(
-                  barrierDismissible: false,
-                  context: context,
-                  builder: (context) => PrimarySchoolModal(),
-                )
-              });
+      WidgetsBinding.instance
+          .addPostFrameCallback((_) => showPrimarySchoolModal(context));
     }
 
     SKCacheManager.restoreCachedData();
@@ -59,6 +52,16 @@ class _MainState extends State<MainView> {
     Mod.fetchMods();
 
     super.initState();
+  }
+
+  showPrimarySchoolModal(BuildContext context) {
+    Navigator.push(
+      context,
+      SKNavOverlayRoute(
+        builder: (context) => PrimarySchoolModal(),
+        isBarrierDismissible: false,
+      ),
+    );
   }
 
   @override
@@ -99,7 +102,7 @@ class _MainState extends State<MainView> {
     if (StudentClass.currentClasses.length == 0) {
       return TutorialTab((context) {
         presentWidgetOverMainView(AddClassesView());
-      }, 'Join your first class 👌');
+      }, 'Join your 1st class 🤓');
     } else {
       if (!constraintsSetup) {
         constraintsSetup = true;

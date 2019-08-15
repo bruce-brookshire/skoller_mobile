@@ -680,8 +680,9 @@ class SKNavFadeUpRoute extends ModalRoute<void> {
 
 class SKNavOverlayRoute extends ModalRoute<Object> {
   final WidgetBuilder builder;
+  final bool isBarrierDismissible;
 
-  SKNavOverlayRoute({@required this.builder});
+  SKNavOverlayRoute({@required this.builder, this.isBarrierDismissible = true});
 
   @override
   Duration get transitionDuration => Duration(milliseconds: 500);
@@ -690,7 +691,7 @@ class SKNavOverlayRoute extends ModalRoute<Object> {
   bool get opaque => false;
 
   @override
-  bool get barrierDismissible => true;
+  bool get barrierDismissible => isBarrierDismissible;
 
   @override
   Color get barrierColor => Colors.black.withOpacity(0.3);
@@ -1365,7 +1366,7 @@ class SKHeaderProfilePhoto extends StatelessWidget {
       );
 }
 
-enum SammiPersonality { cool, smile, wow, ooo }
+enum SammiPersonality { cool, smile, wow, ooo, school }
 enum SammiSide { left, right }
 
 class SammiSpeechBubble extends StatelessWidget {
@@ -1413,47 +1414,55 @@ class SammiSpeechBubble extends StatelessWidget {
 
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 8),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        mainAxisAlignment:
-            leftArrow ? MainAxisAlignment.start : MainAxisAlignment.end,
-        mainAxisSize: MainAxisSize.min,
-        children: leftArrow
-            ? [
-                image,
-                Flexible(
-                  flex: 1,
-                  fit: FlexFit.tight,
-                  child: Padding(
-                    padding: EdgeInsets.only(left: 2, top: 6),
-                    child: Stack(
-                      alignment: Alignment.centerLeft,
-                      children: <Widget>[
-                        contents,
-                        arrow,
-                      ],
-                    ),
-                  ),
-                ),
-              ]
-            : [
-                Flexible(
-                  flex: 1,
-                  fit: FlexFit.tight,
-                  child: Padding(
-                    padding: EdgeInsets.only(left: 2, top: 6),
-                    child: Stack(
-                      alignment: Alignment.centerRight,
-                      children: <Widget>[
-                        contents,
-                        arrow,
-                      ],
-                    ),
-                  ),
-                ),
-                image,
+      child: sammiPersonality == null
+          ? Stack(
+              alignment: Alignment.centerLeft,
+              children: <Widget>[
+                contents,
+                arrow,
               ],
-      ),
+            )
+          : Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment:
+                  leftArrow ? MainAxisAlignment.start : MainAxisAlignment.end,
+              mainAxisSize: MainAxisSize.min,
+              children: leftArrow
+                  ? [
+                      image,
+                      Flexible(
+                        flex: 1,
+                        fit: FlexFit.tight,
+                        child: Padding(
+                          padding: EdgeInsets.only(left: 2, top: 6),
+                          child: Stack(
+                            alignment: Alignment.centerLeft,
+                            children: <Widget>[
+                              contents,
+                              arrow,
+                            ],
+                          ),
+                        ),
+                      ),
+                    ]
+                  : [
+                      Flexible(
+                        flex: 1,
+                        fit: FlexFit.tight,
+                        child: Padding(
+                          padding: EdgeInsets.only(left: 2, top: 6),
+                          child: Stack(
+                            alignment: Alignment.centerRight,
+                            children: <Widget>[
+                              contents,
+                              arrow,
+                            ],
+                          ),
+                        ),
+                      ),
+                      image,
+                    ],
+            ),
     );
   }
 
@@ -1467,10 +1476,123 @@ class SammiSpeechBubble extends StatelessWidget {
         return Image.asset(ImageNames.sammiImages.wow);
       case SammiPersonality.ooo:
         return Image.asset(ImageNames.sammiImages.shocked);
+      case SammiPersonality.school:
+        return Image.asset(ImageNames.sammiImages.school);
     }
     return null;
   }
 }
+
+// class AnimatedSammiSpeechBubble extends StatefulWidget {
+//   final SammiPersonality sammiPersonality;
+//   final  Text speechBubbleContents;
+//   final SammiSide sammiSide;
+
+//   AnimatedSammiSpeechBubble({
+//     @required this.sammiPersonality,
+//     @required this.speechBubbleContents,
+//     this.sammiSide = SammiSide.left,
+//   });
+
+//   @override
+//   State createState() => _AnimatedSammiSpeechBubble();
+// }
+
+// class _AnimatedSammiSpeechBubble extends State<AnimatedSammiSpeechBubble> {
+//   int index = 0;
+//   String curText = '';
+//   Image _sammiImageBuilder() {
+//     switch (widget.sammiPersonality) {
+//       case SammiPersonality.cool:
+//         return Image.asset(ImageNames.sammiImages.cool);
+//       case SammiPersonality.smile:
+//         return Image.asset(ImageNames.sammiImages.smile);
+//       case SammiPersonality.wow:
+//         return Image.asset(ImageNames.sammiImages.wow);
+//       case SammiPersonality.ooo:
+//         return Image.asset(ImageNames.sammiImages.shocked);
+//     }
+//     return null;
+//   }
+
+//   @override
+//   Widget build(BuildContext context) {
+//     final leftArrow = widget.sammiSide == SammiSide.left;
+//     final image = _sammiImageBuilder();
+
+//     final contents = Align(
+//       alignment: leftArrow ? Alignment.centerLeft : Alignment.centerRight,
+//       child: Container(
+//           margin: leftArrow
+//               ? EdgeInsets.only(left: 13)
+//               : EdgeInsets.only(right: 13),
+//           padding: EdgeInsets.all(8),
+//           decoration: BoxDecoration(
+//             color: Colors.white,
+//             borderRadius: BorderRadius.circular(7),
+//             border: Border.all(color: SKColors.border_gray),
+//             boxShadow: [UIAssets.boxShadow],
+//           ),
+//           child: widget.speechBubbleContents),
+//     );
+
+//     final arrow = Align(
+//       alignment: leftArrow ? Alignment.centerLeft : Alignment.centerRight,
+//       child: CustomPaint(
+//         painter: _SammiArrowPainter(widget.sammiSide),
+//         child: Container(
+//           width: 14,
+//           height: 16,
+//         ),
+//       ),
+//     );
+
+//     return Padding(
+//       padding: EdgeInsets.symmetric(horizontal: 8),
+//       child: Row(
+//         crossAxisAlignment: CrossAxisAlignment.center,
+//         mainAxisAlignment:
+//             leftArrow ? MainAxisAlignment.start : MainAxisAlignment.end,
+//         mainAxisSize: MainAxisSize.min,
+//         children: leftArrow
+//             ? [
+//                 image,
+//                 Flexible(
+//                   flex: 1,
+//                   fit: FlexFit.tight,
+//                   child: Padding(
+//                     padding: EdgeInsets.only(left: 2, top: 6),
+//                     child: Stack(
+//                       alignment: Alignment.centerLeft,
+//                       children: <Widget>[
+//                         contents,
+//                         arrow,
+//                       ],
+//                     ),
+//                   ),
+//                 ),
+//               ]
+//             : [
+//                 Flexible(
+//                   flex: 1,
+//                   fit: FlexFit.tight,
+//                   child: Padding(
+//                     padding: EdgeInsets.only(left: 2, top: 6),
+//                     child: Stack(
+//                       alignment: Alignment.centerRight,
+//                       children: <Widget>[
+//                         contents,
+//                         arrow,
+//                       ],
+//                     ),
+//                   ),
+//                 ),
+//                 image,
+//               ],
+//       ),
+//     );
+//   }
+// }
 
 class _SammiArrowPainter extends CustomPainter {
   final SammiSide side;

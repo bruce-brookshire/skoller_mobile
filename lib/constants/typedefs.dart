@@ -18,4 +18,6 @@ typedef void ProfessorCallback(Professor professor);
 
 typedef dynamic DynamicCallback();
 
-typedef StringCallback(String string);
+typedef void StringCallback(String string);
+
+typedef void DoubleStringCallback(String str1, String str2);

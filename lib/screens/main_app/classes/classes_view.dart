@@ -105,7 +105,10 @@ class _ClassesState extends State<ClassesView> {
     if (classes.length == 0)
       cardCount = 1;
     else if (classes.length == 1)
-      cardCount = 2;
+      cardCount = [ClassStatuses.needs_setup, ClassStatuses.class_setup]
+              .contains(classes.first.status.id)
+          ? 2
+          : 1;
     else
       cardCount = classes.length;
 
@@ -194,20 +197,13 @@ class _ClassesState extends State<ClassesView> {
         child: SammiSpeechBubble(
           sammiPersonality: SammiPersonality.cool,
           speechBubbleContents: Text.rich(
-            TextSpan(
-                text: 'Hey ${SKUser.current.student.nameFirst},\n',
-                children: [
-                  TextSpan(
-                      text: 'Please feed me your',
-                      style: TextStyle(fontWeight: FontWeight.normal)),
-                  TextSpan(
-                      text: ' syllabus 🍔',
-                      style: TextStyle(color: SKColors.skoller_blue)),
-                  TextSpan(
-                      text: ' I\'m hungry!',
-                      style: TextStyle(fontWeight: FontWeight.normal)),
-                ]),
-            style: TextStyle(fontSize: 14),
+            TextSpan(text: 'Please feed me your', children: [
+              TextSpan(
+                  text: ' syllabus 🍔',
+                  style: TextStyle(color: SKColors.skoller_blue, fontWeight: FontWeight.bold)),
+              TextSpan(text: ' I\'m hungry'),
+            ]),
+            style: TextStyle(fontSize: 15, fontWeight: FontWeight.normal),
           ),
         ),
       ),

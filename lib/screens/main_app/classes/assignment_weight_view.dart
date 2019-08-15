@@ -83,6 +83,14 @@ class _AssignmentWeightState extends State<AssignmentWeightView> {
       title: studentClass.name,
       titleColor: studentClass.getColor(),
       children: [
+        if (weightAssignmentDensity.length == 0)
+          Padding(
+            padding: EdgeInsets.fromLTRB(16, 12, 16, 0),
+            child: SammiSpeechBubble(
+            sammiPersonality: SammiPersonality.smile,
+            speechBubbleContents: Text('The last step is to add assignments!'),
+          ),
+          ),
         Expanded(
           child: Container(
             decoration: BoxDecoration(
@@ -119,7 +127,8 @@ class _AssignmentWeightState extends State<AssignmentWeightView> {
                                   CupertinoPageRoute(
                                     builder: (context) => AssignmentAddView(
                                         widget.class_id, null),
-                                    settings: RouteSettings(name: 'AssignmentAddView'),
+                                    settings: RouteSettings(
+                                        name: 'AssignmentAddView'),
                                   ),
                                 );
                               },
@@ -182,7 +191,8 @@ class _AssignmentWeightState extends State<AssignmentWeightView> {
                                         widget.class_id,
                                         weights[index],
                                       ),
-                                      settings: RouteSettings(name: 'AssignmentAddView'),
+                                      settings: RouteSettings(
+                                          name: 'AssignmentAddView'),
                                     ),
                                   );
                                 } else {
@@ -194,7 +204,8 @@ class _AssignmentWeightState extends State<AssignmentWeightView> {
                                         class_id: widget.class_id,
                                         weight: weight,
                                       ),
-                                      settings: RouteSettings(name: 'AssignmentBatchAddView'),
+                                      settings: RouteSettings(
+                                          name: 'AssignmentBatchAddView'),
                                     ),
                                   );
                                 }

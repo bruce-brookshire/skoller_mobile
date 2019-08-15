@@ -107,7 +107,7 @@ class _WeightExtractionState extends State<WeightExtractionView> {
                       style: TextStyle(fontWeight: FontWeight.normal),
                       children: [
                         TextSpan(
-                          text: 'First, setup weights!',
+                          text: 'First, set up weights!',
                           style: TextStyle(fontWeight: FontWeight.bold),
                         ),
                       ],
@@ -185,13 +185,18 @@ class _SubviewOneState extends State<_SubviewOne> {
   @override
   Widget build(BuildContext context) => Column(
         children: <Widget>[
-          Spacer(),
-          Text(
-            'For example, Exams are worth 60% of your grade.',
-            style: TextStyle(
-                color: SKColors.text_light_gray, fontWeight: FontWeight.normal),
-            textAlign: TextAlign.center,
+          Padding(
+            padding: EdgeInsets.only(top: 16),
+            child: Text(
+              'For example, Exams are worth 60% of your grade.',
+              style: TextStyle(
+                  fontSize: 13,
+                  // color: SKColors.text_light_gray,
+                  fontWeight: FontWeight.normal),
+              textAlign: TextAlign.center,
+            ),
           ),
+          Spacer(),
           GestureDetector(
             onTapUp: (details) => widget.subviewParent.forwardState(),
             child: Container(
@@ -345,43 +350,24 @@ class _SubviewThreeState extends State<_SubviewThree> {
     numPoints = isPoints ? widget.subviewParent.state.numPoints : 100;
   }
 
-  void editWeight(int weightIndex) async {
+  void editWeight(int weightIndex) {
     final weight = widget.subviewParent.state.weights[weightIndex];
 
-    final nameController = TextEditingController(text: weight['name']);
-    final valueController = TextEditingController(text: '${weight['value']}');
-
-    final results =
-        await showWeightMaker(nameController, valueController, false);
-
-    if (results != null && results is bool && results) {
-      final name = nameController.text.trim();
-      final value = valueController.text.trim();
-
+    showWeightMaker(weight['name'], '${weight['value']}', false, (name, value) {
       if (name != '' && value != '' && int.tryParse(value) != null) {
-        setState(() {
-          widget.subviewParent.state.weights[weightIndex]['name'] = name;
-          widget.subviewParent.state.weights[weightIndex]['value'] =
-              int.parse(value);
-        });
+        setState(
+          () {
+            widget.subviewParent.state.weights[weightIndex]['name'] = name;
+            widget.subviewParent.state.weights[weightIndex]['value'] =
+                int.parse(value);
+          },
+        );
       }
-    }
-
-    nameController.dispose();
-    valueController.dispose();
+    });
   }
 
-  void addWeight(TapUpDetails details) async {
-    final nameController = TextEditingController();
-    final valueController = TextEditingController();
-
-    final results =
-        await showWeightMaker(nameController, valueController, true);
-
-    if (results != null && results is bool && results) {
-      final name = nameController.text.trim();
-      final value = valueController.text.trim();
-
+  void addWeight(TapUpDetails details) {
+    showWeightMaker('', '', true, (name, value) {
       if (name != '' && value != '' && int.tryParse(value) != null) {
         setState(
           () => widget.subviewParent.state.weights.add(
@@ -392,98 +378,19 @@ class _SubviewThreeState extends State<_SubviewThree> {
           ),
         );
       }
-    }
-
-    nameController.dispose();
-    valueController.dispose();
+    });
   }
 
   Future<bool> showWeightMaker(
-    TextEditingController nameController,
-    TextEditingController valueController,
+    String nameStr,
+    String valueStr,
     bool isCreate,
+    DoubleStringCallback results,
   ) {
     return showDialog(
       context: context,
-      builder: (context) => Dialog(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(10),
-          side: BorderSide(color: SKColors.border_gray),
-        ),
-        child: Padding(
-          padding: EdgeInsets.fromLTRB(12, 12, 12, 0),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: <Widget>[
-              Text(
-                isCreate ? 'Create weight' : 'Update weight',
-                style: TextStyle(fontSize: 16),
-                textAlign: TextAlign.center,
-              ),
-              Padding(
-                padding: EdgeInsets.only(top: 16),
-                child: Text('Name'),
-              ),
-              CupertinoTextField(
-                placeholder: 'Exams',
-                controller: nameController,
-                padding: EdgeInsets.fromLTRB(6, 8, 6, 4),
-                textCapitalization: TextCapitalization.words,
-                cursorColor: SKColors.skoller_blue,
-                placeholderStyle:
-                    TextStyle(fontSize: 14, color: SKColors.text_light_gray),
-                style: TextStyle(color: SKColors.dark_gray, fontSize: 15),
-              ),
-              Padding(
-                padding: EdgeInsets.only(top: 12),
-                child: Text('Value'),
-              ),
-              Row(
-                children: <Widget>[
-                  SizedBox(
-                      width: 60,
-                      child: CupertinoTextField(
-                        controller: valueController,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(5),
-                          border: Border.all(color: SKColors.border_gray),
-                        ),
-                        padding: EdgeInsets.fromLTRB(6, 8, 6, 4),
-                        cursorColor: SKColors.skoller_blue,
-                        placeholder: '25',
-                        placeholderStyle: TextStyle(
-                            fontSize: 14, color: SKColors.text_light_gray),
-                        style:
-                            TextStyle(color: SKColors.dark_gray, fontSize: 15),
-                      )),
-                  Padding(
-                    padding: EdgeInsets.only(left: 8, bottom: 24),
-                    child: Text('${isPoints ? 'pts.' : '%'}'),
-                  ),
-                  Spacer(),
-                ],
-              ),
-              GestureDetector(
-                onTapUp: (details) => Navigator.pop(context, true),
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: SKColors.skoller_blue,
-                    borderRadius: BorderRadius.circular(5),
-                  ),
-                  padding: EdgeInsets.symmetric(vertical: 8),
-                  margin: EdgeInsets.symmetric(vertical: 12),
-                  child: Text(
-                    'Add',
-                    style: TextStyle(color: Colors.white),
-                    textAlign: TextAlign.center,
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
+      builder: (context) => _WeightExtractionFormModal(
+          isPoints, isCreate, nameStr, valueStr, results),
     );
   }
 
@@ -629,7 +536,7 @@ class _SubviewThreeState extends State<_SubviewThree> {
                             ),
                           ),
                           Expanded(child: Text(weight['name'])),
-                          Text('${weight['value']}'),
+                          Text('${weight['value']}${isPoints ? ' pts.' : '%'}'),
                         ],
                       ),
                     ),
@@ -724,4 +631,147 @@ class _SubviewThreeState extends State<_SubviewThree> {
       ],
     );
   }
+}
+
+class _WeightExtractionFormModal extends StatefulWidget {
+  final bool isPoints;
+  final bool isCreate;
+
+  final String startNameVal;
+  final String startValueVal;
+
+  final DoubleStringCallback resultsCallback;
+
+  _WeightExtractionFormModal(this.isPoints, this.isCreate, this.startNameVal,
+      this.startValueVal, this.resultsCallback);
+
+  @override
+  State createState() => _WeightExtractionFormModalState();
+}
+
+class _WeightExtractionFormModalState
+    extends State<_WeightExtractionFormModal> {
+  final nameFocusNode = FocusNode();
+  final valueFocusNode = FocusNode();
+
+  TextEditingController nameController;
+  TextEditingController valueController;
+
+  @override
+  void initState() {
+    nameController = TextEditingController(text: widget.startNameVal);
+    valueController = TextEditingController(text: widget.startValueVal);
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    unfocusNodes();
+
+    nameFocusNode.dispose();
+    valueFocusNode.dispose();
+
+    nameController.dispose();
+    valueController.dispose();
+
+    super.dispose();
+  }
+
+  void unfocusNodes() {
+    nameFocusNode.unfocus();
+    valueFocusNode.unfocus();
+  }
+
+  @override
+  Widget build(BuildContext context) => Dialog(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10),
+          side: BorderSide(color: SKColors.border_gray),
+        ),
+        child: Padding(
+          padding: EdgeInsets.fromLTRB(12, 12, 12, 0),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: <Widget>[
+              Text(
+                widget.isCreate ? 'Create weight' : 'Update weight',
+                style: TextStyle(fontSize: 16),
+                textAlign: TextAlign.center,
+              ),
+              Padding(
+                padding: EdgeInsets.only(top: 16),
+                child: Text('Name'),
+              ),
+              CupertinoTextField(
+                placeholder: 'Exams',
+                controller: nameController,
+                padding: EdgeInsets.fromLTRB(6, 8, 6, 4),
+                textCapitalization: TextCapitalization.words,
+                cursorColor: SKColors.skoller_blue,
+                autofocus: true,
+                focusNode: nameFocusNode,
+                textInputAction: TextInputAction.next,
+                placeholderStyle:
+                    TextStyle(fontSize: 14, color: SKColors.text_light_gray),
+                onSubmitted: (_) => nameFocusNode.nextFocus(),
+                style: TextStyle(color: SKColors.dark_gray, fontSize: 15),
+              ),
+              Padding(
+                padding: EdgeInsets.only(top: 12),
+                child: Text('Value'),
+              ),
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: <Widget>[
+                  SizedBox(
+                      width: 60,
+                      child: CupertinoTextField(
+                        controller: valueController,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(5),
+                          border: Border.all(color: SKColors.border_gray),
+                        ),
+                        padding: EdgeInsets.fromLTRB(6, 8, 6, 4),
+                        cursorColor: SKColors.skoller_blue,
+                        placeholder: '25',
+                        focusNode: valueFocusNode,
+                        keyboardType: TextInputType.number,
+                        placeholderStyle: TextStyle(
+                            fontSize: 14, color: SKColors.text_light_gray),
+                        style:
+                            TextStyle(color: SKColors.dark_gray, fontSize: 15),
+                      )),
+                  Padding(
+                    padding: EdgeInsets.only(left: 8),
+                    child: Text('${widget.isPoints ? 'pts.' : '%'}'),
+                  ),
+                  Spacer(),
+                ],
+              ),
+              GestureDetector(
+                onTapUp: (details) {
+                  widget.resultsCallback(
+                      nameController.text, valueController.text);
+                  unfocusNodes();
+                  Navigator.pop(context);
+                },
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: SKColors.skoller_blue,
+                    borderRadius: BorderRadius.circular(5),
+                  ),
+                  padding: EdgeInsets.symmetric(vertical: 8),
+                  margin: EdgeInsets.symmetric(vertical: 12),
+                  child: Text(
+                    'Add',
+                    style: TextStyle(color: Colors.white),
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
 }

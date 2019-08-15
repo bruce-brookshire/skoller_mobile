@@ -156,6 +156,10 @@ class _PhoneVerificationState extends State<PhoneVerificationView> {
                       if (code.length == 5 && int.tryParse(code) != null) {
                         pinControllers[0].text = code;
                         pinFieldChanged(0);
+                      } else {
+                        setState(() {
+                          loading = false;
+                        });
                       }
                     });
                   },

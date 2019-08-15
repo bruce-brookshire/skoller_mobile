@@ -15,6 +15,8 @@ class _PrimarySchoolState extends State<PrimarySchoolModal> {
   int selectedSchoolId;
   Period selectedPeriod;
 
+  bool showingGreeting = true;
+
   @override
   void initState() {
     super.initState();
@@ -22,16 +24,16 @@ class _PrimarySchoolState extends State<PrimarySchoolModal> {
     if (SKUser.current.student.primarySchool != null) {
       eligibleSchools = [SKUser.current.student.primarySchool];
       selectedPeriod = eligibleSchools.first.getBestCurrentPeriod();
+      showingGreeting = false;
     } else {
       SKUser.current.checkEmailDomain().then((response) async {
         if (response.wasSuccessful()) {
           final List<School> obj = response.obj;
 
           if (obj.length == 1) {
-            await SKUser.current.update(primarySchool: obj.first);
             selectedSchoolId = obj.first.id;
             selectedPeriod = obj.first.getBestCurrentPeriod();
-          }
+          } else if (obj.length == 0 && !showingGreeting) tappedSearch(null);
 
           setState(() {
             eligibleSchools = obj;
@@ -111,6 +113,8 @@ class _PrimarySchoolState extends State<PrimarySchoolModal> {
 
   @override
   Widget build(BuildContext context) {
+    if (showingGreeting) return createGreeting();
+
     return Container(
       alignment: Alignment.center,
       padding: EdgeInsets.fromLTRB(24, 0, 24, 64),
@@ -145,28 +149,110 @@ class _PrimarySchoolState extends State<PrimarySchoolModal> {
     );
   }
 
-  List<Widget> buildSearch() {
-    return [
-      Padding(
-        padding: EdgeInsets.symmetric(vertical: 8, horizontal: 12),
-        child: Text(
-          'Meet Sammi 👋',
-          style: TextStyle(fontSize: 32),
+  Widget createGreeting() {
+    return Container(
+      alignment: Alignment.center,
+      padding: EdgeInsets.fromLTRB(24, 0, 24, 64),
+      child: Material(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10),
+          side: BorderSide(color: SKColors.border_gray),
+        ),
+        color: SKColors.background_gray,
+        child: Padding(
+          padding: EdgeInsets.symmetric(vertical: 8),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Padding(
+                padding: EdgeInsets.symmetric(vertical: 8, horizontal: 24),
+                child: Row(
+                  children: [
+                    Padding(
+                      padding: EdgeInsets.only(right: 16),
+                      child: Image.asset(ImageNames.sammiImages.intro),
+                    ),
+                    Expanded(
+                      child: Text(
+                        'Welcome to Skoller!',
+                        style: TextStyle(fontSize: 32),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Padding(
+                padding: EdgeInsets.only(right: 16, bottom: 8, left: 4),
+                child: SammiSpeechBubble(
+                  sammiPersonality: null,
+                  speechBubbleContents: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      Text.rich(
+                        TextSpan(
+                          text: 'My name is Sammi. I\'m ',
+                          children: [
+                            TextSpan(
+                                text: 'your guide',
+                                style: TextStyle(fontWeight: FontWeight.bold)),
+                            TextSpan(text: ' to help you get through school!')
+                          ],
+                          style: TextStyle(
+                              fontSize: 17, fontWeight: FontWeight.normal),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              GestureDetector(
+                onTapUp: (details) {
+                  if (eligibleSchools.length == 0) tappedSearch(null);
+                  setState(() => showingGreeting = false);
+                },
+                child: Container(
+                  alignment: Alignment.center,
+                  padding: EdgeInsets.symmetric(vertical: 10),
+                  margin: EdgeInsets.symmetric(horizontal: 24, vertical: 8),
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(5),
+                      color: SKColors.skoller_blue,
+                      boxShadow: [UIAssets.boxShadow]),
+                  child: Text(
+                    'Get started',
+                    style: TextStyle(color: Colors.white),
+                  ),
+                ),
+              )
+            ],
+          ),
         ),
       ),
+    );
+  }
+
+  List<Widget> buildSearch() {
+    return [
       SammiSpeechBubble(
-        sammiPersonality: SammiPersonality.smile,
+        sammiPersonality: SammiPersonality.school,
         speechBubbleContents: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             Text(
-              'Welcome to Skoller! I\'m here to show you around. First up...',
-              style: TextStyle(fontSize: 14, fontWeight: FontWeight.normal),
+              'First off...',
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.normal),
             ),
             Padding(
-              padding: EdgeInsets.only(top: 4),
-              child: Text('Find your school!'),
+              padding: EdgeInsets.only(top: 2),
+              child: Text(
+                'Find your school!',
+                style: TextStyle(
+                  fontSize: 16,
+                ),
+              ),
             ),
           ],
         ),
@@ -235,26 +321,13 @@ class _PrimarySchoolState extends State<PrimarySchoolModal> {
         period?.endDate == null ? null : formatter.format(period.endDate);
 
     return [
-      Padding(
-        padding: EdgeInsets.symmetric(vertical: 8, horizontal: 12),
-        child: Text(
-          'Meet Sammi 👋',
-          style: TextStyle(fontSize: 32),
+      SammiSpeechBubble(
+        sammiPersonality: SammiPersonality.school,
+        speechBubbleContents: Text(
+          'Is this correct?',
+          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
         ),
       ),
-      SammiSpeechBubble(
-          sammiPersonality: SammiPersonality.smile,
-          speechBubbleContents: Text.rich(
-            TextSpan(
-              text: 'Hi! I\'ll help you get set up.',
-              style: TextStyle(fontWeight: FontWeight.normal),
-              children: [
-                TextSpan(
-                    text: ' Is this correct?',
-                    style: TextStyle(fontWeight: FontWeight.bold))
-              ],
-            ),
-          )),
       Padding(
         padding: EdgeInsets.only(top: 16),
         child: Column(
@@ -381,15 +454,8 @@ class _PrimarySchoolState extends State<PrimarySchoolModal> {
 
   List<Widget> buildMultiple() {
     return [
-      Padding(
-        padding: EdgeInsets.symmetric(vertical: 8, horizontal: 12),
-        child: Text(
-          'Meet Sammi 👋',
-          style: TextStyle(fontSize: 32),
-        ),
-      ),
       SammiSpeechBubble(
-          sammiPersonality: SammiPersonality.smile,
+          sammiPersonality: SammiPersonality.school,
           speechBubbleContents: Text.rich(
             TextSpan(
               text: 'I found some schools that might be yours...',

@@ -23,7 +23,7 @@ part 'user.dart';
 part 'mod.dart';
 
 const bool isProd = false;
-const bool isLocal = false;
+const bool isLocal = true;
 
 class RequestResponse<T> {
   int status;

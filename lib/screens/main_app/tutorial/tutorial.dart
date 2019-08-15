@@ -121,7 +121,7 @@ class _ViewFour extends StatelessWidget {
           children: <Widget>[
             Expanded(
               child: ListView(
-                padding: EdgeInsets.only(top: 88),
+                padding: EdgeInsets.only(top: 72),
                 children: classes.map(createCompleteCard).toList(),
               ),
             ),
@@ -142,7 +142,7 @@ class _ViewFour extends StatelessWidget {
                       TextSpan(text: 'Classes', children: [
                         TextSpan(
                             text:
-                                ' is a custom grade calculator for EACH class so you always know where you stand.',
+                                ' includes a grade calculator so you stay on track.',
                             style: TextStyle(fontWeight: FontWeight.normal))
                       ]),
                     ),

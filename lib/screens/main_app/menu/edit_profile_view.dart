@@ -280,9 +280,6 @@ class _EditProfileState extends State<EditProfileView> {
                         style: TextStyle(fontSize: 16),
                       ),
                       onPressed: () async {
-                        Navigator.popUntil(
-                            context, (route) => route.settings.isInitialRoute);
-
                         bool success = await SKUser.current.delete();
                         if (success) success = await Auth.logOut();
 

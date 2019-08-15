@@ -78,7 +78,7 @@ class ActivityTutorialView extends StatelessWidget {
           children: <Widget>[
             Expanded(
               child: ListView(
-                padding: EdgeInsets.only(top: 88),
+                padding: EdgeInsets.only(top: 72),
                 children: items.map(buildListItem).toList(),
               ),
             )
@@ -99,7 +99,7 @@ class ActivityTutorialView extends StatelessWidget {
                       TextSpan(text: 'Activity', children: [
                         TextSpan(
                             text:
-                                ' has changes to due dates and other suggestions from classmates.',
+                                ' shows schedule updates from your classmates.',
                             style: TextStyle(fontWeight: FontWeight.normal))
                       ]),
                     ),

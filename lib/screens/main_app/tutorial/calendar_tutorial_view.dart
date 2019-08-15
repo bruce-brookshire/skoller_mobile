@@ -80,7 +80,7 @@ class CalendarTutorialView extends StatelessWidget {
           children: [
             Container(
               color: Colors.white,
-              height: 80,
+              height: 64,
             ),
             Container(
               color: Colors.white,
@@ -114,7 +114,7 @@ class CalendarTutorialView extends StatelessWidget {
                       TextSpan(text: 'Calendar', children: [
                         TextSpan(
                             text:
-                                ' gives you a bird\'s eye view of your assignments for the entire semester.',
+                                ' gives a bird\'s eye view of your entire semester.',
                             style: TextStyle(fontWeight: FontWeight.normal))
                       ]),
                     ),
