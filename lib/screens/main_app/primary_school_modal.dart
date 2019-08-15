@@ -1,6 +1,7 @@
 import 'package:dart_notification_center/dart_notification_center.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:skoller/screens/main_app/tutorial/calendar_tutorial_view.dart';
 import 'package:skoller/tools.dart';
 import './menu/school_search_view.dart';
 
@@ -113,39 +114,151 @@ class _PrimarySchoolState extends State<PrimarySchoolModal> {
 
   @override
   Widget build(BuildContext context) {
-    if (showingGreeting) return createGreeting();
+    Widget body;
+    if (showingGreeting)
+      body = createGreeting();
+    else
+      body = Container(
+        alignment: Alignment.center,
+        padding: EdgeInsets.fromLTRB(24, 0, 24, 64),
+        child: Material(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+            side: BorderSide(color: SKColors.border_gray),
+          ),
+          color: SKColors.background_gray,
+          child: Padding(
+            padding: EdgeInsets.all(12),
+            child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  if (eligibleSchools == null)
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        SizedBox(
+                            width: 40,
+                            height: 40,
+                            child: CircularProgressIndicator()),
+                      ],
+                    ),
+                  if ((eligibleSchools?.length ?? -1) == 0) ...buildSearch(),
+                  if ((eligibleSchools?.length ?? -1) == 1) ...buildSingle(),
+                  if ((eligibleSchools?.length ?? -1) > 1) ...buildMultiple(),
+                ]),
+          ),
+        ),
+      );
 
-    return Container(
-      alignment: Alignment.center,
-      padding: EdgeInsets.fromLTRB(24, 0, 24, 64),
-      child: Material(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(10),
-          side: BorderSide(color: SKColors.border_gray),
-        ),
-        color: SKColors.background_gray,
-        child: Padding(
-          padding: EdgeInsets.all(12),
-          child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                if (eligibleSchools == null)
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      SizedBox(
-                          width: 40,
-                          height: 40,
-                          child: CircularProgressIndicator()),
-                    ],
+    return Stack(
+      children: <Widget>[
+        Positioned.fill(
+          child: Material(
+            color: Colors.white,
+            child: SafeArea(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: <Widget>[
+                  Container(
+                    height: 44,
+                    padding: EdgeInsets.symmetric(horizontal: 12),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      boxShadow: [
+                        BoxShadow(
+                          color: Color(0x1C000000),
+                          offset: Offset(0, 3.5),
+                          blurRadius: 2,
+                        )
+                      ],
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: <Widget>[
+                        Image.asset(ImageNames.peopleImages.static_profile),
+                        Text(
+                          'Calendar',
+                          style: TextStyle(fontSize: 18),
+                        ),
+                        Image.asset(ImageNames.rightNavImages.plus),
+                      ],
+                    ),
                   ),
-                if ((eligibleSchools?.length ?? -1) == 0) ...buildSearch(),
-                if ((eligibleSchools?.length ?? -1) == 1) ...buildSingle(),
-                if ((eligibleSchools?.length ?? -1) > 1) ...buildMultiple(),
-              ]),
+                  Padding(
+                    padding: EdgeInsets.symmetric(vertical: 12, horizontal: 12),
+                    child: Text(
+                      DateFormat('MMMM, yyyy').format(DateTime(2019, 10, 1)),
+                      style: TextStyle(fontSize: 16),
+                    ),
+                  ),
+                  Padding(
+                      padding: EdgeInsets.only(
+                        top: 4,
+                        bottom: 8
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: <Widget>[
+                          Text('U',
+                              style: TextStyle(
+                                  color: SKColors.light_gray, fontSize: 14)),
+                          Text('M',
+                              style: TextStyle(
+                                  color: SKColors.light_gray, fontSize: 14)),
+                          Text('T',
+                              style: TextStyle(
+                                  color: SKColors.light_gray, fontSize: 14)),
+                          Text('W',
+                              style: TextStyle(
+                                  color: SKColors.light_gray, fontSize: 14)),
+                          Text('R',
+                              style: TextStyle(
+                                  color: SKColors.light_gray, fontSize: 14)),
+                          Text('F',
+                              style: TextStyle(
+                                  color: SKColors.light_gray, fontSize: 14)),
+                          Text('S',
+                              style: TextStyle(
+                                  color: SKColors.light_gray, fontSize: 14)),
+                        ],
+                      )),
+                  Expanded(
+                      child: CalendarTutorialView(() {}, '', showSammi: false)),
+                  Container(
+                    height: 44,
+                    margin: EdgeInsets.only(top: 8),
+                    decoration: BoxDecoration(
+                        border: Border(
+                            top: BorderSide(color: SKColors.border_gray))),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: <Widget>[
+                        Image.asset(
+                            'image_assets/tab_bar_assets/tasks_blue.png'),
+                        Image.asset(
+                            'image_assets/tab_bar_assets/calendar_gray.png'),
+                        Image.asset(
+                            'image_assets/tab_bar_assets/chat_gray.png'),
+                        Image.asset(
+                            'image_assets/tab_bar_assets/classes_gray.png'),
+                        Image.asset(
+                            'image_assets/tab_bar_assets/activity_gray.png'),
+                      ],
+                    ),
+                  )
+                ],
+              ),
+            ),
+          ),
         ),
-      ),
+        Positioned.fill(
+          child: Container(
+            color: Colors.black.withOpacity(0.65),
+          ),
+        ),
+        body
+      ],
     );
   }
 
@@ -325,7 +438,7 @@ class _PrimarySchoolState extends State<PrimarySchoolModal> {
         sammiPersonality: SammiPersonality.school,
         speechBubbleContents: Text(
           'Is this correct?',
-          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
         ),
       ),
       Padding(

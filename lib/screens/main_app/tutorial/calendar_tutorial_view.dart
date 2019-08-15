@@ -13,7 +13,6 @@ final _colors = [
   Color(0xFFdd4a63), // 7red
 ];
 
-
 class _CalendarItem {
   final String name;
   final int color;
@@ -24,8 +23,10 @@ class _CalendarItem {
 class CalendarTutorialView extends StatelessWidget {
   final VoidCallback onTapDismiss;
   final String promptMsg;
+  final bool showSammi;
 
-  CalendarTutorialView(this.onTapDismiss, this.promptMsg);
+  CalendarTutorialView(this.onTapDismiss, this.promptMsg,
+      {this.showSammi = true});
 
   final firstOfMonth = DateTime(2019, 10, 1);
   final startDate = DateTime(2019, 9, 29);
@@ -70,80 +71,83 @@ class CalendarTutorialView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      alignment: Alignment.center,
-      children: <Widget>[
-        SKNavView(
-          title: 'Calendar',
-          leftBtn: Image.asset(ImageNames.peopleImages.static_profile),
-          rightBtn: Image.asset(ImageNames.rightNavImages.plus),
-          children: [
-            Container(
-              color: Colors.white,
-              height: 64,
-            ),
-            Container(
-              color: Colors.white,
-              padding: EdgeInsets.symmetric(vertical: 12, horizontal: 12),
-              margin: EdgeInsets.only(bottom: 8),
-              alignment: Alignment.centerLeft,
-              child: Text(
-                DateFormat('MMMM, yyyy').format(firstOfMonth),
+    Widget body = Column(
+      mainAxisSize: MainAxisSize.min,
+      children: calendarBody(),
+    );
+    if (!showSammi)
+      return body;
+    else
+      return Stack(
+        alignment: Alignment.center,
+        children: <Widget>[
+          SKNavView(
+            title: 'Calendar',
+            leftBtn: Image.asset(ImageNames.peopleImages.static_profile),
+            rightBtn: Image.asset(ImageNames.rightNavImages.plus),
+            children: [
+              Container(
+                color: Colors.white,
+                height: 64,
               ),
-            ),
-            Expanded(
+              Container(
+                color: Colors.white,
+                padding: EdgeInsets.symmetric(vertical: 12, horizontal: 12),
+                margin: EdgeInsets.only(bottom: 8),
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  DateFormat('MMMM, yyyy').format(firstOfMonth),
+                ),
+              ),
+              Expanded(child: body)
+            ],
+          ),
+          Container(color: Colors.black.withOpacity(0.5)),
+          Material(
+            color: Colors.transparent,
+            child: SafeArea(
+              bottom: false,
               child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: calendarBody(),
+                children: <Widget>[
+                  Padding(
+                    padding: EdgeInsets.only(left: 12, right: 12, top: 48),
+                    child: SammiSpeechBubble(
+                      sammiPersonality: SammiPersonality.ooo,
+                      speechBubbleContents: Text.rich(
+                        TextSpan(text: 'Calendar', children: [
+                          TextSpan(
+                              text:
+                                  ' gives a bird\'s eye view of your entire semester.',
+                              style: TextStyle(fontWeight: FontWeight.normal))
+                        ]),
+                      ),
+                    ),
+                  ),
+                  Spacer(),
+                  GestureDetector(
+                    onTapUp: (details) => onTapDismiss(),
+                    child: Container(
+                      padding:
+                          EdgeInsets.symmetric(vertical: 8, horizontal: 24),
+                      margin: EdgeInsets.only(bottom: 48),
+                      decoration: BoxDecoration(
+                        color: SKColors.skoller_blue,
+                        borderRadius: BorderRadius.circular(5),
+                        border: Border.all(color: Colors.white),
+                        boxShadow: [UIAssets.boxShadow],
+                      ),
+                      child: Text(
+                        promptMsg,
+                        style: TextStyle(color: Colors.white, fontSize: 16),
+                      ),
+                    ),
+                  ),
+                ],
               ),
-            ),
-          ],
-        ),
-        Container(color: Colors.black.withOpacity(0.5)),
-        Material(
-          color: Colors.transparent,
-          child: SafeArea(
-            bottom: false,
-            child: Column(
-              children: <Widget>[
-                Padding(
-                  padding: EdgeInsets.only(left: 12, right: 12, top: 48),
-                  child: SammiSpeechBubble(
-                    sammiPersonality: SammiPersonality.ooo,
-                    speechBubbleContents: Text.rich(
-                      TextSpan(text: 'Calendar', children: [
-                        TextSpan(
-                            text:
-                                ' gives a bird\'s eye view of your entire semester.',
-                            style: TextStyle(fontWeight: FontWeight.normal))
-                      ]),
-                    ),
-                  ),
-                ),
-                Spacer(),
-                GestureDetector(
-                  onTapUp: (details) => onTapDismiss(),
-                  child: Container(
-                    padding: EdgeInsets.symmetric(vertical: 8, horizontal: 24),
-                    margin: EdgeInsets.only(bottom: 48),
-                    decoration: BoxDecoration(
-                      color: SKColors.skoller_blue,
-                      borderRadius: BorderRadius.circular(5),
-                      border: Border.all(color: Colors.white),
-                      boxShadow: [UIAssets.boxShadow],
-                    ),
-                    child: Text(
-                      promptMsg,
-                      style: TextStyle(color: Colors.white, fontSize: 16),
-                    ),
-                  ),
-                ),
-              ],
             ),
           ),
-        ),
-      ],
-    );
+        ],
+      );
   }
 
   List<Widget> calendarBody() {
