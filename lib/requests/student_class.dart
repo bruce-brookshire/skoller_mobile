@@ -189,7 +189,7 @@ class StudentClass {
         '/students/${SKUser.current.student.id}/classes/${this.id}/assignments',
         {
           "due": tzCorrectedString,
-          "weight_id": weight.id,
+          "weight_id": weight?.id,
           "name": name,
           "is_completed": false,
           "is_private": false,
