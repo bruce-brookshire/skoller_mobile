@@ -230,7 +230,7 @@ class _CreateClassScreenOneState extends State<_CreateClassScreenOne> {
         Padding(
           padding: EdgeInsets.only(bottom: 16),
           child: SammiSpeechBubble(
-            sammiPersonality: SammiPersonality.smile,
+            sammiPersonality: SammiPersonality.school,
             speechBubbleContents: Text.rich(
               TextSpan(text: 'Create your class ', children: [
                 TextSpan(
@@ -240,153 +240,168 @@ class _CreateClassScreenOneState extends State<_CreateClassScreenOne> {
             ),
           ),
         ),
-        Container(
-          margin: EdgeInsets.symmetric(vertical: 6, horizontal: 12),
-          padding: EdgeInsets.symmetric(vertical: 4, horizontal: 8),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(5),
-            border: Border.all(color: SKColors.border_gray),
-            boxShadow: [UIAssets.boxShadow],
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-              Text(
-                'Class name',
-                style: TextStyle(
-                    color: SKColors.skoller_blue,
-                    fontSize: 14,
-                    fontWeight: FontWeight.normal),
-              ),
-              CupertinoTextField(
-                cursorColor: SKColors.skoller_blue,
-                padding: EdgeInsets.only(top: 1),
-                placeholder: 'Intro to Calculus',
-                style: TextStyle(fontSize: 15, color: SKColors.dark_gray),
-                decoration: BoxDecoration(border: null),
-                controller: parent.classNameController,
-                textCapitalization: TextCapitalization.words,
-                focusNode: nodes[0],
-                onChanged: checkValid,
-                onEditingComplete: () => nodes[0].nextFocus(),
-                textInputAction: TextInputAction.next,
-                autofocus: true,
-              ),
-            ],
+        GestureDetector(
+          onTapUp: (details) => nodes[0].requestFocus(),
+          child: Container(
+            margin: EdgeInsets.symmetric(vertical: 6, horizontal: 12),
+            padding: EdgeInsets.symmetric(vertical: 4, horizontal: 8),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(5),
+              border: Border.all(color: SKColors.border_gray),
+              boxShadow: [UIAssets.boxShadow],
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                Text(
+                  'Class name',
+                  style: TextStyle(
+                      color: SKColors.skoller_blue,
+                      fontSize: 14,
+                      fontWeight: FontWeight.normal),
+                ),
+                CupertinoTextField(
+                  cursorColor: SKColors.skoller_blue,
+                  padding: EdgeInsets.only(top: 1),
+                  placeholder: 'Intro to Calculus',
+                  style: TextStyle(fontSize: 15, color: SKColors.dark_gray),
+                  decoration: BoxDecoration(border: null),
+                  controller: parent.classNameController,
+                  textCapitalization: TextCapitalization.words,
+                  focusNode: nodes[0],
+                  onChanged: checkValid,
+                  onEditingComplete: () => nodes[0].nextFocus(),
+                  textInputAction: TextInputAction.next,
+                  autofocus: true,
+                ),
+              ],
+            ),
           ),
         ),
         Row(
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
             Expanded(
-              child: Container(
-                margin: EdgeInsets.fromLTRB(12, 4, 4, 4),
-                padding: EdgeInsets.symmetric(vertical: 4, horizontal: 4),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(5),
-                  border: Border.all(color: SKColors.border_gray),
-                  boxShadow: [UIAssets.boxShadow],
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.min,
-                  children: <Widget>[
-                    Text(
-                      'Subject',
-                      style: TextStyle(
-                          color: SKColors.skoller_blue,
-                          fontSize: 13,
-                          fontWeight: FontWeight.normal),
-                    ),
-                    CupertinoTextField(
-                      cursorColor: SKColors.skoller_blue,
-                      padding: EdgeInsets.only(top: 1),
-                      placeholder: 'MATH',
-                      style: TextStyle(fontSize: 15, color: SKColors.dark_gray),
-                      decoration: BoxDecoration(border: null),
-                      textCapitalization: TextCapitalization.characters,
-                      controller: parent.subjectController,
-                      focusNode: nodes[1],
-                      onEditingComplete: () => nodes[1].nextFocus(),
-                      textInputAction: TextInputAction.next,
-                      onChanged: checkValid,
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            Expanded(
-              child: Container(
-                margin: EdgeInsets.fromLTRB(4, 4, 4, 4),
-                padding: EdgeInsets.symmetric(vertical: 4, horizontal: 4),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(5),
-                  border: Border.all(color: SKColors.border_gray),
-                  boxShadow: [UIAssets.boxShadow],
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.min,
-                  children: <Widget>[
-                    Text(
-                      'Code',
-                      style: TextStyle(
-                          color: SKColors.skoller_blue,
-                          fontSize: 13,
-                          fontWeight: FontWeight.normal),
-                    ),
-                    CupertinoTextField(
-                      cursorColor: SKColors.skoller_blue,
-                      padding: EdgeInsets.only(top: 1),
-                      placeholder: '1300',
-                      style: TextStyle(fontSize: 15, color: SKColors.dark_gray),
-                      decoration: BoxDecoration(border: null),
-                      controller: parent.codeController,
-                      onChanged: checkValid,
-                      focusNode: nodes[2],
-                      keyboardType: TextInputType.number,
-                    ),
-                  ],
+              child: GestureDetector(
+                onTapUp: (details) => nodes[1].requestFocus(),
+                child: Container(
+                  margin: EdgeInsets.fromLTRB(12, 4, 4, 4),
+                  padding: EdgeInsets.symmetric(vertical: 4, horizontal: 4),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(5),
+                    border: Border.all(color: SKColors.border_gray),
+                    boxShadow: [UIAssets.boxShadow],
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: <Widget>[
+                      Text(
+                        'Subject',
+                        style: TextStyle(
+                            color: SKColors.skoller_blue,
+                            fontSize: 13,
+                            fontWeight: FontWeight.normal),
+                      ),
+                      CupertinoTextField(
+                        cursorColor: SKColors.skoller_blue,
+                        padding: EdgeInsets.only(top: 1),
+                        placeholder: 'MATH',
+                        style:
+                            TextStyle(fontSize: 15, color: SKColors.dark_gray),
+                        decoration: BoxDecoration(border: null),
+                        textCapitalization: TextCapitalization.characters,
+                        controller: parent.subjectController,
+                        focusNode: nodes[1],
+                        onEditingComplete: () => nodes[1].nextFocus(),
+                        textInputAction: TextInputAction.next,
+                        onChanged: checkValid,
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),
             Expanded(
-              child: Container(
-                margin: EdgeInsets.fromLTRB(4, 4, 12, 4),
-                padding: EdgeInsets.symmetric(vertical: 4, horizontal: 4),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(5),
-                  border: Border.all(color: SKColors.border_gray),
-                  boxShadow: [UIAssets.boxShadow],
+              child: GestureDetector(
+                onTapUp: (details) => nodes[2].requestFocus(),
+                child: Container(
+                  margin: EdgeInsets.fromLTRB(4, 4, 4, 4),
+                  padding: EdgeInsets.symmetric(vertical: 4, horizontal: 4),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(5),
+                    border: Border.all(color: SKColors.border_gray),
+                    boxShadow: [UIAssets.boxShadow],
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: <Widget>[
+                      Text(
+                        'Code',
+                        style: TextStyle(
+                            color: SKColors.skoller_blue,
+                            fontSize: 13,
+                            fontWeight: FontWeight.normal),
+                      ),
+                      CupertinoTextField(
+                        cursorColor: SKColors.skoller_blue,
+                        padding: EdgeInsets.only(top: 1),
+                        placeholder: '1300',
+                        style:
+                            TextStyle(fontSize: 15, color: SKColors.dark_gray),
+                        decoration: BoxDecoration(border: null),
+                        controller: parent.codeController,
+                        onChanged: checkValid,
+                        focusNode: nodes[2],
+                        keyboardType: TextInputType.number,
+                      ),
+                    ],
+                  ),
                 ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.min,
-                  children: <Widget>[
-                    Text(
-                      'Section',
-                      style: TextStyle(
-                          color: SKColors.skoller_blue,
-                          fontSize: 13,
-                          fontWeight: FontWeight.normal),
-                    ),
-                    CupertinoTextField(
-                      cursorColor: SKColors.skoller_blue,
-                      padding: EdgeInsets.only(top: 1),
-                      placeholder: '2',
-                      style: TextStyle(fontSize: 15, color: SKColors.dark_gray),
-                      decoration: BoxDecoration(border: null),
-                      controller: parent.sectionController,
-                      keyboardType: TextInputType.number,
-                      focusNode: nodes[3],
-                      onChanged: checkValid,
-                    ),
-                  ],
+              ),
+            ),
+            Expanded(
+              child: GestureDetector(
+                onTapUp: (details) => nodes[3].requestFocus(),
+                child: Container(
+                  margin: EdgeInsets.fromLTRB(4, 4, 12, 4),
+                  padding: EdgeInsets.symmetric(vertical: 4, horizontal: 4),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(5),
+                    border: Border.all(color: SKColors.border_gray),
+                    boxShadow: [UIAssets.boxShadow],
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: <Widget>[
+                      Text(
+                        'Section',
+                        style: TextStyle(
+                            color: SKColors.skoller_blue,
+                            fontSize: 13,
+                            fontWeight: FontWeight.normal),
+                      ),
+                      CupertinoTextField(
+                        cursorColor: SKColors.skoller_blue,
+                        padding: EdgeInsets.only(top: 1),
+                        placeholder: '2',
+                        style:
+                            TextStyle(fontSize: 15, color: SKColors.dark_gray),
+                        decoration: BoxDecoration(border: null),
+                        controller: parent.sectionController,
+                        keyboardType: TextInputType.number,
+                        focusNode: nodes[3],
+                        onChanged: checkValid,
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),
@@ -552,7 +567,7 @@ class _CreateClassScreenTwoState extends State<_CreateClassScreenTwo> {
         Padding(
           padding: EdgeInsets.only(bottom: 6),
           child: SammiSpeechBubble(
-            sammiPersonality: SammiPersonality.ooo,
+            sammiPersonality: SammiPersonality.school,
             sammiSide: SammiSide.right,
             speechBubbleContents: Text('You are halfway there!'),
           ),
@@ -805,7 +820,7 @@ class _CreateClassScreenThreeState extends State<_CreateClassScreenThree> {
         Padding(
           padding: EdgeInsets.symmetric(vertical: 12),
           child: SammiSpeechBubble(
-            sammiPersonality: SammiPersonality.cool,
+            sammiPersonality: SammiPersonality.school,
             speechBubbleContents: Text.rich(
               TextSpan(
                 text: 'Review ',

@@ -64,7 +64,7 @@ class _ClassDetailState extends State<ClassDetailView> {
   Future loadClass([dynamic options]) async {
     Map<int, int> weightDensity = {};
 
-    for (final Assignment assignment in studentClass.assignments ?? []) {
+    for (final Assignment assignment in studentClass?.assignments ?? []) {
       if (assignment.weight_id != null) {
         final currCount = weightDensity[assignment.weight_id] ?? 0;
         weightDensity[assignment.weight_id] = currCount + 1;

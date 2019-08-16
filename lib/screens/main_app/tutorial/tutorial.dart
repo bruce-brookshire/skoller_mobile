@@ -3,7 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:skoller/screens/main_app/tutorial/activity_tutorial_view.dart';
 import 'package:skoller/screens/main_app/tutorial/calendar_tutorial_view.dart';
 import 'package:skoller/screens/main_app/tutorial/chat_tutorial_view.dart';
-import 'package:skoller/screens/main_app/tutorial/tasks_tutorial_view.dart';
+import 'package:skoller/screens/main_app/tutorial/forecast_tutorial_view.dart';
 import 'package:skoller/tools.dart';
 
 class TutorialTab extends StatefulWidget {
@@ -20,7 +20,7 @@ class _TutorialTabState extends State<TutorialTab> {
   List<StatelessWidget> views;
 
   final List<String> _indexIconPartialPaths = [
-    'tasks_',
+    'forecast_',
     'calendar_',
     'chat_',
     'classes_',
@@ -32,7 +32,7 @@ class _TutorialTabState extends State<TutorialTab> {
   @override
   void initState() {
     views = [
-      TasksTutorialView(() => widget.onTapDismiss(context), widget.promptMsg),
+      ForecastTutorialView(() => widget.onTapDismiss(context), widget.promptMsg),
       CalendarTutorialView(() => widget.onTapDismiss(context), widget.promptMsg),
       ChatTutorialView(() => widget.onTapDismiss(context), widget.promptMsg),
       _ViewFour(() => widget.onTapDismiss(context), widget.promptMsg),

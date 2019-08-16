@@ -1,5 +1,6 @@
 import 'package:dart_notification_center/dart_notification_center.dart';
 import 'package:dropdown_banner/dropdown_banner.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:skoller/tools.dart';
 import 'package:intl/intl.dart';
@@ -18,6 +19,8 @@ class _AssignmentAddState extends State<AssignmentAddView> {
   DateTime dueDate;
 
   String assignmentName;
+
+  bool isPrivate = false;
 
   void tappedDateSelector(TapUpDetails details) {
     final now = DateTime.now();
@@ -55,6 +58,8 @@ class _AssignmentAddState extends State<AssignmentAddView> {
   }
 
   Widget createInfoContainer() {
+    final isValid = validState();
+
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
@@ -80,23 +85,25 @@ class _AssignmentAddState extends State<AssignmentAddView> {
                   padding: EdgeInsets.only(right: 8, left: 4),
                   child: Image.asset(ImageNames.peopleImages.people_gray),
                 ),
-                Text.rich(
-                  TextSpan(
-                    text: '', // default text style
-                    children: <TextSpan>[
-                      TextSpan(
-                          text: 'Add: ',
-                          style: TextStyle(
-                              fontWeight: FontWeight.normal, fontSize: 15)),
-                      TextSpan(
-                          text: widget.weight == null
-                              ? 'Not graded'
-                              : widget.weight.name,
-                          style: TextStyle(
-                              fontWeight: FontWeight.bold, fontSize: 15)),
-                    ],
+                Expanded(
+                  child: Text.rich(
+                    TextSpan(
+                      text: '', // default text style
+                      children: <TextSpan>[
+                        TextSpan(
+                            text: 'Add: ',
+                            style: TextStyle(
+                                fontWeight: FontWeight.normal, fontSize: 15)),
+                        TextSpan(
+                            text: widget.weight == null
+                                ? 'Not graded'
+                                : widget.weight.name,
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold, fontSize: 15)),
+                      ],
+                    ),
                   ),
-                )
+                ),
               ],
             ),
           ),
@@ -105,6 +112,7 @@ class _AssignmentAddState extends State<AssignmentAddView> {
             child: TextField(
               decoration: InputDecoration(hintText: 'Assignment name'),
               style: TextStyle(fontSize: 14),
+              textCapitalization: TextCapitalization.words,
               onChanged: (newStr) {
                 String trimmedString = newStr.trim();
                 bool makeNull =
@@ -124,41 +132,53 @@ class _AssignmentAddState extends State<AssignmentAddView> {
               },
             ),
           ),
-          Container(
-            padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+          Padding(
+            padding: EdgeInsets.fromLTRB(16, 16, 16, 0),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
-                Text(
-                  'Due date: ',
-                  style: TextStyle(fontWeight: FontWeight.normal, fontSize: 15),
-                ),
+                Text('Due date',
+                    style: TextStyle(fontWeight: FontWeight.normal)),
                 GestureDetector(
+                  behavior: HitTestBehavior.opaque,
                   onTapUp: tappedDateSelector,
-                  child: Text(
-                    dueDate == null
-                        ? 'Select date'
-                        : DateFormat('EEE, MMMM d').format(dueDate),
-                    style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 15,
-                        color: SKColors.skoller_blue),
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(vertical: 8),
+                    child: Text(
+                      dueDate == null
+                          ? 'Select date'
+                          : DateFormat('EEE, MMMM d').format(dueDate),
+                      style:
+                          TextStyle(fontSize: 15, color: SKColors.skoller_blue),
+                    ),
                   ),
                 ),
               ],
             ),
           ),
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: <Widget>[
+                Text('Share with classmates',
+                    style: TextStyle(fontWeight: FontWeight.normal)),
+                CupertinoSwitch(
+                  onChanged: (newVal) => setState(() => isPrivate = !newVal),
+                  value: !isPrivate,
+                  activeColor: SKColors.skoller_blue,
+                )
+              ],
+            ),
+          ),
           GestureDetector(
             onTapUp: (details) {
-              if (validState()) {
+              if (isValid) {
                 final loadingScreen = SKLoadingScreen.fadeIn(context);
 
                 StudentClass.currentClasses[widget.class_id]
                     .createAssignment(
-                  assignmentName,
-                  widget.weight,
-                  dueDate,
-                )
+                        assignmentName, widget.weight, dueDate, isPrivate)
                     .then((response) async {
                   loadingScreen.dismiss();
 
@@ -184,14 +204,29 @@ class _AssignmentAddState extends State<AssignmentAddView> {
               alignment: Alignment.center,
               padding: EdgeInsets.symmetric(vertical: 8),
               decoration: BoxDecoration(
-                  color:
-                      validState() ? SKColors.success : SKColors.inactive_gray,
+                  color: isValid ? (isPrivate ? SKColors.skoller_blue : SKColors.success) : SKColors.inactive_gray,
                   borderRadius: BorderRadius.circular(5)),
-              child: Text(
-                'Save',
-                style: TextStyle(
-                  color: validState() ? Colors.white : SKColors.dark_gray,
-                ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Container(
+                    height: 14,
+                    padding: EdgeInsets.only(right: 8),
+                    child: Image.asset(isPrivate
+                        ? (isValid
+                            ? ImageNames.peopleImages.person_white
+                            : ImageNames.peopleImages.person_dark_gray)
+                        : (isValid
+                            ? ImageNames.peopleImages.people_white
+                            : ImageNames.peopleImages.people_gray)),
+                  ),
+                  Text(
+                    isPrivate ? 'Keep private' : 'Share assignment',
+                    style: TextStyle(
+                      color: isValid ? Colors.white : SKColors.dark_gray,
+                    ),
+                  ),
+                ],
               ),
             ),
           ),

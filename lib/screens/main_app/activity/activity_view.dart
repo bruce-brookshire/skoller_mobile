@@ -171,18 +171,18 @@ class _ActivityState extends State<ActivityView> {
                   options: AddClassesView(),
                 ),
                 child: Container(
-                  padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                  padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                   margin: EdgeInsets.only(bottom: 7),
                   decoration: BoxDecoration(
-                    color: Colors.white,
+                    color: SKColors.skoller_blue,
                     boxShadow: [UIAssets.boxShadow],
                     borderRadius: BorderRadius.circular(5),
-                    border: Border.all(color: SKColors.skoller_blue),
+                    border: Border.all(color: Colors.white)
                   ),
                   child: Text(
-                    'Join your second class 👌',
+                    'Join your 2nd class 👌',
                     style: TextStyle(
-                      color: SKColors.skoller_blue,
+                      color: Colors.white,
                     ),
                   ),
                 ),

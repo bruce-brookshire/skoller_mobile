@@ -17,6 +17,7 @@ class SkollerJobsView extends StatelessWidget {
                 children: <Widget>[
                   Expanded(
                     child: GestureDetector(
+                      behavior: HitTestBehavior.opaque,
                       onTapUp: (details) => Navigator.pop(context),
                       child: Container(
                         padding: EdgeInsets.only(bottom: 24),

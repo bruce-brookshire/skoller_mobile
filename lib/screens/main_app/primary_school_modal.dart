@@ -235,7 +235,7 @@ class _PrimarySchoolState extends State<PrimarySchoolModal> {
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
                       children: <Widget>[
                         Image.asset(
-                            'image_assets/tab_bar_assets/tasks_blue.png'),
+                            'image_assets/tab_bar_assets/forecast_blue.png'),
                         Image.asset(
                             'image_assets/tab_bar_assets/calendar_gray.png'),
                         Image.asset(

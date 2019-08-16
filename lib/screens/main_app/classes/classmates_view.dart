@@ -154,7 +154,7 @@ class _ClassmatesState extends State<ClassmatesView> {
                       GestureDetector(
                         onTapUp: (details) {
                           Share.share(
-                              'School is hard. But this new app called Skoller makes it easy! Our class \(studentClass.name ?? "") is already in the app. Download so we can keep up together!\n\n${studentClass.enrollmentLink}');
+                              'School is hard. But this new app called Skoller makes it easy! Our class ${studentClass.name ?? ""} is already in the app. Download so we can keep up together!\n\n${studentClass.enrollmentLink}');
                         },
                         child: Container(
                           // alignment: Alignment.center,

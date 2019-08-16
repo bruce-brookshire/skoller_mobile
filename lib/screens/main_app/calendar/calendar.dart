@@ -34,25 +34,31 @@ class _CalendarState extends State<CalendarView> {
 
     today = DateTime.now();
 
-    updateAssignments(Assignment.currentAssignments.values);
+    updateAssignments();
 
     children = [
       DateTime(today.year, today.month - 1, 1),
       DateTime(today.year, today.month, 1),
       DateTime(today.year, today.month + 1, 1),
     ];
+
+    DartNotificationCenter.subscribe(
+        observer: this,
+        channel: NotificationChannels.classChanged,
+        onNotification: (_) => updateAssignments());
   }
 
   @override
   void dispose() {
     super.dispose();
     controller.dispose();
+    DartNotificationCenter.unsubscribe(observer: this);
   }
 
-  void updateAssignments(Iterable<Assignment> new_assignments) {
+  void updateAssignments() {
     assignments = {};
     //Add assignments to the day hash map
-    for (var assignment in new_assignments) {
+    for (var assignment in Assignment.currentAssignments.values) {
       if (assignment.due != null && assignment.parentClass != null) {
         final dateStr = createDateStr(assignment.due);
 
@@ -111,16 +117,18 @@ class _CalendarState extends State<CalendarView> {
     }
   }
 
-  void tappedAdd(BuildContext context) async {
+  void tappedAdd() async {
     final classes = StudentClass.currentClasses.values.toList();
 
     if (classes.length == 0) {
       return;
     }
 
-    classes.sort((class1, class2) {
-      return class1.name.compareTo(class2.name);
-    });
+    classes
+      ..sort((class1, class2) {
+        return class1.name.compareTo(class2.name);
+      })
+      ..removeWhere((studentClass) => (studentClass.weights ?? []).length == 0);
 
     int selectedIndex = 0;
 
@@ -161,9 +169,7 @@ class _CalendarState extends State<CalendarView> {
           DartNotificationCenter.post(channel: NotificationChannels.toggleMenu),
       title: 'Calendar',
       rightBtn: Image.asset(ImageNames.rightNavImages.plus),
-      callbackRight: () {
-        tappedAdd(context);
-      },
+      callbackRight: tappedAdd,
       children: <Widget>[
         Container(
           color: Colors.white,
@@ -253,18 +259,18 @@ class _CalendarState extends State<CalendarView> {
                   options: AddClassesView(),
                 ),
                 child: Container(
-                  padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                  padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                   margin: EdgeInsets.only(bottom: 7),
                   decoration: BoxDecoration(
-                    color: Colors.white,
+                    color: SKColors.skoller_blue,
                     boxShadow: [UIAssets.boxShadow],
                     borderRadius: BorderRadius.circular(5),
-                    border: Border.all(color: SKColors.skoller_blue),
+                    border: Border.all(color: Colors.white),
                   ),
                   child: Text(
-                    'Join your second class 👌',
+                    'Join your 2nd class 👌',
                     style: TextStyle(
-                      color: SKColors.skoller_blue,
+                      color: Colors.white,
                     ),
                   ),
                 ),

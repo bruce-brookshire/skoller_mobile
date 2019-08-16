@@ -41,6 +41,14 @@ class _AssignmentBatchAddState extends State<AssignmentBatchAddView> {
         );
         Navigator.pop(context);
       }
+    }).catchError((error) {
+      DropdownBanner.showBanner(
+        text:
+            'One of your classmates is already on it 👍 just sit back and hang tight!',
+        color: SKColors.success,
+        textStyle: TextStyle(color: Colors.white),
+      );
+      Navigator.pop(context);
     });
   }
 
@@ -94,9 +102,8 @@ class _AssignmentBatchAddState extends State<AssignmentBatchAddView> {
     await studentClass.refetchSelf();
 
     loadingScreen.dismiss();
-    
-    DartNotificationCenter.post(
-        channel: NotificationChannels.classChanged);
+
+    DartNotificationCenter.post(channel: NotificationChannels.classChanged);
     Navigator.pop(context);
 
     if (failedRequests == 0) {
@@ -313,8 +320,6 @@ class _AddAssignmentSubState extends State<_AddAssignmentSubview> {
   bool isValidState = false;
 
   TextEditingController textFieldController = TextEditingController();
-
-
 
   @override
   void dispose() {

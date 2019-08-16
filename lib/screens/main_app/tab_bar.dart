@@ -9,7 +9,7 @@ import 'package:skoller/tools.dart';
 import 'classes/classes_view.dart';
 import 'chat/chat_list_view.dart';
 import 'calendar/calendar.dart';
-import 'tasks/tasks_view.dart';
+import 'tasks/forecast_view.dart';
 
 class SKTabBar extends StatefulWidget {
   @override
@@ -18,7 +18,7 @@ class SKTabBar extends StatefulWidget {
 
 class _SKTabBarState extends State<SKTabBar> {
   final _widgetOptions = [
-    TasksView(),
+    ForecastView(),
     CalendarView(),
     ChatListView(),
     ClassesView(),
@@ -42,7 +42,7 @@ class _SKTabBarState extends State<SKTabBar> {
   ];
 
   final List<String> _indexIconPartialPaths = [
-    'tasks_',
+    'forecast_',
     'calendar_',
     'chat_',
     'classes_',

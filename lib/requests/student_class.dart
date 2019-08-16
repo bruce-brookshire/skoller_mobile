@@ -172,6 +172,7 @@ class StudentClass {
     String name,
     Weight weight,
     DateTime dueDate,
+    bool isPrivate,
   ) async {
     String tzCorrectedString = dueDate.toUtc().toIso8601String();
 
@@ -192,7 +193,7 @@ class StudentClass {
           "weight_id": weight?.id,
           "name": name,
           "is_completed": false,
-          "is_private": false,
+          "is_private": isPrivate,
           "created_on": "mobile"
         },
         (content) =>

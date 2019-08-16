@@ -228,7 +228,7 @@ class _ClassesState extends State<ClassesView> {
                       text: 'You got your first class set up! Now, ',
                       style: TextStyle(fontWeight: FontWeight.normal)),
                   TextSpan(
-                      text: 'join your second class',
+                      text: 'Join your 2nd class 👌',
                       style: TextStyle(color: SKColors.skoller_blue)),
                   TextSpan(
                       text: '.',

@@ -6,18 +6,18 @@ import 'package:intl/intl.dart';
 import 'package:skoller/constants/constants.dart';
 import 'package:skoller/screens/main_app/activity/update_info_view.dart';
 import 'package:skoller/screens/main_app/menu/add_classes_view.dart';
-import 'package:skoller/screens/main_app/tutorial/tasks_tutorial_view.dart';
+import 'package:skoller/screens/main_app/tutorial/forecast_tutorial_view.dart';
 import 'package:skoller/tools.dart';
 import '../classes/assignment_info_view.dart';
 import '../classes/assignment_weight_view.dart';
 
 enum Forecast { tenDay, thirtyDay, all }
 
-class TasksView extends StatefulWidget {
+class ForecastView extends StatefulWidget {
   State createState() => _TasksState();
 }
 
-class _TasksState extends State<TasksView> {
+class _TasksState extends State<ForecastView> {
   List<_TaskLikeItem> _taskItems = [];
   Forecast forecast = Forecast.tenDay;
   bool showingCompletedTasks = false;
@@ -148,16 +148,18 @@ class _TasksState extends State<TasksView> {
     if (mounted) setState(() {});
   }
 
-  void tappedAdd(BuildContext context) async {
+  void tappedAdd() async {
     final classes = StudentClass.currentClasses.values.toList();
 
     if (classes.length == 0) {
       return;
     }
 
-    classes.sort((class1, class2) {
-      return class1.name.compareTo(class2.name);
-    });
+    classes
+      ..sort((class1, class2) {
+        return class1.name.compareTo(class2.name);
+      })
+      ..removeWhere((studentClass) => (studentClass.weights ?? []).length == 0);
 
     int selectedIndex = 0;
 
@@ -283,7 +285,7 @@ class _TasksState extends State<TasksView> {
   Widget build(BuildContext context) {
     //If we do not have a setup class
     if (!StudentClass.liveClassesAvailable)
-      return TasksTutorialView(
+      return ForecastTutorialView(
         () => DartNotificationCenter.post(
             channel: NotificationChannels.selectTab, options: 3),
         'Setup first class',
@@ -303,15 +305,13 @@ class _TasksState extends State<TasksView> {
     }
 
     return SKNavView(
-      title: 'Tasks',
+      title: 'Forecast',
       leftBtn: SKHeaderProfilePhoto(),
       callbackLeft: () {
         DartNotificationCenter.post(channel: NotificationChannels.toggleMenu);
       },
       rightBtn: Image.asset(ImageNames.rightNavImages.plus),
-      callbackRight: () {
-        tappedAdd(context);
-      },
+      callbackRight: tappedAdd,
       children: <Widget>[
         Expanded(
           child: RefreshIndicator(
@@ -448,17 +448,21 @@ class _TasksState extends State<TasksView> {
                         child: Container(
                           margin: EdgeInsets.only(bottom: 7),
                           padding:
-                              EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+                              EdgeInsets.symmetric(vertical: 8, horizontal: 16),
                           decoration: BoxDecoration(
-                              border: Border.all(color: SKColors.skoller_blue),
+                              border: Border.all(
+                                  color: StudentClass.currentClasses.length == 1
+                                      ? Colors.white
+                                      : SKColors.skoller_blue),
                               borderRadius: BorderRadius.circular(5),
                               boxShadow: [UIAssets.boxShadow],
-                              color: Colors.white),
+                              color: StudentClass.currentClasses.length == 1
+                                  ? SKColors.skoller_blue
+                                  : Colors.white),
                           child: StudentClass.currentClasses.length == 1
                               ? Text(
-                                  'Join your second class 👌',
-                                  style:
-                                      TextStyle(color: SKColors.skoller_blue),
+                                  'Join your 2nd class 👌',
+                                  style: TextStyle(color: Colors.white),
                                 )
                               : Row(
                                   children: <Widget>[

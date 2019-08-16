@@ -136,7 +136,7 @@ class _ProfileLinkSharingState extends State<ProfileLinkSharingView> {
 
               Share.share(sharingType == _SharingType.anyone
                   ? 'Check out this new app that\'s helping me keep up with school... it\'s like the Waze of the classroom!\n\n$shareLink'
-                  : 'School is hard. But this new app called Skoller makes it easy! Our class \(studentClass.name ?? "") is already in the app. Download so we can keep up together!\n\n$shareLink');
+                  : 'School is hard. But this new app called Skoller makes it easy! Our class ${studentClass.name ?? ""} is already in the app. Download so we can keep up together!\n\n$shareLink');
             },
             child: Container(
               alignment: Alignment.center,

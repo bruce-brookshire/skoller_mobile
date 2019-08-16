@@ -23,11 +23,11 @@ class _TaskCellItem {
       this.name, this.className, this.color, this.due, this.completion);
 }
 
-class TasksTutorialView extends StatelessWidget {
+class ForecastTutorialView extends StatelessWidget {
   final VoidCallback onTapDismiss;
   final String promptMsg;
 
-  TasksTutorialView(this.onTapDismiss, this.promptMsg);
+  ForecastTutorialView(this.onTapDismiss, this.promptMsg);
 
   final items = [
     _TaskCellItem('Reading Quiz', 'World Religions', 6, 'Today', 0.3),
@@ -52,7 +52,7 @@ class TasksTutorialView extends StatelessWidget {
       alignment: Alignment.center,
       children: <Widget>[
         SKNavView(
-          title: 'Tasks',
+          title: 'Forecast',
           leftBtn: Image.asset(ImageNames.peopleImages.static_profile),
           rightBtn: Image.asset(ImageNames.rightNavImages.plus),
           children: [
