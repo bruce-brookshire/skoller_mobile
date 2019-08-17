@@ -230,7 +230,7 @@ class _CreateClassScreenOneState extends State<_CreateClassScreenOne> {
         Padding(
           padding: EdgeInsets.only(bottom: 16),
           child: SammiSpeechBubble(
-            sammiPersonality: SammiPersonality.school,
+            sammiPersonality: SammiPersonality.smile,
             speechBubbleContents: Text.rich(
               TextSpan(text: 'Create your class ', children: [
                 TextSpan(
@@ -567,7 +567,7 @@ class _CreateClassScreenTwoState extends State<_CreateClassScreenTwo> {
         Padding(
           padding: EdgeInsets.only(bottom: 6),
           child: SammiSpeechBubble(
-            sammiPersonality: SammiPersonality.school,
+            sammiPersonality: SammiPersonality.ooo,
             sammiSide: SammiSide.right,
             speechBubbleContents: Text('You are halfway there!'),
           ),
@@ -820,7 +820,7 @@ class _CreateClassScreenThreeState extends State<_CreateClassScreenThree> {
         Padding(
           padding: EdgeInsets.symmetric(vertical: 12),
           child: SammiSpeechBubble(
-            sammiPersonality: SammiPersonality.school,
+            sammiPersonality: SammiPersonality.cool,
             speechBubbleContents: Text.rich(
               TextSpan(
                 text: 'Review ',

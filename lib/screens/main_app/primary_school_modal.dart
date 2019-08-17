@@ -193,10 +193,7 @@ class _PrimarySchoolState extends State<PrimarySchoolModal> {
                     ),
                   ),
                   Padding(
-                      padding: EdgeInsets.only(
-                        top: 4,
-                        bottom: 8
-                      ),
+                      padding: EdgeInsets.only(top: 4, bottom: 8),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceAround,
                         children: <Widget>[
@@ -494,52 +491,50 @@ class _PrimarySchoolState extends State<PrimarySchoolModal> {
                 ),
               ),
             ),
-            if (period != null)
-              Padding(
-                padding: EdgeInsets.only(left: 6, top: 8),
-                child: Text(
-                  'Term',
-                  style: TextStyle(fontSize: 14),
-                ),
+            Padding(
+              padding: EdgeInsets.only(left: 6, top: 8),
+              child: Text(
+                'Term',
+                style: TextStyle(fontSize: 14),
               ),
-            if (period != null)
-              GestureDetector(
-                onTapUp: tappedPeriodSelect,
-                child: Container(
-                  margin: EdgeInsets.symmetric(vertical: 4, horizontal: 4),
-                  padding: EdgeInsets.all(8),
-                  decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(5),
-                      border: Border.all(color: SKColors.border_gray),
-                      boxShadow: [UIAssets.boxShadow]),
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(period.name),
-                            Text(
-                              '${start ?? ''} to ${end ?? 'N/A'}',
-                              style: TextStyle(
-                                  color: SKColors.light_gray,
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.normal),
-                            ),
-                          ],
-                        ),
+            ),
+            GestureDetector(
+              onTapUp: tappedPeriodSelect,
+              child: Container(
+                margin: EdgeInsets.symmetric(vertical: 4, horizontal: 4),
+                padding: EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(5),
+                    border: Border.all(color: SKColors.border_gray),
+                    boxShadow: [UIAssets.boxShadow]),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(period.name),
+                          Text(
+                            '${start ?? ''} to ${end ?? 'N/A'}',
+                            style: TextStyle(
+                                color: SKColors.light_gray,
+                                fontSize: 14,
+                                fontWeight: FontWeight.normal),
+                          ),
+                        ],
                       ),
-                      Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 4),
-                        child: Image.asset(
-                            ImageNames.navArrowImages.dropdown_blue),
-                      )
-                    ],
-                  ),
+                    ),
+                    Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 4),
+                      child:
+                          Image.asset(ImageNames.navArrowImages.dropdown_blue),
+                    )
+                  ],
                 ),
               ),
+            ),
           ],
         ),
       ),

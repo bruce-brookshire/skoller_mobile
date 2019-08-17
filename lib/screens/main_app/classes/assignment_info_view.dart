@@ -783,14 +783,14 @@ class _AssignmentInfoState extends State<AssignmentInfoView> {
             children: <Widget>[
               Text.rich(
                 TextSpan(
-                  text: 'You\'re ',
+                  text: 'Chat unlocks when ',
                   children: [
                     TextSpan(
                       text:
-                          '${4 - enrollment} classmate${(4 - enrollment) == 1 ? '' : 's'}',
+                          '4 classmates',
                       style: TextStyle(fontWeight: FontWeight.bold),
                     ),
-                    TextSpan(text: ' away from unlocking chat!')
+                    TextSpan(text: ' join!')
                   ],
                   style: TextStyle(fontWeight: FontWeight.normal, fontSize: 14),
                 ),

@@ -452,6 +452,7 @@ class _AddClassesState extends State<AddClassesView> {
                   children: <Widget>[
                     Text(
                       SKUser.current.student.primarySchool.name,
+                      overflow: TextOverflow.ellipsis,
                       style: TextStyle(
                           fontSize: 18,
                           color: SKUser.current.student.primarySchool.color ??
