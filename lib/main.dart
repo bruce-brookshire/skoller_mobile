@@ -16,6 +16,7 @@ void main() {
 
   if (isProd)
     ErrorWidget.builder = (details) => Container(
+      color: Colors.white,
           child: Text(
             'Sorry, something wen\'t wrong 😔',
             style: TextStyle(color: SKColors.dark_gray, fontWeight: FontWeight.bold, fontSize: 15),
