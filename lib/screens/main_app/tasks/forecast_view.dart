@@ -464,21 +464,12 @@ class _TasksState extends State<ForecastView> {
                                   'Join your 2nd class 👌',
                                   style: TextStyle(color: Colors.white),
                                 )
-                              : Row(
-                                  children: <Widget>[
-                                    Padding(
-                                      child: Image.asset(
-                                          ImageNames.tasksImages.forecast),
-                                      padding: EdgeInsets.only(right: 4),
-                                    ),
-                                    Text(
-                                      forecast == Forecast.all
-                                          ? 'Semester outlook'
-                                          : '$forecastStr-day forecast',
-                                      style: TextStyle(
-                                          color: SKColors.skoller_blue),
-                                    ),
-                                  ],
+                              : Text(
+                                  forecast == Forecast.all
+                                      ? 'Semester outlook'
+                                      : '$forecastStr-day forecast',
+                                  style:
+                                      TextStyle(color: SKColors.skoller_blue),
                                 ),
                         ),
                       ),
