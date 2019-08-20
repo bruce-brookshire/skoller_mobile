@@ -367,59 +367,37 @@ class _ClassInfoState extends State<ClassInfoView> {
                   ],
                 ),
               ),
-              Container(
-                margin: EdgeInsets.fromLTRB(16, 0, 16, 16),
-                decoration: BoxDecoration(
-                    border: Border.all(color: SKColors.border_gray),
-                    borderRadius: BorderRadius.circular(10),
+              SKColorPicker(
+                callback: (newColor) {
+                  studentClass.setColor(newColor).then((response) {
+                    if (response.wasSuccessful()) {
+                      DartNotificationCenter.post(
+                          channel: NotificationChannels.classChanged);
+                    }
+                  });
+                  setState(() {});
+                },
+                child: Container(
+                  padding: EdgeInsets.symmetric(vertical: 10),
+                  margin: EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+                  decoration: BoxDecoration(
+                    color: studentClass.getColor(),
+                    borderRadius: BorderRadius.circular(5),
                     boxShadow: [UIAssets.boxShadow],
-                    color: Colors.white),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: <Widget>[
-                    Container(
-                      padding: EdgeInsets.fromLTRB(12, 12, 12, 8),
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.only(
-                          topLeft: Radius.circular(10),
-                          topRight: Radius.circular(10),
-                        ),
-                        color: SKColors.selected_gray,
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      Text(
+                        'Change color',
+                        style: TextStyle(color: Colors.white),
                       ),
-                      child: Text('Grow community'),
-                    ),
-                    GestureDetector(
-                      onTapUp: (details) => Share.share(
-                          'School is hard. But this new app called Skoller makes it easy! Our class ${studentClass.name ?? ''} is already in the app. Download so we can keep up together!\n\n${studentClass.enrollmentLink}'),
-                      child: Container(
-                        margin: EdgeInsets.all(12),
-                        padding: EdgeInsets.symmetric(vertical: 8),
-                        alignment: Alignment.center,
-                        decoration: BoxDecoration(
-                          color: SKColors.skoller_blue,
-                          borderRadius: BorderRadius.circular(5),
-                        ),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Padding(
-                              padding: EdgeInsets.only(right: 8),
-                              child: Image.asset(
-                                  ImageNames.peopleImages.people_white),
-                            ),
-                            Text(
-                              'Share with classmates',
-                              style: TextStyle(color: Colors.white),
-                            ),
-                          ],
-                        ),
-                      ),
-                    )
-                  ],
+                    ],
+                  ),
                 ),
               ),
               Container(
-                margin: EdgeInsets.fromLTRB(16, 0, 16, 16),
+                margin: EdgeInsets.fromLTRB(16, 16, 16, 0),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[
@@ -485,33 +463,58 @@ class _ClassInfoState extends State<ClassInfoView> {
                   ],
                 ),
               ),
-              SKColorPicker(
-                callback: (newColor) {
-                  studentClass.setColor(newColor).then((response) {
-                    if (response.wasSuccessful()) {
-                      DartNotificationCenter.post(
-                          channel: NotificationChannels.classChanged);
-                    }
-                  });
-                  setState(() {});
-                },
-                child: Container(
-                  padding: EdgeInsets.symmetric(vertical: 10),
-                  margin: EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-                  decoration: BoxDecoration(
-                    color: studentClass.getColor(),
-                    borderRadius: BorderRadius.circular(5),
+              Container(
+                margin: EdgeInsets.fromLTRB(16, 16, 16, 16),
+                decoration: BoxDecoration(
+                    border: Border.all(color: SKColors.border_gray),
+                    borderRadius: BorderRadius.circular(10),
                     boxShadow: [UIAssets.boxShadow],
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      Text(
-                        'Change color',
-                        style: TextStyle(color: Colors.white),
+                    color: Colors.white),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: <Widget>[
+                    Container(
+                      padding: EdgeInsets.fromLTRB(12, 12, 12, 8),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(10),
+                          topRight: Radius.circular(10),
+                        ),
+                        color: SKColors.selected_gray,
                       ),
-                    ],
-                  ),
+                      child: Text(
+                        'Grow community',
+                        style: TextStyle(fontSize: 17),
+                      ),
+                    ),
+                    GestureDetector(
+                      onTapUp: (details) => Share.share(
+                          'School is hard. But this new app called Skoller makes it easy! Our class ${studentClass.name ?? ''} is already in the app. Download so we can keep up together!\n\n${studentClass.enrollmentLink}'),
+                      child: Container(
+                        margin: EdgeInsets.all(12),
+                        padding: EdgeInsets.symmetric(vertical: 8),
+                        alignment: Alignment.center,
+                        decoration: BoxDecoration(
+                          color: SKColors.skoller_blue,
+                          borderRadius: BorderRadius.circular(5),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Padding(
+                              padding: EdgeInsets.only(right: 8),
+                              child: Image.asset(
+                                  ImageNames.peopleImages.people_white),
+                            ),
+                            Text(
+                              'Share with classmates',
+                              style: TextStyle(color: Colors.white),
+                            ),
+                          ],
+                        ),
+                      ),
+                    )
+                  ],
                 ),
               ),
               if (studentClass.documents.length > 0)

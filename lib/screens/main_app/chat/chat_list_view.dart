@@ -86,9 +86,14 @@ class _ChatListState extends State<ChatListView> {
       return;
     }
 
-    classes.sort((class1, class2) {
-      return class1.name.compareTo(class2.name);
-    });
+    classes
+      ..sort((class1, class2) {
+        return class1.name.compareTo(class2.name);
+      })
+      ..removeWhere((c) => ![
+            ClassStatuses.class_issue,
+            ClassStatuses.class_setup
+          ].contains(c.status.id));
 
     int selectedIndex = 0;
 
@@ -351,7 +356,7 @@ class _ChatListState extends State<ChatListView> {
                             ),
                           ],
                         ),
-                              style: TextStyle(fontSize: 14),
+                        style: TextStyle(fontSize: 14),
                       ),
                     ),
                   ),

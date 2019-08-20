@@ -290,6 +290,9 @@ class _TasksState extends State<ForecastView> {
             channel: NotificationChannels.selectTab, options: 3),
         'Setup first class',
       );
+    final setupSecondClass = StudentClass.currentClasses.length == 2 &&
+        StudentClass.currentClasses.values
+            .any((c) => c.status.id == ClassStatuses.needs_setup);
 
     String forecastStr;
     switch (forecast) {
@@ -355,30 +358,46 @@ class _TasksState extends State<ForecastView> {
                               ),
                               Padding(
                                 padding: EdgeInsets.only(top: 4),
-                                child: Text.rich(
-                                  TextSpan(
-                                    text: 'Your personal forecast shows ',
-                                    style: TextStyle(
-                                        fontWeight: FontWeight.normal,
-                                        fontSize: 13),
-                                    children: [
-                                      TextSpan(
-                                        text:
-                                            '${assignments} assignment${assignments == 1 ? '' : 's'}',
+                                child: setupSecondClass
+                                    ? Text(
+                                        'Forecast works best when all of you’re classes are set up.',
                                         style: TextStyle(
-                                            fontWeight: FontWeight.bold),
-                                      ),
-                                      forecast == Forecast.all
-                                          ? TextSpan(
-                                              text: ' left to do.',
-                                            )
-                                          : TextSpan(
+                                            fontWeight: FontWeight.normal,
+                                            fontSize: 14),
+                                      )
+                                    : (assignments == 0
+                                        ? Text(
+                                            'You’re all caught up! 😃',
+                                            style: TextStyle(
+                                                fontWeight: FontWeight.normal,
+                                                fontSize: 14),
+                                          )
+                                        : Text.rich(
+                                            TextSpan(
                                               text:
-                                                  ' due in the next $forecastStr days.',
+                                                  'Your personal forecast shows ',
+                                              style: TextStyle(
+                                                  fontWeight: FontWeight.normal,
+                                                  fontSize: 13),
+                                              children: [
+                                                TextSpan(
+                                                  text:
+                                                      '${assignments} assignment${assignments == 1 ? '' : 's'}',
+                                                  style: TextStyle(
+                                                      fontWeight:
+                                                          FontWeight.bold),
+                                                ),
+                                                forecast == Forecast.all
+                                                    ? TextSpan(
+                                                        text: ' left to do.',
+                                                      )
+                                                    : TextSpan(
+                                                        text:
+                                                            ' due in the next $forecastStr days.',
+                                                      ),
+                                              ],
                                             ),
-                                    ],
-                                  ),
-                                ),
+                                          )),
                               ),
                             ],
                           ),

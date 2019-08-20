@@ -3,6 +3,7 @@ import 'dart:collection';
 import 'package:dropdown_banner/dropdown_banner.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:skoller/screens/main_app/classes/weight_creation_modal.dart';
 import 'package:skoller/tools.dart';
 
 class WeightsChangeRequestView extends StatefulWidget {
@@ -16,7 +17,10 @@ class WeightsChangeRequestView extends StatefulWidget {
 
 class _WeightsChangeRequestState extends State<WeightsChangeRequestView> {
   List<Map> weights;
+
   bool isPoints;
+  bool isEdited = false;
+
   int selectedSegment = 0;
 
   @override
@@ -31,61 +35,84 @@ class _WeightsChangeRequestState extends State<WeightsChangeRequestView> {
     super.initState();
   }
 
-  void editWeight(int weightIndex) async {
-    final weight = weights[weightIndex];
+  void checkValid() {
+    final weights = StudentClass.currentClasses[widget.classId].weights ?? [];
+    Map<String, double> weightMap = {};
+    bool hasChanged = false;
 
-    final nameController = TextEditingController(text: weight['name']);
-    final valueController = TextEditingController(text: '${weight['value']}');
+    for (final weight in weights) {
+      weightMap[weight.name] = weight.weight;
+    }
 
-    final results =
-        await showWeightMaker(nameController, valueController, false);
+    for (final weight in this.weights) {
+      final name = weight['name'];
 
-    if (results != null && results is bool && results) {
-      final name = nameController.text.trim();
-      final value = valueController.text.trim();
-
-      if (name != '' &&
-          value != '' &&
-          int.tryParse(value) != null) {
-        setState(() {
-          weights[weightIndex]['name'] = name;
-          weights[weightIndex]['value'] = int.parse(value);
-        });
+      if (weightMap.containsKey(name)) {
+        if (weightMap[name] == weight['value']) {
+          weightMap.remove(name);
+        } else {
+          hasChanged = true;
+          break;
+        }
+      } else {
+        hasChanged = true;
+        break;
       }
     }
 
-    nameController.dispose();
-    valueController.dispose();
+    if (!hasChanged) hasChanged = weightMap.length != 0;
+
+    if (hasChanged != isEdited) setState(() => isEdited = hasChanged);
   }
 
-  void addWeight(TapUpDetails details) async {
-    final nameController = TextEditingController();
-    final valueController = TextEditingController();
+  void editWeight(int weightIndex) {
+    final weight = weights[weightIndex];
 
-    final results =
-        await showWeightMaker(nameController, valueController, true);
+    showWeightMaker(weight['name'], '${weight['value']}', false, (name, value) {
+      if (name != '' && value != '' && int.tryParse(value) != null) {
+        setState(
+          () {
+            weights[weightIndex]['name'] = name;
+            weights[weightIndex]['value'] = int.parse(value);
+          },
+        );
+        checkValid();
+      }
+    });
+  }
 
-    if (results != null && results is bool && results) {
-      final name = nameController.text.trim();
-      final value = valueController.text.trim();
-
-      if (name != '' &&
-          value != '' &&
-          int.tryParse(value) != null) {
+  void addWeight(TapUpDetails details) {
+    showWeightMaker('', '', true, (name, value) {
+      if (name != '' && value != '' && int.tryParse(value) != null) {
         setState(
           () => weights.add({
             'name': name,
             'value': int.parse(value),
           } as Map),
         );
+        checkValid();
       }
-    }
+    });
+  }
+
+  Future<bool> showWeightMaker(
+    String nameStr,
+    String valueStr,
+    bool isCreate,
+    DoubleStringCallback results,
+  ) {
+    return showDialog(
+      context: context,
+      builder: (context) =>
+          WeightCreationModal(isPoints, isCreate, nameStr, valueStr, results),
+    );
   }
 
   void tappedSubmit(TapUpDetails details) {
     final currTotal = weights.fold(0, (val, item) => item['value'] + val);
 
-    if (isPoints || currTotal == 100) {
+
+    if ((isPoints || currTotal == 100) && isEdited) {
       final studentClass = StudentClass.currentClasses[widget.classId];
       final loader = SKLoadingScreen.fadeIn(context);
       studentClass.weightChangeRequest(isPoints, weights).then((success) {
@@ -105,102 +132,11 @@ class _WeightsChangeRequestState extends State<WeightsChangeRequestView> {
           );
         }
       });
+    } else  if (!isEdited) {
+      DropdownBanner.showBanner(text: 'Weight structure must change to create a change request.', color: SKColors.alert_orange, textStyle: TextStyle(color: Colors.white));
+    } else {
+      DropdownBanner.showBanner(text: 'Weights must sum to 100%', color: SKColors.alert_orange, textStyle: TextStyle(color: Colors.white));
     }
-  }
-
-  Future<bool> showWeightMaker(
-    TextEditingController nameController,
-    TextEditingController valueController,
-    bool isCreate,
-  ) {
-    return showDialog(
-      context: context,
-      builder: (context) => Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: <Widget>[
-          Dialog(
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(10),
-              side: BorderSide(color: SKColors.border_gray),
-            ),
-            child: Padding(
-              padding: EdgeInsets.all(12),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: <Widget>[
-                  Text(
-                    isCreate ? 'Create weight' : 'Update weight',
-                    style: TextStyle(fontSize: 16),
-                    textAlign: TextAlign.center,
-                  ),
-                  Padding(
-                    padding: EdgeInsets.only(top: 16),
-                    child: Text('Name'),
-                  ),
-                  CupertinoTextField(
-                    placeholder: 'Exams',
-                    controller: nameController,
-                    padding: EdgeInsets.fromLTRB(6, 8, 6, 4),
-                    textCapitalization: TextCapitalization.words,
-                    cursorColor: SKColors.skoller_blue,
-                    placeholderStyle: TextStyle(
-                        fontSize: 14, color: SKColors.text_light_gray),
-                    style: TextStyle(color: SKColors.dark_gray, fontSize: 15),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.only(top: 12),
-                    child: Text('Value'),
-                  ),
-                  Row(
-                    children: <Widget>[
-                      SizedBox(
-                          width: 60,
-                          child: CupertinoTextField(
-                            controller: valueController,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(5),
-                              border: Border.all(color: SKColors.border_gray),
-                            ),
-                            padding: EdgeInsets.fromLTRB(6, 8, 6, 4),
-                            cursorColor: SKColors.skoller_blue,
-                            placeholder: '25',
-                            placeholderStyle: TextStyle(
-                                fontSize: 14, color: SKColors.text_light_gray),
-                            style: TextStyle(
-                                color: SKColors.dark_gray, fontSize: 15),
-                          )),
-                      Padding(
-                        padding: EdgeInsets.only(left: 8),
-                        child: Text('${isPoints ? 'pts.' : '%'}'),
-                      ),
-                      Spacer(),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-          ),
-          Material(
-            color: Colors.white.withAlpha(0),
-            child: GestureDetector(
-              onTapUp: (details) => Navigator.pop(context, true),
-              child: Container(
-                decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(5),
-                    boxShadow: [UIAssets.boxShadow]),
-                padding: EdgeInsets.symmetric(vertical: 12, horizontal: 56),
-                child: Text(
-                  'Done',
-                  style: TextStyle(color: SKColors.skoller_blue),
-                ),
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
   }
 
   @override
@@ -295,6 +231,7 @@ class _WeightsChangeRequestState extends State<WeightsChangeRequestView> {
                                         setState(() {
                                           weights.removeAt(index);
                                         });
+                                        checkValid();
                                       },
                                       child: Padding(
                                         padding: EdgeInsets.only(right: 12),
@@ -380,7 +317,8 @@ class _WeightsChangeRequestState extends State<WeightsChangeRequestView> {
                               alignment: Alignment.center,
                               padding: EdgeInsets.symmetric(vertical: 8),
                               decoration: BoxDecoration(
-                                  color: (isPoints || currTotal == 100)
+                                  color: ((isPoints || currTotal == 100) &&
+                                          isEdited)
                                       ? SKColors.success
                                       : SKColors.inactive_gray,
                                   borderRadius: BorderRadius.circular(5),
@@ -388,7 +326,8 @@ class _WeightsChangeRequestState extends State<WeightsChangeRequestView> {
                               child: Text(
                                 'Submit weights',
                                 style: TextStyle(
-                                    color: (isPoints || currTotal == 100)
+                                    color: ((isPoints || currTotal == 100) &&
+                                            isEdited)
                                         ? Colors.white
                                         : SKColors.dark_gray),
                               ),

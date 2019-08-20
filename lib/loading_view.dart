@@ -11,7 +11,7 @@ class LoadingView extends StatefulWidget {
 }
 
 class _LoadingState extends State<LoadingView> {
-  bool loading = true;
+  bool loading = false;
 
   @override
   void initState() {

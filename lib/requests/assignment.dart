@@ -183,6 +183,17 @@ class Assignment {
     );
   }
 
+  Future<RequestResponse> updateName(String name) {
+    return SKRequests.put(
+      '/assignments/${id}',
+      {
+        'is_private': true,
+        'name': name,
+      },
+      Assignment._fromJsonObj,
+    );
+  }
+
   Future<bool> delete(bool isPrivate) async {
     int statusCode = await SKRequests.delete(
       '/assignments/${id}',

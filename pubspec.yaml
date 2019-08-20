@@ -21,7 +21,7 @@ dependencies:
   firebase_core: ^0.4.0+8
   firebase_messaging: ^5.1.2
   firebase_analytics: ^4.0.2
-  dropdown_banner: ^1.1.1
+  dropdown_banner: ^1.2.0
   path_provider: ^1.1.2
   webview_flutter: ^0.3.11
   flutter:
