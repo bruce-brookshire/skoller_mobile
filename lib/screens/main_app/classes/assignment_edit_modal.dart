@@ -241,7 +241,7 @@ class _AssignmentEditModalState extends State<AssignmentEditModal> {
                           style: TextStyle(
                               fontSize: 15, color: SKColors.dark_gray),
                           decoration: BoxDecoration(border: null),
-                          textCapitalization: TextCapitalization.characters,
+                          textCapitalization: TextCapitalization.words,
                           controller: nameController,
                           onChanged: checkValid,
                         ),

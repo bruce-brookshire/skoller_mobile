@@ -34,7 +34,11 @@ class _SignInState extends State<SignIn> {
       return;
     }
 
+    final loader = SKLoadingScreen.fadeIn(context);
+
     final status = await Auth.requestLogin(trimStr);
+
+    loader.dismiss();
 
     if ([200, 204].contains(status)) {
       final bool result = await showDialog(

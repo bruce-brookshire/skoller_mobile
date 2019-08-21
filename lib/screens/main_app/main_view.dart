@@ -1,14 +1,13 @@
-import 'package:flutter/material.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:skoller/constants/constants.dart';
 import 'package:dart_notification_center/dart_notification_center.dart';
 import 'package:skoller/screens/main_app/menu/add_classes_view.dart';
 import 'package:skoller/screens/main_app/tutorial/tutorial.dart';
+import 'package:skoller/constants/constants.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:skoller/tools.dart';
-import 'dart:async';
-import 'tab_bar.dart';
-import 'menu_view.dart';
 import 'primary_school_modal.dart';
+import 'menu_view.dart';
+import 'tab_bar.dart';
 
 class MainView extends StatefulWidget {
   @override

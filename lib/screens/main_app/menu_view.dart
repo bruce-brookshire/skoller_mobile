@@ -1,15 +1,15 @@
-import 'package:flutter/material.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:skoller/screens/main_app/menu/profile_link_sharing_view.dart';
+import 'package:dart_notification_center/dart_notification_center.dart';
+import 'package:skoller/screens/main_app/menu/manage_classes_view.dart';
 import 'package:skoller/screens/main_app/menu/skoller_jobs_view.dart';
+import 'package:skoller/screens/main_app/menu/my_points_view.dart';
+import 'package:skoller/screens/main_app/menu/reminders_view.dart';
+import 'package:skoller/screens/main_app/menu/profile_view.dart';
 import 'package:skoller/screens/main_app/tutorial/tutorial.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:dart_notification_center/dart_notification_center.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:skoller/tools.dart';
-import 'package:skoller/screens/main_app/menu/manage_classes_view.dart';
-import 'package:skoller/screens/main_app/menu/my_points_view.dart';
-import 'package:skoller/screens/main_app/menu/profile_link_sharing_view.dart';
-import 'package:skoller/screens/main_app/menu/profile_view.dart';
-import 'package:skoller/screens/main_app/menu/reminders_view.dart';
 
 class MenuView extends StatelessWidget {
   final List<Widget> menuOptions = [
@@ -87,9 +87,7 @@ class MenuView extends StatelessWidget {
         'action': () async {
           final url = 'mailto:support@skoller.co?subject=Feedback';
 
-          if (await canLaunch(url)) {
-            launch(url);
-          }
+          if (await canLaunch(url)) launch(url);
         },
       },
       {

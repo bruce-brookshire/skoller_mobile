@@ -16,17 +16,19 @@ void main() {
 
   if (isProd)
     ErrorWidget.builder = (details) => Container(
-      color: Colors.white,
+          color: Colors.white,
           child: Text(
             'Sorry, something wen\'t wrong 😔',
-            style: TextStyle(color: SKColors.dark_gray, fontWeight: FontWeight.bold, fontSize: 15),
+            style: TextStyle(
+                color: SKColors.dark_gray,
+                fontWeight: FontWeight.bold,
+                fontSize: 15),
           ),
         );
 
-  PackageInfo.fromPlatform()
-      .then((info) => UIAssets.versionNumber = info.version);
-
   SKCacheManager.createCacheDir();
+
+  Auth.requestNotificationPermissions();
 }
 
 class SkollerApp extends StatefulWidget {

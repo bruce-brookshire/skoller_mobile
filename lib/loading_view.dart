@@ -12,6 +12,7 @@ class LoadingView extends StatefulWidget {
 
 class _LoadingState extends State<LoadingView> {
   bool loading = false;
+  bool validVersion;
 
   @override
   void initState() {
@@ -20,14 +21,20 @@ class _LoadingState extends State<LoadingView> {
     attemptLogin();
   }
 
-  void attemptLogin() {
+  void attemptLogin() async {
     if (!loading) {
       setState(() {
         loading = true;
       });
     }
 
-    Auth.attemptLogin().then((result) async {
+    final versionValid = await Auth.enforceMinVersion();
+    validVersion = versionValid;
+
+    if (!versionValid)
+      setState(() => loading = false);
+    else {
+      final result = await Auth.attemptLogin();
       AppState nextState;
       switch (result) {
         case LogInResponse.success:
@@ -73,11 +80,13 @@ class _LoadingState extends State<LoadingView> {
           loading = false;
         });
       }
-    });
+    }
   }
 
   @override
   Widget build(BuildContext context) {
+    final isValidVersion = validVersion is bool && validVersion;
+
     return Scaffold(
       backgroundColor: Colors.white,
       body: Container(
@@ -103,8 +112,8 @@ class _LoadingState extends State<LoadingView> {
                 child: Image.asset(ImageNames.signUpImages.logo_wide_white),
               ),
               Container(
-                margin: EdgeInsets.only(top: 24, bottom: 48),
-                height: 32,
+                margin: EdgeInsets.fromLTRB(12, 24, 12, 48),
+                padding: EdgeInsets.symmetric(vertical: 12),
                 width: loading ? 32 : null,
                 child: loading
                     ? CircularProgressIndicator(
@@ -112,12 +121,15 @@ class _LoadingState extends State<LoadingView> {
                       )
                     : GestureDetector(
                         onTapUp: (details) {
-                          attemptLogin();
+                          if (isValidVersion) attemptLogin();
                         },
                         child: Text(
-                          'Failed loading. Tap to retry',
+                          isValidVersion
+                              ? 'Failed loading. Tap to retry'
+                              : 'In order to offer the best experience, please update to the newest version.',
+                          textAlign: TextAlign.center,
                           style: TextStyle(
-                              color: SKColors.warning_red,
+                              color: Colors.white,
                               fontWeight: FontWeight.normal),
                         ),
                       ),
