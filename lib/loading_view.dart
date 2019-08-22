@@ -1,9 +1,10 @@
-import 'package:dropdown_banner/dropdown_banner.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:skoller/tools.dart';
 import 'package:dart_notification_center/dart_notification_center.dart';
 import 'package:skoller/screens/auth/phone_verification_view.dart';
+import 'package:dropdown_banner/dropdown_banner.dart';
+import 'package:url_launcher/url_launcher.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:skoller/tools.dart';
 
 class LoadingView extends StatefulWidget {
   @override
@@ -120,8 +121,14 @@ class _LoadingState extends State<LoadingView> {
                         valueColor: AlwaysStoppedAnimation(Colors.white),
                       )
                     : GestureDetector(
-                        onTapUp: (details) {
-                          if (isValidVersion) attemptLogin();
+                        onTapUp: (details) async {
+                          if (isValidVersion)
+                            attemptLogin();
+                          else {
+                            final url = 'appstore.com/skoller';
+
+                            if (await canLaunch(url)) launch(url);
+                          }
                         },
                         child: Text(
                           isValidVersion
