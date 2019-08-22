@@ -25,7 +25,7 @@ part 'chat.dart';
 part 'user.dart';
 part 'mod.dart';
 
-const bool isProd = true;
+const bool isProd = false;
 const bool isLocal = false;
 
 class RequestResponse<T> {
@@ -42,8 +42,10 @@ class RequestResponse<T> {
       if (constructor != null && context != null) {
         if (context is List) {
           this.obj = JsonListMaker.convert<T>(constructor, context);
-        } else {
+        } else if (context is Map) {
           this.obj = constructor(context);
+        } else  {
+          this.obj = context;
         }
       } else {
         this.obj = context;

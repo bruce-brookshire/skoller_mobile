@@ -79,7 +79,7 @@ class School {
       content['name'],
       content['adr_region'],
       content['adr_locality'],
-      color != null ? Color(int.parse(color, radix: 16)) : null,
+      color != null ? Color(int.parse(color, radix: 16) ?? 0xFF4A4A4A) : null,
     );
   }
 

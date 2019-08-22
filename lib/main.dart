@@ -1,6 +1,6 @@
 import 'package:dart_notification_center/dart_notification_center.dart';
 import 'package:dropdown_banner/dropdown_banner.dart';
-import 'package:package_info/package_info.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:skoller/loading_view.dart';
 import 'package:skoller/screens/main_app/main_view.dart';
@@ -15,16 +15,21 @@ void main() {
   TimeZoneManager.verifyTzDbActive();
 
   if (isProd)
-    ErrorWidget.builder = (details) => Container(
-          color: Colors.white,
-          child: Text(
-            'Sorry, something wen\'t wrong 😔',
-            style: TextStyle(
-                color: SKColors.dark_gray,
-                fontWeight: FontWeight.bold,
-                fontSize: 15),
-          ),
-        );
+    ErrorWidget.builder = (details) {
+      FirebaseAnalytics().logEvent(
+          name: 'flutter_component_error',
+          parameters: {'exception_stack': details.stack});
+      return Container(
+        color: Colors.white,
+        child: Text(
+          'Sorry, something wen\'t wrong 😔',
+          style: TextStyle(
+              color: SKColors.dark_gray,
+              fontWeight: FontWeight.bold,
+              fontSize: 15),
+        ),
+      );
+    };
 
   SKCacheManager.createCacheDir();
 

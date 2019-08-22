@@ -16,6 +16,8 @@ class ActivityView extends StatefulWidget {
 class _ActivityState extends State<ActivityView> {
   List<List<Mod>> stackedMods = [];
 
+  final _refreshIndicatorKey = GlobalKey<RefreshIndicatorState>();
+
   @override
   void initState() {
     super.initState();
@@ -145,10 +147,15 @@ class _ActivityState extends State<ActivityView> {
                 ),
               )
             : Expanded(
-                child: ListView.builder(
-                  padding: EdgeInsets.only(top: 4),
-                  itemCount: stackedMods.length,
-                  itemBuilder: buildListItem,
+                child: RefreshIndicator(
+                  key: _refreshIndicatorKey,
+                  onRefresh: () async =>
+                      stackAndSortMods(Mod.currentMods.values.toList()),
+                  child: ListView.builder(
+                    padding: EdgeInsets.only(top: 4),
+                    itemCount: stackedMods.length,
+                    itemBuilder: buildListItem,
+                  ),
                 ),
               )
       ],
@@ -174,11 +181,10 @@ class _ActivityState extends State<ActivityView> {
                   padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                   margin: EdgeInsets.only(bottom: 7),
                   decoration: BoxDecoration(
-                    color: SKColors.skoller_blue,
-                    boxShadow: [UIAssets.boxShadow],
-                    borderRadius: BorderRadius.circular(5),
-                    border: Border.all(color: Colors.white)
-                  ),
+                      color: SKColors.skoller_blue,
+                      boxShadow: [UIAssets.boxShadow],
+                      borderRadius: BorderRadius.circular(5),
+                      border: Border.all(color: Colors.white)),
                   child: Text(
                     'Join your 2nd class 👌',
                     style: TextStyle(

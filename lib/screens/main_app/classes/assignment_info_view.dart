@@ -75,7 +75,9 @@ class _AssignmentInfoState extends State<AssignmentInfoView> {
         setState(() {
           assignment.completed = !assignment.completed;
         });
-      }
+      } else
+        DartNotificationCenter.post(
+            channel: NotificationChannels.assignmentChanged);
     });
     setState(() {
       assignment.completed = !assignment.completed;
@@ -787,8 +789,7 @@ class _AssignmentInfoState extends State<AssignmentInfoView> {
                   text: 'Chat unlocks when ',
                   children: [
                     TextSpan(
-                      text:
-                          '4 classmates',
+                      text: '4 classmates',
                       style: TextStyle(fontWeight: FontWeight.bold),
                     ),
                     TextSpan(text: ' join!')

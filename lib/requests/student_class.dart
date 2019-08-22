@@ -165,6 +165,14 @@ class StudentClass {
     });
   }
 
+  Future<RequestResponse> _updateParentClass(Map params) {
+    return SKRequests.put(
+      '/classes/$id',
+      params,
+      null,
+    );
+  }
+
   /**
    * Creates an assignment for [this] StudentClass due at the local reference DateTime specified
    */
@@ -268,15 +276,18 @@ class StudentClass {
         )
         .toList();
 
-    bool success = true;
+    final updatePoints = await _updateParentClass({'is_points': isPoints});
 
-    for (final request in requests) {
-      final response = await request;
-      if (!response.wasSuccessful()) {
-        success = false;
-        break;
+    bool success = updatePoints.wasSuccessful();
+
+    if (success)
+      for (final request in requests) {
+        final response = await request;
+        if (!response.wasSuccessful()) {
+          success = false;
+          break;
+        }
       }
-    }
 
     return success;
   }

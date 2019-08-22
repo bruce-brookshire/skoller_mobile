@@ -183,6 +183,73 @@ class _SubviewOne extends StatefulWidget {
 }
 
 class _SubviewOneState extends State<_SubviewOne> {
+  void tappedNoWeights(_) {
+    final studentClass = widget.subviewParent.studentClass;
+    final loader = SKLoadingScreen.fadeIn(context);
+
+    studentClass.createWeights(
+      false,
+      [
+        {'name': 'All Assignments', 'value': 100}
+      ],
+    ).then((success) {
+      //After creating
+      if (success) {
+        return studentClass.releaseDIYLock(isCompleted: true);
+      } else {
+        throw 'Failed to create weights';
+      }
+    }).then((response) {
+      //After releasing
+      if (response.wasSuccessful()) {
+        return studentClass.refetchSelf();
+      } else {
+        throw 'Failed to unlock weight. Try again in a few minutes';
+      }
+    }).then((response) {
+      DropdownBanner.showBanner(
+        text: 'Successfully created weights!',
+        color: SKColors.success,
+        textStyle: TextStyle(color: Colors.white),
+      );
+
+      loader.dismiss();
+
+      //After reloading class
+      if (response.wasSuccessful()) {
+        //New info is available, push to assignments
+        DartNotificationCenter.post(channel: NotificationChannels.classChanged);
+
+        Navigator.pushReplacement(
+          context,
+          CupertinoPageRoute(
+            builder: (context) => AssignmentWeightView(studentClass.id),
+            settings: RouteSettings(name: 'AssignmentWeightView'),
+          ),
+        );
+      } else {
+        //Pop because new studentClass info isnt ready yet
+        Navigator.pop(context);
+      }
+    }).catchError((error) {
+      loader.dismiss();
+
+      if (error is String) {
+        DropdownBanner.showBanner(
+          text: error,
+          color: SKColors.warning_red,
+          textStyle: TextStyle(color: Colors.white),
+        );
+      } else {
+        DropdownBanner.showBanner(
+          text: 'Something went wrong :/',
+          color: SKColors.warning_red,
+          textStyle: TextStyle(color: Colors.white),
+        );
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) => Column(
         children: <Widget>[
@@ -217,15 +284,20 @@ class _SubviewOneState extends State<_SubviewOne> {
             ),
           ),
           Spacer(),
-          Padding(
-            padding: EdgeInsets.symmetric(vertical: 16, horizontal: 24),
-            child: Text(
-              'This class does not have weighted assignments.',
-              style: TextStyle(
-                  color: SKColors.skoller_blue, fontWeight: FontWeight.normal),
-              textAlign: TextAlign.center,
+          GestureDetector(
+            behavior: HitTestBehavior.opaque,
+            onTapUp: tappedNoWeights,
+            child: Padding(
+              padding: EdgeInsets.symmetric(vertical: 16, horizontal: 24),
+              child: Text(
+                'This class does not have weighted assignments.',
+                style: TextStyle(
+                    color: SKColors.skoller_blue,
+                    fontWeight: FontWeight.normal),
+                textAlign: TextAlign.center,
+              ),
             ),
-          )
+          ),
         ],
       );
 }
@@ -390,8 +462,8 @@ class _SubviewThreeState extends State<_SubviewThree> {
   ) {
     return showDialog(
       context: context,
-      builder: (context) => WeightCreationModal(
-          isPoints, isCreate, nameStr, valueStr, results),
+      builder: (context) =>
+          WeightCreationModal(isPoints, isCreate, nameStr, valueStr, results),
     );
   }
 
@@ -429,7 +501,7 @@ class _SubviewThreeState extends State<_SubviewThree> {
       if (response.wasSuccessful()) {
         return studentClass.refetchSelf();
       } else {
-        throw 'Failed to unlock assignment. Try again in a few minutes';
+        throw 'Failed to unlock weight. Try again in a few minutes';
       }
     }).then((response) {
       DropdownBanner.showBanner(
@@ -438,12 +510,12 @@ class _SubviewThreeState extends State<_SubviewThree> {
         textStyle: TextStyle(color: Colors.white),
       );
 
+      loadingScreen.dismiss();
+
       //After reloading class
       if (response.wasSuccessful()) {
         //New info is available, push to assignments
         DartNotificationCenter.post(channel: NotificationChannels.classChanged);
-
-        loadingScreen.dismiss();
 
         Navigator.pushReplacement(
           context,
@@ -633,4 +705,3 @@ class _SubviewThreeState extends State<_SubviewThree> {
     );
   }
 }
-
