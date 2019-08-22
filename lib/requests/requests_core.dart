@@ -295,9 +295,6 @@ class Auth {
 
       if (thisPlatform == null) return false;
 
-      print(thisPlatform['value']);
-      print(version);
-
       final device =
           version.split('.').map((str) => int.tryParse(str)).toList();
       final preferred = (thisPlatform['value'] as String)
@@ -523,12 +520,10 @@ class Auth {
       final tokenNotifier = _apnsConnector.token;
 
       if (tokenNotifier.value != null && SKUser.current != null) {
-        print(tokenNotifier.value);
         saveNotificationToken(tokenNotifier.value);
       } else {
         _apnsConnector.token.addListener(() {
           final token = _apnsConnector.token.value;
-          print(token);
           if (token != null && SKUser.current != null) {
             saveNotificationToken(token);
           }
@@ -536,7 +531,6 @@ class Auth {
       }
     } else if (Platform.isAndroid) {
       _firebaseMessaging.getToken().then((token) {
-        print(token);
         if (token != null && SKUser.current != null)
           saveNotificationToken(token);
       }).catchError(print);

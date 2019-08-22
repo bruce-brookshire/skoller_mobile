@@ -14,11 +14,11 @@ void main() {
   //Allow currentTZ to cache through heuristic exploration before we need it
   TimeZoneManager.verifyTzDbActive();
 
-  if (isProd)
+  // if (isProd)
     ErrorWidget.builder = (details) {
       FirebaseAnalytics().logEvent(
           name: 'flutter_component_error',
-          parameters: {'exception_stack': details.stack});
+          parameters: {'exception_stack': details.stack.toString()});
       return Container(
         color: Colors.white,
         child: Text(

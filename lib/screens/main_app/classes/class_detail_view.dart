@@ -73,7 +73,7 @@ class _ClassDetailState extends State<ClassDetailView> {
 
     weightsWithoutAssignments = 0;
 
-    for (final Weight weight in studentClass.weights ?? [])
+    for (final Weight weight in studentClass?.weights ?? [])
       if (weightDensity[weight.id] == null) weightsWithoutAssignments += 1;
 
     if (mounted) setState(() {});
