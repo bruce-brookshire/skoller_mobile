@@ -26,17 +26,16 @@ class _AssignmentAddState extends State<AssignmentAddView> {
     final now = DateTime.now();
 
     SKCalendarPicker.presentDateSelector(
-            title: 'Due Date',
-            subtitle: 'When is this assignment due?',
-            context: context,
-            startDate: DateTime(now.year, now.month, now.day))
-        .then((selectedDate) {
-      if (selectedDate != null) {
+      title: 'Due Date',
+      subtitle: 'When is this assignment due?',
+      context: context,
+      startDate: DateTime(now.year, now.month, now.day),
+      onSelect: (selectedDate) {
         setState(() {
           dueDate = selectedDate;
         });
-      }
-    });
+      },
+    );
   }
 
   bool validState() {
@@ -204,7 +203,9 @@ class _AssignmentAddState extends State<AssignmentAddView> {
               alignment: Alignment.center,
               padding: EdgeInsets.symmetric(vertical: 8),
               decoration: BoxDecoration(
-                  color: isValid ? (isPrivate ? SKColors.skoller_blue : SKColors.success) : SKColors.inactive_gray,
+                  color: isValid
+                      ? (isPrivate ? SKColors.skoller_blue : SKColors.success)
+                      : SKColors.inactive_gray,
                   borderRadius: BorderRadius.circular(5)),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,

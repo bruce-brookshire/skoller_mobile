@@ -183,10 +183,23 @@ class _SubviewOne extends StatefulWidget {
 }
 
 class _SubviewOneState extends State<_SubviewOne> {
-  void tappedNoWeights(_) {
+  void tappedNoWeights(_) async {
     final studentClass = widget.subviewParent.studentClass;
-    final loader = SKLoadingScreen.fadeIn(context);
 
+    final shouldContinue = await showDialog(
+      context: context,
+      builder: (context) => SKAlertDialog(
+        title: 'Are you sure?',
+        subTitle:
+            'Choosing this means that this class does not have any weights. This will be changed for the entire class.',
+        confirmText: 'Confirm',
+        cancelText: 'Cancel',
+      ),
+    );
+
+    if (!shouldContinue) return;
+
+    final loader = SKLoadingScreen.fadeIn(context);
     studentClass.createWeights(
       false,
       [

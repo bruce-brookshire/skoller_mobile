@@ -289,6 +289,8 @@ class SKCalendarPicker extends StatefulWidget {
     @required String subtitle,
     @required BuildContext context,
     @required DateTime startDate,
+    @required DateCallback onSelect,
+    bool showNoDate = false,
   }) async {
     DateTime selectedDate = startDate;
 
@@ -348,6 +350,22 @@ class SKCalendarPicker extends StatefulWidget {
                     ],
                   ),
                   calendar,
+                  if (showNoDate)
+                    Padding(
+                      padding:
+                          EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+                      child: GestureDetector(
+                        onTapUp: (_) {
+                          onSelect(null);
+                          Navigator.pop(context);
+                        },
+                        child: Text(
+                          'Due date unknown?',
+                          style: TextStyle(color: SKColors.skoller_blue),
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                    ),
                   Row(
                     children: <Widget>[
                       Expanded(
@@ -372,7 +390,8 @@ class SKCalendarPicker extends StatefulWidget {
                         child: GestureDetector(
                           behavior: HitTestBehavior.opaque,
                           onTapUp: (details) {
-                            Navigator.pop(context, selectedDate);
+                            onSelect(selectedDate);
+                            Navigator.pop(context);
                           },
                           child: Container(
                             alignment: Alignment.center,

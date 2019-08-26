@@ -71,6 +71,8 @@ class _EditProfileState extends State<EditProfileView> {
 
   @override
   Widget build(BuildContext context) {
+    if (SKUser.current == null) return Container(color: Colors.white,);
+    
     return SKNavView(
       title: 'Edit Profile',
       rightBtn: Text(

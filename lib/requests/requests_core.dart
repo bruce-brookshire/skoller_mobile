@@ -6,7 +6,7 @@ import 'package:package_info/package_info.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:flutter_apns/apns_connector.dart';
-import 'package:time_machine/time_machine.dart';
+import 'package:time_machine/time_machine.dart' as time_machine;
 import '../constants/timezone_manager.dart';
 import 'package:flutter_apns/apns.dart';
 import 'package:http/http.dart' as http;
@@ -25,7 +25,7 @@ part 'chat.dart';
 part 'user.dart';
 part 'mod.dart';
 
-const bool isProd = false;
+const bool isProd = true;
 const bool isLocal = false;
 
 class RequestResponse<T> {
@@ -447,10 +447,13 @@ class Auth {
     final utc_hour_future_notification = 17 - offset;
 
     final timeStrFactory = (int hour) {
-      if (hour >= 10)
-        return '$hour:00:00.000';
+      final newHr = hour.abs() % 24;
+      print(newHr);
+
+      if (newHr >= 10)
+        return '$newHr:00:00.000';
       else
-        return '0$hour:00:00.000';
+        return '0$newHr:00:00.000';
     };
 
     return SKRequests.post(

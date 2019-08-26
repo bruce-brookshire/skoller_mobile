@@ -133,7 +133,7 @@ class _LoadingState extends State<LoadingView> {
                         child: Text(
                           isValidVersion
                               ? 'Failed loading. Tap to retry'
-                              : 'In order to offer the best experience, please update to the newest version.',
+                              : 'We have improvements that require an update. Tap here to do so!',
                           textAlign: TextAlign.center,
                           style: TextStyle(
                               color: Colors.white,

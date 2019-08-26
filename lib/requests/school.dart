@@ -86,7 +86,7 @@ class School {
   Period getBestCurrentPeriod() {
     final today = DateTime.now();
 
-    List<Period> periods = (SKUser.current.student.primarySchool?.periods ?? [])
+    List<Period> periods = (this.periods ?? []).toList()
       ..sort(
         (p1, p2) {
           if (p1.startDate == null && p2.startDate == null) {

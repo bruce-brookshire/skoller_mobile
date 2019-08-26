@@ -68,7 +68,7 @@ class _AssignmentBatchAddState extends State<AssignmentBatchAddView> {
 
     if (result != null) {
       int index = queuedAssignments
-          .indexWhere((element) => element.dueDate.isAfter(result.dueDate));
+          .indexWhere((element) => element.dueDate?.isAfter(result.dueDate) ?? false);
 
       setState(() {
         queuedAssignments.insert(
@@ -241,7 +241,7 @@ class _AssignmentBatchAddState extends State<AssignmentBatchAddView> {
             ),
           ),
           Text(
-            due == null ? 'Not due' : dateFormatter.format(due),
+            due == null ? '' : dateFormatter.format(due),
             style: TextStyle(fontSize: 14, fontWeight: FontWeight.normal),
           ),
         ]),
@@ -317,6 +317,7 @@ class _AddAssignmentSubview extends StatefulWidget {
 class _AddAssignmentSubState extends State<_AddAssignmentSubview> {
   DateTime dueDate;
 
+  bool dateSelected = false;
   bool isValidState = false;
 
   TextEditingController textFieldController = TextEditingController();
@@ -329,7 +330,7 @@ class _AddAssignmentSubState extends State<_AddAssignmentSubview> {
 
   checkState() {
     bool prevState = isValidState;
-    bool newState = textFieldController.text.trim() != "" && dueDate != null;
+    bool newState = textFieldController.text.trim() != "" && dateSelected;
     if (prevState != newState) {
       setState(() {
         isValidState = newState;
@@ -341,18 +342,19 @@ class _AddAssignmentSubState extends State<_AddAssignmentSubview> {
     final now = DateTime.now();
 
     SKCalendarPicker.presentDateSelector(
-            title: 'Due Date',
-            subtitle: 'When is this assignment due?',
-            context: context,
-            startDate: DateTime(now.year, now.month, now.day))
-        .then((selectedDate) {
-      if (selectedDate != null) {
+      title: 'Due Date',
+      subtitle: 'When is this assignment due?',
+      context: context,
+      startDate: DateTime(now.year, now.month, now.day),
+      showNoDate: true,
+      onSelect: (selectedDate) {
         setState(() {
           dueDate = selectedDate;
+          dateSelected = true;
           checkState();
         });
-      }
-    });
+      },
+    );
   }
 
   @override
@@ -395,9 +397,9 @@ class _AddAssignmentSubState extends State<_AddAssignmentSubview> {
                 GestureDetector(
                   onTapUp: tappedDateSelector,
                   child: Text(
-                    dueDate == null
+                    !dateSelected
                         ? 'Select date'
-                        : DateFormat('EEE, MMMM d').format(dueDate),
+                        : (dueDate == null ? 'No due date' : DateFormat('EEE, MMMM d').format(dueDate)),
                     style: TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 15,

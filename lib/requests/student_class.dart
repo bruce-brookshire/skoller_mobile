@@ -32,7 +32,7 @@ class StudentClass {
 
   Map<String, dynamic> gradeScale;
 
-  static DateTimeZoneProvider tzdb;
+  static time_machine.DateTimeZoneProvider tzdb;
 
   static final _classColors = [
     '9b55e5ff', // purple
@@ -182,13 +182,14 @@ class StudentClass {
     DateTime dueDate,
     bool isPrivate,
   ) async {
-    String tzCorrectedString = dueDate.toUtc().toIso8601String();
+    String tzCorrectedString = dueDate?.toUtc()?.toIso8601String();
 
-    DateTime correctedDueDate =
-        await TimeZoneManager.convertUtcOffsetFromLocalToSchool(
-      dueDate,
-      getSchool().timezone,
-    );
+    DateTime correctedDueDate = dueDate == null
+        ? null
+        : await TimeZoneManager.convertUtcOffsetFromLocalToSchool(
+            dueDate,
+            getSchool().timezone,
+          );
 
     if (correctedDueDate != null) {
       tzCorrectedString = correctedDueDate.toIso8601String();
@@ -219,13 +220,14 @@ class StudentClass {
     Weight weight,
     DateTime dueDate,
   ) async {
-    String tzCorrectedString = dueDate.toUtc().toIso8601String();
+    String tzCorrectedString = dueDate?.toUtc()?.toIso8601String();
 
-    DateTime correctedDueDate =
-        await TimeZoneManager.convertUtcOffsetFromLocalToSchool(
-      dueDate,
-      getSchool().timezone,
-    );
+    DateTime correctedDueDate = dueDate == null
+        ? null
+        : await TimeZoneManager.convertUtcOffsetFromLocalToSchool(
+            dueDate,
+            getSchool().timezone,
+          );
 
     if (correctedDueDate != null) {
       tzCorrectedString = correctedDueDate.toIso8601String();

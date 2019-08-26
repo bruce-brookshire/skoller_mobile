@@ -55,19 +55,19 @@ class _AssignmentEditModalState extends State<AssignmentEditModal> {
   }
 
   void tappedDueDate(TapUpDetails details) async {
-    final result = await SKCalendarPicker.presentDateSelector(
-        title: 'Due date',
-        subtitle: 'When is this assignment due?',
-        context: context,
-        startDate: selectedDate ?? DateTime.now());
-
-    if (result != null && result is DateTime) {
-      setState(() {
-        selectedDate = result;
-        shouldDelete = false;
-      });
-      checkValid();
-    }
+    SKCalendarPicker.presentDateSelector(
+      title: 'Due date',
+      subtitle: 'When is this assignment due?',
+      context: context,
+      startDate: selectedDate ?? DateTime.now(),
+      onSelect: (selectedDate) {
+        setState(() {
+          this.selectedDate = selectedDate;
+          shouldDelete = false;
+        });
+        checkValid();
+      },
+    );
   }
 
   void tappedWeight(TapUpDetails details) async {

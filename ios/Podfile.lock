@@ -1,22 +1,22 @@
 PODS:
   - FacebookCore (0.8.0):
     - FBSDKCoreKit (~> 5.0)
-  - FBSDKCoreKit (5.4.0):
-    - FBSDKCoreKit/Basics (= 5.4.0)
-    - FBSDKCoreKit/Core (= 5.4.0)
-  - FBSDKCoreKit/Basics (5.4.0)
-  - FBSDKCoreKit/Core (5.4.0):
+  - FBSDKCoreKit (5.4.1):
+    - FBSDKCoreKit/Basics (= 5.4.1)
+    - FBSDKCoreKit/Core (= 5.4.1)
+  - FBSDKCoreKit/Basics (5.4.1)
+  - FBSDKCoreKit/Core (5.4.1):
     - FBSDKCoreKit/Basics
-  - Firebase/Analytics (6.6.0):
+  - Firebase/Analytics (6.7.0):
     - Firebase/Core
-  - Firebase/Core (6.6.0):
+  - Firebase/Core (6.7.0):
     - Firebase/CoreOnly
-    - FirebaseAnalytics (= 6.1.0)
-  - Firebase/CoreOnly (6.6.0):
-    - FirebaseCore (= 6.2.0)
-  - Firebase/Messaging (6.6.0):
+    - FirebaseAnalytics (= 6.1.1)
+  - Firebase/CoreOnly (6.7.0):
+    - FirebaseCore (= 6.2.1)
+  - Firebase/Messaging (6.7.0):
     - Firebase/CoreOnly
-    - FirebaseMessaging (~> 4.1.2)
+    - FirebaseMessaging (~> 4.1.3)
   - firebase_analytics (0.0.1):
     - Firebase/Analytics (~> 6.0)
     - Firebase/Core
@@ -28,17 +28,17 @@ PODS:
     - Firebase/Core
     - Firebase/Messaging
     - Flutter
-  - FirebaseAnalytics (6.1.0):
+  - FirebaseAnalytics (6.1.1):
     - FirebaseCore (~> 6.2)
     - FirebaseInstanceID (~> 4.2)
-    - GoogleAppMeasurement (= 6.1.0)
+    - GoogleAppMeasurement (= 6.1.1)
     - GoogleUtilities/AppDelegateSwizzler (~> 6.0)
     - GoogleUtilities/MethodSwizzler (~> 6.0)
     - GoogleUtilities/Network (~> 6.0)
     - "GoogleUtilities/NSData+zlib (~> 6.0)"
     - nanopb (~> 0.3)
-  - FirebaseAnalyticsInterop (1.3.0)
-  - FirebaseCore (6.2.0):
+  - FirebaseAnalyticsInterop (1.4.0)
+  - FirebaseCore (6.2.1):
     - FirebaseCoreDiagnostics (~> 1.0)
     - FirebaseCoreDiagnosticsInterop (~> 1.0)
     - GoogleUtilities/Environment (~> 6.2)
@@ -53,7 +53,7 @@ PODS:
     - FirebaseCore (~> 6.0)
     - GoogleUtilities/Environment (~> 6.0)
     - GoogleUtilities/UserDefaults (~> 6.0)
-  - FirebaseMessaging (4.1.2):
+  - FirebaseMessaging (4.1.3):
     - FirebaseAnalyticsInterop (~> 1.3)
     - FirebaseCore (~> 6.2)
     - FirebaseInstanceID (~> 4.1)
@@ -67,14 +67,14 @@ PODS:
     - Flutter
   - flutter_keychain (0.0.1):
     - Flutter
-  - GoogleAppMeasurement (6.1.0):
+  - GoogleAppMeasurement (6.1.1):
     - GoogleUtilities/AppDelegateSwizzler (~> 6.0)
     - GoogleUtilities/MethodSwizzler (~> 6.0)
     - GoogleUtilities/Network (~> 6.0)
     - "GoogleUtilities/NSData+zlib (~> 6.0)"
     - nanopb (~> 0.3)
-  - GoogleDataTransport (1.1.1)
-  - GoogleDataTransportCCTSupport (1.0.1):
+  - GoogleDataTransport (1.1.2)
+  - GoogleDataTransportCCTSupport (1.0.2):
     - GoogleDataTransport (~> 1.1)
     - nanopb
   - GoogleUtilities/AppDelegateSwizzler (6.2.5):
@@ -177,24 +177,24 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   FacebookCore: 563bb4cbcd7dd86cf89f3729252140bf256aacaa
-  FBSDKCoreKit: 026e56cf2c2cebc656cf2aec5c6898b8c4f33930
-  Firebase: a2b5951f30ff38fd3b3bdae9c7d340f940fd3c51
+  FBSDKCoreKit: 5144671077d67f07d7d243dbc7fd57a171f73954
+  Firebase: 291d7b0a7b393f252358083b5d224884126fa46d
   firebase_analytics: 5afaaf8f43ae6a640f200d98f3ecff32e9873538
-  firebase_core: b3b02d0b5e9d01aab5e50ba7cbcf84c73cb6883c
-  firebase_messaging: efa1c09df5b6fbf505ee319bf27a0c88efe9ff8c
-  FirebaseAnalytics: 48414ae5cbf6976d8a2f7177e0466540e5ab33ce
-  FirebaseAnalyticsInterop: 0f250d71e8741352407a8db351e6de78c5c56d35
-  FirebaseCore: 8c9e08bce0c72a3affd83927d8184cf244918bc8
+  firebase_core: ae55ea92448ec8675d325da4db22cf3b4d58a54d
+  firebase_messaging: 74e9d76acfbdff96a3f9f570f463a2b2bc784bf5
+  FirebaseAnalytics: 843c7f64a8f9c79f0d03281197ebe7bb1d58d477
+  FirebaseAnalyticsInterop: d48b6ab67bcf016a05e55b71fc39c61c0cb6b7f3
+  FirebaseCore: 32b48f41c84a56fbde73b35ed01a830b3b6dc048
   FirebaseCoreDiagnostics: 4c04ae09d0ab027c30179828c6bb47764df1bd13
   FirebaseCoreDiagnosticsInterop: 6829da2b8d1fc795ff1bd99df751d3788035d2cb
   FirebaseInstanceID: 8b42755db950682e7de0d167bc6fb26a57b244af
-  FirebaseMessaging: ddd74d13644ef24cc4e2d95cabd1cf408e99b7b0
+  FirebaseMessaging: 930e4cce01f8f1e634cfdd1881db471fb61be883
   Flutter: 0e3d915762c693b495b44d77113d4970485de6ec
   flutter_apns: f516b118e423fe7c0a38771180549c4d6cb67c2f
   flutter_keychain: 01aabf894ffe8b01adfda1d9df21c210c1b4b452
-  GoogleAppMeasurement: 47285fa897e5a125df56b9ef8750a1d81e4598a8
-  GoogleDataTransport: ffbadce4ab93c88fb9dd8e6366c47bfcb4a32193
-  GoogleDataTransportCCTSupport: 3451e7d8ba19093e533362a6d78d6d9014c6a037
+  GoogleAppMeasurement: 86a82f0e1f20b8eedf8e20326530138fd71409de
+  GoogleDataTransport: 9c3d63ed82f882a9a74d4be67dd7ad01bf046102
+  GoogleDataTransportCCTSupport: 6b545f7149111180763dc18c6f372c963de4a310
   GoogleUtilities: e7dc37039b19df7fe543479d3e4a02ac8d11bb69
   nanopb: 2901f78ea1b7b4015c860c2fdd1ea2fee1a18d48
   package_info: 78cabb3c322943c55d39676f4a5bfc748c01d055

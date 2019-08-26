@@ -451,7 +451,7 @@ class _AddClassesState extends State<AddClassesView> {
                   mainAxisSize: MainAxisSize.min,
                   children: <Widget>[
                     Text(
-                      SKUser.current.student.primarySchool.name,
+                      SKUser.current.student.primarySchool?.name,
                       overflow: TextOverflow.ellipsis,
                       style: TextStyle(
                           fontSize: 18,

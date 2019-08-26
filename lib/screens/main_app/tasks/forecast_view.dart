@@ -84,9 +84,6 @@ class _TasksState extends State<ForecastView> {
                 minDaysOutCompleted = daysOut;
             }
             return !showingCompletedTasks && a.completed;
-          })
-          ..sort((a1, a2) {
-            return -1;
           }))
         .map((a) => _TaskLikeItem(a.id, false, a.due))
         .toList();

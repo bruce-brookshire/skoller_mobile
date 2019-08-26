@@ -34,6 +34,7 @@ class _PrimarySchoolState extends State<PrimarySchoolModal> {
           if (obj.length == 1) {
             selectedSchoolId = obj.first.id;
             selectedPeriod = obj.first.getBestCurrentPeriod();
+            await SKUser.current.update(primarySchool: obj.first);
           } else if (obj.length == 0 && !showingGreeting) tappedSearch(null);
 
           setState(() {

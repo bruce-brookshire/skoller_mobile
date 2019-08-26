@@ -14,19 +14,27 @@ void main() {
   //Allow currentTZ to cache through heuristic exploration before we need it
   TimeZoneManager.verifyTzDbActive();
 
-  // if (isProd)
+  if (isProd)
     ErrorWidget.builder = (details) {
       FirebaseAnalytics().logEvent(
-          name: 'flutter_component_error',
-          parameters: {'exception_stack': details.stack.toString()});
-      return Container(
-        color: Colors.white,
-        child: Text(
-          'Sorry, something wen\'t wrong 😔',
-          style: TextStyle(
-              color: SKColors.dark_gray,
-              fontWeight: FontWeight.bold,
-              fontSize: 15),
+        name: 'flutter_component_error',
+        parameters: {
+          'exception_stack': details.stack.toString(),
+          'user_id': SKUser.current?.id ?? 0
+        },
+      );
+      
+      return SafeArea(
+        child: Container(
+          color: Colors.white,
+          child: Text(
+            'Sorry, something wen\'t wrong 😔',
+            textAlign: TextAlign.center,
+            style: TextStyle(
+                color: SKColors.dark_gray,
+                fontWeight: FontWeight.bold,
+                fontSize: 15),
+          ),
         ),
       );
     };
