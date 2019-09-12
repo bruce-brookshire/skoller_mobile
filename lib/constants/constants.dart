@@ -83,7 +83,8 @@ class PushNotificationCategories {
   static const chatPost = 'ClassChat.Post';
 
   // Forecast tab
-  static const assignmentReminder = 'Assignment.Reminder';
+  static const assignmentReminderToday = 'Assignment.Reminder.Today';
+  static const assignmentReminderFuture = 'Assignment.Reminder.Future';
   static const assignmentPost = 'Assignment.Post';
 
   // Activity tab
@@ -99,17 +100,17 @@ class PushNotificationCategories {
   static const custom = 'Manual.Custom';
   static const signupLinkUsed = 'SignupLink.Used';
 
-  static bool isChat(String category) =>
-      _validateMember([chatComment, chatPost, chatReply, secondClass], category);
+  static bool isChat(String category) => _validateMember(
+      [chatComment, chatPost, chatReply, secondClass], category);
 
-  static bool isClasses(String category) =>
-      _validateMember([classComplete, classPrompt, needsSyllabus, classStart], category);
+  static bool isClasses(String category) => _validateMember(
+      [classComplete, classPrompt, needsSyllabus, classStart], category);
 
   static bool isActivity(String category) =>
       _validateMember([updateAuto, updatePending], category);
 
-  static bool isForecast(String category) =>
-      _validateMember([assignmentReminder], category);
+  static bool isForecast(String category) => _validateMember(
+      [assignmentReminderToday, assignmentReminderFuture], category);
 
   static bool _validateMember(List<String> categories, category) =>
       categories.contains(category);
