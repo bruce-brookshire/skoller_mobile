@@ -83,42 +83,40 @@ class StudentClass {
       return Color(int.parse(substr, radix: 16));
     };
 
-    if (_color != null) {
-      return colorizer(_color);
-    } else {
-      String newColor;
-
-      //Make this an ordered map so we can iterate in order through the available colors
-      final colorMap = LinkedHashMap.fromIterables(
-        StudentClass._classColors,
-        List.generate(StudentClass._classColors.length, (val) => false),
-      );
-
-      for (final studentClass in StudentClass.currentClasses.values) {
-        if (studentClass._color != null) {
-          colorMap[studentClass._color] = true;
-        }
-      }
-
-      if (colorMap.containsValue(false)) {
-        colorMap.removeWhere((key, val) => val);
-        newColor = colorMap.keys.first;
-      } else {
-        final loc = Random.secure().nextInt(colorMap.length);
-        newColor = colorMap.keys.toList()[loc];
-      }
-
-      _update({'color': newColor}).then((response) {
-        if (response.wasSuccessful()) {
-          this.refetchSelf();
-        }
-      });
-
-      return colorizer(newColor);
-    }
+    return colorizer(_color != null ? _color : initializeColor());
   }
 
-  void initializeColor() {}
+  String initializeColor() {
+    String newColor;
+
+    //Make this an ordered map so we can iterate in order through the available colors
+    final colorMap = LinkedHashMap.fromIterables(
+      StudentClass._classColors,
+      List.generate(StudentClass._classColors.length, (val) => false),
+    );
+
+    for (final studentClass in StudentClass.currentClasses.values) {
+      if (studentClass._color != null) {
+        colorMap[studentClass._color] = true;
+      }
+    }
+
+    if (colorMap.containsValue(false)) {
+      colorMap.removeWhere((key, val) => val);
+      newColor = colorMap.keys.first;
+    } else {
+      final loc = Random.secure().nextInt(colorMap.length);
+      newColor = colorMap.keys.toList()[loc];
+    }
+
+    _update({'color': newColor}).then((response) {
+      if (response.wasSuccessful()) {
+        this.refetchSelf();
+      }
+    });
+
+    return newColor;
+  }
 
   Future<RequestResponse> setColor(Color color) {
     this._color = color.value.toRadixString(16).substring(2) + 'ff';
@@ -166,11 +164,7 @@ class StudentClass {
   }
 
   Future<RequestResponse> _updateParentClass(Map params) {
-    return SKRequests.put(
-      '/classes/$id',
-      params,
-      null,
-    );
+    return SKRequests.put('/classes/$id', params, null);
   }
 
   /**
@@ -398,6 +392,7 @@ class StudentClass {
   //Static Members//
   //--------------//
 
+  static bool classesLoaded = false;
   static Map<int, StudentClass> currentClasses = {};
   static final List<Color> colors = [
     Color(0xFFdd4a63), //Red
@@ -478,6 +473,7 @@ class StudentClass {
       cacheResult: true,
       cachePath: 'student_classes.json',
       postRequestAction: () {
+        classesLoaded = true;
         StudentClass.currentClasses = {};
         Assignment.currentAssignments = {};
       },
@@ -562,12 +558,17 @@ class SchoolClass {
     return schoolClass;
   }
 
-  Future<RequestResponse> enrollInClass() {
-    return SKRequests.post(
+  Future<RequestResponse> enrollInClass() async {
+    final RequestResponse<StudentClass> response = await SKRequests.post(
       '/students/${SKUser.current.student.id}/classes/$id',
       null,
       StudentClass._fromJsonObj,
     );
+
+    if (response.wasSuccessful() && response.obj._color == null) {
+      response.obj.initializeColor();
+    }
+    return response;
   }
 
   static Future<http.Response> _activeClassSearch;

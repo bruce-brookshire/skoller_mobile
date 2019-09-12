@@ -71,8 +71,11 @@ class _EditProfileState extends State<EditProfileView> {
 
   @override
   Widget build(BuildContext context) {
-    if (SKUser.current == null) return Container(color: Colors.white,);
-    
+    if (SKUser.current == null)
+      return Container(
+        color: Colors.white,
+      );
+
     return SKNavView(
       title: 'Edit Profile',
       rightBtn: Text(
@@ -282,13 +285,27 @@ class _EditProfileState extends State<EditProfileView> {
                         style: TextStyle(fontSize: 16),
                       ),
                       onPressed: () async {
+                        final loader = SKLoadingScreen.fadeIn(context);
                         bool success = await SKUser.current.delete();
-                        if (success) success = await Auth.logOut();
+                        if (success) {
+                          await Auth.logOut();
+                          loader.dismiss();
+                          Navigator.pop(context);
+                          Navigator.popUntil(this.context,
+                              (route) => route.settings.isInitialRoute);
 
-                        if (success)
                           DartNotificationCenter.post(
                               channel: NotificationChannels.appStateChanged,
                               options: AppState.auth);
+                        } else {
+                          loader.dismiss();
+                          DropdownBanner.showBanner(
+                            text:
+                                'Something went wrong while attempting to delete your account',
+                            color: SKColors.warning_red,
+                            textStyle: TextStyle(color: Colors.white),
+                          );
+                        }
                       },
                     ),
                     CupertinoActionSheetAction(

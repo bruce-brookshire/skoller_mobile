@@ -51,14 +51,16 @@ class _SKTabBarState extends State<SKTabBar> {
 
   List<bool> _indexNeedsDot = [false, false, false, false, false];
 
-  var controller = CupertinoTabController(
-      initialIndex: StudentClass.currentClasses.length == 0 ? 3 : 0);
+  CupertinoTabController controller;
 
-  var prevIndex = StudentClass.currentClasses.length == 0 ? 3 : 0;
+  var prevIndex = StudentClass.currentClasses.length == 0 ? CLASSES_TAB : FORECAST_TAB;
 
   @override
   void initState() {
     super.initState();
+
+    controller = CupertinoTabController(initialIndex: prevIndex);
+
     checkAlertDots();
 
     DartNotificationCenter.subscribe(
@@ -101,12 +103,12 @@ class _SKTabBarState extends State<SKTabBar> {
   }
 
   void checkAlertDots() {
-    _indexNeedsDot[3] = StudentClass.currentClasses.values.any(
+    _indexNeedsDot[CLASSES_TAB] = StudentClass.currentClasses.values.any(
       (elem) => [ClassStatuses.needs_setup, ClassStatuses.needs_student_input]
           .contains(elem.status.id),
     );
 
-    _indexNeedsDot[4] =
+    _indexNeedsDot[ACTIVITY_TAB] =
         Mod.currentMods.values.any((mod) => mod.isAccepted == null);
   }
 

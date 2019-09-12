@@ -159,7 +159,7 @@ class _CalendarState extends State<CalendarView> {
     if (!StudentClass.liveClassesAvailable)
       return CalendarTutorialView(
         () => DartNotificationCenter.post(
-            channel: NotificationChannels.selectTab, options: 3),
+            channel: NotificationChannels.selectTab, options: CLASSES_TAB),
         'Setup first class',
       );
 

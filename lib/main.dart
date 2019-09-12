@@ -23,7 +23,7 @@ void main() {
           'user_id': SKUser.current?.id ?? 0
         },
       );
-      
+
       return SafeArea(
         child: Container(
           color: Colors.white,

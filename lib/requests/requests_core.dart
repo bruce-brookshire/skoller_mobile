@@ -1,11 +1,16 @@
 library requests_core;
 
+import 'dart:async';
+
 import 'package:dart_notification_center/dart_notification_center.dart';
+import 'package:dropdown_banner/dropdown_banner.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:package_info/package_info.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:flutter_apns/apns_connector.dart';
+import 'package:skoller/screens/main_app/classes/class_link_sharing_modal.dart';
+import 'package:skoller/screens/main_app/menu/my_points_view.dart';
 import 'package:time_machine/time_machine.dart' as time_machine;
 import '../constants/timezone_manager.dart';
 import 'package:flutter_apns/apns.dart';
@@ -25,7 +30,7 @@ part 'chat.dart';
 part 'user.dart';
 part 'mod.dart';
 
-const bool isProd = true;
+const bool isProd = false;
 const bool isLocal = false;
 
 class RequestResponse<T> {
@@ -44,7 +49,7 @@ class RequestResponse<T> {
           this.obj = JsonListMaker.convert<T>(constructor, context);
         } else if (context is Map) {
           this.obj = constructor(context);
-        } else  {
+        } else {
           this.obj = context;
         }
       } else {
@@ -492,30 +497,111 @@ class Auth {
       _apnsConnector = createPushConnector();
       _apnsConnector.configure(
         onMessage: (Map<String, dynamic> message) async {
-          print('on message $message');
+          if (message != null && message['aps'] != null) {
+            final body = message['aps']['alert'];
+            final category = message['aps']['category'];
+
+            _dropdownNotifications(
+                null, body, () => _handleNotificationAction(category, message));
+          }
         },
-        onResume: (Map<String, dynamic> message) async {
-          print('on resume $message');
-        },
-        onLaunch: (Map<String, dynamic> message) async {
-          print('on launch $message');
-        },
+        onResume: _iosBackgroundHandler,
+        onLaunch: _iosBackgroundHandler,
       );
       _apnsConnector.requestNotificationPermissions();
     } else {
       _firebaseMessaging = FirebaseMessaging();
       _firebaseMessaging.configure(
         onMessage: (Map<String, dynamic> message) async {
+          if (message != null && message['notification'] != null) {
+            final title = message['notification']['title'];
+            final body = message['notification']['body'];
+            final category = message['data']['category'];
+
+            _dropdownNotifications(title, body,
+                () => _handleNotificationAction(category, message['data']));
+          }
           print('on message $message');
         },
-        onResume: (Map<String, dynamic> message) async {
-          print('on resume $message');
-        },
-        onLaunch: (Map<String, dynamic> message) async {
-          print('on launch $message');
-        },
+        onResume: _androidBackgroundHandler,
+        onLaunch: _androidBackgroundHandler,
       );
     }
+  }
+
+  static Future<dynamic> _androidBackgroundHandler(
+      Map<String, dynamic> message) async {
+    print(message);
+    _handleNotificationAction(message['data']['category'], message['data']);
+  }
+
+  static Future<dynamic> _iosBackgroundHandler(
+      Map<String, dynamic> message) async {
+    print(message);
+    _handleNotificationAction(message['aps']['category'], message);
+  }
+
+  static void _dropdownNotifications(
+    String title,
+    String body,
+    VoidCallback tapCallback,
+  ) {
+    DropdownBanner.showBanner(
+      duration: Duration(seconds: 5),
+      color: SKColors.menu_blue,
+      text:
+          '${title ?? ''}${(title != null && body != null) ? '\n' : ''}${body ?? ''}',
+      textStyle: TextStyle(fontSize: 14),
+      tapCallback: tapCallback,
+    );
+  }
+
+  // Handles a notification action
+  static void _handleNotificationAction(
+      [String category, Map data, int attempt = 0]) {
+    //If we have no category or if we have exceeded our attempts, return
+    if (category == null || attempt == 3) return;
+
+    if (StudentClass.classesLoaded) {
+      if (PushNotificationCategories.isClasses(category))
+        DartNotificationCenter.post(
+          channel: NotificationChannels.selectTab,
+          options: CLASSES_TAB,
+        );
+      else if (PushNotificationCategories.isChat(category))
+        DartNotificationCenter.post(
+          channel: NotificationChannels.selectTab,
+          options: CHAT_TAB,
+        );
+      else if (PushNotificationCategories.isActivity(category))
+        DartNotificationCenter.post(
+          channel: NotificationChannels.selectTab,
+          options: ACTIVITY_TAB,
+        );
+      else if (PushNotificationCategories.isForecast(category))
+        DartNotificationCenter.post(
+          channel: NotificationChannels.selectTab,
+          options: FORECAST_TAB,
+        );
+      // Is this a grow community notification and do we have the student class loaded?
+      else if (PushNotificationCategories.growCommunity == category &&
+          StudentClass.currentClasses[data['class_id'] ?? 0] != null)
+        DartNotificationCenter.post(
+          channel: NotificationChannels.presentViewOverTabBar,
+          options: ClassLinkSharingModal(
+            data['class_id'],
+          ),
+        );
+      else if (PushNotificationCategories.points == category)
+        DartNotificationCenter.post(
+          channel: NotificationChannels.presentViewOverTabBar,
+          options: MyPointsView(),
+        );
+    } else
+      Timer(
+        Duration(milliseconds: 500 * (attempt + 1)),
+        () => _handleNotificationAction(category, data, attempt + 1),
+      );
   }
 
   static void _setupNotifications() {

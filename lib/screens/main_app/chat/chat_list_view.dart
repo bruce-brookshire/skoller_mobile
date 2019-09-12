@@ -211,7 +211,7 @@ class _ChatListState extends State<ChatListView> {
     if (!StudentClass.liveClassesAvailable)
       return ChatTutorialView(
         () => DartNotificationCenter.post(
-            channel: NotificationChannels.selectTab, options: 3),
+            channel: NotificationChannels.selectTab, options: CLASSES_TAB),
         'Setup first class',
       );
 

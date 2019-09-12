@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
-import '../../constants/constants.dart';
+import 'package:skoller/tools.dart';
 import 'sign_in.dart';
 import 'sign_up.dart';
 

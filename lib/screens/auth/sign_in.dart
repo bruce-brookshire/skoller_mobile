@@ -6,7 +6,7 @@ import 'package:skoller/screens/auth/phone_verification_view.dart';
 import 'package:flutter/services.dart';
 import 'package:skoller/screens/auth/sign_up.dart';
 import '../../requests/requests_core.dart';
-import '../../constants/constants.dart';
+import 'package:skoller/tools.dart';
 
 class SignIn extends StatefulWidget {
   @override

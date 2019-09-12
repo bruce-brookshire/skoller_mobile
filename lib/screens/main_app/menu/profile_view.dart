@@ -11,6 +11,8 @@ class ProfileView extends StatefulWidget {
 class _ProfileState extends State<ProfileView> {
   @override
   Widget build(BuildContext context) {
+    if (SKUser.current == null) Container(color: Colors.white);
+
     final fields = SKUser.current.student.fieldsOfStudy ?? [];
 
     return Scaffold(

@@ -6,7 +6,7 @@ import 'package:skoller/screens/main_app/activity/update_info_view.dart';
 import 'package:skoller/screens/main_app/menu/add_classes_view.dart';
 import 'package:skoller/screens/main_app/tutorial/activity_tutorial_view.dart';
 import '../../../requests/requests_core.dart';
-import 'package:skoller/constants/constants.dart';
+import 'package:skoller/tools.dart';
 
 class ActivityView extends StatefulWidget {
   @override
@@ -99,7 +99,7 @@ class _ActivityState extends State<ActivityView> {
     if (!StudentClass.liveClassesAvailable)
       return ActivityTutorialView(
         () => DartNotificationCenter.post(
-            channel: NotificationChannels.selectTab, options: 3),
+            channel: NotificationChannels.selectTab, options: CLASSES_TAB),
         'Setup first class',
       );
 

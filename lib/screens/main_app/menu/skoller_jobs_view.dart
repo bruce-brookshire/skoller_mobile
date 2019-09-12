@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:skoller/constants/constants.dart';
+import 'package:skoller/tools.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class SkollerJobsView extends StatelessWidget {

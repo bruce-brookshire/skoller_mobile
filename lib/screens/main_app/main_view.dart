@@ -53,7 +53,7 @@ class _MainState extends State<MainView> {
     super.initState();
   }
 
-  showPrimarySchoolModal(BuildContext context) {
+  void showPrimarySchoolModal(BuildContext context) {
     Navigator.push(
       context,
       SKNavOverlayRoute(

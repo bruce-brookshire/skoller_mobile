@@ -284,7 +284,7 @@ class _TasksState extends State<ForecastView> {
     if (!StudentClass.liveClassesAvailable)
       return ForecastTutorialView(
         () => DartNotificationCenter.post(
-            channel: NotificationChannels.selectTab, options: 3),
+            channel: NotificationChannels.selectTab, options: CLASSES_TAB),
         'Setup first class',
       );
     final setupSecondClass = StudentClass.currentClasses.length == 2 &&
