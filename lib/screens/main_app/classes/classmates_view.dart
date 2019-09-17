@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:skoller/screens/main_app/classes/student_profile_modal.dart';
+import './modals/student_profile_modal.dart';
 import 'package:skoller/tools.dart';
 import 'package:share/share.dart';
 

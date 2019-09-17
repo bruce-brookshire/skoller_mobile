@@ -22,6 +22,8 @@ const CHAT_TAB = 2;
 const CLASSES_TAB = 3;
 const ACTIVITY_TAB = 4;
 
+const PARTY_SIZE = 4;
+
 class SKColors {
   static const dark_gray = Color(0xFF4A4A4A);
   static const background_gray = Color(0xFFF5F7F9);

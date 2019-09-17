@@ -3,7 +3,7 @@ import 'package:dropdown_banner/dropdown_banner.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:auto_size_text/auto_size_text.dart';
-import 'package:skoller/screens/main_app/classes/class_link_sharing_modal.dart';
+import './modals/class_link_sharing_modal.dart';
 import 'package:skoller/screens/main_app/classes/classmates_view.dart';
 import 'package:skoller/screens/main_app/classes/weights_info_view.dart';
 import 'package:skoller/tools.dart';

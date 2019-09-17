@@ -4,15 +4,15 @@ import 'dart:collection';
 import 'class_detail_view.dart';
 import 'package:intl/intl.dart';
 import 'package:share/share.dart';
-import 'assignment_edit_modal.dart';
+import './modals/assignment_edit_modal.dart';
 import 'package:skoller/tools.dart';
-import 'assignment_notes_modal.dart';
+import './modals/assignment_notes_modal.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:skoller/constants/constants.dart';
 import 'package:dropdown_banner/dropdown_banner.dart';
-import 'package:skoller/screens/main_app/classes/student_profile_modal.dart';
+import './modals/student_profile_modal.dart';
 import 'package:dart_notification_center/dart_notification_center.dart';
 import 'package:skoller/screens/main_app/activity/update_info_view.dart';
 

@@ -378,7 +378,7 @@ class StudentClass {
   }
 
   String _startTimeString(TimeOfDay time) => time == null
-      ? 'online'
+      ? null
       : '${time.hour < 10 ? '0' : ''}${time.hour}:${time.minute < 10 ? '0' : ''}${time.minute}:00';
 
   Future<bool> weightChangeRequest(bool isPoints, List<Map> weights) async {

@@ -2,7 +2,7 @@ import 'package:dart_notification_center/dart_notification_center.dart';
 import 'package:dropdown_banner/dropdown_banner.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:skoller/screens/main_app/classes/weight_creation_modal.dart';
+import './modals/weight_creation_modal.dart';
 import 'package:skoller/tools.dart';
 
 import 'dart:collection';

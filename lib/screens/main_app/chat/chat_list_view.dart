@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:skoller/screens/main_app/chat/chat_inbox_view.dart';
 import 'package:skoller/screens/main_app/chat/chat_info_view.dart';
+import 'package:skoller/screens/main_app/classes/modals/class_link_sharing_modal.dart';
 import 'package:skoller/screens/main_app/menu/add_classes_view.dart';
 import 'package:skoller/screens/main_app/tutorial/chat_tutorial_view.dart';
 import 'package:skoller/tools.dart';
@@ -97,112 +98,62 @@ class _ChatListState extends State<ChatListView> {
 
     int selectedIndex = 0;
 
-    final result1 = await showCupertinoDialog(
-        context: context,
-        builder: (context) {
-          return CupertinoAlertDialog(
-            title: Column(
-              children: <Widget>[
-                Text(
-                  'Create a post',
-                  style: TextStyle(fontSize: 16),
-                ),
-                Container(
-                  padding: EdgeInsets.only(bottom: 8, top: 2),
-                  child: Text(
-                    'Select a class',
-                    style:
-                        TextStyle(fontSize: 12, fontWeight: FontWeight.normal),
-                  ),
-                ),
-              ],
-            ),
-            content: Container(
-              decoration: BoxDecoration(
-                border: Border(
-                  bottom: BorderSide(color: SKColors.border_gray),
-                  top: BorderSide(color: SKColors.border_gray),
-                ),
-              ),
-              height: 180,
-              child: CupertinoPicker.builder(
-                backgroundColor: Colors.white,
-                childCount: classes.length,
-                itemBuilder: (context, index) => Container(
-                  alignment: Alignment.center,
-                  child: Text(
-                    classes[index].name,
-                    style: TextStyle(fontSize: 15),
-                  ),
-                ),
-                itemExtent: 32,
-                onSelectedItemChanged: (index) {
-                  selectedIndex = index;
-                },
-              ),
-            ),
-            actions: <Widget>[
-              CupertinoDialogAction(
-                child: Text(
-                  'Cancel',
-                  style: TextStyle(color: SKColors.skoller_blue, fontSize: 16),
-                ),
-                isDefaultAction: false,
-                onPressed: () {
-                  Navigator.pop(context, false);
-                },
-              ),
-              CupertinoDialogAction(
-                child: Text(
-                  'Select',
-                  style: TextStyle(
-                      color: SKColors.skoller_blue,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 16),
-                ),
-                isDefaultAction: true,
-                onPressed: () {
-                  Navigator.pop(context, true);
-                },
-              )
-            ],
-          );
-        });
+    final result1 = await showDialog(
+      context: context,
+      builder: (context) => SKPickerModal(
+        title: 'Create a post',
+        subtitle: 'Select a class',
+        items: classes.map((c) => c.name).toList(),
+        onSelect: (index) => selectedIndex = index,
+      ),
+    );
 
     if (result1 == null || !result1) {
       return;
     }
 
-    final result = await showDialog(
-        context: context, builder: (context) => _CreatePostModal());
+    final studentClass = classes[selectedIndex];
 
-    if (result is String && result != '') {
-      final loadingScreen = SKLoadingScreen.fadeIn(context);
+    if (studentClass.enrollment < PARTY_SIZE) {
+      showDialog(
+        context: context,
+        builder: (context) => ClassLinkSharingModal(
+          studentClass.id,
+          showClassName: true,
+        ),
+      );
+    } else {
+      final result = await showDialog(
+          context: context, builder: (context) => _CreatePostModal());
 
-      classes[selectedIndex]
-          .createStudentChat(result)
-          .then((response) {
-            if (response.wasSuccessful()) {
-              return (response.obj as Chat).refetch();
-            } else {
-              throw 'Unable to create post';
-            }
-          })
-          .then((response) {
-            if (response.wasSuccessful()) {
-              setState(() {
-                chats.insert(0, response.obj);
-              });
-            } else {
-              throw 'Failed to update';
-            }
-          })
-          .catchError((error) => DropdownBanner.showBanner(
-                text: error is String ? error : 'Failed to add grade scale',
-                color: SKColors.warning_red,
-                textStyle: TextStyle(color: Colors.white),
-              ))
-          .then((response) => loadingScreen.dismiss());
+      if (result is String && result != '') {
+        final loadingScreen = SKLoadingScreen.fadeIn(context);
+
+        classes[selectedIndex]
+            .createStudentChat(result)
+            .then((response) {
+              if (response.wasSuccessful()) {
+                return (response.obj as Chat).refetch();
+              } else {
+                throw 'Unable to create post';
+              }
+            })
+            .then((response) {
+              if (response.wasSuccessful()) {
+                setState(() {
+                  chats.insert(0, response.obj);
+                });
+              } else {
+                throw 'Failed to update';
+              }
+            })
+            .catchError((error) => DropdownBanner.showBanner(
+                  text: error is String ? error : 'Failed to add grade scale',
+                  color: SKColors.warning_red,
+                  textStyle: TextStyle(color: Colors.white),
+                ))
+            .then((response) => loadingScreen.dismiss());
+      }
     }
   }
 

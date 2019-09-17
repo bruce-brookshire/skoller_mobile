@@ -67,8 +67,8 @@ class _AssignmentBatchAddState extends State<AssignmentBatchAddView> {
     );
 
     if (result != null) {
-      int index = queuedAssignments
-          .indexWhere((element) => element.dueDate?.isAfter(result.dueDate) ?? false);
+      int index = queuedAssignments.indexWhere(
+          (element) => element.dueDate?.isAfter(result.dueDate) ?? false);
 
       setState(() {
         queuedAssignments.insert(
@@ -78,6 +78,10 @@ class _AssignmentBatchAddState extends State<AssignmentBatchAddView> {
   }
 
   void tappedSaveAssignments(TapUpDetails details) async {
+    final tappedSubmit = await showConfirmationModal();
+
+    if (tappedSubmit == null || !tappedSubmit) return;
+
     final loadingScreen = SKLoadingScreen.fadeIn(context);
 
     List<Future<RequestResponse>> futureQueue = [];
@@ -121,22 +125,113 @@ class _AssignmentBatchAddState extends State<AssignmentBatchAddView> {
     }
   }
 
+  Future<bool> showConfirmationModal() => showDialog(
+        context: context,
+        builder: (context) => SafeArea(
+          child: Padding(
+            padding: EdgeInsets.symmetric(vertical: 24, horizontal: 24),
+            child: Material(
+              color: Colors.white,
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10)),
+              child: Padding(
+                padding: EdgeInsets.all(12),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: <Widget>[
+                    SammiSpeechBubble(
+                      sammiPersonality: SammiPersonality.smile,
+                      speechBubbleContents: Text.rich(
+                        TextSpan(
+                          text: 'Review 🧐\n',
+                          children: [
+                            TextSpan(
+                              text: 'Does everything look right?',
+                              style: TextStyle(fontWeight: FontWeight.normal),
+                            )
+                          ],
+                        ),
+                      ),
+                    ),
+                    Padding(
+                      padding: EdgeInsets.fromLTRB(10, 8, 10, 0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: <Widget>[
+                          Text(
+                            'Name',
+                            style: TextStyle(fontSize: 14),
+                          ),
+                          Text(
+                            'Due',
+                            style: TextStyle(fontSize: 14),
+                          )
+                        ],
+                      ),
+                    ),
+                    Expanded(
+                      child: ListView(
+                        padding: EdgeInsets.only(top: 8),
+                        children: createAssignmentRows(
+                          false,
+                          DateFormat('EEE, MMM d'),
+                        ),
+                      ),
+                    ),
+                    GestureDetector(
+                      onTapUp: (details) => Navigator.pop(context, false),
+                      child: Container(
+                        margin: EdgeInsets.symmetric(vertical: 12),
+                        padding: EdgeInsets.symmetric(vertical: 5),
+                        decoration: BoxDecoration(
+                          color: SKColors.warning_red,
+                          borderRadius: BorderRadius.circular(5),
+                          boxShadow: [UIAssets.boxShadow],
+                        ),
+                        alignment: Alignment.center,
+                        child: Text(
+                          '👈 Make a change',
+                          style: TextStyle(color: Colors.white),
+                        ),
+                      ),
+                    ),
+                    GestureDetector(
+                      onTapUp: (details) => Navigator.pop(context, true),
+                      child: Container(
+                        padding: EdgeInsets.symmetric(vertical: 4),
+                        // margin: EdgeInsets.symmetric(horizontal: 12),
+                        decoration: BoxDecoration(
+                          color: SKColors.success,
+                          borderRadius: BorderRadius.circular(5),
+                          boxShadow: [UIAssets.boxShadow],
+                        ),
+                        alignment: Alignment.center,
+                        child: Text(
+                          '👌 Save',
+                          style: TextStyle(color: Colors.white),
+                        ),
+                      ),
+                    )
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ),
+      );
+
   @override
   Widget build(BuildContext context) {
     final studentClass = StudentClass.currentClasses[widget.class_id];
 
-    List<Widget> children = [
-      createInfoContainer(),
-    ];
-
-    if (queuedAssignments.length > 0) {
-      children.add(createAssignmentQueueContainer(studentClass));
-    }
-
     return SKNavView(
       title: studentClass.name,
       titleColor: studentClass.getColor(),
-      children: children,
+      children: [
+        createInfoContainer(),
+        if (queuedAssignments.length > 0)
+          createAssignmentQueueContainer(studentClass),
+      ],
     );
   }
 
@@ -212,41 +307,7 @@ class _AssignmentBatchAddState extends State<AssignmentBatchAddView> {
     }
     final dateFormatter = DateFormat('EEE, MMM d');
 
-    final listElements = queuedAssignments.map((assignment) {
-      final due = assignment.dueDate;
-      final name = assignment.name;
-
-      return Container(
-        padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-        child: Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
-          GestureDetector(
-            onTapUp: (details) {
-              setState(() {
-                queuedAssignments.removeWhere(
-                    (test_assignment) => test_assignment == assignment);
-              });
-            },
-            child: Container(
-              padding: EdgeInsets.only(top: 4, bottom: 4, right: 6),
-              child: Image.asset(ImageNames.assignmentInfoImages.circle_x),
-            ),
-          ),
-          Expanded(
-            child: Text(
-              name,
-              style: TextStyle(fontSize: 14),
-              maxLines: 1,
-              softWrap: false,
-              overflow: TextOverflow.ellipsis,
-            ),
-          ),
-          Text(
-            due == null ? '' : dateFormatter.format(due),
-            style: TextStyle(fontSize: 14, fontWeight: FontWeight.normal),
-          ),
-        ]),
-      );
-    }).toList();
+    final listElements = createAssignmentRows(true, dateFormatter);
 
     return Expanded(
       child: Container(
@@ -282,7 +343,7 @@ class _AssignmentBatchAddState extends State<AssignmentBatchAddView> {
               child: Container(
                 margin: EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                    color: SKColors.success,
+                    color: SKColors.skoller_blue,
                     borderRadius: BorderRadius.circular(5)),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -290,7 +351,7 @@ class _AssignmentBatchAddState extends State<AssignmentBatchAddView> {
                     Container(
                       padding: EdgeInsets.symmetric(vertical: 6),
                       child: Text(
-                        "Submit",
+                        "Review",
                         style: TextStyle(color: Colors.white),
                       ),
                     ),
@@ -303,6 +364,45 @@ class _AssignmentBatchAddState extends State<AssignmentBatchAddView> {
       ),
     );
   }
+
+  List<Widget> createAssignmentRows(
+          bool allowDelete, DateFormat dateFormatter) =>
+      queuedAssignments.map((assignment) {
+        final due = assignment.dueDate;
+        final name = assignment.name;
+
+        return Container(
+          padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+          child: Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
+            if (allowDelete)
+              GestureDetector(
+                onTapUp: (details) {
+                  setState(() {
+                    queuedAssignments.removeWhere(
+                        (test_assignment) => test_assignment == assignment);
+                  });
+                },
+                child: Container(
+                  padding: EdgeInsets.only(top: 4, bottom: 4, right: 6),
+                  child: Image.asset(ImageNames.assignmentInfoImages.circle_x),
+                ),
+              ),
+            Expanded(
+              child: Text(
+                name,
+                style: TextStyle(fontSize: 14),
+                maxLines: 1,
+                softWrap: false,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
+            Text(
+              due == null ? '' : dateFormatter.format(due),
+              style: TextStyle(fontSize: 14, fontWeight: FontWeight.normal),
+            ),
+          ]),
+        );
+      }).toList();
 }
 
 class _AddAssignmentSubview extends StatefulWidget {
@@ -399,7 +499,9 @@ class _AddAssignmentSubState extends State<_AddAssignmentSubview> {
                   child: Text(
                     !dateSelected
                         ? 'Select date'
-                        : (dueDate == null ? 'No due date' : DateFormat('EEE, MMMM d').format(dueDate)),
+                        : (dueDate == null
+                            ? 'No due date'
+                            : DateFormat('EEE, MMMM d').format(dueDate)),
                     style: TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 15,

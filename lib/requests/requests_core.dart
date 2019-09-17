@@ -9,7 +9,7 @@ import 'package:package_info/package_info.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:flutter_apns/apns_connector.dart';
-import 'package:skoller/screens/main_app/classes/class_link_sharing_modal.dart';
+import 'package:skoller/screens/main_app/classes/modals/class_link_sharing_modal.dart';
 import 'package:skoller/screens/main_app/menu/my_points_view.dart';
 import 'package:time_machine/time_machine.dart' as time_machine;
 import '../constants/timezone_manager.dart';
@@ -31,7 +31,7 @@ part 'user.dart';
 part 'mod.dart';
 
 const bool isProd = false;
-const bool isLocal = false;
+const bool isLocal = true;
 
 class RequestResponse<T> {
   int status;
