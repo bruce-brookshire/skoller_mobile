@@ -30,8 +30,8 @@ part 'chat.dart';
 part 'user.dart';
 part 'mod.dart';
 
-const bool isProd = false;
-const bool isLocal = true;
+const bool isProd = true;
+const bool isLocal = false;
 
 class RequestResponse<T> {
   int status;
@@ -80,7 +80,9 @@ class JsonListMaker {
 class SKRequests {
   static const String _environment = isProd
       ? 'https://api.skoller.co'
-      : (isLocal ? 'http://127.0.0.1:4000' : 'https://api-staging.skoller.co');
+      : (isLocal
+          ? 'http://10.1.10.107:4000'
+          : 'https://api-staging.skoller.co');
 
   static final String _baseUrl = '$_environment/api/v1';
 
@@ -273,11 +275,6 @@ class SKCacheManager {
 enum LogInResponse { success, needsVerification, failed, internetError }
 
 class Auth {
-  // static SKUser user;
-
-  static final _kSharedToken = 'STUDENT_TOKEN';
-  static final _kStudentPhone = 'STUDENT_PHONE';
-
   static String userPhone;
 
   static Future<bool> enforceMinVersion() async {
@@ -331,7 +328,7 @@ class Auth {
 
     String token = context['token'];
     SharedPreferences.getInstance()
-        .then((inst) => inst.setString(_kSharedToken, token));
+        .then((inst) => inst.setString(PreferencesKeys.kSharedToken, token));
     SKRequests._headers['Authorization'] = 'Bearer $token';
 
     return user;
@@ -343,8 +340,8 @@ class Auth {
 
   static Future<LogInResponse> attemptLogin() async {
     final inst = await SharedPreferences.getInstance();
-    final token = inst.getString(_kSharedToken);
-    userPhone = inst.getString(_kStudentPhone);
+    final token = inst.getString(PreferencesKeys.kSharedToken);
+    userPhone = inst.getString(PreferencesKeys.kStudentPhone);
 
     if (token != null) {
       SKRequests._headers['Authorization'] = 'Bearer $token';
@@ -402,8 +399,8 @@ class Auth {
     ).then((response) {
       if (response.wasSuccessful()) {
         _setupNotifications();
-        SharedPreferences.getInstance()
-            .then((inst) => inst.setString(_kStudentPhone, phone));
+        SharedPreferences.getInstance().then(
+            (inst) => inst.setString(PreferencesKeys.kStudentPhone, phone));
 
         userPhone = phone;
         return response;

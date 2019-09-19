@@ -72,6 +72,12 @@ class NotificationChannels {
   static const selectTab = 'select-tab';
 }
 
+class PreferencesKeys {
+  static const kShouldReview = 'should-review';
+  static const kSharedToken = 'STUDENT_TOKEN';
+  static const kStudentPhone = 'STUDENT_PHONE';
+}
+
 class PushNotificationCategories {
   // Classes tab
   static const classComplete = 'Class.Complete';

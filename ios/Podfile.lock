@@ -1,4 +1,6 @@
 PODS:
+  - app_review (0.0.1):
+    - Flutter
   - FacebookCore (0.9.0):
     - FBSDKCoreKit (~> 5.0)
   - FBSDKCoreKit (5.5.0):
@@ -115,6 +117,7 @@ PODS:
     - Flutter
 
 DEPENDENCIES:
+  - app_review (from `.symlinks/plugins/app_review/ios`)
   - FacebookCore
   - FBSDKCoreKit
   - firebase_analytics (from `.symlinks/plugins/firebase_analytics/ios`)
@@ -150,6 +153,8 @@ SPEC REPOS:
     - Protobuf
 
 EXTERNAL SOURCES:
+  app_review:
+    :path: ".symlinks/plugins/app_review/ios"
   firebase_analytics:
     :path: ".symlinks/plugins/firebase_analytics/ios"
   firebase_core:
@@ -176,12 +181,13 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/webview_flutter/ios"
 
 SPEC CHECKSUMS:
+  app_review: 9496df930315fcc396542b68ad915e2d437dec71
   FacebookCore: ba86524b66cfa86d0f8e65d08faa8504a9f732dd
   FBSDKCoreKit: 7ade9cfea30eef2f6cf105a1aa904f89ea68fb7d
   Firebase: 9cbe4e5b5eaafa05dc932be58b7c8c3820d71e88
   firebase_analytics: 5afaaf8f43ae6a640f200d98f3ecff32e9873538
   firebase_core: ae55ea92448ec8675d325da4db22cf3b4d58a54d
-  firebase_messaging: 74e9d76acfbdff96a3f9f570f463a2b2bc784bf5
+  firebase_messaging: acdcd2edbe7270bae6c3a93cf6c60e86538b3064
   FirebaseAnalytics: 843c7f64a8f9c79f0d03281197ebe7bb1d58d477
   FirebaseAnalyticsInterop: d48b6ab67bcf016a05e55b71fc39c61c0cb6b7f3
   FirebaseCore: e9d9bd1dae61c1e82bc1e0e617a9d832392086a0

@@ -1,7 +1,11 @@
+import 'dart:io';
+
 import 'package:dart_notification_center/dart_notification_center.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:skoller/screens/main_app/menu/add_classes_view.dart';
 import 'package:skoller/screens/main_app/tutorial/tutorial.dart';
 import 'package:skoller/constants/constants.dart';
+import 'package:app_review/app_review.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:skoller/tools.dart';
@@ -50,7 +54,15 @@ class _MainState extends State<MainView> {
 
     Mod.fetchMods();
 
+    checkAppReview();
+
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    DartNotificationCenter.unsubscribe(observer: this);
+    super.dispose();
   }
 
   void showPrimarySchoolModal(BuildContext context) {
@@ -63,10 +75,167 @@ class _MainState extends State<MainView> {
     );
   }
 
-  @override
-  void dispose() {
-    DartNotificationCenter.unsubscribe(observer: this);
-    super.dispose();
+  void checkAppReview() async {
+    final inst = await SharedPreferences.getInstance();
+
+    final hasShown = await inst.get(PreferencesKeys.kShouldReview);
+
+    if (hasShown is bool || (hasShown != null && !(hasShown is String))) return;
+
+    final now = DateTime.now();
+    final scheduled = hasShown == null ? null : DateTime.parse(hasShown);
+
+    if (scheduled?.isAfter(now) ?? false) return;
+
+    // Check to make sure there are at least 2 classes set up,
+    // and that there is at least 1 assignment past due
+
+    final numSetupClasses = StudentClass.currentClasses.values.toList().fold(
+        0,
+        (curCount, sc) =>
+            ([ClassStatuses.class_setup, ClassStatuses.class_issue]
+                    .contains(sc.status.id)
+                ? 1
+                : 0) +
+            curCount);
+
+    final assignmentCompleted = Assignment.currentAssignments.values
+        .any((a) => a.due.isBefore(now) || a.completed);
+
+    final shouldReview = numSetupClasses >= 2 && assignmentCompleted;
+
+    if (shouldReview) {
+      if (Platform.isAndroid) {
+        final shouldProceed =
+            await createAndroidReviewRequest(hasShown is String);
+
+        if (shouldProceed == null) {
+          inst.setString(
+            PreferencesKeys.kShouldReview,
+            now.add(Duration(days: 20)).toIso8601String(),
+          );
+
+          return;
+        } else if (shouldProceed is bool && !shouldProceed) {
+          inst.setBool(PreferencesKeys.kShouldReview, false);
+
+          return;
+        }
+      }
+
+      inst.setBool(PreferencesKeys.kShouldReview, true);
+
+      AppReview.requestReview;
+    }
+  }
+
+  Future<bool> createAndroidReviewRequest(bool showRatingDisable) async {
+    return showDialog(
+      context: context,
+      builder: (context) => Dialog(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10),
+          side: BorderSide(color: SKColors.border_gray),
+        ),
+        child: Padding(
+          padding: EdgeInsets.all(12),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: <Widget>[
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: List.generate(
+                  5,
+                  (_) => Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 4),
+                    child: Image.asset(ImageNames.chatImages.star_yellow),
+                  ),
+                ),
+              ),
+              Padding(
+                padding: EdgeInsets.symmetric(vertical: 8),
+                child: Text(
+                  'Review us!',
+                  style: TextStyle(fontSize: 18),
+                  textAlign: TextAlign.center,
+                ),
+              ),
+              Text(
+                'When you do, it helps your peers see the value in Skoller. We would appreciate your feedback!',
+                style: TextStyle(fontSize: 15, fontWeight: FontWeight.normal),
+                textAlign: TextAlign.center,
+              ),
+              GestureDetector(
+                behavior: HitTestBehavior.opaque,
+                onTapUp: (details) => Navigator.pop(context, true),
+                child: Padding(
+                  padding: EdgeInsets.only(top: 12),
+                  child: Container(
+                    alignment: Alignment.center,
+                    padding: EdgeInsets.symmetric(vertical: 8),
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(5),
+                        color: SKColors.skoller_blue,
+                        boxShadow: [UIAssets.boxShadow]),
+                    child: Text(
+                      'Leave a review',
+                      style: TextStyle(color: Colors.white),
+                    ),
+                  ),
+                ),
+              ),
+              GestureDetector(
+                behavior: HitTestBehavior.opaque,
+                onTapUp: (details) => Navigator.pop(context, null),
+                child: Padding(
+                  padding: EdgeInsets.only(top: 12),
+                  child: Container(
+                    alignment: Alignment.center,
+                    padding: EdgeInsets.symmetric(vertical: 8),
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(5),
+                        color: Colors.white,
+                        border: Border.all(color: SKColors.border_gray)),
+                    child: Text(
+                      'Maybe later',
+                      style: TextStyle(
+                        color: SKColors.skoller_blue,
+                        fontWeight: FontWeight.normal,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+              if (showRatingDisable)
+                GestureDetector(
+                  behavior: HitTestBehavior.opaque,
+                  onTapUp: (details) => Navigator.pop(context, false),
+                  child: Padding(
+                    padding: EdgeInsets.only(top: 12),
+                    child: Container(
+                      alignment: Alignment.center,
+                      padding: EdgeInsets.symmetric(vertical: 8),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(5),
+                        color: Colors.white,
+                      ),
+                      child: Text(
+                        'Don\'t ask me again',
+                        style: TextStyle(
+                          color: SKColors.skoller_blue,
+                          fontWeight: FontWeight.normal,
+                          fontSize: 14,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 
   void toggleMenu(dynamic withOptions) {
