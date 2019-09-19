@@ -114,8 +114,8 @@ class _LoadingState extends State<LoadingView> {
               ),
               Container(
                 margin: EdgeInsets.fromLTRB(12, 24, 12, 48),
-                padding: EdgeInsets.symmetric(vertical: 12),
                 width: loading ? 32 : null,
+                height: loading ? 32 : null,
                 child: loading
                     ? CircularProgressIndicator(
                         valueColor: AlwaysStoppedAnimation(Colors.white),

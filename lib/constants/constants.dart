@@ -73,9 +73,10 @@ class NotificationChannels {
 }
 
 class PreferencesKeys {
-  static const kShouldReview = 'should-review';
+  static const kShouldReview = 'SHOULD_REVIEW';
   static const kSharedToken = 'STUDENT_TOKEN';
   static const kStudentPhone = 'STUDENT_PHONE';
+  static const kShouldAskMajor = 'SHOULD_ASK_MAJOR';
 }
 
 class PushNotificationCategories {

@@ -1,8 +1,7 @@
-import 'dart:io';
-
 import 'package:dart_notification_center/dart_notification_center.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:skoller/screens/main_app/menu/add_classes_view.dart';
+import 'package:skoller/screens/main_app/menu/major_search_modal.dart';
 import 'package:skoller/screens/main_app/tutorial/tutorial.dart';
 import 'package:skoller/constants/constants.dart';
 import 'package:app_review/app_review.dart';
@@ -12,6 +11,7 @@ import 'package:skoller/tools.dart';
 import 'primary_school_modal.dart';
 import 'menu_view.dart';
 import 'tab_bar.dart';
+import 'dart:io';
 
 class MainView extends StatefulWidget {
   @override
@@ -32,11 +32,25 @@ class _MainState extends State<MainView> {
 
   @override
   void initState() {
+    print("initing");
+    // If the student does not have a primary school or term, set it
     if (SKUser.current.student.primarySchool == null ||
-        SKUser.current.student.primaryPeriod == null) {
-      WidgetsBinding.instance
-          .addPostFrameCallback((_) => showPrimarySchoolModal(context));
-    }
+        SKUser.current.student.primaryPeriod == null)
+      WidgetsBinding.instance.addPostFrameCallback(
+        (_) => showPrimarySchoolModal(),
+      );
+    // If the student has no majors and they have at least one class set up
+    else if ((SKUser.current.student.fieldsOfStudy ?? []).length == 0 &&
+        StudentClass.currentClasses.values.any((sc) => [
+              ClassStatuses.class_setup,
+              ClassStatuses.class_issue
+            ].contains(sc.status.id ?? 0)))
+      WidgetsBinding.instance.addPostFrameCallback(
+        (_) => showMajorSelection(),
+      );
+    // If the user can review
+    else
+      checkAppReview();
 
     SKCacheManager.restoreCachedData();
 
@@ -54,8 +68,6 @@ class _MainState extends State<MainView> {
 
     Mod.fetchMods();
 
-    checkAppReview();
-
     super.initState();
   }
 
@@ -65,7 +77,7 @@ class _MainState extends State<MainView> {
     super.dispose();
   }
 
-  void showPrimarySchoolModal(BuildContext context) {
+  void showPrimarySchoolModal() {
     Navigator.push(
       context,
       SKNavOverlayRoute(
@@ -73,6 +85,28 @@ class _MainState extends State<MainView> {
         isBarrierDismissible: false,
       ),
     );
+  }
+
+  void showMajorSelection() async {
+    final inst = await SharedPreferences.getInstance();
+    final alreadyShown =
+        await inst.containsKey(PreferencesKeys.kShouldAskMajor);
+
+    // If the db shows we've already asked, just return.
+    if (alreadyShown) return;
+
+    final loader = SKLoadingScreen.fadeIn(context);
+    final result = await FieldsOfStudy.getFieldsOfStudy();
+    loader.dismiss();
+
+    if (result.wasSuccessful()) {
+      inst.setBool(PreferencesKeys.kShouldAskMajor, false);
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (context) => MajorSelector(result.obj),
+      );
+    }
   }
 
   void checkAppReview() async {
@@ -100,7 +134,7 @@ class _MainState extends State<MainView> {
             curCount);
 
     final assignmentCompleted = Assignment.currentAssignments.values
-        .any((a) => a.due.isBefore(now) || a.completed);
+        .any((a) => (a.due?.isBefore(now) ?? false) || a.completed);
 
     final shouldReview = numSetupClasses >= 2 && assignmentCompleted;
 
