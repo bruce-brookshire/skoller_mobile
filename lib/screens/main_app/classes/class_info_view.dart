@@ -129,9 +129,33 @@ class _ClassInfoState extends State<ClassInfoView> {
                 ),
                 color: SKColors.selected_gray,
               ),
-              child: Text(
-                'Grow community',
-                style: TextStyle(fontSize: 17),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: <Widget>[
+                      Padding(
+                        padding: EdgeInsets.only(right: 8),
+                        child:
+                            Image.asset(ImageNames.peopleImages.people_gray),
+                      ),
+                      Text(
+                        'Grow community',
+                        style: TextStyle(fontSize: 17),
+                      ),
+                    ],
+                  ),
+                  // Padding(
+                  // padding: EdgeInsets.fromLTRB(12, 12, 12, 0),
+                  // child:
+                  Text(
+                    'Share this class specific link so your classmates can collaborate!🎉',
+                    style:
+                        TextStyle(fontWeight: FontWeight.normal, fontSize: 14),
+                    textAlign: TextAlign.left,
+                  ),
+                  // ),
+                ],
               ),
             ),
             GestureDetector(
@@ -148,12 +172,8 @@ class _ClassInfoState extends State<ClassInfoView> {
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Padding(
-                      padding: EdgeInsets.only(right: 8),
-                      child: Image.asset(ImageNames.peopleImages.people_white),
-                    ),
                     Text(
-                      'Share with classmates',
+                      studentClass.enrollmentLink.split('//')[1],
                       style: TextStyle(color: Colors.white),
                     ),
                   ],
