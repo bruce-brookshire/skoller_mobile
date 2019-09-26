@@ -3,6 +3,7 @@ import 'package:dropdown_banner/dropdown_banner.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:auto_size_text/auto_size_text.dart';
+import 'package:skoller/screens/main_app/classes/modals/add_grade_scale_modal.dart';
 import './modals/class_link_sharing_modal.dart';
 import 'package:skoller/screens/main_app/classes/classmates_view.dart';
 import 'package:skoller/screens/main_app/classes/weights_info_view.dart';
@@ -100,16 +101,17 @@ class _ClassDetailState extends State<ClassDetailView> {
     }
   }
 
-  Future<bool> showGradeScalePicker() {
-    return showDialog(
-      context: context,
-      builder: (context) => Dialog(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(10),
+  Future showGradeScalePicker() {
+    return Navigator.push(
+        context,
+        SKNavOverlayRoute(
+          isBarrierDismissible: false,
+          builder: (context) => AddGradeScaleModal(
+            classId: widget.classId,
+            onCompletionShowGradeScale: false,
+          ),
         ),
-        child: GradeScaleModalView(studentClass),
-      ),
-    );
+      );
   }
 
   void showSpeculate() async {

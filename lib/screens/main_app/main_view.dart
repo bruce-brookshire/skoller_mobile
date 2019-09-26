@@ -20,19 +20,17 @@ class MainView extends StatefulWidget {
 
 class _MainState extends State<MainView> {
   bool menuShowing = false;
-  bool constraintsSetup = false;
 
-  double deviceWidth;
+  double deviceWidth = 320;
 
-  double menuLeft;
-  double menuWidth;
+  double menuWidth = 224;
+  double menuLeft = -230;
 
-  double backgroundLeft;
-  double backgroundWidth;
+  double backgroundWidth = 115;
+  double backgroundLeft = -120;
 
   @override
   void initState() {
-    print("initing");
     // If the student does not have a primary school or term, set it
     if (SKUser.current.student.primarySchool == null ||
         SKUser.current.student.primaryPeriod == null)
@@ -67,6 +65,8 @@ class _MainState extends State<MainView> {
     );
 
     Mod.fetchMods();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) => setScreenSize());
 
     super.initState();
   }
@@ -161,6 +161,17 @@ class _MainState extends State<MainView> {
 
       AppReview.requestReview;
     }
+  }
+
+  void setScreenSize() {
+    Size size = MediaQuery.of(context).size;
+    deviceWidth = size.width;
+
+    menuWidth = deviceWidth * 0.7;
+    menuLeft = -menuWidth - 5;
+
+    backgroundWidth = (deviceWidth - menuWidth) + 15;
+    backgroundLeft = -backgroundWidth - 5;
   }
 
   Future<bool> createAndroidReviewRequest(bool showRatingDisable) async {
@@ -301,24 +312,12 @@ class _MainState extends State<MainView> {
 
   @override
   Widget build(BuildContext context) {
-    if (StudentClass.currentClasses.length == 0) {
-      return TutorialTab((context) {
-        presentWidgetOverMainView(AddClassesView());
-      }, 'Join your 1st class 🤓');
-    } else {
-      if (!constraintsSetup) {
-        constraintsSetup = true;
-
-        Size size = MediaQuery.of(context).size;
-        deviceWidth = size.width;
-
-        menuWidth = deviceWidth * 0.7;
-        menuLeft = -menuWidth - 5;
-
-        backgroundWidth = (deviceWidth - menuWidth) + 15;
-        backgroundLeft = -backgroundWidth - 5;
-      }
-
+    if (StudentClass.currentClasses.length == 0)
+      return TutorialTab(
+        (context) => presentWidgetOverMainView(AddClassesView()),
+        'Join your 1st class 🤓',
+      );
+    else
       return Stack(
         children: <Widget>[
           SKTabBar(),
@@ -352,6 +351,5 @@ class _MainState extends State<MainView> {
           ),
         ],
       );
-    }
   }
 }

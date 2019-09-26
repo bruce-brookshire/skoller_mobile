@@ -8,7 +8,7 @@ environment:
 dependencies:
   charts_flutter: ^0.6.0
   dart_notification_center: ^1.0.0
-  dropdown_banner: ^1.2.0
+  dropdown_banner: ^1.3.0
   http: ^0.12.0+1
   intl: ^0.15.8
   auto_size_text: ^1.1.2

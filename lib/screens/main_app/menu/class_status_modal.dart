@@ -55,7 +55,7 @@ class ClassStatusModal extends StatelessWidget {
           secondaryAction: () => Navigator.pop(context));
     } else if ([ClassStatuses.class_setup, ClassStatuses.class_issue]
             .contains(statusId) &&
-        studentClass.enrollment < 4) {
+        (studentClass?.enrollment ?? 0) < 4) {
       status = _SyllabusAction(
         header: 'You\'re in!',
         subHeader: 'And this class is already set up 🙌',

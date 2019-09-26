@@ -295,6 +295,13 @@ class _EditProfileState extends State<EditProfileView> {
                           Navigator.popUntil(this.context,
                               (route) => route.settings.isInitialRoute);
 
+                          DropdownBanner.showBanner(
+                            text:
+                                'Successfully deleted your account. We are sad to see you go!',
+                            textStyle: TextStyle(color: Colors.white),
+                            color: SKColors.success,
+                          );
+
                           DartNotificationCenter.post(
                               channel: NotificationChannels.appStateChanged,
                               options: AppState.auth);
@@ -336,4 +343,3 @@ class _EditProfileState extends State<EditProfileView> {
     );
   }
 }
-

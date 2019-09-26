@@ -113,7 +113,7 @@ class _ClassChangeRequestState extends State<ClassChangeRequestView> {
     final loader = SKLoadingScreen.fadeIn(context);
 
     studentClass
-        .classChangeRequest(
+        .submitClassChangeRequest(
       name: name == studentClass.name ? null : name,
       subject: subject == studentClass.subject ? null : subject,
       code: code == studentClass.code ? null : code,

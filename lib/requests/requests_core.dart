@@ -1,17 +1,15 @@
 library requests_core;
 
-import 'dart:async';
-
-import 'package:dart_notification_center/dart_notification_center.dart';
-import 'package:dropdown_banner/dropdown_banner.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:package_info/package_info.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:path_provider/path_provider.dart';
-import 'package:flutter_apns/apns_connector.dart';
 import 'package:skoller/screens/main_app/classes/modals/class_link_sharing_modal.dart';
+import 'package:dart_notification_center/dart_notification_center.dart';
 import 'package:skoller/screens/main_app/menu/my_points_view.dart';
 import 'package:time_machine/time_machine.dart' as time_machine;
+import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:dropdown_banner/dropdown_banner.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:flutter_apns/apns_connector.dart';
+import 'package:package_info/package_info.dart';
 import '../constants/timezone_manager.dart';
 import 'package:flutter_apns/apns.dart';
 import 'package:http/http.dart' as http;
@@ -20,6 +18,7 @@ import 'package:skoller/tools.dart';
 import 'package:intl/intl.dart';
 import 'dart:collection';
 import 'dart:convert';
+import 'dart:async';
 import 'dart:math';
 import 'dart:io';
 
@@ -31,7 +30,7 @@ part 'user.dart';
 part 'mod.dart';
 
 const bool isProd = false;
-const bool isLocal = false;
+const bool isLocal = true;
 
 class RequestResponse<T> {
   int status;
@@ -560,39 +559,36 @@ class Auth {
     if (category == null || attempt == 3) return;
 
     if (StudentClass.classesLoaded) {
-      if (PushNotificationCategories.isClasses(category))
-        DartNotificationCenter.post(
-          channel: NotificationChannels.selectTab,
-          options: CLASSES_TAB,
-        );
-      else if (PushNotificationCategories.isChat(category))
-        DartNotificationCenter.post(
-          channel: NotificationChannels.selectTab,
-          options: CHAT_TAB,
-        );
-      else if (PushNotificationCategories.isActivity(category))
-        DartNotificationCenter.post(
-          channel: NotificationChannels.selectTab,
-          options: ACTIVITY_TAB,
-        );
-      else if (PushNotificationCategories.isForecast(category))
-        DartNotificationCenter.post(
-          channel: NotificationChannels.selectTab,
-          options: FORECAST_TAB,
-        );
+      String channel;
+      dynamic options;
+
+      if (PushNotificationCategories.isClasses(category)) {
+        channel = NotificationChannels.selectTab;
+        options = CLASSES_TAB;
+      } else if (PushNotificationCategories.isChat(category)) {
+        channel = NotificationChannels.selectTab;
+        options = CHAT_TAB;
+      } else if (PushNotificationCategories.isActivity(category)) {
+        channel = NotificationChannels.selectTab;
+        options = ACTIVITY_TAB;
+      } else if (PushNotificationCategories.isForecast(category)) {
+        channel = NotificationChannels.selectTab;
+        options = FORECAST_TAB;
+      }
       // Is this a grow community notification and do we have the student class loaded?
       else if (PushNotificationCategories.growCommunity == category &&
-          StudentClass.currentClasses[data['class_id'] ?? 0] != null)
-        DartNotificationCenter.post(
-          channel: NotificationChannels.presentViewOverTabBar,
-          options: ClassLinkSharingModal(
-            data['class_id'],
-          ),
-        );
-      else if (PushNotificationCategories.points == category)
-        DartNotificationCenter.post(
-          channel: NotificationChannels.presentViewOverTabBar,
-          options: MyPointsView(),
+          StudentClass.currentClasses[data['class_id'] ?? 0] != null) {
+        channel = NotificationChannels.presentViewOverTabBar;
+        options = ClassLinkSharingModal(data['class_id']);
+      } else if (PushNotificationCategories.points == category) {
+        channel = NotificationChannels.presentViewOverTabBar;
+        options = MyPointsView();
+      }
+
+      if (channel != null && options != null)
+        Timer(
+          Duration(milliseconds: 500),
+          () => DartNotificationCenter.post(channel: channel, options: options),
         );
     } else
       Timer(
