@@ -64,6 +64,12 @@ class _MainState extends State<MainView> {
       onNotification: presentWidgetOverMainView,
     );
 
+    DartNotificationCenter.subscribe(
+      channel: NotificationChannels.presentModalViewOverTabBar,
+      observer: this,
+      onNotification: presentModalWidgetOverMainView,
+    );
+
     Mod.fetchMods();
 
     WidgetsBinding.instance.addPostFrameCallback((_) => setScreenSize());
@@ -307,6 +313,15 @@ class _MainState extends State<MainView> {
         builder: (context) => viewToPresent,
         settings: RouteSettings(name: viewToPresent.runtimeType.toString()),
       ),
+    );
+  }
+
+  void presentModalWidgetOverMainView(dynamic viewToPresent) {
+    if (menuShowing) toggleMenu(null);
+
+    Navigator.push(
+      context,
+      SKNavOverlayRoute(builder: (context) => viewToPresent),
     );
   }
 

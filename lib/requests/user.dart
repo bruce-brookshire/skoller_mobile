@@ -140,7 +140,8 @@ class Student {
 
   Student._fromJson(Map content) {
     schools =
-        JsonListMaker.convert(School._fromJsonObj, content['schools'] ?? []) ?? [];
+        JsonListMaker.convert(School._fromJsonObj, content['schools'] ?? []) ??
+            [];
     School.currentSchools = {};
 
     for (final school in schools) {
@@ -225,6 +226,8 @@ class FieldsOfStudy {
 
   FieldsOfStudy(this.id, this.field);
 
+  int get hashCode => id;
+
   static FieldsOfStudy _fromJsonObj(Map content) => FieldsOfStudy(
         content['id'],
         content['field'],
@@ -233,6 +236,7 @@ class FieldsOfStudy {
   static Future<RequestResponse> getFieldsOfStudy() {
     return SKRequests.get('/fields-of-study/list', _fromJsonObj);
   }
+
 }
 
 class PublicStudent {

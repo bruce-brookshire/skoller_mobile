@@ -25,13 +25,41 @@ class MajorSelectorState extends State<MajorSelector> {
   }
 
   void processSearch(String search) {
-    final searchText = search.trim();
+    final searchText = search.trim().toLowerCase();
+
     if (searchText == '')
-      searchedFields = [];
-    else
-      searchedFields = widget.availableFields.toList()
-        ..removeWhere((field) =>
-            !field.field.toLowerCase().contains(search.toLowerCase()));
+      searchedFields = SKUser.current.student.fieldsOfStudy ?? [];
+    else {
+      final searcher = (String key) => widget.availableFields
+          .toList()
+          .where(
+            (field) => field.field.toLowerCase().contains(key),
+          )
+          .toList();
+
+      // Get the fields that match the phrase
+      final searched = (searchText.split(" ")
+            ..removeWhere(
+              (s) => s == '',
+            ))
+          .expand(searcher);
+
+      Map<FieldsOfStudy, int> ranker = {};
+
+      for (final field in searched) {
+        if (ranker.containsKey(field))
+          ranker[field] += 1;
+        else
+          ranker[field] = 1;
+      }
+
+      searchedFields = (ranker.entries.toList(growable: false)
+            ..sort(
+              (e1, e2) => e2.value.compareTo(e1.value),
+            ))
+          .map((e) => e.key)
+          .toList();
+    }
     setState(() {});
   }
 

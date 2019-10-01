@@ -64,6 +64,7 @@ class ClassStatuses {
 class NotificationChannels {
   static const toggleMenu = 'toggle-menu';
   static const presentViewOverTabBar = 'present-view-over-tab-bar';
+  static const presentModalViewOverTabBar = 'present-modal-view-over-tab-bar';
   static const userChanged = 'user-changed';
   static const classChanged = 'class-changed';
   static const assignmentChanged = 'assignment-changed';
@@ -103,7 +104,7 @@ class PushNotificationCategories {
   // Modal
   static const classStart = 'Class.Start';
   static const growCommunity = 'Class.Community';
-  static const points = ' Points.1Thousand';
+  static const points = 'Points.1Thousand';
 
   // Other
   static const custom = 'Manual.Custom';

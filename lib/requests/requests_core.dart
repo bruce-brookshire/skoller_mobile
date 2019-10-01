@@ -494,11 +494,16 @@ class Auth {
       _apnsConnector.configure(
         onMessage: (Map<String, dynamic> message) async {
           if (message != null && message['aps'] != null) {
-            final body = message['aps']['alert'];
-            final category = message['aps']['category'];
+            final aps = message['aps'];
+            final alert = aps['alert'];
 
-            _dropdownNotifications(
-                null, body, () => _handleNotificationAction(category, message));
+            final title = alert is String ? null : alert['title'];
+            final body = alert is String ? alert : alert['body'];
+            
+            final category = aps['category'];
+
+            _dropdownNotifications(title, body,
+                () => _handleNotificationAction(category, message));
           }
         },
         onResume: _iosBackgroundHandler,
@@ -517,7 +522,6 @@ class Auth {
             _dropdownNotifications(title, body,
                 () => _handleNotificationAction(category, message['data']));
           }
-          print('on message $message');
         },
         onResume: _androidBackgroundHandler,
         onLaunch: _androidBackgroundHandler,
@@ -527,7 +531,7 @@ class Auth {
 
   static Future<dynamic> _androidBackgroundHandler(
       Map<String, dynamic> message) async {
-    print(message);
+    print("android background");
     _handleNotificationAction(message['data']['category'], message['data']);
   }
 
@@ -562,6 +566,12 @@ class Auth {
       String channel;
       dynamic options;
 
+      () async {
+        await StudentClass.getStudentClasses();
+        await Mod.fetchMods();
+        DartNotificationCenter.post(channel: NotificationChannels.classChanged);
+      }();
+
       if (PushNotificationCategories.isClasses(category)) {
         channel = NotificationChannels.selectTab;
         options = CLASSES_TAB;
@@ -576,10 +586,14 @@ class Auth {
         options = FORECAST_TAB;
       }
       // Is this a grow community notification and do we have the student class loaded?
-      else if (PushNotificationCategories.growCommunity == category &&
-          StudentClass.currentClasses[data['class_id'] ?? 0] != null) {
-        channel = NotificationChannels.presentViewOverTabBar;
-        options = ClassLinkSharingModal(data['class_id']);
+      else if (PushNotificationCategories.growCommunity == category) {
+        dynamic class_id = data['class_id'];
+        if (class_id is String) class_id = int.parse(data['class_id']);
+
+        if (StudentClass.currentClasses[class_id] != null) {
+          channel = NotificationChannels.presentModalViewOverTabBar;
+          options = ClassLinkSharingModal(class_id);
+        }
       } else if (PushNotificationCategories.points == category) {
         channel = NotificationChannels.presentViewOverTabBar;
         options = MyPointsView();

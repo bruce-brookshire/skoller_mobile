@@ -136,8 +136,7 @@ class _ClassInfoState extends State<ClassInfoView> {
                     children: <Widget>[
                       Padding(
                         padding: EdgeInsets.only(right: 8),
-                        child:
-                            Image.asset(ImageNames.peopleImages.people_gray),
+                        child: Image.asset(ImageNames.peopleImages.people_gray),
                       ),
                       Text(
                         'Grow community',
@@ -145,16 +144,17 @@ class _ClassInfoState extends State<ClassInfoView> {
                       ),
                     ],
                   ),
-                  // Padding(
-                  // padding: EdgeInsets.fromLTRB(12, 12, 12, 0),
-                  // child:
-                  Text(
-                    'Share this class specific link so your classmates can collaborate!🎉',
-                    style:
-                        TextStyle(fontWeight: FontWeight.normal, fontSize: 14),
-                    textAlign: TextAlign.left,
+                  Padding(
+                    padding: EdgeInsets.only(top: 4),
+                    child: Text(
+                      studentClass.enrollment == 1
+                          ? 'The class is set up & ready to go 👌 share your hard work with classmates 💥'
+                          : 'Keep up with classes, TOGETHER. Share with your classmates to collab ✨',
+                      style: TextStyle(
+                          fontWeight: FontWeight.normal, fontSize: 14),
+                      textAlign: TextAlign.left,
+                    ),
                   ),
-                  // ),
                 ],
               ),
             ),
@@ -169,15 +169,17 @@ class _ClassInfoState extends State<ClassInfoView> {
                   color: SKColors.skoller_blue,
                   borderRadius: BorderRadius.circular(5),
                 ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
+                child:
+                    //  Row(
+                    //   mainAxisSize: MainAxisSize.min,
+                    //   children: [
+                    //     Image.asset(ImageNames.classInfoImages.clipboard),
                     Text(
-                      studentClass.enrollmentLink.split('//')[1],
-                      style: TextStyle(color: Colors.white),
-                    ),
-                  ],
+                  studentClass.enrollmentLink.split('//')[1],
+                  style: TextStyle(color: Colors.white),
                 ),
+                //   ],
+                // ),
               ),
             ),
           ],
@@ -492,7 +494,7 @@ class _ClassInfoState extends State<ClassInfoView> {
                     border: Border.all(
                       color: studentClass.gradeScale == null
                           ? SKColors.warning_red
-                          : SKColors.border_gray,
+                          : SKColors.skoller_blue,
                     ),
                   ),
                   alignment: Alignment.center,

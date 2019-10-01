@@ -1,6 +1,5 @@
 part of 'constants.dart';
 
-
 class ImageNames {
   static final signUpImages = _SignUpImages();
   static final rightNavImages = _RightNavImages();
@@ -14,6 +13,7 @@ class ImageNames {
   static final menuImages = _MenuImages();
   static final tasksImages = _TasksImages();
   static final tutorialImages = _TutorialImages();
+  static final classInfoImages = _ClassInfoImages();
 }
 
 class _MenuImages {
@@ -153,4 +153,10 @@ class _StatusImages {
   final needs_syllabus = '${_base}/needs_syllabus.png';
   final setup_community = '${_base}/setup_community.png';
   final setup_live = '${_base}/setup_live.png';
+}
+
+class _ClassInfoImages {
+  static const _base = 'image_assets/class_info_assets';
+
+  final clipboard = '${_base}/clipboard.png';
 }

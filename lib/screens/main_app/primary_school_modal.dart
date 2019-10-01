@@ -119,35 +119,37 @@ class _PrimarySchoolState extends State<PrimarySchoolModal> {
     if (showingGreeting)
       body = createGreeting();
     else
-      body = Container(
-        alignment: Alignment.center,
-        padding: EdgeInsets.fromLTRB(24, 0, 24, 64),
-        child: Material(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10),
-            side: BorderSide(color: SKColors.border_gray),
-          ),
-          color: SKColors.background_gray,
-          child: Padding(
-            padding: EdgeInsets.all(12),
-            child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  if (eligibleSchools == null)
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        SizedBox(
-                            width: 40,
-                            height: 40,
-                            child: CircularProgressIndicator()),
-                      ],
-                    ),
-                  if ((eligibleSchools?.length ?? -1) == 0) ...buildSearch(),
-                  if ((eligibleSchools?.length ?? -1) == 1) ...buildSingle(),
-                  if ((eligibleSchools?.length ?? -1) > 1) ...buildMultiple(),
-                ]),
+      body = SafeArea(
+        child: Container(
+          alignment: Alignment.center,
+          padding: EdgeInsets.fromLTRB(24, 0, 24, 64),
+          child: Material(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
+              side: BorderSide(color: SKColors.border_gray),
+            ),
+            color: SKColors.background_gray,
+            child: Padding(
+              padding: EdgeInsets.all(12),
+              child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    if (eligibleSchools == null)
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          SizedBox(
+                              width: 40,
+                              height: 40,
+                              child: CircularProgressIndicator()),
+                        ],
+                      ),
+                    if ((eligibleSchools?.length ?? -1) == 0) ...buildSearch(),
+                    if ((eligibleSchools?.length ?? -1) == 1) ...buildSingle(),
+                    if ((eligibleSchools?.length ?? -1) > 1) ...buildMultiple(),
+                  ]),
+            ),
           ),
         ),
       );
@@ -563,7 +565,9 @@ class _PrimarySchoolState extends State<PrimarySchoolModal> {
 
   List<Widget> buildMultiple() {
     return [
-      SammiSpeechBubble(
+      Padding(
+        padding: EdgeInsets.only(bottom: 16),
+        child: SammiSpeechBubble(
           sammiPersonality: SammiPersonality.school,
           speechBubbleContents: Text.rich(
             TextSpan(
@@ -575,48 +579,67 @@ class _PrimarySchoolState extends State<PrimarySchoolModal> {
                     style: TextStyle(fontWeight: FontWeight.bold))
               ],
             ),
-          )),
-      Padding(
-        padding: EdgeInsets.only(top: 16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          mainAxisSize: MainAxisSize.min,
-          children: eligibleSchools
-              .map(
-                (school) => GestureDetector(
-                  onTapUp: (details) =>
-                      setState(() => selectedSchoolId = school.id),
-                  child: Container(
-                    margin: EdgeInsets.symmetric(vertical: 4, horizontal: 4),
-                    padding: EdgeInsets.all(8),
-                    decoration: BoxDecoration(
-                        color: selectedSchoolId == school.id
-                            ? SKColors.menu_blue
-                            : Colors.white,
-                        borderRadius: BorderRadius.circular(5),
-                        border: Border.all(color: SKColors.border_gray),
-                        boxShadow: [UIAssets.boxShadow]),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          school.name,
-                          style: TextStyle(color: school.color),
-                        ),
-                        Text(
-                          '${school.adrLocality}, ${school.adrRegion}',
-                          style: TextStyle(
-                              color: SKColors.light_gray,
-                              fontSize: 14,
-                              fontWeight: FontWeight.normal),
-                        ),
-                      ],
-                    ),
-                  ),
+          ),
+        ),
+      ),
+      Flexible(
+        child: 
+        LayoutBuilder(
+          builder: (BuildContext context, BoxConstraints constraints) =>
+              Scrollbar(
+            child: SingleChildScrollView(
+              child: ConstrainedBox(
+                constraints: BoxConstraints(minHeight: constraints.maxHeight),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    ...eligibleSchools
+                        .map(
+                          (school) => GestureDetector(
+                            onTapUp: (details) =>
+                                setState(() => selectedSchoolId = school.id),
+                            child: Container(
+                              margin: EdgeInsets.symmetric(
+                                  vertical: 4, horizontal: 4),
+                              padding: EdgeInsets.all(8),
+                              decoration: BoxDecoration(
+                                  color: selectedSchoolId == school.id
+                                      ? SKColors.menu_blue
+                                      : Colors.white,
+                                  borderRadius: BorderRadius.circular(5),
+                                  border:
+                                      Border.all(color: SKColors.border_gray),
+                                  boxShadow: [UIAssets.boxShadow]),
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    school.name,
+                                    style: TextStyle(color: school.color),
+                                  ),
+                                  Text(
+                                    '${school.adrLocality}, ${school.adrRegion}',
+                                    style: TextStyle(
+                                        color: SKColors.light_gray,
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.normal),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        )
+                        .toList(),
+                    SizedBox(
+                      height: 8,
+                    )
+                  ],
                 ),
-              )
-              .toList(),
+              ),
+            ),
+          ),
         ),
       ),
       GestureDetector(
