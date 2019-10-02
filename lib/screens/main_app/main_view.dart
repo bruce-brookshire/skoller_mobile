@@ -8,6 +8,7 @@ import 'package:app_review/app_review.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:skoller/tools.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'primary_school_modal.dart';
 import 'menu_view.dart';
 import 'tab_bar.dart';
@@ -46,9 +47,12 @@ class _MainState extends State<MainView> {
       WidgetsBinding.instance.addPostFrameCallback(
         (_) => showMajorSelection(),
       );
+
     // If the user can review
-    else
+    else {
+      checkSeedInvestPopup();
       checkAppReview();
+    }
 
     SKCacheManager.restoreCachedData();
 
@@ -111,6 +115,98 @@ class _MainState extends State<MainView> {
         context: context,
         barrierDismissible: false,
         builder: (context) => MajorSelector(result.obj),
+      );
+    }
+  }
+
+  void checkSeedInvestPopup() async {
+    final inst = await SharedPreferences.getInstance();
+    final action_name = 'seed_invest_popup';
+    final utc_now = DateTime.now().toUtc();
+    final deadline = DateTime.utc(2019, 11, 1);
+
+    if (!inst.containsKey(action_name) && utc_now.isBefore(deadline)) {
+      inst.setBool(action_name, true);
+
+      showDialog(
+        context: context,
+        builder: (context) => Dialog(
+          backgroundColor: Colors.transparent,
+          child: Container(
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(10),
+              border: Border.all(color: SKColors.border_gray),
+              boxShadow: [UIAssets.boxShadow],
+            ),
+            padding: EdgeInsets.symmetric(vertical: 8, horizontal: 8),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    GestureDetector(
+                      onTapUp: (_) => Navigator.pop(context),
+                      child: SizedBox(
+                        width: 32,
+                        height: 32,
+                        child: Image.asset(ImageNames.navArrowImages.down),
+                      ),
+                    ),
+                    Text(
+                      'For a LIMITED time',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(fontSize: 18),
+                    ),
+                    SizedBox(
+                      width: 32,
+                    )
+                  ],
+                ),
+                Padding(
+                  padding: EdgeInsets.only(top: 4),
+                  child: Text(
+                    'Don’t miss out! The power of Skoller can be in your hands...',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(fontWeight: FontWeight.normal),
+                  ),
+                ),
+                Padding(
+                  padding: EdgeInsets.symmetric(vertical: 12),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(5),
+                    child: Image.asset('image_assets/$action_name.png'),
+                  ),
+                ),
+                GestureDetector(
+                  behavior: HitTestBehavior.opaque,
+                  onTapUp: (_) async {
+                    final url = 'https://seedinvest.com/skoller';
+                    if (await canLaunch(url)) {
+                      launch(url);
+                    }
+                    Navigator.pop(context);
+                  },
+                  child: Container(
+                    alignment: Alignment.center,
+                    padding: EdgeInsets.symmetric(vertical: 8),
+                    decoration: BoxDecoration(
+                      color: SKColors.skoller_blue,
+                      borderRadius: BorderRadius.circular(5),
+                      boxShadow: [UIAssets.boxShadow],
+                    ),
+                    child: Text(
+                      'Check it out!',
+                      style: TextStyle(color: Colors.white),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
       );
     }
   }

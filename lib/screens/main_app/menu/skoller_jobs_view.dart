@@ -9,68 +9,77 @@ class SkollerJobsView extends StatelessWidget {
     return Scaffold(
       body: SafeArea(
         child: Padding(
-          padding: EdgeInsets.all(24),
+          padding: EdgeInsets.all(16),
           child: Column(
             children: <Widget>[
               Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
-                  Expanded(
+                  Padding(
+                    padding: EdgeInsets.only(bottom: 12, right: 12),
                     child: GestureDetector(
                       behavior: HitTestBehavior.opaque,
                       onTapUp: (details) => Navigator.pop(context),
                       child: Container(
-                        padding: EdgeInsets.only(bottom: 24),
-                        alignment: Alignment.centerLeft,
+                        width: 32,
+                        height: 32,
+                        alignment: Alignment.center,
                         child: Image.asset(ImageNames.navArrowImages.down),
                       ),
                     ),
                   ),
-                  Column(
-                    children: <Widget>[
-                      Row(
-                        children: <Widget>[
-                          Container(
-                            padding: EdgeInsets.only(right: 8, bottom: 8),
-                            child: Image.asset(ImageNames.sammiImages.cool),
-                          ),
-                          Text.rich(
-                            TextSpan(
-                              text: 'Skoller',
-                              children: [
-                                TextSpan(
-                                  text: 'Jobs',
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.normal,
-                                      fontStyle: FontStyle.italic),
-                                ),
-                              ],
-                              style: TextStyle(
-                                  fontSize: 32, color: SKColors.skoller_blue),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: <Widget>[
+                        Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: <Widget>[
+                            Container(
+                              padding: EdgeInsets.only(right: 8, bottom: 8),
+                              child: Image.asset(ImageNames.sammiImages.cool),
                             ),
-                          ),
-                        ],
-                      ),
-                      Text.rich(
-                        TextSpan(
-                          text: 'From the classroom to your ',
-                          children: [
-                            TextSpan(
-                              text: 'dream job',
-                              style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontStyle: FontStyle.italic),
+                            Text.rich(
+                              TextSpan(
+                                text: 'Skoller',
+                                children: [
+                                  TextSpan(
+                                    text: 'Jobs',
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.normal,
+                                        fontStyle: FontStyle.italic),
+                                  ),
+                                ],
+                                style: TextStyle(
+                                    fontSize: 32, color: SKColors.skoller_blue),
+                              ),
+                              textAlign: TextAlign.center,
                             ),
                           ],
-                          style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.normal,
-                              fontStyle: FontStyle.italic),
                         ),
-                      ),
-                    ],
+                        Text.rich(
+                          TextSpan(
+                            text: 'From the classroom to your ',
+                            children: [
+                              TextSpan(
+                                text: 'dream job',
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontStyle: FontStyle.italic),
+                              ),
+                            ],
+                            style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.normal,
+                                fontStyle: FontStyle.italic),
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                      ],
+                    ),
                   ),
-                  Spacer(),
+                  SizedBox(width: 44, height: 44)
                 ],
               ),
               Spacer(),
@@ -103,9 +112,7 @@ class SkollerJobsView extends StatelessWidget {
                   ),
                 ),
               ),
-              Spacer(
-                flex: 2,
-              ),
+              Spacer(flex: 2),
             ],
           ),
         ),

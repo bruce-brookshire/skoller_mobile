@@ -1,13 +1,12 @@
 library constants;
 
-import 'package:dropdown_banner/dropdown_banner.dart';
-import 'package:flutter/material.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
-import 'package:intl/intl.dart';
-import 'package:firebase_analytics/firebase_analytics.dart';
 import '../requests/requests_core.dart';
+import 'package:intl/intl.dart';
 import 'dart:ui' as dartUI;
 import 'dart:async';
 
