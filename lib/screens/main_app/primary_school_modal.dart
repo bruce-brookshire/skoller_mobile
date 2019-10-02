@@ -1,4 +1,3 @@
-import 'package:dart_notification_center/dart_notification_center.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:skoller/screens/main_app/tutorial/calendar_tutorial_view.dart';

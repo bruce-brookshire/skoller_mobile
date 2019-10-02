@@ -1,14 +1,14 @@
+
+import 'package:skoller/screens/main_app/tutorial/calendar_tutorial_view.dart';
+import 'package:skoller/screens/main_app/classes/assignment_weight_view.dart';
+import 'package:skoller/screens/main_app/classes/assignment_info_view.dart';
 import 'package:dart_notification_center/dart_notification_center.dart';
-import 'package:dropdown_banner/dropdown_banner.dart';
-import 'package:flutter/material.dart';
+import 'package:skoller/screens/main_app/menu/add_classes_view.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/rendering.dart';
-import 'package:intl/intl.dart';
-import 'package:skoller/screens/main_app/classes/assignment_info_view.dart';
-import 'package:skoller/screens/main_app/classes/assignment_weight_view.dart';
-import 'package:skoller/screens/main_app/menu/add_classes_view.dart';
-import 'package:skoller/screens/main_app/tutorial/calendar_tutorial_view.dart';
+import 'package:flutter/material.dart';
 import 'package:skoller/tools.dart';
+import 'package:intl/intl.dart';
 
 class CalendarView extends StatefulWidget {
   @override
