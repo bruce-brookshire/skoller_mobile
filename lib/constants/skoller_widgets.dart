@@ -1318,117 +1318,6 @@ class SammiSpeechBubble extends StatelessWidget {
   }
 }
 
-// class AnimatedSammiSpeechBubble extends StatefulWidget {
-//   final SammiPersonality sammiPersonality;
-//   final  Text speechBubbleContents;
-//   final SammiSide sammiSide;
-
-//   AnimatedSammiSpeechBubble({
-//     @required this.sammiPersonality,
-//     @required this.speechBubbleContents,
-//     this.sammiSide = SammiSide.left,
-//   });
-
-//   @override
-//   State createState() => _AnimatedSammiSpeechBubble();
-// }
-
-// class _AnimatedSammiSpeechBubble extends State<AnimatedSammiSpeechBubble> {
-//   int index = 0;
-//   String curText = '';
-//   Image _sammiImageBuilder() {
-//     switch (widget.sammiPersonality) {
-//       case SammiPersonality.cool:
-//         return Image.asset(ImageNames.sammiImages.cool);
-//       case SammiPersonality.smile:
-//         return Image.asset(ImageNames.sammiImages.smile);
-//       case SammiPersonality.wow:
-//         return Image.asset(ImageNames.sammiImages.wow);
-//       case SammiPersonality.ooo:
-//         return Image.asset(ImageNames.sammiImages.shocked);
-//     }
-//     return null;
-//   }
-
-//   @override
-//   Widget build(BuildContext context) {
-//     final leftArrow = widget.sammiSide == SammiSide.left;
-//     final image = _sammiImageBuilder();
-
-//     final contents = Align(
-//       alignment: leftArrow ? Alignment.centerLeft : Alignment.centerRight,
-//       child: Container(
-//           margin: leftArrow
-//               ? EdgeInsets.only(left: 13)
-//               : EdgeInsets.only(right: 13),
-//           padding: EdgeInsets.all(8),
-//           decoration: BoxDecoration(
-//             color: Colors.white,
-//             borderRadius: BorderRadius.circular(7),
-//             border: Border.all(color: SKColors.border_gray),
-//             boxShadow: [UIAssets.boxShadow],
-//           ),
-//           child: widget.speechBubbleContents),
-//     );
-
-//     final arrow = Align(
-//       alignment: leftArrow ? Alignment.centerLeft : Alignment.centerRight,
-//       child: CustomPaint(
-//         painter: _SammiArrowPainter(widget.sammiSide),
-//         child: Container(
-//           width: 14,
-//           height: 16,
-//         ),
-//       ),
-//     );
-
-//     return Padding(
-//       padding: EdgeInsets.symmetric(horizontal: 8),
-//       child: Row(
-//         crossAxisAlignment: CrossAxisAlignment.center,
-//         mainAxisAlignment:
-//             leftArrow ? MainAxisAlignment.start : MainAxisAlignment.end,
-//         mainAxisSize: MainAxisSize.min,
-//         children: leftArrow
-//             ? [
-//                 image,
-//                 Flexible(
-//                   flex: 1,
-//                   fit: FlexFit.tight,
-//                   child: Padding(
-//                     padding: EdgeInsets.only(left: 2, top: 6),
-//                     child: Stack(
-//                       alignment: Alignment.centerLeft,
-//                       children: <Widget>[
-//                         contents,
-//                         arrow,
-//                       ],
-//                     ),
-//                   ),
-//                 ),
-//               ]
-//             : [
-//                 Flexible(
-//                   flex: 1,
-//                   fit: FlexFit.tight,
-//                   child: Padding(
-//                     padding: EdgeInsets.only(left: 2, top: 6),
-//                     child: Stack(
-//                       alignment: Alignment.centerRight,
-//                       children: <Widget>[
-//                         contents,
-//                         arrow,
-//                       ],
-//                     ),
-//                   ),
-//                 ),
-//                 image,
-//               ],
-//       ),
-//     );
-//   }
-// }
-
 class _SammiArrowPainter extends CustomPainter {
   final SammiSide side;
   final point_radius = 2.0;
@@ -1975,4 +1864,60 @@ class SyllabusInstructionsModal extends StatelessWidget {
       ],
     );
   }
+}
+
+class SKHeaderCard extends StatelessWidget {
+  final Widget leftHeaderItem;
+  final Widget rightHeaderItem;
+  final List<Widget> children;
+  final EdgeInsets margin;
+
+  SKHeaderCard({
+    @required this.leftHeaderItem,
+    this.rightHeaderItem,
+    @required this.children,
+    this.margin,
+  });
+
+  @override
+  Widget build(BuildContext context) => Container(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(10),
+          border: Border.all(color: SKColors.border_gray),
+          boxShadow: [UIAssets.boxShadow],
+        ),
+        margin: margin ?? EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: <Widget>[
+            Container(
+              alignment: Alignment.centerLeft,
+              padding: EdgeInsets.fromLTRB(12, 12, 12, 8),
+              decoration: BoxDecoration(
+                color: SKColors.selected_gray,
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(10),
+                  topRight: Radius.circular(10),
+                ),
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  leftHeaderItem,
+                  if (rightHeaderItem != null) rightHeaderItem,
+                ],
+              ),
+            ),
+            Padding(
+              padding: EdgeInsets.all(10),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                mainAxisSize: MainAxisSize.min,
+                children: children,
+              ),
+            ),
+          ],
+        ),
+      );
 }

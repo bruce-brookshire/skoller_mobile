@@ -119,7 +119,8 @@ class _ClassChangeRequestState extends State<ClassChangeRequestView> {
       code: code == studentClass.code ? null : code,
       section: section == studentClass.section ? null : section,
       meetDays: meetDays == studentClass.meetDays ? null : meetDays,
-      meetTime: (isOnline || startTime == studentClass.meetTime) ? null : startTime,
+      meetTime:
+          (isOnline || startTime == studentClass.meetTime) ? null : startTime,
       isOnline: isOnline,
     )
         .then((response) {
@@ -271,282 +272,298 @@ class _ClassChangeRequestState extends State<ClassChangeRequestView> {
       backgroundColor: SKColors.background_gray,
       leftBtn: Image.asset(ImageNames.navArrowImages.down),
       children: <Widget>[
-        Container(
-          margin: EdgeInsets.all(16),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(10),
-            border: Border.all(color: SKColors.border_gray),
-            boxShadow: [UIAssets.boxShadow],
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
+        Expanded(
+          child: ListView(
             children: <Widget>[
               Container(
-                padding: EdgeInsets.fromLTRB(12, 12, 12, 8),
-                margin: EdgeInsets.only(bottom: 8),
-                decoration: BoxDecoration(
-                  color: SKColors.selected_gray,
-                  borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(10),
-                    topRight: Radius.circular(10),
-                  ),
-                ),
-                child: Text('Edit class info', style: TextStyle(fontSize: 17)),
-              ),
-              Container(
-                margin: EdgeInsets.fromLTRB(12, 4, 12, 4),
-                padding: EdgeInsets.symmetric(vertical: 4, horizontal: 4),
+                margin: EdgeInsets.all(16),
                 decoration: BoxDecoration(
                   color: Colors.white,
-                  borderRadius: BorderRadius.circular(5),
+                  borderRadius: BorderRadius.circular(10),
                   border: Border.all(color: SKColors.border_gray),
+                  boxShadow: [UIAssets.boxShadow],
                 ),
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: <Widget>[
-                    Text(
-                      'Class name',
-                      style: TextStyle(
-                          color: SKColors.skoller_blue,
-                          fontSize: 13,
-                          fontWeight: FontWeight.normal),
-                    ),
-                    CupertinoTextField(
-                      cursorColor: SKColors.skoller_blue,
-                      padding: EdgeInsets.only(top: 1),
-                      placeholder: 'Microeconomics',
-                      style: TextStyle(fontSize: 15, color: SKColors.dark_gray),
-                      decoration: BoxDecoration(border: null),
-                      controller: nameController,
-                      onChanged: checkValid,
-                      keyboardType: TextInputType.text,
-                    ),
-                  ],
-                ),
-              ),
-              Row(
-                children: <Widget>[
-                  Expanded(
-                    child: Container(
-                      margin: EdgeInsets.fromLTRB(12, 4, 4, 4),
-                      padding: EdgeInsets.symmetric(vertical: 4, horizontal: 4),
+                    Container(
+                      padding: EdgeInsets.fromLTRB(12, 12, 12, 8),
+                      margin: EdgeInsets.only(bottom: 8),
                       decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(5),
-                        border: Border.all(color: SKColors.border_gray),
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisSize: MainAxisSize.min,
-                        children: <Widget>[
-                          Text(
-                            'Subject',
-                            style: TextStyle(
-                                color: SKColors.skoller_blue,
-                                fontSize: 13,
-                                fontWeight: FontWeight.normal),
-                          ),
-                          CupertinoTextField(
-                            cursorColor: SKColors.skoller_blue,
-                            padding: EdgeInsets.only(top: 1),
-                            placeholder: 'MATH',
-                            style: TextStyle(
-                                fontSize: 15, color: SKColors.dark_gray),
-                            decoration: BoxDecoration(border: null),
-                            textCapitalization: TextCapitalization.characters,
-                            controller: subjectController,
-                            onChanged: checkValid,
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  Expanded(
-                    child: Container(
-                      margin: EdgeInsets.fromLTRB(4, 4, 4, 4),
-                      padding: EdgeInsets.symmetric(vertical: 4, horizontal: 4),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(5),
-                        border: Border.all(color: SKColors.border_gray),
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisSize: MainAxisSize.min,
-                        children: <Widget>[
-                          Text(
-                            'Code',
-                            style: TextStyle(
-                                color: SKColors.skoller_blue,
-                                fontSize: 13,
-                                fontWeight: FontWeight.normal),
-                          ),
-                          CupertinoTextField(
-                            cursorColor: SKColors.skoller_blue,
-                            padding: EdgeInsets.only(top: 1),
-                            placeholder: '1300',
-                            style: TextStyle(
-                                fontSize: 15, color: SKColors.dark_gray),
-                            decoration: BoxDecoration(border: null),
-                            controller: codeController,
-                            onChanged: checkValid,
-                            keyboardType: TextInputType.number,
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  Expanded(
-                    child: Container(
-                      margin: EdgeInsets.fromLTRB(4, 4, 12, 4),
-                      padding: EdgeInsets.symmetric(vertical: 4, horizontal: 4),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(5),
-                        border: Border.all(color: SKColors.border_gray),
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisSize: MainAxisSize.min,
-                        children: <Widget>[
-                          Text(
-                            'Section',
-                            style: TextStyle(
-                                color: SKColors.skoller_blue,
-                                fontSize: 13,
-                                fontWeight: FontWeight.normal),
-                          ),
-                          CupertinoTextField(
-                            cursorColor: SKColors.skoller_blue,
-                            padding: EdgeInsets.only(top: 1),
-                            placeholder: '2',
-                            style: TextStyle(
-                                fontSize: 15, color: SKColors.dark_gray),
-                            decoration: BoxDecoration(border: null),
-                            controller: sectionController,
-                            keyboardType: TextInputType.number,
-                            onChanged: checkValid,
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-              Container(
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(5),
-                  border: Border.all(color: SKColors.border_gray),
-                ),
-                margin: EdgeInsets.fromLTRB(12, 4, 12, 12),
-                padding: EdgeInsets.all(12),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: <Widget>[
-                        Text(
-                          'This is an online class',
-                          style: TextStyle(fontWeight: FontWeight.normal),
+                        color: SKColors.selected_gray,
+                        borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(10),
+                          topRight: Radius.circular(10),
                         ),
-                        Switch(
-                          activeColor: SKColors.skoller_blue,
-                          value: isOnline,
-                          onChanged: (newVal) {
-                            setState(() => isOnline = newVal);
-                            checkValid(null);
-                          },
-                        )
-                      ],
-                    ),
-                    Padding(
-                      padding: EdgeInsets.only(top: 8, bottom: 2),
-                      child: Text(
-                        'Meet days',
-                        style: TextStyle(
-                            fontWeight: FontWeight.normal, fontSize: 15),
                       ),
+                      child: Text('Edit class info',
+                          style: TextStyle(fontSize: 17)),
+                    ),
+                    Container(
+                      margin: EdgeInsets.fromLTRB(12, 4, 12, 4),
+                      padding: EdgeInsets.symmetric(vertical: 4, horizontal: 4),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(5),
+                        border: Border.all(color: SKColors.border_gray),
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisSize: MainAxisSize.min,
+                        children: <Widget>[
+                          Text(
+                            'Class name',
+                            style: TextStyle(
+                                color: SKColors.skoller_blue,
+                                fontSize: 13,
+                                fontWeight: FontWeight.normal),
+                          ),
+                          CupertinoTextField(
+                            cursorColor: SKColors.skoller_blue,
+                            padding: EdgeInsets.only(top: 1),
+                            placeholder: 'Microeconomics',
+                            style: TextStyle(
+                                fontSize: 15, color: SKColors.dark_gray),
+                            decoration: BoxDecoration(border: null),
+                            controller: nameController,
+                            onChanged: checkValid,
+                            keyboardType: TextInputType.text,
+                          ),
+                        ],
+                      ),
+                    ),
+                    Row(
+                      children: <Widget>[
+                        Expanded(
+                          child: Container(
+                            margin: EdgeInsets.fromLTRB(12, 4, 4, 4),
+                            padding: EdgeInsets.symmetric(
+                                vertical: 4, horizontal: 4),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(5),
+                              border: Border.all(color: SKColors.border_gray),
+                            ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisSize: MainAxisSize.min,
+                              children: <Widget>[
+                                Text(
+                                  'Subject',
+                                  style: TextStyle(
+                                      color: SKColors.skoller_blue,
+                                      fontSize: 13,
+                                      fontWeight: FontWeight.normal),
+                                ),
+                                CupertinoTextField(
+                                  cursorColor: SKColors.skoller_blue,
+                                  padding: EdgeInsets.only(top: 1),
+                                  placeholder: 'MATH',
+                                  style: TextStyle(
+                                      fontSize: 15, color: SKColors.dark_gray),
+                                  decoration: BoxDecoration(border: null),
+                                  textCapitalization:
+                                      TextCapitalization.characters,
+                                  controller: subjectController,
+                                  onChanged: checkValid,
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                        Expanded(
+                          child: Container(
+                            margin: EdgeInsets.fromLTRB(4, 4, 4, 4),
+                            padding: EdgeInsets.symmetric(
+                                vertical: 4, horizontal: 4),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(5),
+                              border: Border.all(color: SKColors.border_gray),
+                            ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisSize: MainAxisSize.min,
+                              children: <Widget>[
+                                Text(
+                                  'Code',
+                                  style: TextStyle(
+                                      color: SKColors.skoller_blue,
+                                      fontSize: 13,
+                                      fontWeight: FontWeight.normal),
+                                ),
+                                CupertinoTextField(
+                                  cursorColor: SKColors.skoller_blue,
+                                  padding: EdgeInsets.only(top: 1),
+                                  placeholder: '1300',
+                                  style: TextStyle(
+                                      fontSize: 15, color: SKColors.dark_gray),
+                                  decoration: BoxDecoration(border: null),
+                                  controller: codeController,
+                                  onChanged: checkValid,
+                                  keyboardType: TextInputType.number,
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                        Expanded(
+                          child: Container(
+                            margin: EdgeInsets.fromLTRB(4, 4, 12, 4),
+                            padding: EdgeInsets.symmetric(
+                                vertical: 4, horizontal: 4),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(5),
+                              border: Border.all(color: SKColors.border_gray),
+                            ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisSize: MainAxisSize.min,
+                              children: <Widget>[
+                                Text(
+                                  'Section',
+                                  style: TextStyle(
+                                      color: SKColors.skoller_blue,
+                                      fontSize: 13,
+                                      fontWeight: FontWeight.normal),
+                                ),
+                                CupertinoTextField(
+                                  cursorColor: SKColors.skoller_blue,
+                                  padding: EdgeInsets.only(top: 1),
+                                  placeholder: '2',
+                                  style: TextStyle(
+                                      fontSize: 15, color: SKColors.dark_gray),
+                                  decoration: BoxDecoration(border: null),
+                                  controller: sectionController,
+                                  keyboardType: TextInputType.number,
+                                  onChanged: checkValid,
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                     Container(
                       decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(5),
-                          border: Border.all(
-                            color: isOnline
-                                ? SKColors.light_gray
-                                : SKColors.skoller_blue,
-                          )),
-                      child: Row(
-                        children: <Widget>[
-                          createDay('Sun'),
-                          createDay('Mon'),
-                          createDay('Tue'),
-                          createDay('Wed'),
-                          createDay('Thu'),
-                          createDay('Fri'),
-                          createDay('Sat'),
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(5),
+                        border: Border.all(color: SKColors.border_gray),
+                      ),
+                      margin: EdgeInsets.fromLTRB(12, 4, 12, 12),
+                      padding: EdgeInsets.all(12),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: <Widget>[
+                              Text(
+                                'This is an online class',
+                                style: TextStyle(fontWeight: FontWeight.normal),
+                              ),
+                              Switch(
+                                activeColor: SKColors.skoller_blue,
+                                value: isOnline,
+                                onChanged: (newVal) {
+                                  setState(() => isOnline = newVal);
+                                  checkValid(null);
+                                },
+                              )
+                            ],
+                          ),
+                          Padding(
+                            padding: EdgeInsets.only(top: 8, bottom: 2),
+                            child: Text(
+                              'Meet days',
+                              style: TextStyle(
+                                  fontWeight: FontWeight.normal, fontSize: 15),
+                            ),
+                          ),
+                          Container(
+                            decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(5),
+                                border: Border.all(
+                                  color: isOnline
+                                      ? SKColors.light_gray
+                                      : SKColors.skoller_blue,
+                                )),
+                            child: Row(
+                              children: <Widget>[
+                                createDay('Sun'),
+                                createDay('Mon'),
+                                createDay('Tue'),
+                                createDay('Wed'),
+                                createDay('Thu'),
+                                createDay('Fri'),
+                                createDay('Sat'),
+                              ],
+                            ),
+                          ),
+                          Padding(
+                            padding: EdgeInsets.only(top: 12, bottom: 2),
+                            child: Text(
+                              'Meet Time',
+                              style: TextStyle(
+                                  fontWeight: FontWeight.normal, fontSize: 15),
+                            ),
+                          ),
+                          GestureDetector(
+                            onTapUp: tappedStartTime,
+                            child: Container(
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: 8, vertical: 4),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(5),
+                                border: Border.all(
+                                    color: isOnline
+                                        ? SKColors.light_gray
+                                        : SKColors.skoller_blue),
+                              ),
+                              child: Text(
+                                startTime?.format(context) ?? 'N/A',
+                                style: TextStyle(
+                                    color: isOnline
+                                        ? SKColors.light_gray
+                                        : SKColors.skoller_blue,
+                                    fontWeight: FontWeight.normal),
+                              ),
+                            ),
+                          ),
                         ],
                       ),
                     ),
-                    Padding(
-                      padding: EdgeInsets.only(top: 12, bottom: 2),
-                      child: Text(
-                        'Meet Time',
-                        style: TextStyle(
-                            fontWeight: FontWeight.normal, fontSize: 15),
-                      ),
-                    ),
                     GestureDetector(
-                      onTapUp: tappedStartTime,
+                      onTapUp: (details) => tappedSave(),
                       child: Container(
-                        padding:
-                            EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                        alignment: Alignment.center,
+                        padding: EdgeInsets.symmetric(vertical: 8),
+                        margin:
+                            EdgeInsets.only(left: 12, right: 12, bottom: 12),
                         decoration: BoxDecoration(
+                          color: wasEdited
+                              ? SKColors.success
+                              : SKColors.inactive_gray,
                           borderRadius: BorderRadius.circular(5),
-                          border: Border.all(
-                              color: isOnline
-                                  ? SKColors.light_gray
-                                  : SKColors.skoller_blue),
                         ),
                         child: Text(
-                          startTime?.format(context) ?? 'N/A',
+                          'Submit',
                           style: TextStyle(
-                              color: isOnline
-                                  ? SKColors.light_gray
-                                  : SKColors.skoller_blue,
-                              fontWeight: FontWeight.normal),
+                              color: wasEdited
+                                  ? Colors.white
+                                  : SKColors.dark_gray),
                         ),
                       ),
-                    ),
+                    )
                   ],
                 ),
               ),
-              GestureDetector(
-                onTapUp: (details) => tappedSave(),
-                child: Container(
-                  alignment: Alignment.center,
-                  padding: EdgeInsets.symmetric(vertical: 8),
-                  margin: EdgeInsets.only(left: 12, right: 12, bottom: 12),
-                  decoration: BoxDecoration(
-                    color:
-                        wasEdited ? SKColors.success : SKColors.inactive_gray,
-                    borderRadius: BorderRadius.circular(5),
-                  ),
-                  child: Text(
-                    'Submit',
-                    style: TextStyle(
-                        color: wasEdited ? Colors.white : SKColors.dark_gray),
-                  ),
-                ),
-              )
             ],
           ),
-        )
+        ),
       ],
     );
   }

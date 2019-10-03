@@ -1,4 +1,5 @@
 import 'package:skoller/screens/main_app/classes/class_document_view.dart';
+import 'package:skoller/screens/main_app/classes/professor_info_view.dart';
 import 'package:skoller/screens/main_app/classes/weights_info_view.dart';
 import 'package:dart_notification_center/dart_notification_center.dart';
 import './modals/add_grade_scale_modal.dart';
@@ -169,17 +170,10 @@ class _ClassInfoState extends State<ClassInfoView> {
                   color: SKColors.skoller_blue,
                   borderRadius: BorderRadius.circular(5),
                 ),
-                child:
-                    //  Row(
-                    //   mainAxisSize: MainAxisSize.min,
-                    //   children: [
-                    //     Image.asset(ImageNames.classInfoImages.clipboard),
-                    Text(
+                child: Text(
                   studentClass.enrollmentLink.split('//')[1],
                   style: TextStyle(color: Colors.white),
                 ),
-                //   ],
-                // ),
               ),
             ),
           ],
@@ -335,32 +329,44 @@ class _ClassInfoState extends State<ClassInfoView> {
                 ],
               ),
             ),
-            Container(
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: <Widget>[
-                  Text(
-                    'Professor name',
-                    style: TextStyle(
-                      fontSize: 12,
-                      fontWeight: FontWeight.normal,
-                      color: SKColors.light_gray,
+            GestureDetector(
+              behavior: HitTestBehavior.opaque,
+              onTapUp: (_) => Navigator.push(
+                context,
+                CupertinoPageRoute(
+                  builder: (context) => ProfessorInfoView(widget.classId),
+                ),
+              ),
+              child: Padding(
+                padding: EdgeInsets.only(left: 8, right: 12),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        Container(
+                          child: Text(
+                            'Professor name',
+                            style: TextStyle(
+                              fontSize: 12,
+                              fontWeight: FontWeight.normal,
+                              color: SKColors.light_gray,
+                            ),
+                          ),
+                          padding: EdgeInsets.only(top: 8, bottom: 2),
+                        ),
+                        Container(
+                          child: Text(studentClass.professor?.fullName ?? ''),
+                          padding: EdgeInsets.only(bottom: 12),
+                        ),
+                      ],
                     ),
-                  ),
-                ],
+                    Image.asset(ImageNames.navArrowImages.right)
+                  ],
+                ),
               ),
-              margin: EdgeInsets.symmetric(horizontal: 8),
-              padding: EdgeInsets.only(top: 8, bottom: 2),
-            ),
-            Container(
-              alignment: Alignment.centerLeft,
-              child: Text(
-                (studentClass.professor?.firstName ?? '') +
-                    (studentClass.professor?.firstName == null ? '' : ' ') +
-                    (studentClass.professor?.lastName ?? ''),
-              ),
-              margin: EdgeInsets.symmetric(horizontal: 8),
-              padding: EdgeInsets.only(bottom: 12),
             ),
           ],
         ),

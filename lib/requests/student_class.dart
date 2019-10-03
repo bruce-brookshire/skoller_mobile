@@ -376,6 +376,31 @@ class StudentClass {
     return SKRequests.post('/classes/$id/changes/400', {'data': body}, null)
         .then((response) => response.wasSuccessful());
   }
+  
+  Future<bool> submitProfessorChangeRequest({
+    String firstName,
+    String lastName,
+    String email,
+    String phoneNumber,
+    String officeLocation,
+    String availability,
+  }) {
+    Map<String, dynamic> body = {
+      'id': id,
+      'name_first': firstName,
+      'name_last': lastName,
+      'email': email,
+      'phone_number': phoneNumber,
+      'office_location': officeLocation,
+      'availability': availability,
+    };
+
+    body.removeWhere((k, v) => v == null);
+    if (body.length == 1) return Future.value(true);
+
+    return SKRequests.post('/classes/$id/changes/300', {'data': body}, null)
+        .then((response) => response.wasSuccessful());
+  }
 
   String _startTimeString(TimeOfDay time) => time == null
       ? null
@@ -643,9 +668,9 @@ class Professor {
   String firstName;
   String lastName;
   String email;
-  String phone_number;
+  String phoneNumber;
   String availability;
-  String office_location;
+  String officeLocation;
 
   String get fullName {
     return (firstName ?? '') +
@@ -658,9 +683,9 @@ class Professor {
     this.firstName,
     this.lastName,
     this.email,
-    this.phone_number,
+    this.phoneNumber,
     this.availability,
-    this.office_location,
+    this.officeLocation,
   );
 
   static Professor _fromJsonObj(Map content) {
