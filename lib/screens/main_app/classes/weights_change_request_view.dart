@@ -117,7 +117,7 @@ class _WeightsChangeRequestState extends State<WeightsChangeRequestView> {
       final loader = SKLoadingScreen.fadeIn(context);
       studentClass.submitWeightChangeRequest(isPoints, weights).then((success) {
         if (success) {
-          loader.dismiss();
+          loader.fadeOut();
           DropdownBanner.showBanner(
             text: 'Successfully submitted for review',
             color: SKColors.success,

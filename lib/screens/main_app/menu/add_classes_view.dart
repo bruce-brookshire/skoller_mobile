@@ -224,7 +224,7 @@ class _AddClassesState extends State<AddClassesView> {
                     if (success) {
                       await StudentClass.getStudentClasses();
 
-                      loader.dismiss();
+                      loader.fadeOut();
 
                       if (isEnrolled)
                         Navigator.pop(newContext);

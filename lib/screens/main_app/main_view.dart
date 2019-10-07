@@ -107,7 +107,7 @@ class _MainState extends State<MainView> {
 
     final loader = SKLoadingScreen.fadeIn(context);
     final result = await FieldsOfStudy.getFieldsOfStudy();
-    loader.dismiss();
+    loader.fadeOut();
 
     if (result.wasSuccessful()) {
       inst.setBool(PreferencesKeys.kShouldAskMajor, false);

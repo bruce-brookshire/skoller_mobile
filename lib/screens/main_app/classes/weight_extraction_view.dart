@@ -226,7 +226,7 @@ class _SubviewOneState extends State<_SubviewOne> {
         textStyle: TextStyle(color: Colors.white),
       );
 
-      loader.dismiss();
+      loader.fadeOut();
 
       //After reloading class
       if (response.wasSuccessful()) {
@@ -245,7 +245,7 @@ class _SubviewOneState extends State<_SubviewOne> {
         Navigator.pop(context);
       }
     }).catchError((error) {
-      loader.dismiss();
+      loader.fadeOut();
 
       if (error is String) {
         DropdownBanner.showBanner(
@@ -523,7 +523,7 @@ class _SubviewThreeState extends State<_SubviewThree> {
         textStyle: TextStyle(color: Colors.white),
       );
 
-      loadingScreen.dismiss();
+      loadingScreen.fadeOut();
 
       //After reloading class
       if (response.wasSuccessful()) {
@@ -542,7 +542,7 @@ class _SubviewThreeState extends State<_SubviewThree> {
         Navigator.pop(context);
       }
     }).catchError((error) {
-      loadingScreen.dismiss();
+      loadingScreen.fadeOut();
 
       if (error is String) {
         DropdownBanner.showBanner(

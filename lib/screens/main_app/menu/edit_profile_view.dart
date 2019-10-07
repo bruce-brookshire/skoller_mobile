@@ -59,7 +59,7 @@ class _EditProfileState extends State<EditProfileView> {
   void tappedSelectMajors(TapUpDetails details) async {
     final loader = SKLoadingScreen.fadeIn(context);
     final result = await FieldsOfStudy.getFieldsOfStudy();
-    loader.dismiss();
+    loader.fadeOut();
 
     if (result.wasSuccessful()) {
       showDialog(
@@ -290,7 +290,7 @@ class _EditProfileState extends State<EditProfileView> {
                         bool success = await SKUser.current.delete();
                         if (success) {
                           await Auth.logOut();
-                          loader.dismiss();
+                          loader.fadeOut();
                           Navigator.pop(context);
                           Navigator.popUntil(this.context,
                               (route) => route.settings.isInitialRoute);
@@ -306,7 +306,7 @@ class _EditProfileState extends State<EditProfileView> {
                               channel: NotificationChannels.appStateChanged,
                               options: AppState.auth);
                         } else {
-                          loader.dismiss();
+                          loader.fadeOut();
                           DropdownBanner.showBanner(
                             text:
                                 'Something went wrong while attempting to delete your account',

@@ -105,7 +105,7 @@ class _AssignmentBatchAddState extends State<AssignmentBatchAddView> {
     await studentClass.releaseDIYLock();
     await studentClass.refetchSelf();
 
-    loadingScreen.dismiss();
+    loadingScreen.fadeOut();
 
     DartNotificationCenter.post(channel: NotificationChannels.classChanged);
     Navigator.pop(context);

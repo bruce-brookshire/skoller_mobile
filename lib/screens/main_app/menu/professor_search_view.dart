@@ -234,7 +234,7 @@ class _ProfessorSearchState extends State<ProfessorSearchView> {
         nameLast: lastNameController.text.trim(),
       );
 
-      loadingScreen.dismiss();
+      loadingScreen.fadeOut();
 
       if (result.wasSuccessful()) {
         widget.callback(result.obj);

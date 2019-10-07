@@ -124,7 +124,7 @@ class _ClassChangeRequestState extends State<ClassChangeRequestView> {
       isOnline: isOnline,
     )
         .then((response) {
-      loader.dismiss();
+      loader.fadeOut();
       if (response) {
         Navigator.pop(context);
       } else {

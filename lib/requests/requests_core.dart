@@ -31,7 +31,7 @@ part 'mod.dart';
 part 'auth.dart';
 
 const bool isProd = false;
-const bool isLocal = false;
+const bool isLocal = true;
 
 class RequestResponse<T> {
   int status;
@@ -118,7 +118,8 @@ class SKRequests {
     //Remove request entry if we have ownership
     if (shouldRemove) {
       _currentRequests.remove(url);
-      if (postRequestAction != null) postRequestAction();
+      if (postRequestAction != null && [200, 204].contains(request.statusCode))
+        postRequestAction();
     }
 
     //Handle request and return future

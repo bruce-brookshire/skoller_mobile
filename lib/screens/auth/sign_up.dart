@@ -73,7 +73,7 @@ class _SignUpState extends State<SignUp> {
       phone: phone.replaceAll(RegExp(r'[\(\) \-]+'), ''),
       email: email,
     ).then((response) async {
-      loadingScreen.dismiss();
+      loadingScreen.fadeOut();
 
       if (response.wasSuccessful()) {
         final result = await showDialog(

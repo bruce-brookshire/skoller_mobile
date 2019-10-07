@@ -1,20 +1,20 @@
-import 'dart:math';
-import 'dart:async';
-import 'dart:collection';
-import 'class_detail_view.dart';
-import 'package:intl/intl.dart';
-import 'package:share/share.dart';
-import './modals/assignment_edit_modal.dart';
-import 'package:skoller/tools.dart';
+import 'package:skoller/screens/main_app/activity/update_info_view.dart';
+import 'package:dart_notification_center/dart_notification_center.dart';
+import 'package:dropdown_banner/dropdown_banner.dart';
+import 'package:skoller/constants/constants.dart';
 import './modals/assignment_notes_modal.dart';
+import './modals/student_profile_modal.dart';
+import './modals/assignment_edit_modal.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:skoller/constants/constants.dart';
-import 'package:dropdown_banner/dropdown_banner.dart';
-import './modals/student_profile_modal.dart';
-import 'package:dart_notification_center/dart_notification_center.dart';
-import 'package:skoller/screens/main_app/activity/update_info_view.dart';
+import 'package:skoller/tools.dart';
+import 'package:share/share.dart';
+import 'class_detail_view.dart';
+import 'package:intl/intl.dart';
+import 'dart:collection';
+import 'dart:async';
+import 'dart:math';
 
 class AssignmentInfoView extends StatefulWidget {
   final int assignment_id;
@@ -210,7 +210,7 @@ class _AssignmentInfoState extends State<AssignmentInfoView> {
             DartNotificationCenter.post(
                 channel: NotificationChannels.classChanged);
 
-            loader.dismiss();
+            loader.fadeOut();
             Navigator.pop(context);
             return;
           }
@@ -229,7 +229,7 @@ class _AssignmentInfoState extends State<AssignmentInfoView> {
           assignment = Assignment.currentAssignments[widget.assignment_id];
         });
       }
-      loader.dismiss();
+      loader.fadeOut();
     }
   }
 
@@ -424,7 +424,7 @@ class _AssignmentInfoState extends State<AssignmentInfoView> {
           '${NumberUtilities.formatWeightAsPercent(assignment.weight)} of your final grade';
 
     if (days == null)
-      dueDescr = 'Not due';
+      dueDescr = '';
     else if (days < 0)
       dueDescr = 'in the past';
     else if (days == 0)
@@ -498,12 +498,23 @@ class _AssignmentInfoState extends State<AssignmentInfoView> {
                           color: SKColors.light_gray),
                     ),
                   ),
-                  Container(
-                    margin: EdgeInsets.only(left: 12, right: 12),
-                    child: Text(assignment.due == null
-                        ? 'No due date'
-                        : DateFormat('E, MMM. d').format(assignment.due)),
-                  ),
+                  assignment.due == null
+                      ? GestureDetector(
+                          onTapUp: tappedEdit,
+                          child: Container(
+                            margin: EdgeInsets.only(left: 12, right: 12),
+                            child: Text(
+                              'Add due date',
+                              style: TextStyle(color: SKColors.skoller_blue),
+                            ),
+                          ),
+                        )
+                      : Container(
+                          margin: EdgeInsets.only(left: 12, right: 12),
+                          child: Text(
+                            DateFormat('E, MMM. d').format(assignment.due),
+                          ),
+                        ),
                 ],
               ),
               Container(

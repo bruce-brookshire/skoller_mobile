@@ -373,7 +373,7 @@ class _ClassInfoState extends State<ClassInfoView> {
       );
 
   Widget createClassToolsCard(StudentClass studentClass) => Container(
-        margin: EdgeInsets.symmetric(horizontal: 16),
+        margin: EdgeInsets.fromLTRB(16, 0, 16, 16),
         decoration: BoxDecoration(
           color: Colors.white,
           border: Border.all(color: SKColors.border_gray),

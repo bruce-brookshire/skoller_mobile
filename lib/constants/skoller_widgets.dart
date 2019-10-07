@@ -1,32 +1,5 @@
 part of 'constants.dart';
 
-// class SKTextField extends StatelessWidget {
-//   final String fillText;
-//   final EdgeInsets margin;
-//   final double width;
-
-//   SKTextField({this.fillText, this.margin, this.width, });
-
-//   @override
-//   Widget build(BuildContext context) => Container(
-//         margin: margin,
-//         width: width,
-//         child: Material(
-//           type: MaterialType.card,
-//           elevation: 3,
-//           borderRadius: BorderRadius.circular(5),
-//           child: Container(
-//             margin: EdgeInsets.all(4),
-//             padding: EdgeInsets.symmetric(horizontal: 4, vertical: 6),
-//             child: TextField(
-//               obscureText: true,
-//               decoration: InputDecoration.collapsed(hintText: fillText),
-//               style: TextStyle(fontSize: 14),
-//             ),
-//           ),
-//         ),
-//       );
-// }
 
 class SKButton extends StatelessWidget {
   final String buttonText;
@@ -773,7 +746,7 @@ class SKLoadingScreen extends ModalRoute<void> {
   @override
   bool get maintainState => true;
 
-  void dismiss() {
+  void fadeOut() {
     navigator.pop();
   }
 
@@ -1189,6 +1162,7 @@ class SKHeaderProfilePhoto extends StatelessWidget {
         decoration: BoxDecoration(
           color: Colors.white,
           shape: BoxShape.circle,
+          boxShadow: [BoxShadow(blurRadius: 3, color: Color(0x19000000))],
           image: DecorationImage(
             fit: BoxFit.fill,
             image: SKUser.current.avatarUrl == null
@@ -1312,7 +1286,7 @@ class SammiSpeechBubble extends StatelessWidget {
       case SammiPersonality.ooo:
         return Image.asset(ImageNames.sammiImages.shocked);
       case SammiPersonality.school:
-        return Image.asset(ImageNames.sammiImages.school);
+        return Image.asset(ImageNames.sammiImages.smile);
     }
     return null;
   }

@@ -1,3 +1,4 @@
+import 'package:dart_notification_center/dart_notification_center.dart';
 import 'package:dropdown_banner/dropdown_banner.dart';
 import 'package:flutter/material.dart';
 import 'package:skoller/tools.dart';
@@ -127,30 +128,35 @@ class _UpdateInfoState extends State<UpdateInfoView> {
                   children: [
                     Expanded(
                       child: GestureDetector(
-                        onTapUp: (details) {
+                        onTapUp: (details) async {
                           if (mod.isAccepted == null) {
-                            mod.declineMod().then((response) {
-                              if (!response.wasSuccessful()) {
-                                DropdownBanner.showBanner(
-                                  text:
-                                      'Unable to accept assignment modification. Please try again later',
-                                  color: SKColors.warning_red,
-                                  textStyle: TextStyle(color: Colors.white),
-                                );
-                                setState(() {
-                                  mod.isAccepted = null;
-                                });
-                              } else {
-                                DropdownBanner.showBanner(
-                                  text: 'Success!',
-                                  color: SKColors.success,
-                                  textStyle: TextStyle(color: Colors.white),
-                                );
-                              }
-                            });
-                            setState(() {
-                              mod.isAccepted = false;
-                            });
+                            final loader = SKLoadingScreen.fadeIn(context);
+
+                            final response = await mod.declineMod();
+
+                            if (!response.wasSuccessful()) {
+                              DropdownBanner.showBanner(
+                                text:
+                                    'Unable to accept assignment modification. Please try again later',
+                                color: SKColors.warning_red,
+                                textStyle: TextStyle(color: Colors.white),
+                              );
+                              setState(() {
+                                mod.isAccepted = null;
+                              });
+                            } else {
+                              DropdownBanner.showBanner(
+                                text: 'Success!',
+                                color: SKColors.success,
+                                textStyle: TextStyle(color: Colors.white),
+                              );
+                              await StudentClass.getStudentClasses();
+                              await Mod.fetchMods();
+
+                              DartNotificationCenter.post(
+                                  channel: NotificationChannels.modsChanged);
+                            }
+                            loader.fadeOut();
                           }
                         },
                         child: Container(
@@ -178,28 +184,39 @@ class _UpdateInfoState extends State<UpdateInfoView> {
                     ),
                     Expanded(
                       child: GestureDetector(
-                        onTapUp: (details) {
-                          mod.acceptMod().then((response) {
-                            if (!response.wasSuccessful()) {
-                              DropdownBanner.showBanner(
-                                text: 'Failed to accept assignment modification. Try again later',
-                                color: SKColors.warning_red,
-                                textStyle: TextStyle(color: Colors.white),
-                              );
-                              setState(() {
-                                mod.isAccepted = null;
-                              });
-                            } else {
-                              DropdownBanner.showBanner(
-                                text: 'Success!',
-                                color: SKColors.success,
-                                textStyle: TextStyle(color: Colors.white),
-                              );
-                            }
-                          });
+                        onTapUp: (details) async {
                           setState(() {
                             mod.isAccepted = true;
                           });
+
+                          final loader = SKLoadingScreen.fadeIn(context);
+                          final response = await mod.acceptMod();
+                          
+                          if (!response.wasSuccessful()) {
+                            DropdownBanner.showBanner(
+                              text:
+                                  'Failed to accept assignment modification. Try again later',
+                              color: SKColors.warning_red,
+                              textStyle: TextStyle(color: Colors.white),
+                            );
+                            setState(() {
+                              mod.isAccepted = null;
+                            });
+                          } else {
+                            DropdownBanner.showBanner(
+                              text: 'Success!',
+                              color: SKColors.success,
+                              textStyle: TextStyle(color: Colors.white),
+                            );
+
+                            await StudentClass.getStudentClasses();
+                            await Mod.fetchMods();
+
+                            DartNotificationCenter.post(
+                                channel: NotificationChannels.modsChanged);
+                          }
+
+                          loader.fadeOut();
                         },
                         child: Container(
                           padding: EdgeInsets.symmetric(vertical: 5),

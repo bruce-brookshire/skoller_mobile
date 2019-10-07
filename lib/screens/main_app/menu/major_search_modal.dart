@@ -70,7 +70,7 @@ class MajorSelectorState extends State<MajorSelector> {
       fieldsOfStudy: selectedFields.keys.toList(),
     );
 
-    loader.dismiss();
+    loader.fadeOut();
 
     if (success) {
       DropdownBanner.showBanner(

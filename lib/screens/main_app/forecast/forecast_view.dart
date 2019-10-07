@@ -14,10 +14,10 @@ import '../classes/assignment_weight_view.dart';
 enum Forecast { tenDay, thirtyDay, all }
 
 class ForecastView extends StatefulWidget {
-  State createState() => _TasksState();
+  State createState() => _ForecastState();
 }
 
-class _TasksState extends State<ForecastView> {
+class _ForecastState extends State<ForecastView> {
   List<_TaskLikeItem> _taskItems = [];
   Forecast forecast = Forecast.tenDay;
   bool showingCompletedTasks = false;
@@ -287,7 +287,7 @@ class _TasksState extends State<ForecastView> {
                                     padding:
                                         EdgeInsets.symmetric(horizontal: 4),
                                     child: Image.asset(
-                                        ImageNames.tasksImages.forecast),
+                                        ImageNames.forecastImages.forecast),
                                   ),
                                 ],
                               ),
@@ -441,99 +441,205 @@ class _TasksState extends State<ForecastView> {
   Widget buildTaskCell(BuildContext context, int index) {
     final Assignment task = _taskItems[index].getParent;
 
-    return GestureDetector(
-      onTapDown: (details) {
-        setState(() {
-          _tappedIndex = index;
-        });
-      },
-      onTapCancel: () {
-        setState(() {
-          _tappedIndex = null;
-        });
-      },
-      onTapUp: (details) {
-        setState(() {
-          _tappedIndex = null;
-        });
-        Navigator.push(
-          context,
-          CupertinoPageRoute(
-            builder: (context) => AssignmentInfoView(assignment_id: task.id),
-            settings: RouteSettings(name: 'AssignmentInfoView'),
+    final mods = Mod.modsByAssignmentId[task.id];
+
+    if ((mods ?? []).length > 0) {
+      String modDesc;
+
+      if (mods.length == 1)
+        switch (mods.first.modType) {
+          case ModType.due:
+            modDesc = 'Due date change';
+            break;
+          case ModType.weight:
+            modDesc = 'Weight change';
+            break;
+          case ModType.delete:
+            modDesc = 'Delete change';
+            break;
+          default:
+            modDesc = '';
+        }
+      else
+        modDesc = 'Multiple changes';
+
+      return GestureDetector(
+        onTapDown: (details) {
+          setState(() {
+            _tappedIndex = index;
+          });
+        },
+        onTapCancel: () {
+          setState(() {
+            _tappedIndex = null;
+          });
+        },
+        onTapUp: (details) {
+          setState(() {
+            _tappedIndex = null;
+          });
+          StatefulWidget nextPage;
+
+          if (mods.length == 1)
+            nextPage = UpdateInfoView(mods);
+          else
+            nextPage = AssignmentInfoView(assignment_id: task.id);
+
+          Navigator.push(
+            context,
+            CupertinoPageRoute(
+              builder: (context) => nextPage,
+              settings: RouteSettings(
+                  name: mods.length == 1
+                      ? 'UpdateInfoView'
+                      : 'AssignmentInfoView'),
+            ),
+          );
+        },
+        child: Container(
+          margin: EdgeInsets.fromLTRB(7, 3, 7, 4),
+          padding: EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(5),
+            border: Border.all(color: SKColors.border_gray, width: 1),
+            boxShadow: [UIAssets.boxShadow],
+            color: _tappedIndex == index
+                ? SKColors.selected_gray
+                : SKColors.menu_blue,
           ),
-        );
-      },
-      // child: Slidable(
-      //   key: Key('${task.id}'),
-      //   dismissal: SlidableDismissal(
-      //     child: SlidableDrawerDismissal(),
-      //     onDismissed: (actionType) {
-      //       setState(() {
-      //         _taskItems.removeAt(index);
-      //       });
-      //     },
-      //   ),
-      //   actionPane: SlidableDrawerActionPane(
-      //       key: Key('${task.id}')), //SlidableScrollActionPane(),
-      //   actionExtentRatio: 0.25,
-      //   closeOnScroll: true,
-      child: Container(
-        margin: EdgeInsets.fromLTRB(7, 3, 7, 4),
-        padding: EdgeInsets.symmetric(horizontal: 8, vertical: 6),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(5),
-          border: Border.all(color: SKColors.border_gray, width: 1),
-          boxShadow: [UIAssets.boxShadow],
-          color: _tappedIndex == index
-              ? SKColors.selected_gray
-              : Theme.of(context).cardColor,
-        ),
-        child: Column(
-          children: <Widget>[
-            Container(
-              padding: EdgeInsets.only(bottom: 4),
-              child: Row(
+          child: Column(
+            children: <Widget>[
+              Padding(
+                padding: EdgeInsets.only(bottom: 4),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    Expanded(
+                      child: Text(
+                        task?.name ?? 'N/A',
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                            color: task.parentClass.getColor(),
+                            fontWeight: FontWeight.bold,
+                            fontSize: 17),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
                   Expanded(
                     child: Text(
-                      task?.name ?? 'N/A',
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
+                      task.parentClass?.name ?? '',
                       style: TextStyle(
-                          color: task.parentClass.getColor(),
-                          fontWeight: FontWeight.bold,
-                          fontSize: 17),
+                          fontSize: 15, fontWeight: FontWeight.normal),
                     ),
                   ),
-                  Text(
-                    DateUtilities.getFutureRelativeString(task.due),
-                    style:
-                        TextStyle(fontSize: 13, fontWeight: FontWeight.normal),
+                  Container(
+                    padding: EdgeInsets.all(4),
+                    decoration: BoxDecoration(
+                        shape: BoxShape.circle, color: SKColors.warning_red),
+                    child: Image.asset(ImageNames.forecastImages.harry_potter),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.only(left: 4),
+                    child: Text(
+                      modDesc,
+                      style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.normal,
+                          color: SKColors.warning_red),
+                    ),
                   ),
                 ],
-              ),
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: <Widget>[
-                Text(
-                  task.parentClass?.name ?? '',
-                  style: TextStyle(fontSize: 15, fontWeight: FontWeight.normal),
-                ),
-                if (task.weight_id != null && task.weight != null)
-                  SKAssignmentImpactGraph(
-                    task.weight,
-                    task.parentClass.getColor(),
-                    size: ImpactGraphSize.small,
-                  )
-              ],
-            )
-          ],
+              )
+            ],
+          ),
         ),
-      ),
-    );
+      );
+    } else
+      return GestureDetector(
+        onTapDown: (details) {
+          setState(() {
+            _tappedIndex = index;
+          });
+        },
+        onTapCancel: () {
+          setState(() {
+            _tappedIndex = null;
+          });
+        },
+        onTapUp: (details) {
+          setState(() {
+            _tappedIndex = null;
+          });
+          Navigator.push(
+            context,
+            CupertinoPageRoute(
+              builder: (context) => AssignmentInfoView(assignment_id: task.id),
+              settings: RouteSettings(name: 'AssignmentInfoView'),
+            ),
+          );
+        },
+        child: Container(
+          margin: EdgeInsets.fromLTRB(7, 3, 7, 4),
+          padding: EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(5),
+            border: Border.all(color: SKColors.border_gray, width: 1),
+            boxShadow: [UIAssets.boxShadow],
+            color:
+                _tappedIndex == index ? SKColors.selected_gray : Colors.white,
+          ),
+          child: Column(
+            children: <Widget>[
+              Padding(
+                padding: EdgeInsets.only(bottom: 4),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    Expanded(
+                      child: Text(
+                        task?.name ?? 'N/A',
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                            color: task.parentClass.getColor(),
+                            fontWeight: FontWeight.bold,
+                            fontSize: 17),
+                      ),
+                    ),
+                    Text(
+                      DateUtilities.getFutureRelativeString(task.due),
+                      style: TextStyle(
+                          fontSize: 13, fontWeight: FontWeight.normal),
+                    ),
+                  ],
+                ),
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: <Widget>[
+                  Text(
+                    task.parentClass?.name ?? '',
+                    style:
+                        TextStyle(fontSize: 15, fontWeight: FontWeight.normal),
+                  ),
+                  if (task.weight_id != null && task.weight != null)
+                    SKAssignmentImpactGraph(
+                      task.weight,
+                      task.parentClass.getColor(),
+                      size: ImpactGraphSize.small,
+                    )
+                ],
+              )
+            ],
+          ),
+        ),
+      );
   }
 
   Widget buildModCell(BuildContext context, int index) {
@@ -575,7 +681,7 @@ class _TasksState extends State<ForecastView> {
         ),
         child: Column(
           children: <Widget>[
-            Container(
+            Padding(
               padding: EdgeInsets.only(bottom: 4),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,

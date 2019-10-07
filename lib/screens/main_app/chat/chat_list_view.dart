@@ -152,7 +152,7 @@ class _ChatListState extends State<ChatListView> {
                   color: SKColors.warning_red,
                   textStyle: TextStyle(color: Colors.white),
                 ))
-            .then((response) => loadingScreen.dismiss());
+            .then((response) => loadingScreen.fadeOut());
       }
     }
   }

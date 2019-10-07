@@ -92,7 +92,7 @@ class _PrimarySchoolState extends State<PrimarySchoolModal> {
     if (selectedPeriod != null) {
       final loader = SKLoadingScreen.fadeIn(context);
       await SKUser.current.update(primaryPeriod: selectedPeriod);
-      loader.dismiss();
+      loader.fadeOut();
 
       Navigator.pop(context);
     } else if (selectedSchoolId != null) {

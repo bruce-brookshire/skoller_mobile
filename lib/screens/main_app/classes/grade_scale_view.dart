@@ -109,7 +109,7 @@ class _GradeScaleViewState extends State<GradeScaleView> {
           textStyle: TextStyle(color: Colors.white),
         );
       }
-      loader.dismiss();
+      loader.fadeOut();
       //Save
     } else {
       print(newMap);
