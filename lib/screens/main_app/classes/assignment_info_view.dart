@@ -538,7 +538,7 @@ class _AssignmentInfoState extends State<AssignmentInfoView> {
                             margin: EdgeInsets.only(left: 12, right: 12),
                             child: Text(
                               'Add due date',
-                              style: TextStyle(color: SKColors.skoller_blue),
+                              style: TextStyle(color: SKColors.alert_orange),
                             ),
                           ),
                         )
