@@ -78,7 +78,6 @@ class Mod {
 
     ModType modType;
     dynamic data;
-    print(content['mod_type']);
 
     if (content['mod_type'] != null && content['data'] != null) {
       switch (content['mod_type']) {

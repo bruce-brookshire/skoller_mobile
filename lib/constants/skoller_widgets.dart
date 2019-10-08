@@ -1,6 +1,5 @@
 part of 'constants.dart';
 
-
 class SKButton extends StatelessWidget {
   final String buttonText;
   final EdgeInsets margins;
@@ -262,7 +261,8 @@ class SKCalendarPicker extends StatefulWidget {
     @required String subtitle,
     @required BuildContext context,
     @required DateTime startDate,
-    @required DateCallback onSelect,
+    DateCallback onSelect,
+    DateContextCallback onSave,
     bool showNoDate = false,
   }) async {
     DateTime selectedDate = startDate;
@@ -270,6 +270,8 @@ class SKCalendarPicker extends StatefulWidget {
     final calendar = SKCalendarPicker._(startDate, (date) {
       selectedDate = date;
     });
+
+    final isSave = onSave != null;
 
     return showDialog(
         context: context,
@@ -362,16 +364,23 @@ class SKCalendarPicker extends StatefulWidget {
                       Expanded(
                         child: GestureDetector(
                           behavior: HitTestBehavior.opaque,
-                          onTapUp: (details) {
-                            onSelect(selectedDate);
+                          onTapUp: (details) async {
+                            // Wait to save if not used in a data-passing context
+                            if (isSave) await onSave(selectedDate, context);
+                            else onSelect(selectedDate);
+
                             Navigator.pop(context);
                           },
                           child: Container(
                             alignment: Alignment.center,
                             padding: EdgeInsets.only(top: 12, bottom: 8),
                             child: Text(
-                              'Select',
-                              style: TextStyle(color: SKColors.skoller_blue),
+                              isSave ? 'Save' : 'Select',
+                              style: TextStyle(
+                                color: isSave
+                                    ? SKColors.success
+                                    : SKColors.skoller_blue,
+                              ),
                             ),
                           ),
                         ),

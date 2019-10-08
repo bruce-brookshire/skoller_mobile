@@ -5,8 +5,9 @@ typedef void PresentationCallback(Widget widget);
 
 typedef ContextCallback(BuildContext context);
 
-typedef void DateCallback(DateTime date);
 typedef DateTime DateFetch();
+typedef void DateCallback(DateTime date) ;
+typedef Future<void> DateContextCallback(DateTime date, BuildContext context) ;
 
 typedef void ColorCallback(Color color);
 

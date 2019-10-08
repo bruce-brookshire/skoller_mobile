@@ -46,6 +46,10 @@ class _CalendarState extends State<CalendarView> {
         observer: this,
         channel: NotificationChannels.classChanged,
         onNotification: (_) => updateAssignments());
+    DartNotificationCenter.subscribe(
+        observer: this,
+        channel: NotificationChannels.assignmentChanged,
+        onNotification: (_) => updateAssignments());
   }
 
   @override

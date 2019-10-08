@@ -178,7 +178,6 @@ class Auth {
 
     final timeStrFactory = (int hour) {
       final newHr = hour.abs() % 24;
-      print(newHr);
 
       if (newHr >= 10)
         return '$newHr:00:00.000';
@@ -260,13 +259,11 @@ class Auth {
 
   static Future<dynamic> _androidBackgroundHandler(
       Map<String, dynamic> message) async {
-    print("android background");
     _handleNotificationAction(message['data']['category'], message['data']);
   }
 
   static Future<dynamic> _iosBackgroundHandler(
       Map<String, dynamic> message) async {
-    print(message);
     _handleNotificationAction(message['aps']['category'], message);
   }
 

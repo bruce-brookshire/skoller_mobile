@@ -136,6 +136,7 @@ class _SkollerAppState extends State<SkollerApp> {
     return MaterialApp(
       builder: (context, widget) => Theme(data: currentTheme, child: widget),
       theme: currentTheme,
+      debugShowCheckedModeBanner: false,
       home: DropdownBanner(
         child: currentWidget,
         navigatorKey: key,

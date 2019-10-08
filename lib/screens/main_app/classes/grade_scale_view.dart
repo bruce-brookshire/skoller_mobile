@@ -112,8 +112,6 @@ class _GradeScaleViewState extends State<GradeScaleView> {
       loader.fadeOut();
       //Save
     } else {
-      print(newMap);
-      print(gradeScale);
       DropdownBanner.showBanner(
           text: 'You must make a change to submit a change request.',
           color: SKColors.alert_orange);

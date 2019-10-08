@@ -60,12 +60,23 @@ class _AssignmentInfoState extends State<AssignmentInfoView> {
     }
 
     removalKeys.forEach((key) => assignmentMods.remove(key));
+
+    DartNotificationCenter.subscribe(
+      channel: NotificationChannels.assignmentChanged,
+      observer: this,
+      onNotification: (_) => setState(
+        () => assignment = Assignment.currentAssignments[assignment.id],
+      ),
+    );
   }
 
   @override
   void dispose() {
+    DartNotificationCenter.unsubscribe(observer: this);
+
     postFieldController.dispose();
     postFocusNode.dispose();
+
     super.dispose();
   }
 
@@ -225,12 +236,34 @@ class _AssignmentInfoState extends State<AssignmentInfoView> {
       bool response = await assignment.refetchSelf();
 
       if (response != null && response) {
-        setState(() {
-          assignment = Assignment.currentAssignments[widget.assignment_id];
-        });
+        setState(() =>
+            assignment = Assignment.currentAssignments[widget.assignment_id]);
       }
       loader.fadeOut();
     }
+  }
+
+  void tappedAddDueDate(_) async {
+    SKCalendarPicker.presentDateSelector(
+      title: 'Due date',
+      subtitle: 'When is this assignment due?',
+      context: context,
+      startDate: DateTime.now(),
+      onSave: (selectedDate, context) async {
+        final loader = SKLoadingScreen.fadeIn(context);
+        final result = await assignment.addDueDate(selectedDate);
+
+        if (result.wasSuccessful()) {
+          if (await assignment.refetchSelf())
+            setState(() => assignment =
+                Assignment.currentAssignments[widget.assignment_id]);
+
+          loader.fadeOut();
+          DartNotificationCenter.post(
+              channel: NotificationChannels.assignmentChanged);
+        }
+      },
+    );
   }
 
   void tappedWithMods(List<Mod> mods, BuildContext context) {
@@ -500,7 +533,7 @@ class _AssignmentInfoState extends State<AssignmentInfoView> {
                   ),
                   assignment.due == null
                       ? GestureDetector(
-                          onTapUp: tappedEdit,
+                          onTapUp: tappedAddDueDate,
                           child: Container(
                             margin: EdgeInsets.only(left: 12, right: 12),
                             child: Text(
