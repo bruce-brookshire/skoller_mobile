@@ -10,6 +10,7 @@ import 'package:dropdown_banner/dropdown_banner.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:flutter_apns/apns_connector.dart';
 import 'package:package_info/package_info.dart';
+import 'package:http_parser/http_parser.dart';
 import '../constants/timezone_manager.dart';
 import 'package:flutter_apns/apns.dart';
 import 'package:http/http.dart' as http;
@@ -81,7 +82,7 @@ class SKRequests {
   static const String _environment = isProd
       ? 'https://api.skoller.co'
       : (isLocal
-          ? 'http://10.1.10.107:4000'
+          ? 'http://127.0.0.1:4000'
           : 'https://api-staging.skoller.co');
 
   static final String _baseUrl = '$_environment/api/v1';
@@ -146,12 +147,14 @@ class SKRequests {
     Map body,
     _DecodableConstructor<T> constructor,
   ) async {
+    print(body);
     // Construct and start request
     http.Response request = await http.post(
       _baseUrl + url,
       body: json.encode(body),
       headers: _headers,
     );
+    print(request);
 
     // Handle request and return future
     return futureProcessor<T>(request, constructor);

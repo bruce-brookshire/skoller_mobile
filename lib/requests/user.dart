@@ -97,6 +97,20 @@ class SKUser {
     });
   }
 
+  Future<int> uploadProfilePhoto(String path) async {
+    final uri = Uri.parse(SKRequests._baseUrl + '/users/$id');
+    var request = http.MultipartRequest("POST", uri);
+
+    request.headers['Authorization'] = SKRequests._headers['Authorization'];
+
+    request.files.add(await http.MultipartFile.fromPath(
+      '${id}_profilephoto.jpg',
+      path,
+      contentType: MediaType('image', 'jpeg'),
+    ));
+    return (await request.send()).statusCode;
+  }
+
   Future<RequestResponse> checkEmailDomain() {
     final emailDomain = email.split('@')[1];
     return SKRequests.get(
@@ -236,7 +250,6 @@ class FieldsOfStudy {
   static Future<RequestResponse> getFieldsOfStudy() {
     return SKRequests.get('/fields-of-study/list', _fromJsonObj);
   }
-
 }
 
 class PublicStudent {

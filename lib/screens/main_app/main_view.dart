@@ -148,6 +148,7 @@ class _MainState extends State<MainView> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[
                     GestureDetector(
+                      behavior: HitTestBehavior.opaque,
                       onTapUp: (_) => Navigator.pop(context),
                       child: SizedBox(
                         width: 32,

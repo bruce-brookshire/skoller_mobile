@@ -413,8 +413,8 @@ class StudentClass {
         .then((response) => response.wasSuccessful());
   }
 
-  Future<bool> submitGradeScaleChangeRequest(Map weights) {
-    return SKRequests.post('/classes/$id/changes/100', {'data': weights}, null)
+  Future<bool> submitGradeScaleChangeRequest(Map data) {
+    return SKRequests.post('/classes/$id/changes/100', {'data': data}, null)
         .then((response) => response.wasSuccessful());
   }
 

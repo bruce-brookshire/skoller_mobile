@@ -3,7 +3,8 @@ import 'package:dropdown_banner/dropdown_banner.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:skoller/tools.dart';
-import './major_search_modal.dart';
+import 'major_search_modal.dart';
+import 'profile_photo_view.dart';
 
 class EditProfileView extends StatefulWidget {
   @override
@@ -70,6 +71,15 @@ class _EditProfileState extends State<EditProfileView> {
     }
   }
 
+  void tappedCamera(_) {
+    Navigator.push(
+      context,
+      CupertinoPageRoute(
+        builder: (context) => ProfilePhotoView(),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     if (SKUser.current == null)
@@ -88,32 +98,35 @@ class _EditProfileState extends State<EditProfileView> {
         Padding(
           padding: EdgeInsets.symmetric(vertical: 16, horizontal: 16),
           child: Row(children: [
-            Container(
-              alignment: Alignment.center,
-              decoration: BoxDecoration(
-                color: SKColors.light_gray,
-                shape: BoxShape.circle,
-                image: SKUser.current?.avatarUrl == null
-                    ? null
-                    : DecorationImage(
-                        fit: BoxFit.fill,
-                        image: NetworkImage(SKUser.current.avatarUrl),
-                      ),
+            GestureDetector(
+              onTapUp: tappedCamera,
+              child: Container(
+                alignment: Alignment.center,
+                decoration: BoxDecoration(
+                  color: SKColors.light_gray,
+                  shape: BoxShape.circle,
+                  image: SKUser.current?.avatarUrl == null
+                      ? null
+                      : DecorationImage(
+                          fit: BoxFit.fill,
+                          image: NetworkImage(SKUser.current.avatarUrl),
+                        ),
+                ),
+                margin: EdgeInsets.only(bottom: 12),
+                height: 64,
+                width: 64,
+                child: SKUser.current.avatarUrl == null
+                    ? Text(
+                        SKUser.current.student.nameFirst[0] +
+                            SKUser.current.student.nameLast[0],
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 22,
+                          letterSpacing: 1,
+                        ),
+                      )
+                    : null,
               ),
-              margin: EdgeInsets.only(bottom: 12),
-              height: 64,
-              width: 64,
-              child: SKUser.current.avatarUrl == null
-                  ? Text(
-                      SKUser.current.student.nameFirst[0] +
-                          SKUser.current.student.nameLast[0],
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 22,
-                        letterSpacing: 1,
-                      ),
-                    )
-                  : null,
             ),
             Expanded(
               child: Column(

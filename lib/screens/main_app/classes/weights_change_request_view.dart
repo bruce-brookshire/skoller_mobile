@@ -29,7 +29,12 @@ class _WeightsChangeRequestState extends State<WeightsChangeRequestView> {
 
     isPoints = studentClass.isPoints;
     weights = (StudentClass.currentClasses[widget.classId].weights ?? [])
-        .map((weight) => {'name': weight.name, 'value': weight.weight})
+        .map(
+          (weight) => Map<dynamic, dynamic>.fromIterables(
+            ['name', 'value'],
+            [weight.name, weight.weight],
+          ),
+        )
         .toList();
 
     super.initState();
@@ -85,10 +90,10 @@ class _WeightsChangeRequestState extends State<WeightsChangeRequestView> {
     showWeightMaker('', '', true, (name, value) {
       if (name != '' && value != '' && int.tryParse(value) != null) {
         setState(
-          () => weights.add({
-            'name': name,
-            'value': int.parse(value),
-          } as Map),
+          () => weights.add(Map<dynamic, dynamic>.fromIterables(
+            ['name', 'value'],
+            [name, int.parse(value)],
+          )),
         );
         checkValid();
       }
@@ -111,7 +116,6 @@ class _WeightsChangeRequestState extends State<WeightsChangeRequestView> {
   void tappedSubmit(TapUpDetails details) {
     final currTotal = weights.fold(0, (val, item) => item['value'] + val);
 
-
     if ((isPoints || currTotal == 100) && isEdited) {
       final studentClass = StudentClass.currentClasses[widget.classId];
       final loader = SKLoadingScreen.fadeIn(context);
@@ -132,10 +136,16 @@ class _WeightsChangeRequestState extends State<WeightsChangeRequestView> {
           );
         }
       });
-    } else  if (!isEdited) {
-      DropdownBanner.showBanner(text: 'Weight structure must change to create a change request.', color: SKColors.alert_orange, textStyle: TextStyle(color: Colors.white));
+    } else if (!isEdited) {
+      DropdownBanner.showBanner(
+          text: 'Weight structure must change to create a change request.',
+          color: SKColors.alert_orange,
+          textStyle: TextStyle(color: Colors.white));
     } else {
-      DropdownBanner.showBanner(text: 'Weights must sum to 100%', color: SKColors.alert_orange, textStyle: TextStyle(color: Colors.white));
+      DropdownBanner.showBanner(
+          text: 'Weights must sum to 100%',
+          color: SKColors.alert_orange,
+          textStyle: TextStyle(color: Colors.white));
     }
   }
 
@@ -274,15 +284,19 @@ class _WeightsChangeRequestState extends State<WeightsChangeRequestView> {
                           'Total',
                           style: TextStyle(fontSize: 20),
                         ),
-                        GestureDetector(
-                          // onTapUp: (details) =>
-                          //     widget.subviewParent.backwardState(),
-                          child: Text(
-                            '$currTotal${isPoints ? '' : ' / 100'}${isPoints ? ' pts.' : '%'}',
-                            style: TextStyle(
-                                fontSize: 20, color: SKColors.dark_gray),
-                          ),
-                        )
+                        isPoints
+                            ? GestureDetector(
+                                child: Text(
+                                  '$currTotal pts.',
+                                  style: TextStyle(
+                                      fontSize: 20, color: SKColors.dark_gray),
+                                ),
+                              )
+                            : Text(
+                                '$currTotal / 100%',
+                                style: TextStyle(
+                                    fontSize: 20, color: SKColors.dark_gray),
+                              ),
                       ],
                     ),
                   ),
