@@ -69,7 +69,8 @@ class _WeightsChangeRequestState extends State<WeightsChangeRequestView> {
     }
 
     // If the weightMap has leftover weights, then we have new weights
-    if (!hasChanged) hasChanged = weightMap.length != 0 || isPoints != studentClass.isPoints;
+    if (!hasChanged)
+      hasChanged = weightMap.length != 0 || isPoints != studentClass.isPoints;
 
     if (hasChanged != isEdited) setState(() => isEdited = hasChanged);
   }
@@ -123,6 +124,9 @@ class _WeightsChangeRequestState extends State<WeightsChangeRequestView> {
     if ((isPoints || currTotal == 100) && isEdited) {
       final studentClass = StudentClass.currentClasses[widget.classId];
       final loader = SKLoadingScreen.fadeIn(context);
+      final weights =
+          this.weights.map((w) => w..update('value', (v) => '$v')).toList();
+
       studentClass.submitWeightChangeRequest(isPoints, weights).then((success) {
         if (success) {
           loader.fadeOut();

@@ -412,10 +412,10 @@ class StudentClass {
       (c, e) => c..[e['name']] = e['value'],
     );
 
-    if (isPoints != this.isPoints) body['is_points'] = isPoints;
+    if (isPoints != this.isPoints) body['is_points'] = '$isPoints';
 
     return SKRequests.post('/classes/$id/changes/200', {'data': body}, null)
-        .then((response) => response.wasSuccessful());
+        .then((response) {print(response.wasSuccessful()); return true;});
   }
 
   Future<bool> submitGradeScaleChangeRequest(Map data) {

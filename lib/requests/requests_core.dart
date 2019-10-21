@@ -147,14 +147,12 @@ class SKRequests {
     Map body,
     _DecodableConstructor<T> constructor,
   ) async {
-    print(body);
     // Construct and start request
     http.Response request = await http.post(
       _baseUrl + url,
       body: json.encode(body),
       headers: _headers,
     );
-    print(request);
 
     // Handle request and return future
     return futureProcessor<T>(request, constructor);
