@@ -376,7 +376,7 @@ class StudentClass {
     return SKRequests.post('/classes/$id/changes/400', {'data': body}, null)
         .then((response) => response.wasSuccessful());
   }
-  
+
   Future<bool> submitProfessorChangeRequest({
     String firstName,
     String lastName,
@@ -407,8 +407,13 @@ class StudentClass {
       : '${time.hour < 10 ? '0' : ''}${time.hour}:${time.minute < 10 ? '0' : ''}${time.minute}:00';
 
   Future<bool> submitWeightChangeRequest(bool isPoints, List<Map> weights) {
-    final body = weights.fold<Map<String, num>>(
-        Map(), (c, e) => c..[e['name']] = e['value']);
+    final body = weights.fold<Map>(
+      Map(),
+      (c, e) => c..[e['name']] = e['value'],
+    );
+
+    if (isPoints != this.isPoints) body['is_points'] = isPoints;
+
     return SKRequests.post('/classes/$id/changes/200', {'data': body}, null)
         .then((response) => response.wasSuccessful());
   }

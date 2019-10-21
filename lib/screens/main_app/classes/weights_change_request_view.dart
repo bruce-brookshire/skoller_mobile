@@ -41,10 +41,12 @@ class _WeightsChangeRequestState extends State<WeightsChangeRequestView> {
   }
 
   void checkValid() {
-    final weights = StudentClass.currentClasses[widget.classId].weights ?? [];
+    final studentClass = StudentClass.currentClasses[widget.classId];
+    final weights = studentClass.weights ?? [];
     Map<String, double> weightMap = {};
     bool hasChanged = false;
 
+    // Initialize weightMap with class weights
     for (final weight in weights) {
       weightMap[weight.name] = weight.weight;
     }
@@ -53,6 +55,7 @@ class _WeightsChangeRequestState extends State<WeightsChangeRequestView> {
       final name = weight['name'];
 
       if (weightMap.containsKey(name)) {
+        // Remove from weightMap if weightMap contains the key-val
         if (weightMap[name] == weight['value']) {
           weightMap.remove(name);
         } else {
@@ -65,7 +68,8 @@ class _WeightsChangeRequestState extends State<WeightsChangeRequestView> {
       }
     }
 
-    if (!hasChanged) hasChanged = weightMap.length != 0;
+    // If the weightMap has leftover weights, then we have new weights
+    if (!hasChanged) hasChanged = weightMap.length != 0 || isPoints != studentClass.isPoints;
 
     if (hasChanged != isEdited) setState(() => isEdited = hasChanged);
   }
@@ -208,6 +212,7 @@ class _WeightsChangeRequestState extends State<WeightsChangeRequestView> {
                     ),
                     onValueChanged: (index) {
                       isPoints = index == 1;
+                      checkValid();
                       setState(() => selectedSegment = index);
                     },
                     selectedColor: SKColors.skoller_blue,
