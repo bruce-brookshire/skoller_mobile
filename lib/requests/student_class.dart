@@ -390,9 +390,9 @@ class StudentClass {
       'name_first': firstName,
       'name_last': lastName,
       'email': email,
-      'phone_number': phoneNumber,
+      'phone': phoneNumber,
       'office_location': officeLocation,
-      'availability': availability,
+      'office_availability': availability,
     };
 
     body.removeWhere((k, v) => v == null);
@@ -703,8 +703,8 @@ class Professor {
       content['name_first'],
       content['name_last'],
       content['email'],
-      content['phone_number'],
-      content['availability'],
+      content['phone'],
+      content['office_availability'],
       content['office_location'],
     );
   }

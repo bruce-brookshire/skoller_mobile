@@ -180,6 +180,7 @@ class _SchoolSearchState extends State<SchoolSearchView> {
                         textCapitalization: TextCapitalization.words,
                         decoration: BoxDecoration(border: null),
                         autofocus: true,
+                        autocorrect: false,
                         controller: searchController,
                       ),
                     ),

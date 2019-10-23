@@ -289,6 +289,7 @@ class _ProfessorSearchState extends State<ProfessorSearchView> {
                         textCapitalization: TextCapitalization.words,
                         decoration: BoxDecoration(border: null),
                         autofocus: true,
+                        autocorrect: false,
                         controller: searchController,
                       ),
                     ),
