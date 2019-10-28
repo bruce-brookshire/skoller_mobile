@@ -67,9 +67,9 @@ class _SkollerAppState extends State<SkollerApp> {
   void initState() {
     super.initState();
 
-    SystemChrome.setSystemUIOverlayStyle(
-      SystemUiOverlayStyle(statusBarBrightness: Brightness.light),
-    );
+    // SystemChrome.setSystemUIOverlayStyle(
+    //   SystemUiOverlayStyle(statusBarBrightness: Brightness.light),
+    // );
 
     DartNotificationCenter.subscribe(
       channel: NotificationChannels.appStateChanged,

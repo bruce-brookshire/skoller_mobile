@@ -1,3 +1,4 @@
+import 'package:dart_notification_center/dart_notification_center.dart';
 import 'package:dropdown_banner/dropdown_banner.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -50,53 +51,90 @@ class _ProfessorChangeRequestViewState
     availabilityController.dispose();
   }
 
-  void tappedSave(_) {
+  void tappedSave(_) async {
     if (isValidState) {
+      final loader = SKLoadingScreen.fadeIn(context);
+
+      // Form info
       final firstName = firstNameController.text.trim();
       final lastName = lastNameController.text.trim();
       final email = emailController.text.trim();
-      final phoneNumber = phoneNumberController.text.trim();
+      final phoneNumber = phoneNumberController.text
+          .trim()
+          .replaceAll(RegExp(r'[\(\)]+'), '')
+          .replaceAll(RegExp(r'[ ]'), '-');
       final officeLocation = officeLocationController.text.trim();
       final availability = availabilityController.text.trim();
 
+      // Objects
       final studentClass = StudentClass.currentClasses[widget.classId];
       final professor = studentClass.professor;
 
-      studentClass
-          .submitProfessorChangeRequest(
+      // Save directly or submit change request
+      final emailDirect = email != '' && (professor.email ?? '') == '';
+      final phoneDirect =
+          phoneNumber != '' && (professor.phoneNumber ?? '') == '';
+      final officeDirect =
+          officeLocation != '' && (professor.officeLocation ?? '') == '';
+      final availabilityDirect =
+          availability != '' && (professor.availability ?? '') == '';
+
+      // Update direct
+      final direct_response = await professor.updateInfo(
+        emailDirect ? email : null,
+        phoneDirect ? phoneNumber : null,
+        officeDirect ? officeLocation : null,
+        availabilityDirect ? availability : null,
+      );
+
+      // Submit change request
+      final change_response = await studentClass.submitProfessorChangeRequest(
         firstName: firstName == professor.firstName ? null : firstName,
         lastName: lastName == professor.lastName ? null : lastName,
-        email: email == professor.email ? null : email,
-        phoneNumber: phoneNumber == professor.phoneNumber ? null : phoneNumber,
+        email: (emailDirect || email == professor.email) ? null : email,
+        phoneNumber: (phoneDirect || phoneNumber == professor.phoneNumber)
+            ? null
+            : phoneNumber,
         officeLocation:
-            officeLocation == professor.officeLocation ? null : officeLocation,
+            (officeDirect || officeLocation == professor.officeLocation)
+                ? null
+                : officeLocation,
         availability:
-            availability == professor.availability ? null : availability,
-      )
-          .then((success) {
-        if (success) {
-          DropdownBanner.showBanner(
-            text: 'Successfully submitted professor information for review!',
-            color: SKColors.success,
-            textStyle: TextStyle(color: Colors.white),
-          );
-          int count = 0;
-          Navigator.popUntil(context, (_) {
-            if (count == 2)
-              return true;
-            else {
-              count++;
-              return false;
-            }
-          });
-        } else {
-          DropdownBanner.showBanner(
-            text: 'Failed to save updated professor information.',
-            color: SKColors.warning_red,
-            textStyle: TextStyle(color: Colors.white),
-          );
-        }
-      });
+            (availabilityDirect || availability == professor.availability)
+                ? null
+                : availability,
+      );
+
+      if (direct_response && change_response) {
+        await studentClass.refetchSelf();
+
+        DartNotificationCenter.post(channel: NotificationChannels.classChanged);
+
+        loader.fadeOut();
+
+        DropdownBanner.showBanner(
+          text: 'Successfully submitted professor information for review!',
+          color: SKColors.success,
+          textStyle: TextStyle(color: Colors.white),
+        );
+
+        int count = 0;
+        Navigator.popUntil(context, (_) {
+          if (count == 2)
+            return true;
+          else {
+            count++;
+            return false;
+          }
+        });
+      } else {
+        loader.fadeOut();
+        DropdownBanner.showBanner(
+          text: 'Failed to save updated professor information.',
+          color: SKColors.warning_red,
+          textStyle: TextStyle(color: Colors.white),
+        );
+      }
     } else {
       final firstName = firstNameController.text.trim();
       final lastName = lastNameController.text.trim();
@@ -230,7 +268,7 @@ class _ProfessorChangeRequestViewState
                                 decoration: BoxDecoration(border: null),
                                 controller: lastNameController,
                                 onChanged: didEdit,
-                                keyboardType: TextInputType.number,
+                                keyboardType: TextInputType.text,
                               ),
                             ],
                           ),
@@ -268,7 +306,7 @@ class _ProfessorChangeRequestViewState
                           decoration: BoxDecoration(border: null),
                           controller: emailController,
                           onChanged: didEdit,
-                          keyboardType: TextInputType.text,
+                          keyboardType: TextInputType.emailAddress,
                         ),
                       ],
                     ),

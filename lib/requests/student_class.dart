@@ -75,6 +75,12 @@ class StudentClass {
     this.isOnline,
   );
 
+  String get shareMessage {
+    return id % 2 == 0
+        ? 'Ditch your paper planner. Skoller unlocks academic organization and keeps you on track all year long. Our class $name is already set up. Sign up using this link to join me!\n\n$enrollmentLink'
+        : 'This new app takes our syllabus and sends reminders about upcoming due dates, organizes assignments into a calendar, and much more. Our class $name is already set up. Sign up using this link to join me!\n\n$enrollmentLink';
+  }
+
   School getSchool() => School.currentSchools[classPeriod.schoolId];
 
   Color getColor() {
@@ -399,7 +405,10 @@ class StudentClass {
     if (body.length == 1) return Future.value(true);
 
     return SKRequests.post('/classes/$id/changes/300', {'data': body}, null)
-        .then((response) => response.wasSuccessful());
+        .then((response) {
+      print(response);
+      return response.wasSuccessful();
+    });
   }
 
   String _startTimeString(TimeOfDay time) => time == null
@@ -415,7 +424,7 @@ class StudentClass {
     if (isPoints != this.isPoints) body['is_points'] = '$isPoints';
 
     return SKRequests.post('/classes/$id/changes/200', {'data': body}, null)
-        .then((response) {print(response.wasSuccessful()); return true;});
+        .then((response) => true);
   }
 
   Future<bool> submitGradeScaleChangeRequest(Map data) {
@@ -692,6 +701,28 @@ class Professor {
     this.availability,
     this.officeLocation,
   );
+
+  Future<bool> updateInfo(
+    String email,
+    String phoneNumber,
+    String availability,
+    String officeLocation,
+  ) {
+    final Map<String, String> body = {
+      'email': email,
+      'phone': phoneNumber,
+      'office_location': officeLocation,
+      'office_availability': availability,
+    };
+
+    body.removeWhere((_, v) => v == null);
+
+    return SKRequests.put('/professors/$id', body, Professor._fromJsonObj)
+        .then((response) {
+      print(response);
+      return response.wasSuccessful();
+    });
+  }
 
   static Professor _fromJsonObj(Map content) {
     if (content == null) {

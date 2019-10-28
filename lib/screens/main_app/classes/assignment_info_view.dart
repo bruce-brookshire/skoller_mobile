@@ -877,8 +877,8 @@ class _AssignmentInfoState extends State<AssignmentInfoView> {
                 style: TextStyle(fontWeight: FontWeight.normal, fontSize: 14),
               ),
               GestureDetector(
-                onTapUp: (details) => Share.share(
-                    'School is hard. But this new app called Skoller makes it easy! Our class ${assignment.parentClass.name ?? ''} is already in the app. Download so we can keep up together!\n\n${assignment.parentClass.enrollmentLink}'),
+                onTapUp: (details) =>
+                    Share.share(assignment.parentClass.shareMessage),
                 child: Container(
                   alignment: Alignment.center,
                   margin: EdgeInsets.symmetric(horizontal: 16, vertical: 12),

@@ -38,16 +38,15 @@ class _ProfileLinkSharingState extends State<ProfileLinkSharingView> {
           showDialog(
             context: context,
             builder: (context) => SKPickerModal(
-                  title: 'Share type',
-                  subtitle:
-                      'Do you want to share Skoller with anyone or a class enroll link for classmates?',
-                  items: ['Anyone', 'Classmates'],
-                  onSelect: (index) {
-                    setState(() => sharingType = index == 0
-                        ? _SharingType.anyone
-                        : _SharingType.classmates);
-                  },
-                ),
+              title: 'Share type',
+              subtitle:
+                  'Do you want to share Skoller with anyone or a class enroll link for classmates?',
+              items: ['Anyone', 'Classmates'],
+              onSelect: (index) {
+                setState(() => sharingType =
+                    index == 0 ? _SharingType.anyone : _SharingType.classmates);
+              },
+            ),
           );
         },
         child: Container(
@@ -89,16 +88,15 @@ class _ProfileLinkSharingState extends State<ProfileLinkSharingView> {
               showDialog(
                 context: context,
                 builder: (context) => SKPickerModal(
-                      title: 'Select class',
-                      subtitle:
-                          'Let your classmates use your class specific link to enroll',
-                      items: classes
-                          .map((studentClass) => studentClass.name)
-                          .toList(),
-                      onSelect: (index) {
-                        setState(() => studentClass = classes[index]);
-                      },
-                    ),
+                  title: 'Select class',
+                  subtitle:
+                      'Let your classmates use your class specific link to enroll',
+                  items:
+                      classes.map((studentClass) => studentClass.name).toList(),
+                  onSelect: (index) {
+                    setState(() => studentClass = classes[index]);
+                  },
+                ),
               );
             },
             child: Container(
@@ -128,16 +126,9 @@ class _ProfileLinkSharingState extends State<ProfileLinkSharingView> {
         [
           Spacer(),
           GestureDetector(
-            onTapUp: (details) {
-              final shareLink = (sharingType == _SharingType.anyone
-                      ? SKUser.current.student.enrollmentLink
-                      : studentClass.enrollmentLink) ??
-                  'https://itunes.apple.com/us/app/skoller/id1314782490?mt=8';
-
-              Share.share(sharingType == _SharingType.anyone
-                  ? 'Check out this new app that\'s helping me keep up with school... it\'s like the Waze of the classroom!\n\n$shareLink'
-                  : 'School is hard. But this new app called Skoller makes it easy! Our class ${studentClass.name ?? ""} is already in the app. Download so we can keep up together!\n\n$shareLink');
-            },
+            onTapUp: (details) => Share.share(sharingType == _SharingType.anyone
+                ? 'Check out this new app that\'s helping me keep up with school... it\'s like the Waze of the classroom!\n\n${SKUser.current.student.enrollmentLink ?? 'https://itunes.apple.com/us/app/skoller/id1314782490?mt=8'}'
+                : studentClass.shareMessage),
             child: Container(
               alignment: Alignment.center,
               margin: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
