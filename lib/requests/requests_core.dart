@@ -32,7 +32,7 @@ part 'mod.dart';
 part 'auth.dart';
 
 const bool isProd = false;
-const bool isLocal = false;
+const bool isLocal = true;
 
 class RequestResponse<T> {
   int status;

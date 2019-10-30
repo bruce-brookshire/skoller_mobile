@@ -70,40 +70,37 @@ class _ProfessorChangeRequestViewState
       final studentClass = StudentClass.currentClasses[widget.classId];
       final professor = studentClass.professor;
 
+      final origEmail = (professor.email ?? '') == '';
+      final origPhone = (professor.phoneNumber ?? '') == '';
+      final origLocation = (professor.officeLocation ?? '') == '';
+      final origAvailability = (professor.availability ?? '') == '';
+
       // Save directly or submit change request
-      final emailDirect = email != '' && (professor.email ?? '') == '';
-      final phoneDirect =
-          phoneNumber != '' && (professor.phoneNumber ?? '') == '';
-      final officeDirect =
-          officeLocation != '' && (professor.officeLocation ?? '') == '';
-      final availabilityDirect =
-          availability != '' && (professor.availability ?? '') == '';
+      final emailDirect = email != '' && origEmail;
+      final phoneDirect = phoneNumber != '' && origPhone;
+      final officeDirect = officeLocation != '' && origLocation;
+      final availabilityDirect = availability != '' && origAvailability;
 
       // Update direct
       final direct_response = await professor.updateInfo(
         emailDirect ? email : null,
         phoneDirect ? phoneNumber : null,
-        officeDirect ? officeLocation : null,
         availabilityDirect ? availability : null,
+        officeDirect ? officeLocation : null,
       );
 
       // Submit change request
       final change_response = await studentClass.submitProfessorChangeRequest(
         firstName: firstName == professor.firstName ? null : firstName,
         lastName: lastName == professor.lastName ? null : lastName,
-        email: (emailDirect || email == professor.email) ? null : email,
-        phoneNumber: (phoneDirect || phoneNumber == professor.phoneNumber)
-            ? null
-            : phoneNumber,
-        officeLocation:
-            (officeDirect || officeLocation == professor.officeLocation)
-                ? null
-                : officeLocation,
-        availability:
-            (availabilityDirect || availability == professor.availability)
-                ? null
-                : availability,
+        email: !origEmail && email != '' ? email : null,
+        phoneNumber: !origPhone && phoneNumber != '' ? phoneNumber : null,
+        officeLocation: !origLocation && officeLocation != '' ? officeLocation : null,
+        availability: !origAvailability && availability != '' ? availability : null,
       );
+
+      print(change_response);
+      print(direct_response);
 
       if (direct_response && change_response) {
         await studentClass.refetchSelf();

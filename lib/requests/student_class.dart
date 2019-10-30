@@ -716,6 +716,7 @@ class Professor {
     };
 
     body.removeWhere((_, v) => v == null);
+    if (body.length == 0) return Future.value(true);
 
     return SKRequests.put('/professors/$id', body, Professor._fromJsonObj)
         .then((response) {
