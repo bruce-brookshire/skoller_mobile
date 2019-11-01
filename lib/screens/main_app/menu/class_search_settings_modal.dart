@@ -28,8 +28,13 @@ class _ClassSearchSettingsModalState extends State<ClassSearchSettingsModal> {
     }
 
     final now = DateTime.now();
-    possiblePeriods = school.periods.toList()
-      ..removeWhere((p) => now.isAfter(p.endDate));
+    possiblePeriods = (school.periods.toList())
+      ..removeWhere(
+        (p) =>
+            now.isAfter(p.endDate.add(Duration(days: 15))) ||
+            now.isBefore(p.startDate.subtract(Duration(days: 270))),
+      )
+      ..sort((p1, p2) => p1.startDate.compareTo(p2.startDate));
 
     DartNotificationCenter.subscribe(
         channel: NotificationChannels.userChanged,
@@ -51,8 +56,13 @@ class _ClassSearchSettingsModalState extends State<ClassSearchSettingsModal> {
       period = null;
 
       final now = DateTime.now();
-      possiblePeriods = school.periods.toList()
-        ..removeWhere((p) => now.isAfter(p.endDate));
+      possiblePeriods = (school.periods.toList())
+        ..removeWhere(
+          (p) =>
+              now.isAfter(p.endDate.add(Duration(days: 15))) ||
+              now.isBefore(p.startDate.subtract(Duration(days: 270))),
+        )
+        ..sort((p1, p2) => p1.startDate.compareTo(p2.startDate));
 
       if (mounted) setState(() {});
       tappedPeriod(null);

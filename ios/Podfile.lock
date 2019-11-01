@@ -126,7 +126,7 @@ DEPENDENCIES:
   - firebase_analytics (from `.symlinks/plugins/firebase_analytics/ios`)
   - firebase_core (from `.symlinks/plugins/firebase_core/ios`)
   - firebase_messaging (from `.symlinks/plugins/firebase_messaging/ios`)
-  - Flutter (from `.symlinks/flutter/ios`)
+  - Flutter (from `.symlinks/flutter/ios-release`)
   - flutter_apns (from `.symlinks/plugins/flutter_apns/ios`)
   - flutter_keychain (from `.symlinks/plugins/flutter_keychain/ios`)
   - package_info (from `.symlinks/plugins/package_info/ios`)
@@ -167,7 +167,7 @@ EXTERNAL SOURCES:
   firebase_messaging:
     :path: ".symlinks/plugins/firebase_messaging/ios"
   Flutter:
-    :path: ".symlinks/flutter/ios"
+    :path: ".symlinks/flutter/ios-release"
   flutter_apns:
     :path: ".symlinks/plugins/flutter_apns/ios"
   flutter_keychain:
