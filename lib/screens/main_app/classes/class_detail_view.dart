@@ -103,15 +103,15 @@ class _ClassDetailState extends State<ClassDetailView> {
 
   Future showGradeScalePicker() {
     return Navigator.push(
-        context,
-        SKNavOverlayRoute(
-          isBarrierDismissible: false,
-          builder: (context) => AddGradeScaleModal(
-            classId: widget.classId,
-            onCompletionShowGradeScale: false,
-          ),
+      context,
+      SKNavOverlayRoute(
+        isBarrierDismissible: false,
+        builder: (context) => AddGradeScaleModal(
+          classId: widget.classId,
+          onCompletionShowGradeScale: false,
         ),
-      );
+      ),
+    );
   }
 
   void showSpeculate() async {
@@ -530,12 +530,17 @@ class _ClassDetailState extends State<ClassDetailView> {
                           ),
                         ),
                         Text(
-                          DateUtilities.getFutureRelativeString(assignment.due),
+                          assignment.due == null
+                              ? 'Add due date'
+                              : DateUtilities.getFutureRelativeString(
+                                  assignment.due),
                           textScaleFactor: 1,
                           style: TextStyle(
-                            fontSize: 12,
-                            fontWeight: FontWeight.normal,
-                          ),
+                              fontSize: 12,
+                              fontWeight: FontWeight.normal,
+                              color: assignment.due == null
+                                  ? SKColors.alert_orange
+                                  : SKColors.dark_gray),
                         ),
                       ],
                     ),
@@ -603,15 +608,15 @@ class _ClassDetailState extends State<ClassDetailView> {
             child: Container(
               alignment: Alignment.center,
               margin: EdgeInsets.only(top: 4, right: 2),
-              padding: EdgeInsets.only(bottom: 0.5),
               decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(6),
+                shape: BoxShape.circle,
                 color: SKColors.warning_red,
               ),
-              width: 12,
-              height: 12,
+              width: 12.75,
+              height: 12.75,
               child: Text(
                 '${weightsWithoutAssignments}',
+                textAlign: TextAlign.center,
                 style: TextStyle(
                     color: Colors.white,
                     fontSize: 9,

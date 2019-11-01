@@ -65,8 +65,7 @@ class ClassStatusModal extends StatelessWidget {
         primaryActionStr: 'Share with classmates',
         secondaryActionStr: 'Join another class',
         primaryAction: () {
-          Share.share(
-              'School is hard. But this new app called Skoller makes it easy! Our class ${studentClass.name ?? ''} is already in the app. Download so we can keep up together!\n\n${studentClass.enrollmentLink}');
+          Share.share(studentClass.shareMessage);
         },
         secondaryAction: () => Navigator.pop(context),
       );
@@ -175,9 +174,10 @@ class ClassStatusModal extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     if (status.primaryActionImageName != null)
-                    Padding(
-                      padding: EdgeInsets.only(right: 4),
-                      child: Image.asset(status.primaryActionImageName),),
+                      Padding(
+                        padding: EdgeInsets.only(right: 4),
+                        child: Image.asset(status.primaryActionImageName),
+                      ),
                     Text(
                       status.primaryActionStr,
                       textAlign: TextAlign.center,

@@ -53,7 +53,7 @@ class _ChatInfoState extends State<ChatInfoView> {
     final loadingScreen = SKLoadingScreen.fadeIn(context);
 
     chat.createChatComment(post).then((response) {
-      loadingScreen.dismiss();
+      loadingScreen.fadeOut();
 
       if (response.wasSuccessful()) {
         setState(() {
@@ -259,7 +259,7 @@ class _ChatInfoState extends State<ChatInfoView> {
                 color: SKColors.warning_red,
                 textStyle: TextStyle(color: Colors.white),
               ))
-          .then((_) => loadingScreen.dismiss());
+          .then((_) => loadingScreen.fadeOut());
     }
   }
 

@@ -234,7 +234,7 @@ class _ProfessorSearchState extends State<ProfessorSearchView> {
         nameLast: lastNameController.text.trim(),
       );
 
-      loadingScreen.dismiss();
+      loadingScreen.fadeOut();
 
       if (result.wasSuccessful()) {
         widget.callback(result.obj);
@@ -289,6 +289,7 @@ class _ProfessorSearchState extends State<ProfessorSearchView> {
                         textCapitalization: TextCapitalization.words,
                         decoration: BoxDecoration(border: null),
                         autofocus: true,
+                        autocorrect: false,
                         controller: searchController,
                       ),
                     ),

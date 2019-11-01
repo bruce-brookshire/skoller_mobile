@@ -11,7 +11,7 @@ class ImageNames {
   static final chatImages = _ChatImages();
   static final sammiImages = _SammiImages();
   static final menuImages = _MenuImages();
-  static final tasksImages = _TasksImages();
+  static final forecastImages = _ForecastImages();
   static final tutorialImages = _TutorialImages();
   static final classInfoImages = _ClassInfoImages();
 }
@@ -24,10 +24,11 @@ class _MenuImages {
   final reminders = '${_base}/reminders.png';
 }
 
-class _TasksImages {
-  static const _base = 'image_assets/tasks_assets';
+class _ForecastImages {
+  static const _base = 'image_assets/forecast_assets';
 
   final forecast = '${_base}/forecast.png';
+  final harry_potter = '${_base}/harry_potter.png';
 }
 
 class _TutorialImages {
@@ -96,11 +97,12 @@ class _SammiImages {
   static const _base = 'image_assets/sammi_personality_assets';
 
   final cool = '${_base}/cool_sammi.png';
-  final shocked = '${_base}/shocked_sammi.png';
+  final shocked = '${_base}/ooo_sammi.png';
   final wow = '${_base}/wow_sammi.png';
   final smile = '${_base}/smile_sammi.png';
   final intro = '${_base}/intro_sammi.png';
-  final school = '${_base}/school_sammi.png';
+  final big_smile = '${_base}/big_smile_sammi.png';
+  // final school = '${_base}/school_sammi.png';
 }
 
 class _RightNavImages {

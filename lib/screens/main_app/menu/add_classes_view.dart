@@ -224,7 +224,7 @@ class _AddClassesState extends State<AddClassesView> {
                     if (success) {
                       await StudentClass.getStudentClasses();
 
-                      loader.dismiss();
+                      loader.fadeOut();
 
                       if (isEnrolled)
                         Navigator.pop(newContext);
@@ -506,6 +506,7 @@ class _AddClassesState extends State<AddClassesView> {
                     style: TextStyle(fontSize: 15, color: SKColors.dark_gray),
                     textCapitalization: TextCapitalization.words,
                     autofocus: true,
+                    autocorrect: false,
                   ),
                 ),
                 Padding(

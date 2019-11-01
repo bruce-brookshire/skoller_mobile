@@ -75,6 +75,12 @@ class StudentClass {
     this.isOnline,
   );
 
+  String get shareMessage {
+    return id % 2 == 0
+        ? 'Ditch your paper planner. Skoller unlocks academic organization and keeps you on track all year long. Our class $name is already set up. Sign up using this link to join me!\n\n$enrollmentLink'
+        : 'This new app takes our syllabus and sends reminders about upcoming due dates, organizes assignments into a calendar, and much more. Our class $name is already set up. Sign up using this link to join me!\n\n$enrollmentLink';
+  }
+
   School getSchool() => School.currentSchools[classPeriod.schoolId];
 
   Color getColor() {
@@ -377,19 +383,52 @@ class StudentClass {
         .then((response) => response.wasSuccessful());
   }
 
+  Future<bool> submitProfessorChangeRequest({
+    String firstName,
+    String lastName,
+    String email,
+    String phoneNumber,
+    String officeLocation,
+    String availability,
+  }) {
+    Map<String, dynamic> body = {
+      'id': id,
+      'name_first': firstName,
+      'name_last': lastName,
+      'email': email,
+      'phone': phoneNumber,
+      'office_location': officeLocation,
+      'office_availability': availability,
+    };
+
+    body.removeWhere((k, v) => v == null);
+    if (body.length == 1) return Future.value(true);
+
+    return SKRequests.post('/classes/$id/changes/300', {'data': body}, null)
+        .then((response) {
+      print(response);
+      return response.wasSuccessful();
+    });
+  }
+
   String _startTimeString(TimeOfDay time) => time == null
       ? null
       : '${time.hour < 10 ? '0' : ''}${time.hour}:${time.minute < 10 ? '0' : ''}${time.minute}:00';
 
   Future<bool> submitWeightChangeRequest(bool isPoints, List<Map> weights) {
-    final body = weights.fold<Map<String, num>>(
-        Map(), (c, e) => c..[e['name']] = e['value']);
+    final body = weights.fold<Map>(
+      Map(),
+      (c, e) => c..[e['name']] = e['value'],
+    );
+
+    if (isPoints != this.isPoints) body['is_points'] = '$isPoints';
+
     return SKRequests.post('/classes/$id/changes/200', {'data': body}, null)
-        .then((response) => response.wasSuccessful());
+        .then((response) => true);
   }
 
-  Future<bool> submitGradeScaleChangeRequest(Map weights) {
-    return SKRequests.post('/classes/$id/changes/100', {'data': weights}, null)
+  Future<bool> submitGradeScaleChangeRequest(Map data) {
+    return SKRequests.post('/classes/$id/changes/100', {'data': data}, null)
         .then((response) => response.wasSuccessful());
   }
 
@@ -643,9 +682,9 @@ class Professor {
   String firstName;
   String lastName;
   String email;
-  String phone_number;
+  String phoneNumber;
   String availability;
-  String office_location;
+  String officeLocation;
 
   String get fullName {
     return (firstName ?? '') +
@@ -658,10 +697,33 @@ class Professor {
     this.firstName,
     this.lastName,
     this.email,
-    this.phone_number,
+    this.phoneNumber,
     this.availability,
-    this.office_location,
+    this.officeLocation,
   );
+
+  Future<bool> updateInfo(
+    String email,
+    String phoneNumber,
+    String availability,
+    String officeLocation,
+  ) {
+    final Map<String, String> body = {
+      'email': email,
+      'phone': phoneNumber,
+      'office_location': officeLocation,
+      'office_availability': availability,
+    };
+
+    body.removeWhere((_, v) => v == null);
+    if (body.length == 0) return Future.value(true);
+
+    return SKRequests.put('/professors/$id', body, Professor._fromJsonObj)
+        .then((response) {
+      print(response);
+      return response.wasSuccessful();
+    });
+  }
 
   static Professor _fromJsonObj(Map content) {
     if (content == null) {
@@ -673,8 +735,8 @@ class Professor {
       content['name_first'],
       content['name_last'],
       content['email'],
-      content['phone_number'],
-      content['availability'],
+      content['phone'],
+      content['office_availability'],
       content['office_location'],
     );
   }

@@ -105,7 +105,7 @@ class _CreateClassModalState extends State<CreateClassModal> {
       }
     }).then((response) async {
       if (response.wasSuccessful()) {
-        loadingScreen.dismiss();
+        loadingScreen.fadeOut();
 
         StudentClass.getStudentClasses().then(
           (response) => DartNotificationCenter.post(
@@ -129,7 +129,7 @@ class _CreateClassModalState extends State<CreateClassModal> {
         throw 'Failed automatically enrolling in the class. Try adding it from the search.';
       }
     }).catchError((onError) {
-      loadingScreen.dismiss();
+      loadingScreen.fadeOut();
 
       if (onError is String) {
         DropdownBanner.showBanner(
@@ -156,7 +156,7 @@ class _CreateClassModalState extends State<CreateClassModal> {
               behavior: HitTestBehavior.opaque,
               onTapUp: (_) {},
               child: SizedBox(
-                height: 360,
+                height: 372,
                 child: PageView(
                   controller: pageController,
                   physics: NeverScrollableScrollPhysics(),
@@ -591,7 +591,7 @@ class _CreateClassScreenTwoState extends State<_CreateClassScreenTwo> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Padding(
-            padding: EdgeInsets.only(bottom: 6),
+            padding: EdgeInsets.only(bottom: 6, top: 4),
             child: SammiSpeechBubble(
               sammiPersonality: SammiPersonality.ooo,
               sammiSide: SammiSide.right,

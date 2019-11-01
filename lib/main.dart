@@ -2,6 +2,7 @@ import 'package:dart_notification_center/dart_notification_center.dart';
 import 'package:dropdown_banner/dropdown_banner.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:skoller/loading_view.dart';
 import 'package:skoller/screens/main_app/main_view.dart';
 import 'package:skoller/tools.dart';
@@ -66,6 +67,10 @@ class _SkollerAppState extends State<SkollerApp> {
   void initState() {
     super.initState();
 
+    // SystemChrome.setSystemUIOverlayStyle(
+    //   SystemUiOverlayStyle(statusBarBrightness: Brightness.light),
+    // );
+
     DartNotificationCenter.subscribe(
       channel: NotificationChannels.appStateChanged,
       observer: this,
@@ -110,11 +115,13 @@ class _SkollerAppState extends State<SkollerApp> {
           body1: TextStyle(
               color: SKColors.dark_gray,
               fontSize: 15,
-              fontWeight: FontWeight.bold),
+              fontWeight: FontWeight.bold,
+              letterSpacing: 0),
           body2: TextStyle(
               color: SKColors.skoller_blue,
               fontSize: 15,
-              fontWeight: FontWeight.bold),
+              fontWeight: FontWeight.bold,
+              letterSpacing: 0),
           button: TextStyle(color: Colors.white),
         ),
       );
@@ -136,6 +143,7 @@ class _SkollerAppState extends State<SkollerApp> {
     return MaterialApp(
       builder: (context, widget) => Theme(data: currentTheme, child: widget),
       theme: currentTheme,
+      debugShowCheckedModeBanner: false,
       home: DropdownBanner(
         child: currentWidget,
         navigatorKey: key,

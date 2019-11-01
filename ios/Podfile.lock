@@ -1,6 +1,8 @@
 PODS:
   - app_review (0.0.1):
     - Flutter
+  - camera (0.0.1):
+    - Flutter
   - FacebookCore (0.9.0):
     - FBSDKCoreKit (~> 5.0)
   - FBSDKCoreKit (5.5.0):
@@ -118,6 +120,7 @@ PODS:
 
 DEPENDENCIES:
   - app_review (from `.symlinks/plugins/app_review/ios`)
+  - camera (from `.symlinks/plugins/camera/ios`)
   - FacebookCore
   - FBSDKCoreKit
   - firebase_analytics (from `.symlinks/plugins/firebase_analytics/ios`)
@@ -155,6 +158,8 @@ SPEC REPOS:
 EXTERNAL SOURCES:
   app_review:
     :path: ".symlinks/plugins/app_review/ios"
+  camera:
+    :path: ".symlinks/plugins/camera/ios"
   firebase_analytics:
     :path: ".symlinks/plugins/firebase_analytics/ios"
   firebase_core:
@@ -182,6 +187,7 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   app_review: 9496df930315fcc396542b68ad915e2d437dec71
+  camera: 38cc83ae9a5667bb5a71c7d9edaf60a91920fd4e
   FacebookCore: ba86524b66cfa86d0f8e65d08faa8504a9f732dd
   FBSDKCoreKit: 7ade9cfea30eef2f6cf105a1aa904f89ea68fb7d
   Firebase: 9cbe4e5b5eaafa05dc932be58b7c8c3820d71e88

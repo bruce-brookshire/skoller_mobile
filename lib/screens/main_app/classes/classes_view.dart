@@ -200,7 +200,9 @@ class _ClassesState extends State<ClassesView> {
             TextSpan(text: 'Please feed me your', children: [
               TextSpan(
                   text: ' syllabus 🍔',
-                  style: TextStyle(color: SKColors.skoller_blue, fontWeight: FontWeight.bold)),
+                  style: TextStyle(
+                      color: SKColors.skoller_blue,
+                      fontWeight: FontWeight.bold)),
               TextSpan(text: ' I\'m hungry'),
             ]),
             style: TextStyle(fontSize: 15, fontWeight: FontWeight.normal),
@@ -225,14 +227,11 @@ class _ClassesState extends State<ClassesView> {
                 text: 'Hey ${SKUser.current.student.nameFirst},\n',
                 children: [
                   TextSpan(
-                      text: 'You got your first class set up! Now, ',
+                      text: 'You got your first class set up! Now,\n',
                       style: TextStyle(fontWeight: FontWeight.normal)),
                   TextSpan(
-                      text: 'Join your 2nd class 👌',
+                      text: 'Join your 2nd class ',
                       style: TextStyle(color: SKColors.skoller_blue)),
-                  TextSpan(
-                      text: '.',
-                      style: TextStyle(fontWeight: FontWeight.normal)),
                 ]),
             style: TextStyle(fontSize: 15),
           ),

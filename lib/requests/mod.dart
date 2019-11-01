@@ -65,6 +65,7 @@ class Mod {
   //--------------//
 
   static Map<int, Mod> currentMods = {};
+  static Map<int, List<Mod>> modsByAssignmentId = {};
 
   static Mod _fromJsonObj(Map content) {
     if (content == null) {
@@ -117,7 +118,7 @@ class Mod {
       }
     }
 
-    return Mod(
+    final mod = Mod(
       content['id'],
       content['student_assignment_id'],
       content['class']['id'],
@@ -128,19 +129,25 @@ class Mod {
       content['is_accepted'],
       data,
     );
+
+    currentMods[mod.id] = mod;
+
+    if (mod._parentAssignmentId != null && mod.isAccepted == null) {
+      if (modsByAssignmentId.containsKey(mod._parentAssignmentId))
+        modsByAssignmentId[mod._parentAssignmentId].add(mod);
+      else
+        modsByAssignmentId[mod._parentAssignmentId] = [mod];
+    }
+
+    return mod;
   }
 
   static Future<RequestResponse> fetchMods() {
     return SKRequests.get(
-      '/students/${SKUser.current.student.id}/mods/',
-      Mod._fromJsonObj,
-    ).then((response) {
-      if (response.wasSuccessful()) {
-        for (final Mod mod in response.obj) {
-          currentMods[mod.id] = mod;
-        }
-      }
-      return response;
+        '/students/${SKUser.current.student.id}/mods/', Mod._fromJsonObj,
+        postRequestAction: () {
+      modsByAssignmentId = {};
+      currentMods = {};
     });
   }
 

@@ -44,7 +44,7 @@ class Analytics {
 }
 
 class UIAssets {
-  static BoxShadow boxShadow = BoxShadow(
+  static final boxShadow = BoxShadow(
     color: Color(0x1F000000),
     offset: Offset(0, 1.75),
     blurRadius: 3.5,

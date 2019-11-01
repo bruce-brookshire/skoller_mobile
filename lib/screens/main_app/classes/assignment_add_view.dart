@@ -179,7 +179,7 @@ class _AssignmentAddState extends State<AssignmentAddView> {
                     .createAssignment(
                         assignmentName, widget.weight, dueDate, isPrivate)
                     .then((response) async {
-                  loadingScreen.dismiss();
+                  loadingScreen.fadeOut();
 
                   if (response.wasSuccessful()) {
                     await StudentClass.currentClasses[widget.class_id]

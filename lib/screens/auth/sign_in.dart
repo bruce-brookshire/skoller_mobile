@@ -38,7 +38,7 @@ class _SignInState extends State<SignIn> {
 
     final status = await Auth.requestLogin(trimStr);
 
-    loader.dismiss();
+    loader.fadeOut();
 
     if ([200, 204].contains(status)) {
       final bool result = await showDialog(

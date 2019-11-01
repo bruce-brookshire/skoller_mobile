@@ -1,3 +1,4 @@
+import 'package:dart_notification_center/dart_notification_center.dart';
 import 'package:intl/intl.dart';
 import 'package:skoller/tools.dart';
 import 'package:flutter/material.dart';
@@ -54,20 +55,46 @@ class _AssignmentEditModalState extends State<AssignmentEditModal> {
     if (newHasChanged != hasChanged) setState(() => hasChanged = newHasChanged);
   }
 
-  void tappedDueDate(TapUpDetails details) async {
-    SKCalendarPicker.presentDateSelector(
-      title: 'Due date',
-      subtitle: 'When is this assignment due?',
-      context: context,
-      startDate: selectedDate ?? DateTime.now(),
-      onSelect: (selectedDate) {
-        setState(() {
-          this.selectedDate = selectedDate;
-          shouldDelete = false;
-        });
-        checkValid();
-      },
-    );
+  void tappedDueDate(_) {
+    if (assignment.due != null)
+      SKCalendarPicker.presentDateSelector(
+        title: 'Due date',
+        subtitle: 'When is this assignment due?',
+        context: context,
+        startDate: selectedDate ?? DateTime.now(),
+        onSelect: (selectedDate) {
+          setState(() {
+            this.selectedDate = selectedDate;
+            shouldDelete = false;
+          });
+          checkValid();
+        },
+      );
+    else
+      SKCalendarPicker.presentDateSelector(
+        title: 'Due date',
+        subtitle: 'When is this assignment due?',
+        context: context,
+        startDate: selectedDate ?? DateTime.now(),
+        onSave: (selectedDate, context) async {
+          final loader = SKLoadingScreen.fadeIn(context);
+          final success =
+              (await assignment.addDueDate(selectedDate)).wasSuccessful() &&
+                  await assignment.refetchSelf();
+
+          if (success) {
+            setState(() {
+              assignment = Assignment.currentAssignments[assignment.id];
+              this.selectedDate = assignment.due;
+            });
+            DartNotificationCenter.post(
+                channel: NotificationChannels.assignmentChanged);
+          }
+
+          loader.fadeOut();
+          Navigator.pop(this.context);
+        },
+      );
   }
 
   void tappedWeight(TapUpDetails details) async {
@@ -90,6 +117,8 @@ class _AssignmentEditModalState extends State<AssignmentEditModal> {
               alignment: Alignment.center,
               child: Text(
                 classWeights[index].name,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
                 style: TextStyle(
                   color: SKColors.dark_gray,
                   fontSize: 15,
@@ -121,7 +150,7 @@ class _AssignmentEditModalState extends State<AssignmentEditModal> {
       });
     } else {
       if ((assignment.due == null && selectedDate != null) ||
-          !selectedDate.isAtSameMomentAs(assignment.due)) {
+          !(selectedDate?.isAtSameMomentAs(assignment.due) ?? true)) {
         requests.add({
           'request': assignment.updateDueDate(
             isPrivate,
@@ -152,6 +181,7 @@ class _AssignmentEditModalState extends State<AssignmentEditModal> {
 
   @override
   Widget build(BuildContext context) {
+    print("building with selectedDate: $selectedDate");
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 24),
       child: Center(
@@ -296,6 +326,7 @@ class _AssignmentEditModalState extends State<AssignmentEditModal> {
                               onTapUp: tappedWeight,
                               child: Text(
                                 selectedWeight?.name ?? 'Not graded',
+                                textAlign: TextAlign.right,
                                 style: TextStyle(color: SKColors.skoller_blue),
                               ),
                             ),

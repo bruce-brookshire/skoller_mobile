@@ -192,7 +192,7 @@ class _CreateSchoolModalState extends State<CreateSchoolModal> {
             .update(primarySchool: response.obj)
             .then((response2) {
           if (response2) {
-            loadingScreen.dismiss();
+            loadingScreen.fadeOut();
 
             Navigator.pop(context, response.obj);
           } else {
@@ -203,7 +203,7 @@ class _CreateSchoolModalState extends State<CreateSchoolModal> {
         throw 'Failed to create school. Try searching and recreating';
       }
     }).catchError((error) {
-      loadingScreen.dismiss();
+      loadingScreen.fadeOut();
       
       if (error is String) {
         DropdownBanner.showBanner(

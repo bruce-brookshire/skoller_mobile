@@ -1,20 +1,20 @@
-import 'dart:math';
-import 'dart:async';
-import 'dart:collection';
-import 'class_detail_view.dart';
-import 'package:intl/intl.dart';
-import 'package:share/share.dart';
-import './modals/assignment_edit_modal.dart';
-import 'package:skoller/tools.dart';
+import 'package:skoller/screens/main_app/activity/update_info_view.dart';
+import 'package:dart_notification_center/dart_notification_center.dart';
+import 'package:dropdown_banner/dropdown_banner.dart';
+import 'package:skoller/constants/constants.dart';
 import './modals/assignment_notes_modal.dart';
+import './modals/student_profile_modal.dart';
+import './modals/assignment_edit_modal.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:skoller/constants/constants.dart';
-import 'package:dropdown_banner/dropdown_banner.dart';
-import './modals/student_profile_modal.dart';
-import 'package:dart_notification_center/dart_notification_center.dart';
-import 'package:skoller/screens/main_app/activity/update_info_view.dart';
+import 'package:skoller/tools.dart';
+import 'package:share/share.dart';
+import 'class_detail_view.dart';
+import 'package:intl/intl.dart';
+import 'dart:collection';
+import 'dart:async';
+import 'dart:math';
 
 class AssignmentInfoView extends StatefulWidget {
   final int assignment_id;
@@ -60,12 +60,23 @@ class _AssignmentInfoState extends State<AssignmentInfoView> {
     }
 
     removalKeys.forEach((key) => assignmentMods.remove(key));
+
+    DartNotificationCenter.subscribe(
+      channel: NotificationChannels.assignmentChanged,
+      observer: this,
+      onNotification: (_) => setState(
+        () => assignment = Assignment.currentAssignments[assignment.id],
+      ),
+    );
   }
 
   @override
   void dispose() {
+    DartNotificationCenter.unsubscribe(observer: this);
+
     postFieldController.dispose();
     postFocusNode.dispose();
+
     super.dispose();
   }
 
@@ -210,7 +221,7 @@ class _AssignmentInfoState extends State<AssignmentInfoView> {
             DartNotificationCenter.post(
                 channel: NotificationChannels.classChanged);
 
-            loader.dismiss();
+            loader.fadeOut();
             Navigator.pop(context);
             return;
           }
@@ -225,12 +236,34 @@ class _AssignmentInfoState extends State<AssignmentInfoView> {
       bool response = await assignment.refetchSelf();
 
       if (response != null && response) {
-        setState(() {
-          assignment = Assignment.currentAssignments[widget.assignment_id];
-        });
+        setState(() =>
+            assignment = Assignment.currentAssignments[widget.assignment_id]);
       }
-      loader.dismiss();
+      loader.fadeOut();
     }
+  }
+
+  void tappedAddDueDate(_) async {
+    SKCalendarPicker.presentDateSelector(
+      title: 'Due date',
+      subtitle: 'When is this assignment due?',
+      context: context,
+      startDate: DateTime.now(),
+      onSave: (selectedDate, context) async {
+        final loader = SKLoadingScreen.fadeIn(context);
+        final result = await assignment.addDueDate(selectedDate);
+
+        if (result.wasSuccessful()) {
+          if (await assignment.refetchSelf())
+            setState(() => assignment =
+                Assignment.currentAssignments[widget.assignment_id]);
+
+          loader.fadeOut();
+          DartNotificationCenter.post(
+              channel: NotificationChannels.assignmentChanged);
+        }
+      },
+    );
   }
 
   void tappedWithMods(List<Mod> mods, BuildContext context) {
@@ -424,7 +457,7 @@ class _AssignmentInfoState extends State<AssignmentInfoView> {
           '${NumberUtilities.formatWeightAsPercent(assignment.weight)} of your final grade';
 
     if (days == null)
-      dueDescr = 'Not due';
+      dueDescr = '';
     else if (days < 0)
       dueDescr = 'in the past';
     else if (days == 0)
@@ -498,12 +531,23 @@ class _AssignmentInfoState extends State<AssignmentInfoView> {
                           color: SKColors.light_gray),
                     ),
                   ),
-                  Container(
-                    margin: EdgeInsets.only(left: 12, right: 12),
-                    child: Text(assignment.due == null
-                        ? 'No due date'
-                        : DateFormat('E, MMM. d').format(assignment.due)),
-                  ),
+                  assignment.due == null
+                      ? GestureDetector(
+                          onTapUp: tappedAddDueDate,
+                          child: Container(
+                            margin: EdgeInsets.only(left: 12, right: 12),
+                            child: Text(
+                              'Add due date',
+                              style: TextStyle(color: SKColors.alert_orange),
+                            ),
+                          ),
+                        )
+                      : Container(
+                          margin: EdgeInsets.only(left: 12, right: 12),
+                          child: Text(
+                            DateFormat('E, MMM. d').format(assignment.due),
+                          ),
+                        ),
                 ],
               ),
               Container(
@@ -833,8 +877,8 @@ class _AssignmentInfoState extends State<AssignmentInfoView> {
                 style: TextStyle(fontWeight: FontWeight.normal, fontSize: 14),
               ),
               GestureDetector(
-                onTapUp: (details) => Share.share(
-                    'School is hard. But this new app called Skoller makes it easy! Our class ${assignment.parentClass.name ?? ''} is already in the app. Download so we can keep up together!\n\n${assignment.parentClass.enrollmentLink}'),
+                onTapUp: (details) =>
+                    Share.share(assignment.parentClass.shareMessage),
                 child: Container(
                   alignment: Alignment.center,
                   margin: EdgeInsets.symmetric(horizontal: 16, vertical: 12),

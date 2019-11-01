@@ -29,17 +29,24 @@ class _WeightsChangeRequestState extends State<WeightsChangeRequestView> {
 
     isPoints = studentClass.isPoints;
     weights = (StudentClass.currentClasses[widget.classId].weights ?? [])
-        .map((weight) => {'name': weight.name, 'value': weight.weight})
+        .map(
+          (weight) => Map<dynamic, dynamic>.fromIterables(
+            ['name', 'value'],
+            [weight.name, weight.weight],
+          ),
+        )
         .toList();
 
     super.initState();
   }
 
   void checkValid() {
-    final weights = StudentClass.currentClasses[widget.classId].weights ?? [];
+    final studentClass = StudentClass.currentClasses[widget.classId];
+    final weights = studentClass.weights ?? [];
     Map<String, double> weightMap = {};
     bool hasChanged = false;
 
+    // Initialize weightMap with class weights
     for (final weight in weights) {
       weightMap[weight.name] = weight.weight;
     }
@@ -48,6 +55,7 @@ class _WeightsChangeRequestState extends State<WeightsChangeRequestView> {
       final name = weight['name'];
 
       if (weightMap.containsKey(name)) {
+        // Remove from weightMap if weightMap contains the key-val
         if (weightMap[name] == weight['value']) {
           weightMap.remove(name);
         } else {
@@ -60,7 +68,9 @@ class _WeightsChangeRequestState extends State<WeightsChangeRequestView> {
       }
     }
 
-    if (!hasChanged) hasChanged = weightMap.length != 0;
+    // If the weightMap has leftover weights, then we have new weights
+    if (!hasChanged)
+      hasChanged = weightMap.length != 0 || isPoints != studentClass.isPoints;
 
     if (hasChanged != isEdited) setState(() => isEdited = hasChanged);
   }
@@ -85,10 +95,10 @@ class _WeightsChangeRequestState extends State<WeightsChangeRequestView> {
     showWeightMaker('', '', true, (name, value) {
       if (name != '' && value != '' && int.tryParse(value) != null) {
         setState(
-          () => weights.add({
-            'name': name,
-            'value': int.parse(value),
-          } as Map),
+          () => weights.add(Map<dynamic, dynamic>.fromIterables(
+            ['name', 'value'],
+            [name, int.parse(value)],
+          )),
         );
         checkValid();
       }
@@ -111,13 +121,15 @@ class _WeightsChangeRequestState extends State<WeightsChangeRequestView> {
   void tappedSubmit(TapUpDetails details) {
     final currTotal = weights.fold(0, (val, item) => item['value'] + val);
 
-
     if ((isPoints || currTotal == 100) && isEdited) {
       final studentClass = StudentClass.currentClasses[widget.classId];
       final loader = SKLoadingScreen.fadeIn(context);
+      final weights =
+          this.weights.map((w) => w..update('value', (v) => '$v')).toList();
+
       studentClass.submitWeightChangeRequest(isPoints, weights).then((success) {
         if (success) {
-          loader.dismiss();
+          loader.fadeOut();
           DropdownBanner.showBanner(
             text: 'Successfully submitted for review',
             color: SKColors.success,
@@ -132,10 +144,16 @@ class _WeightsChangeRequestState extends State<WeightsChangeRequestView> {
           );
         }
       });
-    } else  if (!isEdited) {
-      DropdownBanner.showBanner(text: 'Weight structure must change to create a change request.', color: SKColors.alert_orange, textStyle: TextStyle(color: Colors.white));
+    } else if (!isEdited) {
+      DropdownBanner.showBanner(
+          text: 'Weight structure must change to create a change request.',
+          color: SKColors.alert_orange,
+          textStyle: TextStyle(color: Colors.white));
     } else {
-      DropdownBanner.showBanner(text: 'Weights must sum to 100%', color: SKColors.alert_orange, textStyle: TextStyle(color: Colors.white));
+      DropdownBanner.showBanner(
+          text: 'Weights must sum to 100%',
+          color: SKColors.alert_orange,
+          textStyle: TextStyle(color: Colors.white));
     }
   }
 
@@ -198,6 +216,7 @@ class _WeightsChangeRequestState extends State<WeightsChangeRequestView> {
                     ),
                     onValueChanged: (index) {
                       isPoints = index == 1;
+                      checkValid();
                       setState(() => selectedSegment = index);
                     },
                     selectedColor: SKColors.skoller_blue,
@@ -274,15 +293,19 @@ class _WeightsChangeRequestState extends State<WeightsChangeRequestView> {
                           'Total',
                           style: TextStyle(fontSize: 20),
                         ),
-                        GestureDetector(
-                          // onTapUp: (details) =>
-                          //     widget.subviewParent.backwardState(),
-                          child: Text(
-                            '$currTotal${isPoints ? '' : ' / 100'}${isPoints ? ' pts.' : '%'}',
-                            style: TextStyle(
-                                fontSize: 20, color: SKColors.dark_gray),
-                          ),
-                        )
+                        isPoints
+                            ? GestureDetector(
+                                child: Text(
+                                  '$currTotal pts.',
+                                  style: TextStyle(
+                                      fontSize: 20, color: SKColors.dark_gray),
+                                ),
+                              )
+                            : Text(
+                                '$currTotal / 100%',
+                                style: TextStyle(
+                                    fontSize: 20, color: SKColors.dark_gray),
+                              ),
                       ],
                     ),
                   ),

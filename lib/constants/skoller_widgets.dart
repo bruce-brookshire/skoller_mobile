@@ -1,33 +1,5 @@
 part of 'constants.dart';
 
-// class SKTextField extends StatelessWidget {
-//   final String fillText;
-//   final EdgeInsets margin;
-//   final double width;
-
-//   SKTextField({this.fillText, this.margin, this.width, });
-
-//   @override
-//   Widget build(BuildContext context) => Container(
-//         margin: margin,
-//         width: width,
-//         child: Material(
-//           type: MaterialType.card,
-//           elevation: 3,
-//           borderRadius: BorderRadius.circular(5),
-//           child: Container(
-//             margin: EdgeInsets.all(4),
-//             padding: EdgeInsets.symmetric(horizontal: 4, vertical: 6),
-//             child: TextField(
-//               obscureText: true,
-//               decoration: InputDecoration.collapsed(hintText: fillText),
-//               style: TextStyle(fontSize: 14),
-//             ),
-//           ),
-//         ),
-//       );
-// }
-
 class SKButton extends StatelessWidget {
   final String buttonText;
   final EdgeInsets margins;
@@ -289,7 +261,8 @@ class SKCalendarPicker extends StatefulWidget {
     @required String subtitle,
     @required BuildContext context,
     @required DateTime startDate,
-    @required DateCallback onSelect,
+    DateCallback onSelect,
+    DateContextCallback onSave,
     bool showNoDate = false,
   }) async {
     DateTime selectedDate = startDate;
@@ -297,6 +270,8 @@ class SKCalendarPicker extends StatefulWidget {
     final calendar = SKCalendarPicker._(startDate, (date) {
       selectedDate = date;
     });
+
+    final isSave = onSave != null;
 
     return showDialog(
         context: context,
@@ -389,16 +364,23 @@ class SKCalendarPicker extends StatefulWidget {
                       Expanded(
                         child: GestureDetector(
                           behavior: HitTestBehavior.opaque,
-                          onTapUp: (details) {
-                            onSelect(selectedDate);
+                          onTapUp: (details) async {
+                            // Wait to save if not used in a data-passing context
+                            if (isSave) await onSave(selectedDate, context);
+                            else onSelect(selectedDate);
+
                             Navigator.pop(context);
                           },
                           child: Container(
                             alignment: Alignment.center,
                             padding: EdgeInsets.only(top: 12, bottom: 8),
                             child: Text(
-                              'Select',
-                              style: TextStyle(color: SKColors.skoller_blue),
+                              isSave ? 'Save' : 'Select',
+                              style: TextStyle(
+                                color: isSave
+                                    ? SKColors.success
+                                    : SKColors.skoller_blue,
+                              ),
                             ),
                           ),
                         ),
@@ -773,7 +755,7 @@ class SKLoadingScreen extends ModalRoute<void> {
   @override
   bool get maintainState => true;
 
-  void dismiss() {
+  void fadeOut() {
     navigator.pop();
   }
 
@@ -1189,6 +1171,7 @@ class SKHeaderProfilePhoto extends StatelessWidget {
         decoration: BoxDecoration(
           color: Colors.white,
           shape: BoxShape.circle,
+          boxShadow: [BoxShadow(blurRadius: 3, color: Color(0x19000000))],
           image: DecorationImage(
             fit: BoxFit.fill,
             image: SKUser.current.avatarUrl == null
@@ -1312,122 +1295,11 @@ class SammiSpeechBubble extends StatelessWidget {
       case SammiPersonality.ooo:
         return Image.asset(ImageNames.sammiImages.shocked);
       case SammiPersonality.school:
-        return Image.asset(ImageNames.sammiImages.school);
+        return Image.asset(ImageNames.sammiImages.smile);
     }
     return null;
   }
 }
-
-// class AnimatedSammiSpeechBubble extends StatefulWidget {
-//   final SammiPersonality sammiPersonality;
-//   final  Text speechBubbleContents;
-//   final SammiSide sammiSide;
-
-//   AnimatedSammiSpeechBubble({
-//     @required this.sammiPersonality,
-//     @required this.speechBubbleContents,
-//     this.sammiSide = SammiSide.left,
-//   });
-
-//   @override
-//   State createState() => _AnimatedSammiSpeechBubble();
-// }
-
-// class _AnimatedSammiSpeechBubble extends State<AnimatedSammiSpeechBubble> {
-//   int index = 0;
-//   String curText = '';
-//   Image _sammiImageBuilder() {
-//     switch (widget.sammiPersonality) {
-//       case SammiPersonality.cool:
-//         return Image.asset(ImageNames.sammiImages.cool);
-//       case SammiPersonality.smile:
-//         return Image.asset(ImageNames.sammiImages.smile);
-//       case SammiPersonality.wow:
-//         return Image.asset(ImageNames.sammiImages.wow);
-//       case SammiPersonality.ooo:
-//         return Image.asset(ImageNames.sammiImages.shocked);
-//     }
-//     return null;
-//   }
-
-//   @override
-//   Widget build(BuildContext context) {
-//     final leftArrow = widget.sammiSide == SammiSide.left;
-//     final image = _sammiImageBuilder();
-
-//     final contents = Align(
-//       alignment: leftArrow ? Alignment.centerLeft : Alignment.centerRight,
-//       child: Container(
-//           margin: leftArrow
-//               ? EdgeInsets.only(left: 13)
-//               : EdgeInsets.only(right: 13),
-//           padding: EdgeInsets.all(8),
-//           decoration: BoxDecoration(
-//             color: Colors.white,
-//             borderRadius: BorderRadius.circular(7),
-//             border: Border.all(color: SKColors.border_gray),
-//             boxShadow: [UIAssets.boxShadow],
-//           ),
-//           child: widget.speechBubbleContents),
-//     );
-
-//     final arrow = Align(
-//       alignment: leftArrow ? Alignment.centerLeft : Alignment.centerRight,
-//       child: CustomPaint(
-//         painter: _SammiArrowPainter(widget.sammiSide),
-//         child: Container(
-//           width: 14,
-//           height: 16,
-//         ),
-//       ),
-//     );
-
-//     return Padding(
-//       padding: EdgeInsets.symmetric(horizontal: 8),
-//       child: Row(
-//         crossAxisAlignment: CrossAxisAlignment.center,
-//         mainAxisAlignment:
-//             leftArrow ? MainAxisAlignment.start : MainAxisAlignment.end,
-//         mainAxisSize: MainAxisSize.min,
-//         children: leftArrow
-//             ? [
-//                 image,
-//                 Flexible(
-//                   flex: 1,
-//                   fit: FlexFit.tight,
-//                   child: Padding(
-//                     padding: EdgeInsets.only(left: 2, top: 6),
-//                     child: Stack(
-//                       alignment: Alignment.centerLeft,
-//                       children: <Widget>[
-//                         contents,
-//                         arrow,
-//                       ],
-//                     ),
-//                   ),
-//                 ),
-//               ]
-//             : [
-//                 Flexible(
-//                   flex: 1,
-//                   fit: FlexFit.tight,
-//                   child: Padding(
-//                     padding: EdgeInsets.only(left: 2, top: 6),
-//                     child: Stack(
-//                       alignment: Alignment.centerRight,
-//                       children: <Widget>[
-//                         contents,
-//                         arrow,
-//                       ],
-//                     ),
-//                   ),
-//                 ),
-//                 image,
-//               ],
-//       ),
-//     );
-//   }
-// }
 
 class _SammiArrowPainter extends CustomPainter {
   final SammiSide side;
@@ -1975,4 +1847,60 @@ class SyllabusInstructionsModal extends StatelessWidget {
       ],
     );
   }
+}
+
+class SKHeaderCard extends StatelessWidget {
+  final Widget leftHeaderItem;
+  final Widget rightHeaderItem;
+  final List<Widget> children;
+  final EdgeInsets margin;
+
+  SKHeaderCard({
+    @required this.leftHeaderItem,
+    this.rightHeaderItem,
+    @required this.children,
+    this.margin,
+  });
+
+  @override
+  Widget build(BuildContext context) => Container(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(10),
+          border: Border.all(color: SKColors.border_gray),
+          boxShadow: [UIAssets.boxShadow],
+        ),
+        margin: margin ?? EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: <Widget>[
+            Container(
+              alignment: Alignment.centerLeft,
+              padding: EdgeInsets.fromLTRB(12, 12, 12, 8),
+              decoration: BoxDecoration(
+                color: SKColors.selected_gray,
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(10),
+                  topRight: Radius.circular(10),
+                ),
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  leftHeaderItem,
+                  if (rightHeaderItem != null) rightHeaderItem,
+                ],
+              ),
+            ),
+            Padding(
+              padding: EdgeInsets.all(10),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                mainAxisSize: MainAxisSize.min,
+                children: children,
+              ),
+            ),
+          ],
+        ),
+      );
 }

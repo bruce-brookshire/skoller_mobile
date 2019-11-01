@@ -162,10 +162,32 @@ class Assignment {
       tzCorrectedString = correctedDueDate.toIso8601String();
     }
 
-    return await SKRequests.put(
+    return SKRequests.put(
       '/assignments/${id}',
       {
         'is_private': isPrivate,
+        'due': tzCorrectedString,
+      },
+      Assignment._fromJsonObj,
+    );
+  }
+
+  Future<RequestResponse> addDueDate(DateTime dueDate) async {
+    String tzCorrectedString = dueDate.toUtc().toIso8601String();
+
+    DateTime correctedDueDate =
+        await TimeZoneManager.convertUtcOffsetFromLocalToSchool(
+      dueDate,
+      parentClass.getSchool().timezone,
+    );
+
+    if (correctedDueDate != null) {
+      tzCorrectedString = correctedDueDate.toIso8601String();
+    }
+
+    return SKRequests.put(
+      '/assignments/${id}/add-due-date',
+      {
         'due': tzCorrectedString,
       },
       Assignment._fromJsonObj,
