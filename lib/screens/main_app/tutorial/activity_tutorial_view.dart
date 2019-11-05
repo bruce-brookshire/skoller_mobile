@@ -115,7 +115,7 @@ class ActivityTutorialView extends StatelessWidget {
                       color: SKColors.skoller_blue,
                       borderRadius: BorderRadius.circular(5),
                       border: Border.all(color: Colors.white),
-                      boxShadow: [UIAssets.boxShadow],
+                      boxShadow: UIAssets.boxShadow,
                     ),
                     child: Text(
                       promptMsg,
@@ -139,7 +139,7 @@ class ActivityTutorialView extends StatelessWidget {
         padding: EdgeInsets.symmetric(horizontal: 8, vertical: 6),
         decoration: BoxDecoration(
           color: Colors.white,
-          boxShadow: [UIAssets.boxShadow],
+          boxShadow: UIAssets.boxShadow,
           borderRadius: BorderRadius.circular(5),
           border: Border.all(color: SKColors.border_gray),
         ),
@@ -209,7 +209,7 @@ class ActivityTutorialView extends StatelessWidget {
         padding: EdgeInsets.symmetric(horizontal: 8, vertical: 6),
         decoration: BoxDecoration(
           color: Colors.white,
-          boxShadow: [UIAssets.boxShadow],
+          boxShadow: UIAssets.boxShadow,
           borderRadius: BorderRadius.circular(5),
           border: Border.all(color: SKColors.border_gray),
         ),

@@ -258,7 +258,7 @@ class _CreateClassScreenOneState extends State<_CreateClassScreenOne> {
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(5),
                     border: Border.all(color: SKColors.border_gray),
-                    boxShadow: [UIAssets.boxShadow],
+                    boxShadow: UIAssets.boxShadow,
                   ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -304,7 +304,7 @@ class _CreateClassScreenOneState extends State<_CreateClassScreenOne> {
                           color: Colors.white,
                           borderRadius: BorderRadius.circular(5),
                           border: Border.all(color: SKColors.border_gray),
-                          boxShadow: [UIAssets.boxShadow],
+                          boxShadow: UIAssets.boxShadow,
                         ),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -347,7 +347,7 @@ class _CreateClassScreenOneState extends State<_CreateClassScreenOne> {
                           color: Colors.white,
                           borderRadius: BorderRadius.circular(5),
                           border: Border.all(color: SKColors.border_gray),
-                          boxShadow: [UIAssets.boxShadow],
+                          boxShadow: UIAssets.boxShadow,
                         ),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -388,7 +388,7 @@ class _CreateClassScreenOneState extends State<_CreateClassScreenOne> {
                           color: Colors.white,
                           borderRadius: BorderRadius.circular(5),
                           border: Border.all(color: SKColors.border_gray),
-                          boxShadow: [UIAssets.boxShadow],
+                          boxShadow: UIAssets.boxShadow,
                         ),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -439,7 +439,7 @@ class _CreateClassScreenOneState extends State<_CreateClassScreenOne> {
                           : SKColors.inactive_gray,
                       borderRadius: BorderRadius.circular(5),
                       border: Border.all(color: SKColors.border_gray),
-                      boxShadow: [UIAssets.boxShadow],
+                      boxShadow: UIAssets.boxShadow,
                     ),
                     padding: EdgeInsets.symmetric(vertical: 6),
                     alignment: Alignment.center,
@@ -617,7 +617,7 @@ class _CreateClassScreenTwoState extends State<_CreateClassScreenTwo> {
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(5),
                 border: Border.all(color: SKColors.border_gray),
-                boxShadow: [UIAssets.boxShadow],
+                boxShadow: UIAssets.boxShadow,
               ),
               child: Row(
                 children: <Widget>[
@@ -663,7 +663,7 @@ class _CreateClassScreenTwoState extends State<_CreateClassScreenTwo> {
               color: Colors.white,
               borderRadius: BorderRadius.circular(5),
               border: Border.all(color: SKColors.border_gray),
-              boxShadow: [UIAssets.boxShadow],
+              boxShadow: UIAssets.boxShadow,
             ),
             margin: EdgeInsets.symmetric(horizontal: 8, vertical: 8),
             padding: EdgeInsets.all(8),
@@ -750,7 +750,7 @@ class _CreateClassScreenTwoState extends State<_CreateClassScreenTwo> {
                 borderRadius: BorderRadius.circular(5),
                 border: Border.all(color: SKColors.border_gray),
                 color: isValid ? SKColors.skoller_blue : SKColors.inactive_gray,
-                boxShadow: [UIAssets.boxShadow],
+                boxShadow: UIAssets.boxShadow,
               ),
               alignment: Alignment.center,
               padding: EdgeInsets.symmetric(vertical: 8),
@@ -872,7 +872,7 @@ class _CreateClassScreenThreeState extends State<_CreateClassScreenThree> {
             decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.circular(5),
-              boxShadow: [UIAssets.boxShadow],
+              boxShadow: UIAssets.boxShadow,
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -1109,7 +1109,7 @@ class _CreateClassScreenThreeState extends State<_CreateClassScreenThree> {
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(5),
                 color: SKColors.success,
-                boxShadow: [UIAssets.boxShadow],
+                boxShadow: UIAssets.boxShadow,
               ),
               child: Text(
                 'Done! 🎉',

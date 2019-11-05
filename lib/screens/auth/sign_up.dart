@@ -190,7 +190,7 @@ class _SignUpState extends State<SignUp> {
                                 color: Colors.white,
                                 borderRadius: BorderRadius.circular(5),
                                 border: Border.all(color: SKColors.border_gray),
-                                boxShadow: [UIAssets.boxShadow],
+                                boxShadow: UIAssets.boxShadow,
                               ),
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -236,7 +236,7 @@ class _SignUpState extends State<SignUp> {
                                 color: Colors.white,
                                 borderRadius: BorderRadius.circular(5),
                                 border: Border.all(color: SKColors.border_gray),
-                                boxShadow: [UIAssets.boxShadow],
+                                boxShadow: UIAssets.boxShadow,
                               ),
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -282,7 +282,7 @@ class _SignUpState extends State<SignUp> {
                           color: Colors.white,
                           borderRadius: BorderRadius.circular(5),
                           border: Border.all(color: SKColors.border_gray),
-                          boxShadow: [UIAssets.boxShadow],
+                          boxShadow: UIAssets.boxShadow,
                         ),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -326,7 +326,7 @@ class _SignUpState extends State<SignUp> {
                           color: Colors.white,
                           borderRadius: BorderRadius.circular(5),
                           border: Border.all(color: SKColors.border_gray),
-                          boxShadow: [UIAssets.boxShadow],
+                          boxShadow: UIAssets.boxShadow,
                         ),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,

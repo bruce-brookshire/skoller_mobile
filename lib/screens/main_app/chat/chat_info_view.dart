@@ -147,7 +147,7 @@ class _ChatInfoState extends State<ChatInfoView> {
                 margin: EdgeInsets.fromLTRB(8, 10, 8, 2),
                 padding: EdgeInsets.symmetric(horizontal: 6, vertical: 4),
                 decoration: BoxDecoration(
-                  boxShadow: [UIAssets.boxShadow],
+                  boxShadow: UIAssets.boxShadow,
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(5),
                   border: Border.all(color: SKColors.border_gray),
@@ -311,7 +311,7 @@ class _ChatInfoState extends State<ChatInfoView> {
       margin: EdgeInsets.fromLTRB(8, 3, 8, 4),
       padding: EdgeInsets.symmetric(horizontal: 8, vertical: 6),
       decoration: BoxDecoration(
-        boxShadow: [UIAssets.boxShadow],
+        boxShadow: UIAssets.boxShadow,
         color: Colors.white,
         borderRadius: BorderRadius.circular(5),
         border: Border.all(color: SKColors.border_gray),
@@ -445,7 +445,7 @@ class _ChatInfoState extends State<ChatInfoView> {
             decoration: BoxDecoration(
               color: SKColors.skoller_blue,
               borderRadius: BorderRadius.circular(5),
-              boxShadow: [UIAssets.boxShadow],
+              boxShadow: UIAssets.boxShadow,
             ),
             child: Text(
               'Add a comment',
@@ -536,7 +536,7 @@ class _ChatInfoState extends State<ChatInfoView> {
       margin: EdgeInsets.fromLTRB(isComment ? 8 : 4, isComment ? 10 : 4, 8, 2),
       padding: EdgeInsets.symmetric(horizontal: 6, vertical: 4),
       decoration: BoxDecoration(
-        boxShadow: [UIAssets.boxShadow],
+        boxShadow: UIAssets.boxShadow,
         color: Colors.white,
         borderRadius: BorderRadius.circular(5),
         border: Border.all(color: SKColors.border_gray),

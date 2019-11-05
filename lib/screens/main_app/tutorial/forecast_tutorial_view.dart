@@ -95,7 +95,7 @@ class ForecastTutorialView extends StatelessWidget {
                       color: SKColors.skoller_blue,
                       borderRadius: BorderRadius.circular(5),
                       border: Border.all(color: Colors.white),
-                      boxShadow: [UIAssets.boxShadow],
+                      boxShadow: UIAssets.boxShadow,
                     ),
                     child: Text(
                       promptMsg,
@@ -118,7 +118,7 @@ class ForecastTutorialView extends StatelessWidget {
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(5),
         border: Border.all(color: SKColors.border_gray, width: 1),
-        boxShadow: [UIAssets.boxShadow],
+        boxShadow: UIAssets.boxShadow,
         color: Colors.white,
       ),
       child: Column(

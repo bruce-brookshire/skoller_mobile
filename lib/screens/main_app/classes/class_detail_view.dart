@@ -323,7 +323,7 @@ class _ClassDetailState extends State<ClassDetailView> {
                               padding: EdgeInsets.symmetric(vertical: 8),
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(5),
-                                boxShadow: [UIAssets.boxShadow],
+                                boxShadow: UIAssets.boxShadow,
                                 color: studentClass.getColor(),
                               ),
                               child: Text(
@@ -400,7 +400,7 @@ class _ClassDetailState extends State<ClassDetailView> {
                 decoration: BoxDecoration(
                     color:
                         classmates < 4 ? studentClass.getColor() : Colors.white,
-                    boxShadow: [UIAssets.boxShadow],
+                    boxShadow: UIAssets.boxShadow,
                     border: Border.all(
                       color:
                           classmates < 4 ? Colors.white : SKColors.skoller_blue,
@@ -482,7 +482,7 @@ class _ClassDetailState extends State<ClassDetailView> {
         decoration: BoxDecoration(
             color:
                 _selectedIndex == index ? SKColors.selected_gray : Colors.white,
-            boxShadow: [UIAssets.boxShadow],
+            boxShadow: UIAssets.boxShadow,
             borderRadius: BorderRadius.circular(5),
             border: Border.all(color: SKColors.border_gray)),
         margin: EdgeInsets.fromLTRB(6, 3, 6, 3),

@@ -331,7 +331,7 @@ class _PrimarySchoolState extends State<PrimarySchoolModal> {
                   decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(5),
                       color: SKColors.skoller_blue,
-                      boxShadow: [UIAssets.boxShadow]),
+                      boxShadow: UIAssets.boxShadow),
                   child: Text(
                     'Get started',
                     style: TextStyle(color: Colors.white),
@@ -375,7 +375,7 @@ class _PrimarySchoolState extends State<PrimarySchoolModal> {
           color: Colors.white,
           borderRadius: BorderRadius.circular(10),
           border: Border.all(color: SKColors.border_gray),
-          boxShadow: [UIAssets.boxShadow],
+          boxShadow: UIAssets.boxShadow,
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -462,7 +462,7 @@ class _PrimarySchoolState extends State<PrimarySchoolModal> {
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(5),
                     border: Border.all(color: SKColors.border_gray),
-                    boxShadow: [UIAssets.boxShadow]),
+                    boxShadow: UIAssets.boxShadow),
                 child: Row(
                   children: [
                     Expanded(
@@ -509,7 +509,7 @@ class _PrimarySchoolState extends State<PrimarySchoolModal> {
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(5),
                     border: Border.all(color: SKColors.border_gray),
-                    boxShadow: [UIAssets.boxShadow]),
+                    boxShadow: UIAssets.boxShadow),
                 child: Row(
                   children: [
                     Expanded(
@@ -551,7 +551,7 @@ class _PrimarySchoolState extends State<PrimarySchoolModal> {
           decoration: BoxDecoration(
             color: SKColors.skoller_blue,
             borderRadius: BorderRadius.circular(5),
-            boxShadow: [UIAssets.boxShadow],
+            boxShadow: UIAssets.boxShadow,
           ),
           child: Text(
             'That\'s right! 👉',
@@ -609,7 +609,7 @@ class _PrimarySchoolState extends State<PrimarySchoolModal> {
                                   borderRadius: BorderRadius.circular(5),
                                   border:
                                       Border.all(color: SKColors.border_gray),
-                                  boxShadow: [UIAssets.boxShadow]),
+                                  boxShadow: UIAssets.boxShadow),
                               child: Column(
                                 mainAxisSize: MainAxisSize.min,
                                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -663,7 +663,7 @@ class _PrimarySchoolState extends State<PrimarySchoolModal> {
                 ? SKColors.inactive_gray
                 : SKColors.skoller_blue,
             borderRadius: BorderRadius.circular(5),
-            boxShadow: [UIAssets.boxShadow],
+            boxShadow: UIAssets.boxShadow,
           ),
           child: Text(
             'Continue 👉',

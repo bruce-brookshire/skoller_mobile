@@ -137,7 +137,7 @@ class ChatTutorialView extends StatelessWidget {
                       color: SKColors.skoller_blue,
                       borderRadius: BorderRadius.circular(5),
                       border: Border.all(color: Colors.white),
-                      boxShadow: [UIAssets.boxShadow],
+                      boxShadow: UIAssets.boxShadow,
                     ),
                     child: Text(
                       promptMsg,
@@ -160,7 +160,7 @@ class ChatTutorialView extends StatelessWidget {
       margin: EdgeInsets.fromLTRB(7, 3, 7, 4),
       padding: EdgeInsets.symmetric(horizontal: 8, vertical: 6),
       decoration: BoxDecoration(
-        boxShadow: [UIAssets.boxShadow],
+        boxShadow: UIAssets.boxShadow,
         color: Colors.white,
         borderRadius: BorderRadius.circular(5),
         border: Border.all(color: SKColors.border_gray),

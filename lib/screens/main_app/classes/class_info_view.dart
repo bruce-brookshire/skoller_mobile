@@ -116,7 +116,7 @@ class _ClassInfoState extends State<ClassInfoView> {
         decoration: BoxDecoration(
             border: Border.all(color: SKColors.border_gray),
             borderRadius: BorderRadius.circular(10),
-            boxShadow: [UIAssets.boxShadow],
+            boxShadow: UIAssets.boxShadow,
             color: Colors.white),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -185,7 +185,7 @@ class _ClassInfoState extends State<ClassInfoView> {
           color: Colors.white,
           border: Border.all(color: SKColors.border_gray),
           borderRadius: BorderRadius.circular(10),
-          boxShadow: [UIAssets.boxShadow],
+          boxShadow: UIAssets.boxShadow,
         ),
         child: Column(
           children: <Widget>[
@@ -377,7 +377,7 @@ class _ClassInfoState extends State<ClassInfoView> {
           color: Colors.white,
           border: Border.all(color: SKColors.border_gray),
           borderRadius: BorderRadius.circular(10),
-          boxShadow: [UIAssets.boxShadow],
+          boxShadow: UIAssets.boxShadow,
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
