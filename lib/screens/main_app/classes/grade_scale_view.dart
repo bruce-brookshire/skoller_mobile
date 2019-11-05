@@ -172,7 +172,7 @@ class _GradeScaleViewState extends State<GradeScaleView> {
               color: Colors.white,
               borderRadius: BorderRadius.circular(10),
               border: Border.all(color: SKColors.border_gray),
-              boxShadow: [UIAssets.boxShadow],
+              boxShadow: UIAssets.boxShadow,
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,

@@ -176,7 +176,7 @@ class _WeightsChangeRequestState extends State<WeightsChangeRequestView> {
               color: Colors.white,
               borderRadius: BorderRadius.circular(10),
               border: Border.all(color: SKColors.border_gray),
-              boxShadow: [UIAssets.boxShadow],
+              boxShadow: UIAssets.boxShadow,
             ),
             child: Column(
               children: <Widget>[
@@ -345,7 +345,7 @@ class _WeightsChangeRequestState extends State<WeightsChangeRequestView> {
                                       ? SKColors.success
                                       : SKColors.inactive_gray,
                                   borderRadius: BorderRadius.circular(5),
-                                  boxShadow: [UIAssets.boxShadow]),
+                                  boxShadow: UIAssets.boxShadow),
                               child: Text(
                                 'Submit weights',
                                 style: TextStyle(

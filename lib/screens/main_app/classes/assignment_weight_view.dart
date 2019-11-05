@@ -95,7 +95,7 @@ class _AssignmentWeightState extends State<AssignmentWeightView> {
           child: Container(
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(10),
-              boxShadow: [UIAssets.boxShadow],
+              boxShadow: UIAssets.boxShadow,
               border: Border.all(color: SKColors.border_gray),
               color: Colors.white,
             ),

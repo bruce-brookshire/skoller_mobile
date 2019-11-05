@@ -230,7 +230,7 @@ class _RemindersState extends State<RemindersView> {
                   color: Colors.white,
                   border: Border.all(color: SKColors.border_gray),
                   borderRadius: BorderRadius.circular(10),
-                  boxShadow: [UIAssets.boxShadow],
+                  boxShadow: UIAssets.boxShadow,
                 ),
                 margin: EdgeInsets.fromLTRB(16, 16, 16, 0),
                 child: Column(
@@ -365,7 +365,7 @@ class _RemindersState extends State<RemindersView> {
                   color: Colors.white,
                   border: Border.all(color: SKColors.border_gray),
                   borderRadius: BorderRadius.circular(10),
-                  boxShadow: [UIAssets.boxShadow],
+                  boxShadow: UIAssets.boxShadow,
                 ),
                 margin: EdgeInsets.fromLTRB(16, 16, 16, 0),
                 child: Column(
@@ -435,7 +435,7 @@ class _RemindersState extends State<RemindersView> {
                   color: Colors.white,
                   border: Border.all(color: SKColors.border_gray),
                   borderRadius: BorderRadius.circular(10),
-                  boxShadow: [UIAssets.boxShadow],
+                  boxShadow: UIAssets.boxShadow,
                 ),
                 margin: EdgeInsets.fromLTRB(16, 16, 16, 0),
                 child: Column(

@@ -91,7 +91,7 @@ class _ManageClassesState extends State<ManageClassesView> {
                     color: Colors.white,
                     border: Border.all(color: SKColors.border_gray),
                     borderRadius: BorderRadius.circular(5),
-                    boxShadow: [UIAssets.boxShadow],
+                    boxShadow: UIAssets.boxShadow,
                   ),
                   child: createClassCard(classes[index]),
                 ),

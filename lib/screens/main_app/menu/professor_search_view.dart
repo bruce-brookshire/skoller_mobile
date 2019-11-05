@@ -264,7 +264,7 @@ class _ProfessorSearchState extends State<ProfessorSearchView> {
                 decoration: BoxDecoration(
                     color: Colors.white,
                     border: Border.all(color: SKColors.border_gray),
-                    boxShadow: [UIAssets.boxShadow]),
+                    boxShadow: UIAssets.boxShadow),
                 child: Row(
                   children: <Widget>[
                     GestureDetector(
@@ -326,7 +326,7 @@ class _ProfessorSearchState extends State<ProfessorSearchView> {
                               color: Colors.white,
                               borderRadius: BorderRadius.circular(5),
                               border: Border.all(color: SKColors.border_gray),
-                              boxShadow: [UIAssets.boxShadow]),
+                              boxShadow: UIAssets.boxShadow),
                           margin: EdgeInsets.fromLTRB(12, 4, 12, 4),
                           padding:
                               EdgeInsets.symmetric(horizontal: 8, vertical: 8),
@@ -359,7 +359,7 @@ class _ProfessorSearchState extends State<ProfessorSearchView> {
                               color: Colors.white,
                               borderRadius: BorderRadius.circular(5),
                               border: Border.all(color: SKColors.border_gray),
-                              boxShadow: [UIAssets.boxShadow]),
+                              boxShadow: UIAssets.boxShadow),
                           margin: EdgeInsets.fromLTRB(12, 4, 12, 4),
                           padding:
                               EdgeInsets.symmetric(horizontal: 8, vertical: 8),

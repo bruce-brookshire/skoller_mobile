@@ -386,7 +386,7 @@ class _CreateSchoolModalState extends State<CreateSchoolModal> {
                           ? SKColors.skoller_blue
                           : SKColors.inactive_gray,
                       borderRadius: BorderRadius.circular(5),
-                      boxShadow: [UIAssets.boxShadow]),
+                      boxShadow: UIAssets.boxShadow),
                   child: Text(
                     'Save school',
                     style: TextStyle(

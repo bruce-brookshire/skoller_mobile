@@ -86,7 +86,7 @@ class _UpdateInfoState extends State<UpdateInfoView> {
       padding: EdgeInsets.all(8),
       decoration: BoxDecoration(
           color: Colors.white,
-          boxShadow: [UIAssets.boxShadow],
+          boxShadow: UIAssets.boxShadow,
           borderRadius: BorderRadius.circular(5),
           border: Border.all(color: SKColors.border_gray)),
       child: Column(

@@ -227,7 +227,7 @@ class MyPointsView extends StatelessWidget {
             color: Colors.white,
             border: Border.all(color: SKColors.border_gray),
             borderRadius: BorderRadius.circular(10),
-            boxShadow: [UIAssets.boxShadow],
+            boxShadow: UIAssets.boxShadow,
           ),
           margin: EdgeInsets.all(16),
           child: Column(

@@ -267,7 +267,7 @@ class _CalendarState extends State<CalendarView> {
                   margin: EdgeInsets.only(bottom: 7),
                   decoration: BoxDecoration(
                     color: SKColors.skoller_blue,
-                    boxShadow: [UIAssets.boxShadow],
+                    boxShadow: UIAssets.boxShadow,
                     borderRadius: BorderRadius.circular(5),
                     border: Border.all(color: Colors.white),
                   ),

@@ -182,6 +182,9 @@ class Period {
 
   School getSchool() => School.currentSchools[schoolId];
 
+  int get hashCode => id;
+  bool operator==(rhs) => rhs is Period && rhs.id == id;
+
   Future<RequestResponse> createClass({
     @required String className,
     @required String subject,

@@ -186,7 +186,7 @@ class _AssignmentBatchAddState extends State<AssignmentBatchAddView> {
                         decoration: BoxDecoration(
                           color: SKColors.warning_red,
                           borderRadius: BorderRadius.circular(5),
-                          boxShadow: [UIAssets.boxShadow],
+                          boxShadow: UIAssets.boxShadow,
                         ),
                         alignment: Alignment.center,
                         child: Text(
@@ -203,7 +203,7 @@ class _AssignmentBatchAddState extends State<AssignmentBatchAddView> {
                         decoration: BoxDecoration(
                           color: SKColors.success,
                           borderRadius: BorderRadius.circular(5),
-                          boxShadow: [UIAssets.boxShadow],
+                          boxShadow: UIAssets.boxShadow,
                         ),
                         alignment: Alignment.center,
                         child: Text(
@@ -241,7 +241,7 @@ class _AssignmentBatchAddState extends State<AssignmentBatchAddView> {
         color: Colors.white,
         borderRadius: BorderRadius.circular(10),
         border: Border.all(color: SKColors.border_gray),
-        boxShadow: [UIAssets.boxShadow],
+        boxShadow: UIAssets.boxShadow,
       ),
       margin: EdgeInsets.all(16),
       child: Column(
@@ -315,7 +315,7 @@ class _AssignmentBatchAddState extends State<AssignmentBatchAddView> {
           color: Colors.white,
           borderRadius: BorderRadius.circular(10),
           border: Border.all(color: SKColors.border_gray),
-          boxShadow: [UIAssets.boxShadow],
+          boxShadow: UIAssets.boxShadow,
         ),
         margin: EdgeInsets.fromLTRB(16, 0, 16, 16),
         child: Column(

@@ -147,7 +147,7 @@ class _AddGradeScaleModalState extends State<AddGradeScaleModal> {
             borderRadius: BorderRadius.circular(10),
             border: Border.all(color: SKColors.border_gray),
             color: Colors.white,
-            boxShadow: [UIAssets.boxShadow],
+            boxShadow: UIAssets.boxShadow,
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -221,7 +221,7 @@ class _AddGradeScaleModalState extends State<AddGradeScaleModal> {
               decoration: BoxDecoration(
                 border: Border.all(color: SKColors.border_gray),
                 borderRadius: BorderRadius.circular(5),
-                boxShadow: [UIAssets.boxShadow],
+                boxShadow: UIAssets.boxShadow,
                 color: selectedIndex == curTemp
                     ? SKColors.skoller_blue
                     : Colors.white,
@@ -257,7 +257,7 @@ class _AddGradeScaleModalState extends State<AddGradeScaleModal> {
           decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(5),
               border: Border.all(color: SKColors.skoller_blue),
-              boxShadow: [UIAssets.boxShadow],
+              boxShadow: UIAssets.boxShadow,
               color: Colors.white),
           padding: EdgeInsets.symmetric(vertical: 8),
           margin: EdgeInsets.symmetric(horizontal: 8, vertical: 8),
@@ -278,7 +278,7 @@ class _AddGradeScaleModalState extends State<AddGradeScaleModal> {
             borderRadius: BorderRadius.circular(5),
             color:
                 selectedIndex == -1 ? SKColors.inactive_gray : SKColors.success,
-            boxShadow: [UIAssets.boxShadow],
+            boxShadow: UIAssets.boxShadow,
           ),
           child: Text(
             'Submit',
@@ -373,7 +373,7 @@ class _AddGradeScaleModalState extends State<AddGradeScaleModal> {
             decoration: BoxDecoration(
               color: SKColors.success,
               borderRadius: BorderRadius.circular(5),
-              boxShadow: [UIAssets.boxShadow],
+              boxShadow: UIAssets.boxShadow,
             ),
             child: Text(
               'Submit',
