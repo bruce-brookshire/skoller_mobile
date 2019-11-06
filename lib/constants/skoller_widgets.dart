@@ -101,9 +101,12 @@ class SKNavBar extends StatelessWidget {
               child: Text(
                 title,
                 style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    color: titleColor),
+                  fontSize: 18,
+                  fontWeight: FontWeight.w800,
+                  color: titleColor,
+                  letterSpacing: 0.5,
+                ),
+                
               ),
             ),
             GestureDetector(
@@ -366,8 +369,10 @@ class SKCalendarPicker extends StatefulWidget {
                           behavior: HitTestBehavior.opaque,
                           onTapUp: (details) async {
                             // Wait to save if not used in a data-passing context
-                            if (isSave) await onSave(selectedDate, context);
-                            else onSelect(selectedDate);
+                            if (isSave)
+                              await onSave(selectedDate, context);
+                            else
+                              onSelect(selectedDate);
 
                             Navigator.pop(context);
                           },

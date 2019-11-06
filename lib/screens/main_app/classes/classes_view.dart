@@ -1,11 +1,13 @@
 import 'package:dart_notification_center/dart_notification_center.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/services.dart';
 import 'package:skoller/screens/main_app/classes/assignment_weight_view.dart';
 import 'package:skoller/screens/main_app/classes/weight_extraction_view.dart';
 import 'package:skoller/screens/main_app/menu/add_classes_view.dart';
 import 'package:skoller/screens/main_app/menu/class_search_settings_modal.dart';
 import 'package:skoller/tools.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'class_detail_view.dart';
 
 enum _CardType {
@@ -13,7 +15,7 @@ enum _CardType {
   sammiSecondClass,
   sammiNewClasses,
   sammiFirstClass,
-  periodName,
+  period,
   studentClass
 }
 
@@ -30,12 +32,16 @@ class ClassesView extends StatefulWidget {
   State createState() => _ClassesState();
 }
 
-typedef Widget _CardConstruct(StudentClass studentClass, int index);
+typedef Widget _CardConstruct(
+    StudentClass studentClass, int index, bool isCurrent);
 
 class _ClassesState extends State<ClassesView> {
-  List<_CardObject> cardObjects = [];
   int selectedIndex;
+  Period promptPeriod;
+
+  List<_CardObject> cardObjects = [];
   Map<int, _CardConstruct> cardConstructors;
+
   final _refreshIndicatorKey = GlobalKey<RefreshIndicatorState>();
   final semesterPrompt = 'sk_semester_prompt_enrollment';
 
@@ -131,7 +137,7 @@ class _ClassesState extends State<ClassesView> {
     }
 
     // Get next prompt period
-    final promptPeriod = (SKUser.current.student.primarySchool.periods
+    this.promptPeriod = (SKUser.current.student.primarySchool.periods
           ..removeWhere((p) => !p.isMainPeriod)
           ..sort((p1, p2) => p1.startDate.compareTo(p2.startDate)))
         .firstWhere((p) =>
@@ -160,23 +166,13 @@ class _ClassesState extends State<ClassesView> {
             e.key.endDate.millisecondsSinceEpoch >= comparisonDiff;
         return [
           ...l,
-          _CardObject(isCurrent, e.key.name, _CardType.periodName),
+          _CardObject(isCurrent, e.key, _CardType.period),
           ...e.value
               .map((s) => _CardObject(isCurrent, s, _CardType.studentClass))
               .toList(),
         ];
       },
     );
-
-    // if (cardObjects.length == 1) {
-    //   if (index == 0 && ClassStatuses.needs_setup == cardObjects[1].object.status.id)
-    //     return createSammiInstructionCard();
-    //   else if (index == 1 && ClassStatuses.class_setup == cardObjects[0].status.id)
-    //     return createSammiSecondClassCard();
-    //   else
-    //     object = cardObjects.first;
-    // } else
-    //   object = cardObjects[index];
 
     final classCount = classes.length;
 
@@ -191,21 +187,12 @@ class _ClassesState extends State<ClassesView> {
 
       if (studentClass.status.id == ClassStatuses.needs_setup)
         list_elems.insert(
-            0, _CardObject(true, classes.first, _CardType.sammiSyllabusInstruction));
+            0,
+            _CardObject(
+                true, classes.first, _CardType.sammiSyllabusInstruction));
       else if (studentClass.status.id == ClassStatuses.class_setup)
         list_elems.add(_CardObject(true, null, _CardType.sammiSecondClass));
     }
-
-    // if (classes.length < 2)
-    //   cardCount = 1;
-    // else if (classes.length == 2)
-    //   cardCount = [ClassStatuses.needs_setup, ClassStatuses.class_setup]
-    //           .contains(cardObjects[1].object.status.id)
-    //       ? 2
-    //       : 1;
-    // else {
-    //   cardCount = cardObjects.length;
-    // }
 
     setState(() {
       this.cardObjects = list_elems;
@@ -240,45 +227,60 @@ class _ClassesState extends State<ClassesView> {
   Widget createObjectCard(BuildContext context, int index) {
     final object = cardObjects[index];
 
+    Widget widget;
+
     switch (object.type) {
       case _CardType.sammiFirstClass:
-        return createSammiPrompt();
+        widget = createSammiPrompt();
+        break;
 
       case _CardType.sammiSyllabusInstruction:
-        return createSammiSyllabusInstructionCard(object);
+        widget = createSammiSyllabusInstructionCard(object);
+        break;
 
       case _CardType.sammiSecondClass:
-        return createSammiSecondClassCard();
+        widget = createSammiSecondClassCard();
+        break;
 
       case _CardType.sammiNewClasses:
-        return promptNewPeriod(object);
+        widget = promptNewPeriod(object);
+        break;
 
-      case _CardType.periodName:
-        return createPeriodNameCard(object);
+      case _CardType.period:
+        widget = createPeriodNameCard(object);
+        break;
 
       case _CardType.studentClass:
         final StudentClass studentClass = object.object;
 
         if (studentClass.status.id == ClassStatuses.needs_student_input &&
             (studentClass.weights ?? []).length > 0)
-          return cardConstructors[ClassStatuses.needs_setup](
-              studentClass, index);
+          widget = cardConstructors[ClassStatuses.needs_setup](
+              studentClass, index, object.isCurrent);
         else
-          return cardConstructors[studentClass.status.id](studentClass, index);
+          widget = cardConstructors[studentClass.status.id](
+              studentClass, index, object.isCurrent);
+        break;
     }
+    return widget;
   }
 
   Widget createPeriodNameCard(_CardObject object) => Padding(
-        padding: EdgeInsets.fromLTRB(8, 8, 8, 2),
+        padding: EdgeInsets.fromLTRB(12, 8, 12, 4),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(
-              object.object,
+              object.object.name,
               style: TextStyle(fontSize: 15, fontWeight: FontWeight.w400),
             ),
             if (!object.isCurrent)
-              Text('See more', style: TextStyle(color: SKColors.skoller_blue))
+              GestureDetector(
+                behavior: HitTestBehavior.opaque,
+                onTapUp: (_) => tappedExpiredPeriodDescr(object.object),
+                child: Text('See more',
+                    style: TextStyle(color: SKColors.skoller_blue)),
+              ),
           ],
         ),
       );
@@ -290,18 +292,7 @@ class _ClassesState extends State<ClassesView> {
           children: <Widget>[
             Image.asset(ImageNames.sammiImages.cool),
             GestureDetector(
-              onTapUp: (_) => showDialog(
-                      context: context,
-                      builder: (_) =>
-                          ClassSearchSettingsModal(object.object.id))
-                  .then((result) async {
-                if (result is Map) {
-                  DartNotificationCenter.post(
-                    channel: NotificationChannels.presentViewOverTabBar,
-                    options: AddClassesView(),
-                  );
-                }
-              }),
+              onTapUp: tappedAddClasses,
               child: Container(
                 padding: EdgeInsets.symmetric(vertical: 8, horizontal: 24),
                 margin: EdgeInsets.only(left: 12),
@@ -395,7 +386,8 @@ class _ClassesState extends State<ClassesView> {
     );
   }
 
-  Widget createCompleteCard(StudentClass studentClass, int index) {
+  Widget createCompleteCard(
+      StudentClass studentClass, int index, bool isCurrent) {
     final grade = studentClass.grade == 0 ? null : studentClass.grade;
 
     return GestureDetector(
@@ -437,7 +429,9 @@ class _ClassesState extends State<ClassesView> {
               width: 58,
               alignment: Alignment.center,
               decoration: BoxDecoration(
-                  color: studentClass.getColor(),
+                  color: isCurrent
+                      ? studentClass.getColor()
+                      : SKColors.text_light_gray,
                   borderRadius: BorderRadius.only(
                       topLeft: Radius.circular(5),
                       bottomLeft: Radius.circular(5))),
@@ -447,7 +441,9 @@ class _ClassesState extends State<ClassesView> {
                     : '${NumberUtilities.formatGradeAsPercent(grade)}',
                 textScaleFactor: 1,
                 style: TextStyle(
-                    color: Colors.white, fontSize: 17, letterSpacing: -0.75),
+                    color: isCurrent ? Colors.white : SKColors.dark_gray,
+                    fontSize: 17,
+                    letterSpacing: -0.75),
               ),
             ),
             Expanded(
@@ -463,7 +459,10 @@ class _ClassesState extends State<ClassesView> {
                         studentClass.name,
                         textScaleFactor: 1,
                         style: TextStyle(
-                            fontSize: 17, color: studentClass.getColor()),
+                            fontSize: 17,
+                            color: isCurrent
+                                ? studentClass.getColor()
+                                : SKColors.dark_gray),
                       ),
                     ),
                     Row(
@@ -508,7 +507,7 @@ class _ClassesState extends State<ClassesView> {
     );
   }
 
-  Widget needsSetup(StudentClass studentClass, int index) {
+  Widget needsSetup(StudentClass studentClass, int index, bool isCurrent) {
     final needsAssignments = (studentClass.weights ?? []).length > 0 &&
         (studentClass.assignments ?? []).length == 0;
     return GestureDetector(
@@ -605,7 +604,7 @@ class _ClassesState extends State<ClassesView> {
     );
   }
 
-  Widget diyOnly(StudentClass studentClass, int index) {
+  Widget diyOnly(StudentClass studentClass, int index, bool isCurrent) {
     return GestureDetector(
       onTapDown: (_) {
         setState(() {
@@ -681,7 +680,8 @@ class _ClassesState extends State<ClassesView> {
     );
   }
 
-  Widget processingSyllabus(StudentClass studentClass, int index) {
+  Widget processingSyllabus(
+      StudentClass studentClass, int index, bool isCurrent) {
     return GestureDetector(
       onTapDown: (_) {
         setState(() {
@@ -757,6 +757,122 @@ class _ClassesState extends State<ClassesView> {
     );
   }
 
+  void tappedExpiredPeriodDescr(Period period) {
+    final now = DateTime.now();
+    final timeless = DateTime(now.year, now.month, now.day);
+    final time_left = 15 - timeless.difference(period.endDate).inDays;
+
+    showDialog(
+      context: context,
+      builder: (context) => Dialog(
+        backgroundColor: Colors.transparent,
+        child: Container(
+          decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(10),
+              color: Colors.white,
+              boxShadow: UIAssets.boxShadow,
+              border: Border.all(color: SKColors.border_gray)),
+          child: Padding(
+            padding: EdgeInsets.symmetric(vertical: 12),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    Image.asset(ImageNames.sammiImages.smile),
+                    Text.rich(
+                      TextSpan(text: period.name, children: [
+                        TextSpan(
+                            text: ' is in the books!',
+                            style: TextStyle(fontWeight: FontWeight.normal))
+                      ]),
+                      style: TextStyle(fontSize: 18),
+                    ),
+                  ],
+                ),
+                Padding(
+                  padding: EdgeInsets.fromLTRB(16, 8, 16, 2),
+                  child: Text(
+                    'Skoller wants to stay #relevant for you ALL throughout college.\n\nSammi automatically hides your classes 15 days after the term ends.',
+                    style: TextStyle(fontWeight: FontWeight.w400, fontSize: 16),
+                  ),
+                ),
+                Padding(
+                  padding: EdgeInsets.fromLTRB(16, 12, 16, 16),
+                  child: Text.rich(
+                    TextSpan(
+                        text: period.name,
+                        children: [
+                          TextSpan(
+                              text: '\'s classes get hidden in ',
+                              style: TextStyle(fontWeight: FontWeight.normal)),
+                          TextSpan(text: '$time_left days.')
+                        ],
+                        style: TextStyle(fontSize: 16)),
+                  ),
+                ),
+                Text(
+                  'Term not over yet?',
+                  style: TextStyle(fontWeight: FontWeight.w300, fontSize: 14),
+                ),
+                GestureDetector(
+                  behavior: HitTestBehavior.opaque,
+                  onTapUp: (_) async {
+                    final url =
+                        'mailto:support@skoller.co?subject=Extend Term&body=School: ${SKUser.current.student.primarySchool.name}%0ATerm: ${period.name}';
+
+                    if (await canLaunch(url))
+                      launch(url);
+                    else
+                      Navigator.push(
+                        context,
+                        SKNavOverlayRoute(
+                          builder: (context) => SKAlertDialog(
+                            title: 'Contact us',
+                            subTitle:
+                                'Email support@skoller.co with your school and term to get them updated!',
+                            confirmText: 'Copy info',
+                            cancelText: 'Dismiss',
+                            getResults: () => Clipboard.setData(ClipboardData(
+                                text:
+                                    'School: ${SKUser.current.student.primarySchool.name}\n\nTerm: ${period.name}')),
+                          ),
+                        ),
+                      );
+                  },
+                  child: Text(
+                    'Extend the term',
+                    style: TextStyle(
+                        fontWeight: FontWeight.w600,
+                        color: SKColors.skoller_blue,
+                        fontSize: 14),
+                  ),
+                ),
+                GestureDetector(
+                  onTapUp: (_) => Navigator.pop(context),
+                  child: Container(
+                    padding: EdgeInsets.symmetric(vertical: 8, horizontal: 36),
+                    margin: EdgeInsets.fromLTRB(12, 20, 12, 0),
+                    alignment: Alignment.center,
+                    decoration: BoxDecoration(
+                      color: SKColors.skoller_blue,
+                      borderRadius: BorderRadius.circular(5),
+                    ),
+                    child: Text(
+                      'Thanks!',
+                      style: TextStyle(color: Colors.white),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
   void tappedAddAssignment(int classId) {
     Navigator.push(
       context,
@@ -783,7 +899,17 @@ class _ClassesState extends State<ClassesView> {
     );
   }
 
-  void tappedAddClasses([_]) {
+  void tappedAddClasses([_]) async {
+    final now = DateTime.now();
+    final timeless = DateTime(now.year, now.month, now.day);
+
+    if (SKUser.current.student.primaryPeriod.endDate.millisecondsSinceEpoch <
+            timeless.millisecondsSinceEpoch &&
+        promptPeriod != null) {
+      await showDialog(
+          context: context,
+          builder: (_) => ClassSearchSettingsModal(promptPeriod.id));
+    }
     DartNotificationCenter.post(
       channel: NotificationChannels.presentViewOverTabBar,
       options: AddClassesView(),
