@@ -47,6 +47,7 @@ class _SignInState extends State<SignIn> {
       );
 
       if (result is bool && result) {
+        Session.startSession();
         await StudentClass.getStudentClasses();
 
         Navigator.popUntil(context, (route) => route.isFirst);

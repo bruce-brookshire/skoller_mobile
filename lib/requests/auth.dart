@@ -162,6 +162,7 @@ class Auth {
     School.currentSchools = {};
     Period.currentPeriods = {};
     SKUser.current = null;
+    Session.currentSession = null;
 
     return true;
   }
@@ -227,7 +228,7 @@ class Auth {
 
             final title = alert is String ? null : alert['title'];
             final body = alert is String ? alert : alert['body'];
-            
+
             final category = aps['category'];
 
             _dropdownNotifications(title, body,
@@ -357,5 +358,40 @@ class Auth {
           saveNotificationToken(token);
       }).catchError(print);
     }
+  }
+}
+
+class Session {
+  final int id;
+  final String type;
+  final DateTime insertedAt;
+
+  Session(this.id, this.type, this.insertedAt);
+
+  static Session currentSession;
+
+  static Session _fromJson(Map content) {
+    var insertedAt = content['inserted_at'] != null
+        ? DateTime.parse(content['inserted_at'])
+        : null;
+    return Session(
+      content['id'],
+      content['session_platform']['type'],
+      insertedAt,
+    );
+  }
+
+  static void startSession() {
+    if (currentSession != null) return;
+
+    final platform = Platform.isIOS ? "ios" : "android";
+
+    SKRequests.post(
+      '/sessions',
+      {"user_id": SKUser.current.id, "platform": platform},
+      Session._fromJson,
+    ).then((response) {
+      if (response.wasSuccessful()) currentSession = response.obj;
+    });
   }
 }

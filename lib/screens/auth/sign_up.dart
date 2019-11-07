@@ -87,7 +87,10 @@ class _SignUpState extends State<SignUp> {
             CupertinoPageRoute(builder: (context) => SignIn()),
           );
         } else if (result is bool && result) {
+          Session.startSession();
+          
           Navigator.popUntil(context, (route) => route.isFirst);
+
           DartNotificationCenter.post(
             channel: NotificationChannels.appStateChanged,
             options: AppState.main,

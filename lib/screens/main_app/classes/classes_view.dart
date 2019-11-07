@@ -145,14 +145,20 @@ class _ClassesState extends State<ClassesView> {
             DateTime.now().millisecondsSinceEpoch);
 
     final now = DateTime.now();
-    final comparisonDiff =
-        DateTime(now.year, now.month, now.day).millisecondsSinceEpoch;
+    final today = DateTime(now.year, now.month, now.day);
+    final nowInMS = today.millisecondsSinceEpoch;
+
+    final daysTillPeriodEnds =
+        SKUser.current.student.primaryPeriod.endDate.difference(today).inDays;
+
+    final shouldPromptPeriod = promptPeriod != null &&
+        !periodClasses.containsKey(promptPeriod) &&
+        daysTillPeriodEnds > 0 &&
+        daysTillPeriodEnds <= 30;
 
     // If we can prompt the student for next period classes, use that as
     // the start of the list, otherwise just an empty list
-    final List<_CardObject> reductionList = (promptPeriod != null &&
-            !periodClasses.containsKey(promptPeriod) &&
-            StudentClass.currentClasses.length > 0)
+    final List<_CardObject> reductionList = shouldPromptPeriod
         ? [_CardObject(true, promptPeriod, _CardType.sammiNewClasses)]
         : [];
 
@@ -162,8 +168,7 @@ class _ClassesState extends State<ClassesView> {
         .fold(
       reductionList,
       (l, e) {
-        final isCurrent =
-            e.key.endDate.millisecondsSinceEpoch >= comparisonDiff;
+        final isCurrent = e.key.endDate.millisecondsSinceEpoch >= nowInMS;
         return [
           ...l,
           _CardObject(isCurrent, e.key, _CardType.period),
@@ -181,8 +186,7 @@ class _ClassesState extends State<ClassesView> {
       list_elems.add(_CardObject(true, null, _CardType.sammiFirstClass));
     // If we have one class, and that class is part of a current term, we need to prompt for the second class
     else if (classCount == 1 &&
-        classes.first.classPeriod.endDate.millisecondsSinceEpoch >=
-            comparisonDiff) {
+        classes.first.classPeriod.endDate.millisecondsSinceEpoch >= nowInMS) {
       final studentClass = classes.first;
 
       if (studentClass.status.id == ClassStatuses.needs_setup)
