@@ -905,7 +905,7 @@ class _ClassesState extends State<ClassesView> {
 
   void tappedAddClasses([_]) async {
     final now = DateTime.now();
-    final timeless = DateTime(now.year, now.month, now.day);
+    final timeless = DateTime(now.year, now.month, now.day).add(Duration(days: 30));
 
     if (SKUser.current.student.primaryPeriod.endDate.millisecondsSinceEpoch <
             timeless.millisecondsSinceEpoch &&
