@@ -21,7 +21,7 @@ class Auth {
       final platformName =
           Platform.isIOS ? 'min_ios_version' : 'min_android_version';
       final thisPlatform =
-          content.firstWhere((platform) => platform['name'] == platformName);
+          content.firstWhere((platform) => platform['name'] == platformName, orElse: () => content.first);
 
       if (thisPlatform == null) return false;
 

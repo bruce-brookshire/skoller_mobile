@@ -60,7 +60,6 @@ class School {
       Period._fromJsonObj,
       content['periods'] ?? [],
     );
-    Period.currentPeriods = {};
 
     for (final period in period_list) {
       Period.currentPeriods[period.id] = period;

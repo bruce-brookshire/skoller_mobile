@@ -97,7 +97,7 @@ class _PrimarySchoolState extends State<PrimarySchoolModal> {
       Navigator.pop(context);
     } else if (selectedSchoolId != null) {
       final school =
-          eligibleSchools.firstWhere((school) => school.id == selectedSchoolId);
+          eligibleSchools.firstWhere((school) => school.id == selectedSchoolId, orElse: () => eligibleSchools.first);
 
       await SKUser.current.update(primarySchool: school);
 

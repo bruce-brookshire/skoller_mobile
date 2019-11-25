@@ -142,7 +142,7 @@ class _ClassesState extends State<ClassesView> {
           ..sort((p1, p2) => p1.startDate.compareTo(p2.startDate)))
         .firstWhere((p) =>
             p.startDate.millisecondsSinceEpoch >
-            DateTime.now().millisecondsSinceEpoch);
+            DateTime.now().millisecondsSinceEpoch, orElse: () => null);
 
     final now = DateTime.now();
     final today = DateTime(now.year, now.month, now.day);
@@ -905,7 +905,8 @@ class _ClassesState extends State<ClassesView> {
 
   void tappedAddClasses([_]) async {
     final now = DateTime.now();
-    final timeless = DateTime(now.year, now.month, now.day).add(Duration(days: 30));
+    final timeless =
+        DateTime(now.year, now.month, now.day).add(Duration(days: 30));
 
     if (SKUser.current.student.primaryPeriod.endDate.millisecondsSinceEpoch <
             timeless.millisecondsSinceEpoch &&

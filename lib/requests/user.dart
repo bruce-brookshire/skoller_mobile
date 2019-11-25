@@ -81,6 +81,9 @@ class SKUser {
         primaryPeriod.id != this.student.primaryPeriod?.id)
       params['primary_period_id'] = primaryPeriod.id;
 
+    if (params['primary_period_id'] == null && params['primary_school_id'] != null)
+      params['primary_period_id'] = primarySchool.periods?.first?.id;
+
     if (fieldsOfStudy != null) params['fields_of_study'] = fieldsOfStudy;
 
     if (params.length == 1) {
