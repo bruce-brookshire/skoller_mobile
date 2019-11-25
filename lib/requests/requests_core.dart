@@ -31,8 +31,8 @@ part 'user.dart';
 part 'mod.dart';
 part 'auth.dart';
 
-const bool isProd = false;
-const bool isLocal = true;
+const bool isProd = true;
+const bool isLocal = false;
 
 class RequestResponse<T> {
   int status;

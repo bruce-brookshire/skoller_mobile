@@ -362,7 +362,7 @@ class _ChatListState extends State<ChatListView> {
                   margin: EdgeInsets.only(bottom: 7),
                   decoration: BoxDecoration(
                     color: SKColors.skoller_blue,
-                    boxShadow: [UIAssets.boxShadow],
+                    boxShadow: UIAssets.boxShadow,
                     borderRadius: BorderRadius.circular(5),
                     border: Border.all(color: Colors.white),
                   ),
@@ -398,7 +398,7 @@ class _ChatListState extends State<ChatListView> {
         margin: EdgeInsets.fromLTRB(7, 3, 7, 4),
         padding: EdgeInsets.symmetric(horizontal: 8, vertical: 6),
         decoration: BoxDecoration(
-          boxShadow: [UIAssets.boxShadow],
+          boxShadow: UIAssets.boxShadow,
           color: Colors.white,
           borderRadius: BorderRadius.circular(5),
           border: Border.all(color: SKColors.border_gray),

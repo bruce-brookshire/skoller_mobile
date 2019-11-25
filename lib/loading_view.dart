@@ -40,6 +40,7 @@ class _LoadingState extends State<LoadingView> {
       switch (result) {
         case LogInResponse.success:
           nextState = AppState.main;
+          Session.startSession();
           break;
         case LogInResponse.needsVerification:
           final success = await showDialog(
@@ -47,9 +48,10 @@ class _LoadingState extends State<LoadingView> {
             builder: (context) => PhoneVerificationView(Auth.userPhone),
           );
 
-          if (success is bool && success)
+          if (success is bool && success) {
             nextState = AppState.main;
-          else
+            Session.startSession();
+          } else
             nextState = AppState.auth;
 
           break;

@@ -249,7 +249,7 @@ class Assignment {
     if (content == null) {
       return null;
     }
-    var due = content['due'] != null ? DateTime.parse(content['due']) : null;
+    final due = content['due'] != null ? DateTime.parse(content['due']) : null;
 
     Assignment assignment = Assignment(
       content['id'],

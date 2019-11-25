@@ -158,7 +158,7 @@ class _ViewFour extends StatelessWidget {
                       color: SKColors.skoller_blue,
                       borderRadius: BorderRadius.circular(5),
                       border: Border.all(color: Colors.white),
-                      boxShadow: [UIAssets.boxShadow],
+                      boxShadow: UIAssets.boxShadow,
                     ),
                     child: Text(
                       promptMsg,
@@ -184,7 +184,7 @@ class _ViewFour extends StatelessWidget {
           border: Border.all(
             color: SKColors.border_gray,
           ),
-          boxShadow: [UIAssets.boxShadow]),
+          boxShadow: UIAssets.boxShadow),
       margin: EdgeInsets.symmetric(horizontal: 7, vertical: 4),
       child: Row(
         children: <Widget>[

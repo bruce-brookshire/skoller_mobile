@@ -409,7 +409,7 @@ class _ForecastState extends State<ForecastView> {
                                       ? Colors.white
                                       : SKColors.skoller_blue),
                               borderRadius: BorderRadius.circular(5),
-                              boxShadow: [UIAssets.boxShadow],
+                              boxShadow: UIAssets.boxShadow,
                               color: StudentClass.currentClasses.length == 1
                                   ? SKColors.skoller_blue
                                   : Colors.white),
@@ -502,7 +502,7 @@ class _ForecastState extends State<ForecastView> {
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(5),
             border: Border.all(color: SKColors.border_gray, width: 1),
-            boxShadow: [UIAssets.boxShadow],
+            boxShadow: UIAssets.boxShadow,
             color: _tappedIndex == index
                 ? SKColors.selected_gray
                 : SKColors.menu_blue,
@@ -590,7 +590,7 @@ class _ForecastState extends State<ForecastView> {
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(5),
             border: Border.all(color: SKColors.border_gray, width: 1),
-            boxShadow: [UIAssets.boxShadow],
+            boxShadow: UIAssets.boxShadow,
             color:
                 _tappedIndex == index ? SKColors.selected_gray : Colors.white,
           ),
@@ -674,7 +674,7 @@ class _ForecastState extends State<ForecastView> {
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(5),
           border: Border.all(color: SKColors.border_gray, width: 1),
-          boxShadow: [UIAssets.boxShadow],
+          boxShadow: UIAssets.boxShadow,
           color: _tappedIndex == index
               ? SKColors.selected_gray
               : SKColors.menu_blue,

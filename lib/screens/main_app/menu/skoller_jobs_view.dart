@@ -103,7 +103,7 @@ class SkollerJobsView extends StatelessWidget {
                   decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(5),
                       color: SKColors.skoller_blue,
-                      boxShadow: [UIAssets.boxShadow]),
+                      boxShadow: UIAssets.boxShadow),
                   padding: EdgeInsets.symmetric(horizontal: 18, vertical: 12),
                   margin: EdgeInsets.only(top: 24),
                   child: Text(

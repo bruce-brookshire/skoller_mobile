@@ -47,6 +47,7 @@ class _SignInState extends State<SignIn> {
       );
 
       if (result is bool && result) {
+        Session.startSession();
         await StudentClass.getStudentClasses();
 
         Navigator.popUntil(context, (route) => route.isFirst);
@@ -100,7 +101,7 @@ class _SignInState extends State<SignIn> {
                         border: Border.all(color: SKColors.border_gray),
                         borderRadius: BorderRadius.circular(5),
                         color: Colors.white,
-                        boxShadow: [UIAssets.boxShadow],
+                        boxShadow: UIAssets.boxShadow,
                       ),
                       child: Container(
                         margin: EdgeInsets.all(4),

@@ -7,7 +7,7 @@ import 'package:skoller/tools.dart';
 class ClassSearchSettingsModal extends StatefulWidget {
   final int initialPeriodId;
 
-  ClassSearchSettingsModal(this.initialPeriodId) : super();
+  ClassSearchSettingsModal(this.initialPeriodId);
 
   @override
   State<StatefulWidget> createState() => _ClassSearchSettingsModalState();
@@ -25,6 +25,9 @@ class _ClassSearchSettingsModalState extends State<ClassSearchSettingsModal> {
 
     if (widget.initialPeriodId != null) {
       period = Period.currentPeriods[widget.initialPeriodId];
+
+      if (period.id != SKUser.current.student.primaryPeriod.id)
+        SKUser.current.update(primaryPeriod: period);
     }
 
     final now = DateTime.now();
@@ -180,13 +183,14 @@ class _ClassSearchSettingsModalState extends State<ClassSearchSettingsModal> {
                 ),
               ),
               GestureDetector(
+                behavior: HitTestBehavior.opaque,
                 onTapUp: (details) {
                   Navigator.pop(context, {'school': school, 'period': period});
                 },
                 child: Padding(
                   padding: EdgeInsets.only(top: 16, bottom: 4),
                   child: Text(
-                    'Save',
+                    'Done',
                     textAlign: TextAlign.center,
                     style: TextStyle(color: SKColors.skoller_blue),
                   ),

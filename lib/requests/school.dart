@@ -60,7 +60,6 @@ class School {
       Period._fromJsonObj,
       content['periods'] ?? [],
     );
-    Period.currentPeriods = {};
 
     for (final period in period_list) {
       Period.currentPeriods[period.id] = period;
@@ -181,6 +180,9 @@ class Period {
   );
 
   School getSchool() => School.currentSchools[schoolId];
+
+  int get hashCode => id;
+  bool operator==(rhs) => rhs is Period && rhs.id == id;
 
   Future<RequestResponse> createClass({
     @required String className,

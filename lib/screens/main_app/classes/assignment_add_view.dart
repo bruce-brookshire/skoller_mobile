@@ -64,7 +64,7 @@ class _AssignmentAddState extends State<AssignmentAddView> {
         color: Colors.white,
         borderRadius: BorderRadius.circular(10),
         border: Border.all(color: SKColors.border_gray),
-        boxShadow: [UIAssets.boxShadow],
+        boxShadow: UIAssets.boxShadow,
       ),
       margin: EdgeInsets.all(16),
       child: Column(
@@ -250,7 +250,7 @@ class _AssignmentAddState extends State<AssignmentAddView> {
           color: Colors.white,
           borderRadius: BorderRadius.circular(10),
           border: Border.all(color: SKColors.border_gray),
-          boxShadow: [UIAssets.boxShadow],
+          boxShadow: UIAssets.boxShadow,
         ),
         margin: EdgeInsets.fromLTRB(16, 0, 16, 16),
         child: Column(

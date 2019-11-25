@@ -154,7 +154,7 @@ class _SchoolSearchState extends State<SchoolSearchView> {
                 decoration: BoxDecoration(
                     color: Colors.white,
                     border: Border.all(color: SKColors.border_gray),
-                    boxShadow: [UIAssets.boxShadow]),
+                    boxShadow: UIAssets.boxShadow),
                 // color: Colors.white,
                 child: Row(
                   children: <Widget>[
@@ -223,7 +223,7 @@ class _SchoolSearchState extends State<SchoolSearchView> {
                               color: Colors.white,
                               borderRadius: BorderRadius.circular(5),
                               border: Border.all(color: SKColors.border_gray),
-                              boxShadow: [UIAssets.boxShadow]),
+                              boxShadow: UIAssets.boxShadow),
                           margin: EdgeInsets.fromLTRB(12, 4, 12, 4),
                           padding:
                               EdgeInsets.symmetric(horizontal: 8, vertical: 8),
@@ -257,7 +257,7 @@ class _SchoolSearchState extends State<SchoolSearchView> {
                               color: Colors.white,
                               borderRadius: BorderRadius.circular(5),
                               border: Border.all(color: SKColors.border_gray),
-                              boxShadow: [UIAssets.boxShadow]),
+                              boxShadow: UIAssets.boxShadow),
                           margin: EdgeInsets.fromLTRB(12, 4, 12, 4),
                           padding:
                               EdgeInsets.symmetric(horizontal: 8, vertical: 8),

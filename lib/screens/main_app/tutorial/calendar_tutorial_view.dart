@@ -134,7 +134,7 @@ class CalendarTutorialView extends StatelessWidget {
                         color: SKColors.skoller_blue,
                         borderRadius: BorderRadius.circular(5),
                         border: Border.all(color: Colors.white),
-                        boxShadow: [UIAssets.boxShadow],
+                        boxShadow: UIAssets.boxShadow,
                       ),
                       child: Text(
                         promptMsg,

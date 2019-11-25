@@ -163,7 +163,7 @@ class MenuView extends StatelessWidget {
       child: Container(
         decoration: BoxDecoration(
           color: SKColors.background_gray,
-          boxShadow: [UIAssets.boxShadow],
+          boxShadow: UIAssets.boxShadow,
         ),
         child: SafeArea(
           bottom: false,

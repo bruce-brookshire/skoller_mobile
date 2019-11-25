@@ -277,7 +277,7 @@ class _AddClassesState extends State<AddClassesView> {
     );
   }
 
-  void tappedSettings(TapUpDetails details) async {
+  void tappedSettings([_]) async {
     final results = await showDialog(
       context: context,
       builder: (context) => ClassSearchSettingsModal(activePeriod.id),
@@ -386,7 +386,7 @@ class _AddClassesState extends State<AddClassesView> {
                                     border:
                                         Border.all(color: SKColors.border_gray),
                                     borderRadius: BorderRadius.circular(5),
-                                    boxShadow: [UIAssets.boxShadow],
+                                    boxShadow: UIAssets.boxShadow,
                                   ),
                                   child: contents,
                                 ));
@@ -409,7 +409,7 @@ class _AddClassesState extends State<AddClassesView> {
   }
 
   Widget createHeader() {
-    final classCount = StudentClass.currentClasses.length;
+    final classCount = StudentClass.currentClasses.values.fold(0, (a, s) => a + (s.classPeriod == SKUser.current.student.primaryPeriod ? 1 : 0));
 
     return Container(
       height: 128,

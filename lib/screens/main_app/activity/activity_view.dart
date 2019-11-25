@@ -182,7 +182,7 @@ class _ActivityState extends State<ActivityView> {
                   margin: EdgeInsets.only(bottom: 7),
                   decoration: BoxDecoration(
                       color: SKColors.skoller_blue,
-                      boxShadow: [UIAssets.boxShadow],
+                      boxShadow: UIAssets.boxShadow,
                       borderRadius: BorderRadius.circular(5),
                       border: Border.all(color: Colors.white)),
                   child: Text(
@@ -217,7 +217,7 @@ class _ActivityState extends State<ActivityView> {
         padding: EdgeInsets.symmetric(horizontal: 8, vertical: 6),
         decoration: BoxDecoration(
           color: Colors.white,
-          boxShadow: [UIAssets.boxShadow],
+          boxShadow: UIAssets.boxShadow,
           borderRadius: BorderRadius.circular(5),
           border: Border.all(color: SKColors.border_gray),
         ),

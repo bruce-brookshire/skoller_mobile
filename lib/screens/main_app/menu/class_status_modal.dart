@@ -168,7 +168,7 @@ class ClassStatusModal extends StatelessWidget {
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(5),
                   color: SKColors.skoller_blue,
-                  boxShadow: [UIAssets.boxShadow],
+                  boxShadow: UIAssets.boxShadow,
                 ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,

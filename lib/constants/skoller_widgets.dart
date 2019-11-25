@@ -101,9 +101,12 @@ class SKNavBar extends StatelessWidget {
               child: Text(
                 title,
                 style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    color: titleColor),
+                  fontSize: 18,
+                  fontWeight: FontWeight.w800,
+                  color: titleColor,
+                  letterSpacing: 0.5,
+                ),
+                
               ),
             ),
             GestureDetector(
@@ -366,8 +369,10 @@ class SKCalendarPicker extends StatefulWidget {
                           behavior: HitTestBehavior.opaque,
                           onTapUp: (details) async {
                             // Wait to save if not used in a data-passing context
-                            if (isSave) await onSave(selectedDate, context);
-                            else onSelect(selectedDate);
+                            if (isSave)
+                              await onSave(selectedDate, context);
+                            else
+                              onSelect(selectedDate);
 
                             Navigator.pop(context);
                           },
@@ -964,7 +969,7 @@ class _SKColorPickerState extends State<SKColorPicker> {
                 decoration: BoxDecoration(
                   color: SKColors.dark_gray,
                   borderRadius: BorderRadius.circular(5),
-                  boxShadow: [UIAssets.boxShadow],
+                  boxShadow: UIAssets.boxShadow,
                 ),
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
@@ -1214,7 +1219,7 @@ class SammiSpeechBubble extends StatelessWidget {
             color: Colors.white,
             borderRadius: BorderRadius.circular(7),
             border: Border.all(color: SKColors.border_gray),
-            boxShadow: [UIAssets.boxShadow],
+            boxShadow: UIAssets.boxShadow,
           ),
           child: speechBubbleContents),
     );
@@ -1563,7 +1568,7 @@ class SyllabusInstructionsModal extends StatelessWidget {
                 decoration: BoxDecoration(
                   color: SKColors.skoller_blue,
                   borderRadius: BorderRadius.circular(5),
-                  boxShadow: [UIAssets.boxShadow],
+                  boxShadow: UIAssets.boxShadow,
                 ),
                 child: Text(
                   'Start',
@@ -1669,7 +1674,7 @@ class SyllabusInstructionsModal extends StatelessWidget {
                 decoration: BoxDecoration(
                   color: SKColors.skoller_blue,
                   borderRadius: BorderRadius.circular(5),
-                  boxShadow: [UIAssets.boxShadow],
+                  boxShadow: UIAssets.boxShadow,
                 ),
                 child: Text(
                   'Start',
@@ -1810,7 +1815,7 @@ class SyllabusInstructionsModal extends StatelessWidget {
                   decoration: BoxDecoration(
                     color: SKColors.skoller_blue,
                     borderRadius: BorderRadius.circular(5),
-                    boxShadow: [UIAssets.boxShadow],
+                    boxShadow: UIAssets.boxShadow,
                   ),
                   child: Text(
                     'Get started',
@@ -1868,7 +1873,7 @@ class SKHeaderCard extends StatelessWidget {
           color: Colors.white,
           borderRadius: BorderRadius.circular(10),
           border: Border.all(color: SKColors.border_gray),
-          boxShadow: [UIAssets.boxShadow],
+          boxShadow: UIAssets.boxShadow,
         ),
         margin: margin ?? EdgeInsets.all(16),
         child: Column(

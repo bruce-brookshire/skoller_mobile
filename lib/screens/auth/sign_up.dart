@@ -87,7 +87,10 @@ class _SignUpState extends State<SignUp> {
             CupertinoPageRoute(builder: (context) => SignIn()),
           );
         } else if (result is bool && result) {
+          Session.startSession();
+          
           Navigator.popUntil(context, (route) => route.isFirst);
+
           DartNotificationCenter.post(
             channel: NotificationChannels.appStateChanged,
             options: AppState.main,
@@ -190,7 +193,7 @@ class _SignUpState extends State<SignUp> {
                                 color: Colors.white,
                                 borderRadius: BorderRadius.circular(5),
                                 border: Border.all(color: SKColors.border_gray),
-                                boxShadow: [UIAssets.boxShadow],
+                                boxShadow: UIAssets.boxShadow,
                               ),
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -236,7 +239,7 @@ class _SignUpState extends State<SignUp> {
                                 color: Colors.white,
                                 borderRadius: BorderRadius.circular(5),
                                 border: Border.all(color: SKColors.border_gray),
-                                boxShadow: [UIAssets.boxShadow],
+                                boxShadow: UIAssets.boxShadow,
                               ),
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -282,7 +285,7 @@ class _SignUpState extends State<SignUp> {
                           color: Colors.white,
                           borderRadius: BorderRadius.circular(5),
                           border: Border.all(color: SKColors.border_gray),
-                          boxShadow: [UIAssets.boxShadow],
+                          boxShadow: UIAssets.boxShadow,
                         ),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -326,7 +329,7 @@ class _SignUpState extends State<SignUp> {
                           color: Colors.white,
                           borderRadius: BorderRadius.circular(5),
                           border: Border.all(color: SKColors.border_gray),
-                          boxShadow: [UIAssets.boxShadow],
+                          boxShadow: UIAssets.boxShadow,
                         ),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,

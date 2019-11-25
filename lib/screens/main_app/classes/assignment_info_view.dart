@@ -406,7 +406,7 @@ class _AssignmentInfoState extends State<AssignmentInfoView> {
                                 decoration: BoxDecoration(
                                   color: Colors.white,
                                   borderRadius: BorderRadius.circular(22),
-                                  boxShadow: [UIAssets.boxShadow],
+                                  boxShadow: UIAssets.boxShadow,
                                 ),
                                 height: 44,
                                 child: Text(
@@ -472,7 +472,7 @@ class _AssignmentInfoState extends State<AssignmentInfoView> {
       padding: EdgeInsets.only(bottom: 12),
       decoration: BoxDecoration(
         color: Colors.white,
-        boxShadow: [UIAssets.boxShadow],
+        boxShadow: UIAssets.boxShadow,
         borderRadius: BorderRadius.circular(10),
       ),
       child: Column(
@@ -637,7 +637,7 @@ class _AssignmentInfoState extends State<AssignmentInfoView> {
       margin: EdgeInsets.symmetric(horizontal: 12, vertical: 2),
       decoration: BoxDecoration(
         color: Colors.white,
-        boxShadow: [UIAssets.boxShadow],
+        boxShadow: UIAssets.boxShadow,
         borderRadius: BorderRadius.circular(10),
       ),
       child: Column(
@@ -886,7 +886,7 @@ class _AssignmentInfoState extends State<AssignmentInfoView> {
                   decoration: BoxDecoration(
                       color: SKColors.skoller_blue,
                       borderRadius: BorderRadius.circular(5),
-                      boxShadow: [UIAssets.boxShadow]),
+                      boxShadow: UIAssets.boxShadow),
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [

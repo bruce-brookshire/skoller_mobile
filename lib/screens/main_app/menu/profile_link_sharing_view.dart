@@ -57,7 +57,7 @@ class _ProfileLinkSharingState extends State<ProfileLinkSharingView> {
               color: shareTypeColor,
             ),
             color: Colors.white,
-            boxShadow: [UIAssets.boxShadow],
+            boxShadow: UIAssets.boxShadow,
             borderRadius: BorderRadius.circular(5),
           ),
           child: Text(
@@ -107,7 +107,7 @@ class _ProfileLinkSharingState extends State<ProfileLinkSharingView> {
                   color: SKColors.skoller_blue,
                 ),
                 color: Colors.white,
-                boxShadow: [UIAssets.boxShadow],
+                boxShadow: UIAssets.boxShadow,
                 borderRadius: BorderRadius.circular(5),
               ),
               child: Text(
@@ -136,9 +136,7 @@ class _ProfileLinkSharingState extends State<ProfileLinkSharingView> {
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(5),
                 color: SKColors.skoller_blue,
-                boxShadow: [
-                  UIAssets.boxShadow,
-                ],
+                boxShadow: UIAssets.boxShadow,
               ),
               child: Text(
                 'Share',

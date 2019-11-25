@@ -135,7 +135,7 @@ class _WeightExtractionState extends State<WeightExtractionView> {
                 color: Colors.white,
                 border: Border.all(color: SKColors.border_gray),
                 borderRadius: BorderRadius.circular(10),
-                boxShadow: [UIAssets.boxShadow],
+                boxShadow: UIAssets.boxShadow,
               ),
               child: Column(children: [
                 Container(
@@ -288,7 +288,7 @@ class _SubviewOneState extends State<_SubviewOne> {
               decoration: BoxDecoration(
                 color: SKColors.skoller_blue,
                 borderRadius: BorderRadius.circular(5),
-                boxShadow: [UIAssets.boxShadow],
+                boxShadow: UIAssets.boxShadow,
               ),
               child: Text(
                 'Start',
@@ -404,7 +404,7 @@ class _SubviewTwoState extends State<_SubviewTwo> {
               decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(5),
                   color: SKColors.skoller_blue,
-                  boxShadow: [UIAssets.boxShadow]),
+                  boxShadow: UIAssets.boxShadow),
               child: Text(
                 'Next',
                 style: TextStyle(color: Colors.white),
@@ -701,7 +701,7 @@ class _SubviewThreeState extends State<_SubviewThree> {
                             ? SKColors.success
                             : SKColors.inactive_gray,
                         borderRadius: BorderRadius.circular(5),
-                        boxShadow: [UIAssets.boxShadow]),
+                        boxShadow: UIAssets.boxShadow),
                     child: Text(
                       'Submit weights',
                       style: TextStyle(

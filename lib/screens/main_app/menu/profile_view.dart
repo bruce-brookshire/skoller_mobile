@@ -102,7 +102,7 @@ class _ProfileState extends State<ProfileView> {
                               padding: EdgeInsets.all(12),
                               decoration: BoxDecoration(
                                 color: Colors.white,
-                                boxShadow: [UIAssets.boxShadow],
+                                boxShadow: UIAssets.boxShadow,
                                 border: Border.all(color: SKColors.dark_gray),
                                 borderRadius: BorderRadius.circular(5),
                               ),
@@ -151,7 +151,7 @@ class _ProfileState extends State<ProfileView> {
                               padding: EdgeInsets.all(12),
                               decoration: BoxDecoration(
                                 color: Colors.white,
-                                boxShadow: [UIAssets.boxShadow],
+                                boxShadow: UIAssets.boxShadow,
                                 border: Border.all(color: SKColors.dark_gray),
                                 borderRadius: BorderRadius.circular(5),
                               ),
@@ -202,7 +202,7 @@ class _ProfileState extends State<ProfileView> {
                               padding: EdgeInsets.all(12),
                               decoration: BoxDecoration(
                                 color: Colors.white,
-                                boxShadow: [UIAssets.boxShadow],
+                                boxShadow: UIAssets.boxShadow,
                                 border: Border.all(color: SKColors.dark_gray),
                                 borderRadius: BorderRadius.circular(5),
                               ),
@@ -281,7 +281,7 @@ class _ProfileState extends State<ProfileView> {
                                     padding: EdgeInsets.all(8),
                                     decoration: BoxDecoration(
                                       color: Colors.white,
-                                      boxShadow: [UIAssets.boxShadow],
+                                      boxShadow: UIAssets.boxShadow,
                                       border:
                                           Border.all(color: SKColors.dark_gray),
                                       borderRadius: BorderRadius.circular(7),
@@ -329,7 +329,7 @@ class _ProfileState extends State<ProfileView> {
                                     padding: EdgeInsets.all(8),
                                     decoration: BoxDecoration(
                                       color: Colors.white,
-                                      boxShadow: [UIAssets.boxShadow],
+                                      boxShadow: UIAssets.boxShadow,
                                       border:
                                           Border.all(color: SKColors.dark_gray),
                                       borderRadius: BorderRadius.circular(7),
