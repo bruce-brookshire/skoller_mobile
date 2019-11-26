@@ -106,7 +106,6 @@ class SKNavBar extends StatelessWidget {
                   color: titleColor,
                   letterSpacing: 0.5,
                 ),
-                
               ),
             ),
             GestureDetector(
@@ -916,14 +915,14 @@ class SKColorPicker extends StatefulWidget {
   final ColorCallback callback;
   final Widget child;
   final List<Color> colors = [
-    Color(0xFF9B55E5),
-    Color(0xFFFF71A8),
-    Color(0xFF1088B3),
-    Color(0xFF4CD8BD),
-    Color(0xFF4CCC58),
-    Color(0xFFF7D300),
-    Color(0xFFFFAE42),
-    Color(0xFFDD4A63),
+    Color(0xFFAE77BD),
+    Color(0xFFE882AC),
+    Color(0xFF3484E3),
+    Color(0xFF61D8A0),
+    Color(0xFF19A394),
+    Color(0xFFF1AA39),
+    Color(0xFFE2762D),
+    Color(0xFFD73F76),
   ];
 
   SKColorPicker({this.callback, this.child});
@@ -1400,7 +1399,7 @@ class SKAssignmentImpactGraph extends StatelessWidget {
       level = _ImpactLevel.high;
 
     final double width = size == ImpactGraphSize.large ? 40 : 32;
-    final double height = size == ImpactGraphSize.large ? 26 : 18;
+    final double height = size == ImpactGraphSize.large ? 28 : 23;
 
     return Column(
       mainAxisSize: MainAxisSize.min,
@@ -1461,25 +1460,33 @@ class _SKImpactGraphPainter extends CustomPainter {
       ..isAntiAlias = true;
 
     final oneThird = size.height / 3;
-    final width = (size.width - 6) / 3;
+    final width = (size.width) / 3;
 
-    final smallRect = Rect.fromLTWH(0, size.height - oneThird, width, oneThird);
-    final mediumRect = Rect.fromLTWH(width + 3, oneThird, width, oneThird * 2);
-    final largeRect = Rect.fromLTWH((width + 3) * 2, 0, width, size.height);
+    final smallRect =
+        _buildRRect(Rect.fromLTWH(0, size.height - oneThird, width, oneThird));
+    final mediumRect =
+        _buildRRect(Rect.fromLTWH(width, oneThird, width, oneThird * 2));
+    final largeRect =
+        _buildRRect(Rect.fromLTWH((width) * 2, 0, width, size.height));
 
-    canvas.drawRect(smallRect, fillPaint1);
+    canvas.drawRRect(smallRect, fillPaint1);
 
     if (impact.index > 0) {
-      canvas.drawRect(mediumRect, fillPaint2);
+      canvas.drawRRect(mediumRect, fillPaint2);
 
       if (impact.index > 1)
-        canvas.drawRect(largeRect, fillPaint3);
+        canvas.drawRRect(largeRect, fillPaint3);
       else
-        canvas.drawRect(largeRect, emptyPaint);
+        canvas.drawRRect(largeRect, emptyPaint);
     } else {
-      canvas.drawRect(mediumRect, emptyPaint);
-      canvas.drawRect(largeRect, emptyPaint);
+      canvas.drawRRect(mediumRect, emptyPaint);
+      canvas.drawRRect(largeRect, emptyPaint);
     }
+  }
+
+  RRect _buildRRect(Rect rect) {
+    return RRect.fromRectAndCorners(rect,
+        topLeft: Radius.circular(2), topRight: Radius.circular(2));
   }
 
   @override
@@ -1908,4 +1915,67 @@ class SKHeaderCard extends StatelessWidget {
           ],
         ),
       );
+}
+
+class ShakeAnimation extends StatefulWidget {
+  final Widget child;
+
+  ShakeAnimation({this.child}) : super(key: UniqueKey());
+
+  @override
+  State<StatefulWidget> createState() => _ShakeAnimationState();
+}
+
+class _ShakeAnimationState extends State<ShakeAnimation>
+    with SingleTickerProviderStateMixin {
+  AnimationController _controller;
+  Animation _animation;
+
+  @override
+  void initState() {
+    super.initState();
+
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 1000),
+    )..addListener(() => setState(() {}));
+
+    _animation = CurvedAnimation(
+      curve: Curves.easeInToLinear,
+      parent: _controller,
+    )
+      ..addStatusListener((status) {
+        if (status == AnimationStatus.completed) {
+          if (mounted)
+            Timer(
+              Duration(seconds: 3),
+              () {
+                if (mounted) _controller.forward(from: 0);
+              },
+            );
+        }
+      })
+      ..addListener(() => setState(() {}));
+
+    _controller.forward();
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  ///Then you can get a shake type motion like so;
+  double get translation {
+    double progress = _animation.value;
+    return sin(progress * pi * 3) * 0.2;
+    // return Matrix4.rotationZ(offset);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Transform.rotate(
+        angle: translation, alignment: Alignment.center, child: widget.child);
+  }
 }

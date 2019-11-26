@@ -23,11 +23,11 @@ class _TaskCellItem {
       this.name, this.className, this.color, this.due, this.completion);
 }
 
-class ForecastTutorialView extends StatelessWidget {
+class TodoTutorialView extends StatelessWidget {
   final VoidCallback onTapDismiss;
   final String promptMsg;
 
-  ForecastTutorialView(this.onTapDismiss, this.promptMsg);
+  TodoTutorialView(this.onTapDismiss, this.promptMsg);
 
   final items = [
     _TaskCellItem('Reading Quiz', 'World Religions', 6, 'Today', 0.3),
@@ -52,7 +52,7 @@ class ForecastTutorialView extends StatelessWidget {
       alignment: Alignment.center,
       children: <Widget>[
         SKNavView(
-          title: 'Forecast',
+          title: 'Todo',
           leftBtn: Image.asset(ImageNames.peopleImages.static_profile),
           rightBtn: Image.asset(ImageNames.rightNavImages.plus),
           children: [
@@ -76,7 +76,7 @@ class ForecastTutorialView extends StatelessWidget {
                   child: SammiSpeechBubble(
                     sammiPersonality: SammiPersonality.smile,
                     speechBubbleContents: Text.rich(
-                      TextSpan(text: 'Forecast', children: [
+                      TextSpan(text: 'Todo', children: [
                         TextSpan(
                             text:
                                 ' snapshots YOUR upcoming assignments!',

@@ -35,14 +35,14 @@ class StudentClass {
   static time_machine.DateTimeZoneProvider tzdb;
 
   static final _classColors = [
-    '9b55e5ff', // purple
-    'ff71a8ff', // pink
-    '1088b3ff', // blue
-    '4cd8bdff', // mint
-    '4add58ff', // green
-    'f7d300ff', // yellow
-    'ffae42ff', // orange
-    'dd4a63ff', // red
+    'AE77BDFF', // Lavendar
+    'E882ACFF', // Pink
+    '3484E3FF', // Blue
+    '61D8A0FF', // Mint
+    '19A394FF', // Teal
+    'F1AA39FF', // Yello
+    'E2762DFF', // Orange
+    'D73F76FF', // Magenta
   ];
 
   //----------------//

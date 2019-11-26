@@ -9,6 +9,7 @@ import '../requests/requests_core.dart';
 import 'package:intl/intl.dart';
 import 'dart:ui' as dartUI;
 import 'dart:async';
+import 'dart:math';
 
 part 'skoller_widgets.dart';
 part 'utilities.dart';
@@ -34,9 +35,9 @@ class SKColors {
 
   static const skoller_blue = Color(0xFF57B9E4);
   static const menu_blue = Color(0xFFEDFAFF);
-  static const success = Color(0xFF4ADD58);
-  static const alert_orange = Color(0xFFFF6D00);
-  static const warning_red = Color(0xFFFF4159);
+  static const success = Color(0xFF0FB25C);
+  static const alert_orange = Color(0xFFEF4B0A);
+  static const warning_red = Color(0xFFEF183D);
 }
 
 class Analytics {

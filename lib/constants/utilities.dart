@@ -22,31 +22,31 @@ class DateUtilities {
     if (days < 7) {
       switch (days) {
         case 0:
-          return 'Today';
+          return 'Due Today';
         case 1:
-          return 'Tomorrow';
+          return 'Due Tomorrow';
         default:
           switch (comp.weekday) {
             case 1:
-              return 'Monday';
+              return 'Due Monday';
             case 2:
-              return 'Tuesday';
+              return 'Due Tuesday';
             case 3:
-              return 'Wednesday';
+              return 'Due Wednesday';
             case 4:
-              return 'Thursday';
+              return 'Due Thursday';
             case 5:
-              return 'Friday';
+              return 'Due Friday';
             case 6:
-              return 'Saturday';
+              return 'Due Saturday';
             case 7:
-              return 'Sunday';
+              return 'Due Sunday';
             default:
-              return 'Soon';
+              return 'Due Soon';
           }
       }
     } else {
-      return '${days} days';
+      return 'Due in ${days} days';
     }
   }
 

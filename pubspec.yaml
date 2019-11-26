@@ -1,6 +1,6 @@
 name: skoller
 description: A new Flutter project.
-version: 5.4.0+27
+version: 5.5.0+28
 
 environment:
   sdk: ">=2.3.0 <3.0.0"
