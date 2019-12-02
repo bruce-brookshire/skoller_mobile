@@ -139,6 +139,7 @@ class _PeopleImages {
   final person_edit = '${_base}/user_edit.png';
   final people_white = '${_base}/people_white.png';
   final people_gray = '${_base}/people_gray.png';
+  final people_gray_large = '${_base}/people_gray_large.png';
   final people_blue = '${_base}/people_blue.png';
   final static_profile = '${_base}/static_profile.png';
 }

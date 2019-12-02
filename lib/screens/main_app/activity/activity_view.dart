@@ -2,6 +2,7 @@ import 'package:dart_notification_center/dart_notification_center.dart';
 import 'package:dropdown_banner/dropdown_banner.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:skoller/screens/main_app/activity/mod_modal.dart';
 import 'package:skoller/screens/main_app/activity/update_info_view.dart';
 import 'package:skoller/screens/main_app/menu/add_classes_view.dart';
 import 'package:skoller/screens/main_app/tutorial/activity_tutorial_view.dart';
@@ -204,13 +205,23 @@ class _ActivityState extends State<ActivityView> {
 
     return GestureDetector(
       onTapUp: (details) {
-        Navigator.push(
-          context,
-          CupertinoPageRoute(
-            builder: (context) => UpdateInfoView(stackedMods[index]),
-            settings: RouteSettings(name: 'UpdateInfoView'),
-          ),
-        );
+        final mods = stackedMods[index];
+
+        if (mods.length == 1)
+          Navigator.push(
+            context,
+            SKNavOverlayRoute(
+              builder: (context) => ModModal(mods.first),
+            ),
+          );
+        else
+          Navigator.push(
+            context,
+            CupertinoPageRoute(
+              builder: (context) => UpdateInfoView(stackedMods[index]),
+              settings: RouteSettings(name: 'UpdateInfoView'),
+            ),
+          );
       },
       child: Container(
         margin: EdgeInsets.fromLTRB(7, 3, 7, 4),

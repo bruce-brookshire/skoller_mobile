@@ -646,16 +646,21 @@ class Weight {
 
   Weight(this.id, this.weight, this.name);
 
+  static Map<int, Weight> currentWeights = {};
+
   static Weight _fromJsonObj(Map content) {
     if (content == null) {
       return null;
     }
 
-    return Weight(
+    final weight = Weight(
       content['id'],
       content['weight'],
       content['name'],
     );
+
+    currentWeights[weight.id] = weight;
+    return weight;
   }
 }
 

@@ -5,6 +5,7 @@ import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:intl/intl.dart';
 import 'package:skoller/constants/constants.dart';
 import 'package:skoller/screens/main_app/activity/update_info_view.dart';
+import 'package:skoller/screens/main_app/activity/mod_modal.dart';
 import 'package:skoller/screens/main_app/menu/add_classes_view.dart';
 import 'package:skoller/screens/main_app/tutorial/todo_tutorial_view.dart';
 import 'package:skoller/tools.dart';
@@ -453,72 +454,55 @@ class _TodoRowState extends State<_TodoRow> {
 
   Widget buildModCell() {
     final Mod mod = widget.item.getParent;
+    final task = mod.data;
 
     return GestureDetector(
-      onTapUp: (details) => Navigator.push(
-        context,
-        CupertinoPageRoute(
-          builder: (context) => UpdateInfoView([mod]),
-          settings: RouteSettings(name: 'UpdateInfoView'),
-        ),
-      ),
+      onTapUp: (details) {
+        Navigator.push(
+          context,
+          SKNavOverlayRoute(builder: (context) => ModModal(mod)),
+        );
+      },
       child: Container(
         margin: EdgeInsets.fromLTRB(7, 3, 7, 4),
-        padding: EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+        padding: EdgeInsets.symmetric(horizontal: 10, vertical: 8),
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(5),
-          border: Border.all(color: SKColors.dark_gray, width: 1),
-          boxShadow: UIAssets.boxShadow,
-          color: Colors.white,
-        ),
-        child: Column(
+            borderRadius: BorderRadius.circular(5),
+            border: Border.all(color: SKColors.text_light_gray, width: 1),
+            boxShadow: UIAssets.boxShadow,
+            color: Colors.white,
+            gradient: LinearGradient(colors: [
+              task.parentClass.getColor(),
+              task.parentClass.getColor().withAlpha(100)
+            ])),
+        child: Row(
           children: <Widget>[
-            Padding(
-              padding: EdgeInsets.only(bottom: 4),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            Expanded(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
-                  Expanded(
-                    child: Text(
-                      mod.data.name,
-                      style: TextStyle(
-                          color: mod.parentClass.getColor(),
-                          fontWeight: FontWeight.bold,
-                          fontSize: 17),
-                    ),
+                  Text(
+                    'New Assignment ALERT',
+                    style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 18),
                   ),
                   Text(
-                    'New Assignment',
+                    'TAP HERE to view!',
                     style: TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w300,
                       fontSize: 13,
-                      fontWeight: FontWeight.normal,
-                      color: SKColors.warning_red,
                     ),
-                  ),
+                  )
                 ],
               ),
             ),
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: <Widget>[
-                Container(
-                  decoration: BoxDecoration(
-                      color: mod.parentClass.getColor(),
-                      shape: BoxShape.circle),
-                  padding: EdgeInsets.all(5),
-                  margin: EdgeInsets.only(right: 4),
-                  child: Image.asset(
-                    ImageNames.assignmentInfoImages.updates_available,
-                  ),
-                ),
-                Expanded(
-                  child: Text(
-                    mod.parentClass?.name ?? '',
-                    style:
-                        TextStyle(fontSize: 15, fontWeight: FontWeight.normal),
-                  ),
-                ),
-              ],
+            Padding(
+              padding: EdgeInsets.all(4),
+              child: Image.asset(ImageNames.peopleImages.people_white),
             )
           ],
         ),
@@ -547,36 +531,22 @@ class _TodoRowState extends State<_TodoRow> {
       modDesc = 'Multiple changes';
 
     return GestureDetector(
-      onTapDown: (details) {
-        setState(() {
-          isTapped = true;
-        });
-      },
-      onTapCancel: () {
-        setState(() {
-          isTapped = false;
-        });
-      },
       onTapUp: (details) {
-        setState(() {
-          isTapped = false;
-        });
-        StatefulWidget nextPage;
+        Route nextRoute;
 
         if (mods.length == 1)
-          nextPage = UpdateInfoView(mods);
+          nextRoute = SKNavOverlayRoute(
+            builder: (context) => ModModal(mods.first),
+          );
         else
-          nextPage = AssignmentInfoView(assignment_id: task.id);
-
-        Navigator.push(
-          context,
-          CupertinoPageRoute(
-            builder: (context) => nextPage,
+          nextRoute = CupertinoPageRoute(
+            builder: (context) => AssignmentInfoView(assignment_id: task.id),
             settings: RouteSettings(
                 name:
                     mods.length == 1 ? 'UpdateInfoView' : 'AssignmentInfoView'),
-          ),
-        );
+          );
+
+        Navigator.push(context, nextRoute);
       },
       child: Container(
         margin: EdgeInsets.fromLTRB(7, 3, 7, 4),

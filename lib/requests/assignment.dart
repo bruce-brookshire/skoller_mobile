@@ -39,6 +39,10 @@ class Assignment {
     return StudentClass.currentClasses[classId];
   }
 
+  Weight get weightObject {
+    return Weight.currentWeights[weight_id];
+  }
+
   Assignment(
     this.id,
     this.name,

@@ -5,7 +5,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/material.dart';
 import 'activity/activity_view.dart';
-import 'forecast/todo_view.dart';
+import 'tasks/todo_view.dart';
 import 'package:skoller/tools.dart';
 import 'classes/classes_view.dart';
 import 'chat/chat_list_view.dart';
