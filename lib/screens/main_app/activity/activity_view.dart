@@ -24,7 +24,29 @@ class _ActivityState extends State<ActivityView> {
     super.initState();
 
     stackedMods = stackAndSortMods(Mod.currentMods.values.toList());
+    fetchMods();
 
+    DartNotificationCenter.subscribe(
+      observer: this,
+      channel: NotificationChannels.modsChanged,
+      onNotification: fetchMods,
+    );
+
+    DartNotificationCenter.subscribe(
+      observer: this,
+      channel: NotificationChannels.assignmentChanged,
+      onNotification: fetchMods,
+    );
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+
+    DartNotificationCenter.unsubscribe(observer: this);
+  }
+
+  Future<void> fetchMods([_]) async {
     Mod.fetchMods().then((response) {
       if (response.wasSuccessful()) {
         final mods = stackAndSortMods(response.obj ?? []);
@@ -150,8 +172,7 @@ class _ActivityState extends State<ActivityView> {
             : Expanded(
                 child: RefreshIndicator(
                   key: _refreshIndicatorKey,
-                  onRefresh: () async =>
-                      stackAndSortMods(Mod.currentMods.values.toList()),
+                  onRefresh: fetchMods,
                   child: ListView.builder(
                     padding: EdgeInsets.only(top: 4),
                     itemCount: stackedMods.length,
@@ -201,13 +222,13 @@ class _ActivityState extends State<ActivityView> {
   }
 
   Widget buildListItem(BuildContext context, int index) {
-    Mod mod = stackedMods[index][0];
+    final mod = stackedMods[index][0];
 
     return GestureDetector(
       onTapUp: (details) {
         final mods = stackedMods[index];
 
-        if (mods.length == 1)
+        if (mods.length == 1 && mods.first.isAccepted == null)
           Navigator.push(
             context,
             SKNavOverlayRoute(

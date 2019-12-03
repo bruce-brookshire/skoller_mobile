@@ -14,22 +14,50 @@ class ModModal extends StatelessWidget {
 
   void tappedAccept(BuildContext context) async {
     final loader = SKLoadingScreen.fadeIn(context);
+    final response = await mod.acceptMod();
 
-    final response = await mod.declineMod();
-
-    loader.fadeOut();
-
-    if (!response.wasSuccessful())
+    if (!response.wasSuccessful()) {
+      loader.fadeOut();
       DropdownBanner.showBanner(
         text:
             'Unable to accept assignment modification. Please try again later',
         color: SKColors.warning_red,
         textStyle: TextStyle(color: Colors.white),
       );
-    else {
-      Navigator.pop(context);
+    } else {
+      await Mod.fetchMods();
+      await mod.parentClass.refetchSelf();
+
       DartNotificationCenter.post(
-          channel: NotificationChannels.assignmentChanged);
+        channel: NotificationChannels.assignmentChanged,
+      );
+
+      loader.fadeOut();
+      Navigator.pop(context);
+    }
+  }
+
+  void tappedDecline(BuildContext context) async {
+    final loader = SKLoadingScreen.fadeIn(context);
+    final response = await mod.declineMod();
+
+    if (!response.wasSuccessful()) {
+      loader.fadeOut();
+      DropdownBanner.showBanner(
+        text:
+            'Unable to accept assignment modification. Please try again later',
+        color: SKColors.warning_red,
+        textStyle: TextStyle(color: Colors.white),
+      );
+    } else {
+      await Mod.fetchMods();
+
+      DartNotificationCenter.post(
+        channel: NotificationChannels.assignmentChanged,
+      );
+
+      loader.fadeOut();
+      Navigator.pop(context);
     }
   }
 
@@ -244,35 +272,41 @@ class ModModal extends StatelessWidget {
       return Column(
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
-          Container(
-            padding: EdgeInsets.symmetric(vertical: 6, horizontal: 12),
-            alignment: Alignment.center,
-            margin: EdgeInsets.symmetric(horizontal: 16),
-            decoration: BoxDecoration(
-              color: SKColors.warning_red,
-              borderRadius: BorderRadius.circular(5),
-              boxShadow: UIAssets.boxShadow,
-            ),
-            child: Text(
-              'Delete Assignment',
-              style: TextStyle(color: Colors.white),
+          GestureDetector(
+            onTapUp: (_) => tappedAccept(context),
+            child: Container(
+              padding: EdgeInsets.symmetric(vertical: 6, horizontal: 12),
+              alignment: Alignment.center,
+              margin: EdgeInsets.symmetric(horizontal: 16),
+              decoration: BoxDecoration(
+                color: SKColors.warning_red,
+                borderRadius: BorderRadius.circular(5),
+                boxShadow: UIAssets.boxShadow,
+              ),
+              child: Text(
+                'Delete Assignment',
+                style: TextStyle(color: Colors.white),
+              ),
             ),
           ),
-          Container(
-            padding: EdgeInsets.symmetric(vertical: 6, horizontal: 12),
-            alignment: Alignment.center,
-            margin: EdgeInsets.fromLTRB(16, 12, 16, 0),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(5),
-              border: Border.all(color: SKColors.skoller_blue),
-              boxShadow: UIAssets.boxShadow,
+          GestureDetector(
+            onTapUp: (_) => tappedDecline(context),
+            child: Container(
+              padding: EdgeInsets.symmetric(vertical: 6, horizontal: 12),
+              alignment: Alignment.center,
+              margin: EdgeInsets.fromLTRB(16, 12, 16, 0),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(5),
+                border: Border.all(color: SKColors.skoller_blue),
+                boxShadow: UIAssets.boxShadow,
+              ),
+              child: Text(
+                'Keep Assignment',
+                style: TextStyle(color: SKColors.skoller_blue),
+              ),
             ),
-            child: Text(
-              'Keep Assignment',
-              style: TextStyle(color: SKColors.skoller_blue),
-            ),
-          )
+          ),
         ],
       );
     else
@@ -297,7 +331,7 @@ class ModModal extends StatelessWidget {
             ),
           ),
           GestureDetector(
-            // onTapUp: ,
+            onTapUp: (_) => tappedDecline(context),
             child: Container(
               padding: EdgeInsets.symmetric(vertical: 6, horizontal: 12),
               alignment: Alignment.center,
