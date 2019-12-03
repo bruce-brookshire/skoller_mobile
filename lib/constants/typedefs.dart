@@ -22,3 +22,6 @@ typedef dynamic DynamicCallback();
 typedef void StringCallback(String string);
 
 typedef void DoubleStringCallback(String str1, String str2);
+
+typedef List<Assignment> AssignmentsForDateCallback(DateTime time);
+typedef void AssignmentCallback(Assignment assignment);

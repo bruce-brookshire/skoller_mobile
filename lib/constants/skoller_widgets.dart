@@ -1390,13 +1390,21 @@ class SKAssignmentImpactGraph extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     _ImpactLevel level;
+    String impactDesc;
 
-    if (completion == null || completion < 0.05)
+    if ((completion ?? 0.0) == 0.0) {
+      level = _ImpactLevel.none;
+      impactDesc = 'None';
+    } else if (completion < 0.05) {
       level = _ImpactLevel.low;
-    else if (completion < 0.15)
+      impactDesc = 'Low';
+    } else if (completion < 0.15) {
       level = _ImpactLevel.medium;
-    else
+      impactDesc = 'Medium';
+    } else {
       level = _ImpactLevel.high;
+      impactDesc = 'High';
+    }
 
     final double width = size == ImpactGraphSize.large ? 40 : 32;
     final double height = size == ImpactGraphSize.large ? 28 : 23;
@@ -1416,9 +1424,7 @@ class SKAssignmentImpactGraph extends StatelessWidget {
           Padding(
             padding: EdgeInsets.only(top: 2),
             child: Text(
-              level == _ImpactLevel.low
-                  ? 'Low'
-                  : (level == _ImpactLevel.medium ? 'Medium' : 'High'),
+              impactDesc,
               style: TextStyle(
                 fontSize: 9,
               ),
@@ -1429,7 +1435,7 @@ class SKAssignmentImpactGraph extends StatelessWidget {
   }
 }
 
-enum _ImpactLevel { low, medium, high }
+enum _ImpactLevel { none, low, medium, high }
 
 class _SKImpactGraphPainter extends CustomPainter {
   final Color color;
@@ -1440,7 +1446,7 @@ class _SKImpactGraphPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final fillPaint1 = Paint()
-      ..color = color.withOpacity(0.5)
+      ..color = color.withOpacity(0.25)
       ..style = PaintingStyle.fill
       ..isAntiAlias = true;
 
@@ -1471,16 +1477,21 @@ class _SKImpactGraphPainter extends CustomPainter {
 
     canvas.drawRRect(smallRect, fillPaint1);
 
-    if (impact.index > 0) {
-      canvas.drawRRect(mediumRect, fillPaint2);
+    final rects = [smallRect, mediumRect, largeRect];
+    final paints = [fillPaint1, fillPaint2, fillPaint3];
 
-      if (impact.index > 1)
-        canvas.drawRRect(largeRect, fillPaint3);
-      else
-        canvas.drawRRect(largeRect, emptyPaint);
-    } else {
-      canvas.drawRRect(mediumRect, emptyPaint);
-      canvas.drawRRect(largeRect, emptyPaint);
+    int currIndex = 1;
+
+    while (currIndex <= impact.index) {
+      final typeIndex = currIndex - 1;
+
+      canvas.drawRRect(rects[typeIndex], paints[typeIndex]);
+      currIndex++;
+    }
+
+    while (currIndex <= _ImpactLevel.high.index) {
+      canvas.drawRRect(rects[currIndex - 1], emptyPaint);
+      currIndex++;
     }
   }
 

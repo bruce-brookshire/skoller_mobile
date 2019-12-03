@@ -84,14 +84,14 @@ class _AssignmentInfoState extends State<AssignmentInfoView> {
     assignment.toggleComplete().then((success) {
       if (!success) {
         setState(() {
-          assignment.completed = !assignment.completed;
+          assignment.isCompleted = !assignment.isCompleted;
         });
       } else
         DartNotificationCenter.post(
             channel: NotificationChannels.assignmentChanged);
     });
     setState(() {
-      assignment.completed = !assignment.completed;
+      assignment.isCompleted = !assignment.isCompleted;
     });
   }
 
@@ -611,7 +611,7 @@ class _AssignmentInfoState extends State<AssignmentInfoView> {
       _GradeShakeAnimation(
         onTap: tappedGradeSelector,
         text: assignment.grade == null ? '--%' : '${assignment.grade}%',
-        isAlert: assignment.grade == null && assignment.completed,
+        isAlert: assignment.grade == null && assignment.isCompleted,
       )
     ];
 
@@ -663,7 +663,7 @@ class _AssignmentInfoState extends State<AssignmentInfoView> {
                 Padding(
                   padding: EdgeInsets.only(top: 2),
                   child: Text(
-                    assignment.completed ? 'Completed' : 'Not completed',
+                    assignment.isCompleted ? 'Completed' : 'Not completed',
                     style: TextStyle(
                         color: SKColors.light_gray,
                         fontWeight: FontWeight.normal,
@@ -671,7 +671,7 @@ class _AssignmentInfoState extends State<AssignmentInfoView> {
                   ),
                 ),
                 Switch(
-                  value: assignment.completed ?? true,
+                  value: assignment.isCompleted ?? true,
                   activeColor: SKColors.skoller_blue,
                   onChanged: (val) {
                     toggleComplete();

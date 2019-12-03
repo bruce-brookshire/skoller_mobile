@@ -6,6 +6,7 @@ import 'package:intl/intl.dart';
 import 'package:skoller/constants/constants.dart';
 import 'package:skoller/screens/main_app/activity/update_info_view.dart';
 import 'package:skoller/screens/main_app/activity/mod_modal.dart';
+import 'package:skoller/screens/main_app/calendar/calendar.dart';
 import 'package:skoller/screens/main_app/menu/add_classes_view.dart';
 import 'package:skoller/screens/main_app/tutorial/todo_tutorial_view.dart';
 import 'package:skoller/tools.dart';
@@ -70,19 +71,17 @@ class _TodoState extends State<TodoView> {
     int minDaysOutCompleted;
     bool newCompletedTasksAvailable = false;
     List<_TaskLikeItem> tasks = (Assignment.currentAssignments.values.toList()
-          ..removeWhere((a) =>
-              (a.due?.isBefore(today) ?? true) ||
-              a.parentClass == null ||
-              a.weight_id == null)
+          ..removeWhere(
+              (a) => (a.due?.isBefore(today) ?? true) || a.parentClass == null)
           ..removeWhere((a) {
-            if (a.completed) {
+            if (a.isCompleted) {
               newCompletedTasksAvailable = true;
 
               int daysOut = a.due.difference(today).inDays;
               if (daysOut < (minDaysOutCompleted ?? 1000))
                 minDaysOutCompleted = daysOut;
             }
-            return !showingCompletedTasks && a.completed;
+            return !showingCompletedTasks && a.isCompleted;
           }))
         .map((a) => _TaskLikeItem(a.id, false, a.due))
         .toList();
@@ -179,6 +178,28 @@ class _TodoState extends State<TodoView> {
         ),
       );
     }
+  }
+
+  void onCompleteAssignment(Assignment task) async {
+    final index = _taskItems
+        .indexWhere((item) => !item.isMod && item.parentObjectId == task.id);
+
+    bool success;
+
+    if (!showingCompletedTasks) {
+      final item = _taskItems.removeAt(index);
+
+      setState(() {});
+
+      success = await task.toggleComplete();
+
+      if (!success) _taskItems.insert(index, item);
+    } else
+      success = await task.toggleComplete();
+
+    if (success)
+      DartNotificationCenter.post(
+          channel: NotificationChannels.assignmentChanged);
   }
 
   void tappedChangeTodo(TapUpDetails details) async {
@@ -337,7 +358,10 @@ class _TodoState extends State<TodoView> {
                         ),
                       );
                     } else if (index <= _taskItems.length)
-                      return _TodoRow(_taskItems[index - 1]);
+                      return _TodoRow(
+                        _taskItems[index - 1],
+                        this.onCompleteAssignment,
+                      );
                     else
                       return GestureDetector(
                         key: Key('bottom item'),
@@ -424,8 +448,9 @@ class _TaskLikeItem {
 
 class _TodoRow extends StatefulWidget {
   final _TaskLikeItem item;
+  final AssignmentCallback onCompleted;
 
-  _TodoRow(this.item);
+  _TodoRow(this.item, this.onCompleted);
 
   @override
   State<StatefulWidget> createState() => _TodoRowState();
@@ -446,7 +471,7 @@ class _TodoRowState extends State<_TodoRow> {
 
     if ((mods ?? []).length > 0)
       return buildTaskUpdatesCell(task, mods);
-    else if (isChecked)
+    else if (isChecked || task.isCompleted)
       return buildTaskCheckedCell(task);
     else
       return buildTasksNormalCell(task);
@@ -617,7 +642,9 @@ class _TodoRowState extends State<_TodoRow> {
                     decoration: BoxDecoration(
                       border: Border.all(color: SKColors.text_light_gray),
                       borderRadius: BorderRadius.circular(10),
-                      color: SKColors.skoller_blue,
+                      color: task.isCompleted
+                          ? SKColors.dark_gray
+                          : SKColors.skoller_blue,
                     ),
                     width: 20,
                     height: 20,
@@ -648,35 +675,57 @@ class _TodoRowState extends State<_TodoRow> {
                       ),
                     ),
                     Text(
-                      DateUtilities.getFutureRelativeString(task.due),
+                      task.isCompleted
+                          ? 'Completed'
+                          : DateUtilities.getFutureRelativeString(task.due),
                       style:
                           TextStyle(fontSize: 12, fontWeight: FontWeight.w700),
                     ),
                   ],
                 ),
               ),
-              Container(
-                height: 56,
-                width: 56,
-                alignment: Alignment.center,
-                decoration: BoxDecoration(
-                  color: SKColors.skoller_blue,
-                  borderRadius: BorderRadius.only(
-                    topRight: Radius.circular(5),
-                    bottomRight: Radius.circular(5),
+              GestureDetector(
+                behavior: HitTestBehavior.opaque,
+                onTapUp: (_) {
+                  widget.onCompleted(task);
+                  setState(() {
+                    isChecked = false;
+                  });
+                },
+                child: Container(
+                  height: 56,
+                  width: 56,
+                  alignment: Alignment.center,
+                  decoration: BoxDecoration(
+                    color: task.isCompleted
+                        ? SKColors.dark_gray
+                        : SKColors.skoller_blue,
+                    borderRadius: BorderRadius.only(
+                      topRight: Radius.circular(5),
+                      bottomRight: Radius.circular(5),
+                    ),
                   ),
+                  child: task.isCompleted
+                      ? Text(
+                          'Mark incomplete',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.w700,
+                              fontSize: 10),
+                        )
+                      : ShakeAnimation(
+                          child: Text(
+                            'Mark as complete',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.w700,
+                                fontSize: 10),
+                          ),
+                        ),
                 ),
-                child: ShakeAnimation(
-                  child: Text(
-                    'Mark as complete',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.w700,
-                        fontSize: 10),
-                  ),
-                ),
-              )
+              ),
             ],
           ),
         ),
@@ -752,12 +801,11 @@ class _TodoRowState extends State<_TodoRow> {
                                 fontSize: 17),
                           ),
                         ),
-                        if (task.weight_id != null && task.weight != null)
-                          SKAssignmentImpactGraph(
-                            task.weight,
-                            task.parentClass.getColor(),
-                            size: ImpactGraphSize.small,
-                          )
+                        SKAssignmentImpactGraph(
+                          task.weight,
+                          task.parentClass.getColor(),
+                          size: ImpactGraphSize.small,
+                        )
                       ],
                     ),
                     Row(

@@ -141,7 +141,7 @@ class _MainState extends State<MainView> {
             curCount);
 
     final assignmentCompleted = Assignment.currentAssignments.values
-        .any((a) => (a.due?.isBefore(now) ?? false) || a.completed);
+        .any((a) => (a.due?.isBefore(now) ?? false) || a.isCompleted);
 
     final shouldReview = numSetupClasses >= 2 && assignmentCompleted;
 

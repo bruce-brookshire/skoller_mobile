@@ -386,7 +386,7 @@ class _CalendarState extends State<CalendarView> {
           .toList();
 }
 
-typedef List<Assignment> AssignmentsForDateCallback(DateTime time);
+
 
 class _CalendarBody extends StatelessWidget {
   final DateTime firstOfMonth;
