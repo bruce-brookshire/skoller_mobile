@@ -17,9 +17,9 @@ import 'dart:async';
 import 'dart:math';
 
 class AssignmentInfoView extends StatefulWidget {
-  final int assignment_id;
+  final int assignmentId;
 
-  AssignmentInfoView({Key key, this.assignment_id}) : super(key: key);
+  AssignmentInfoView({Key key, this.assignmentId}) : super(key: key);
 
   @override
   State createState() => _AssignmentInfoState();
@@ -36,7 +36,7 @@ class _AssignmentInfoState extends State<AssignmentInfoView> {
   void initState() {
     super.initState();
 
-    assignment = Assignment.currentAssignments[widget.assignment_id];
+    assignment = Assignment.currentAssignments[widget.assignmentId];
 
     for (final mod in Mod.currentMods.values) {
       if (mod.modType != ModType.newAssignment &&
@@ -237,7 +237,7 @@ class _AssignmentInfoState extends State<AssignmentInfoView> {
 
       if (response != null && response) {
         setState(() =>
-            assignment = Assignment.currentAssignments[widget.assignment_id]);
+            assignment = Assignment.currentAssignments[widget.assignmentId]);
       }
       loader.fadeOut();
     }
@@ -256,7 +256,7 @@ class _AssignmentInfoState extends State<AssignmentInfoView> {
         if (result.wasSuccessful()) {
           if (await assignment.refetchSelf())
             setState(() => assignment =
-                Assignment.currentAssignments[widget.assignment_id]);
+                Assignment.currentAssignments[widget.assignmentId]);
 
           loader.fadeOut();
           DartNotificationCenter.post(

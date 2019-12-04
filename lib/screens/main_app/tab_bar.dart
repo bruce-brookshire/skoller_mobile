@@ -42,7 +42,7 @@ class _SKTabBarState extends State<SKTabBar> {
   ];
 
   final List<String> _indexIconPartialPaths = [
-    'forecast_',
+    'todos_',
     'calendar_',
     'chat_',
     'classes_',

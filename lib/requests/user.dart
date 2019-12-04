@@ -37,20 +37,26 @@ class SKUser {
     bool isAssignmentPostNotifications,
     School primarySchool,
     Period primaryPeriod,
+    int todoDaysPast,
+    int todoDaysFuture,
     List<int> fieldsOfStudy,
   }) {
-    Map<String, dynamic> params = {'id': this.student.id};
+    Map<String, dynamic> params = {
+      'id': this.student.id,
+      'name_first': firstName,
+      'name_last': lastName,
+      'bio': bio,
+      'organization': organizations,
+      'notification_days_notice': notificationDays,
+      'is_assign_post_notifications': isAssignmentPostNotifications,
+      'primary_school_id': primarySchool?.id,
+      'primary_period_id': primaryPeriod?.id,
+      'fields_of_study': fieldsOfStudy,
+      'todo_days_future': todoDaysFuture,
+      'todo_days_past': todoDaysPast,
+    };
 
-    if (firstName != null && firstName != this.student.nameFirst)
-      params['name_first'] = firstName;
-
-    if (lastName != null && lastName != this.student.nameLast)
-      params['name_last'] = lastName;
-
-    if (bio != null && bio != this.student.bio) params['bio'] = bio;
-
-    if (organizations != null && organizations != this.student.organizations)
-      params['organization'] = organizations;
+    params.removeWhere((_, v) => v == null);
 
     if (notificationTime != null) {
       final formattedNotificationTime =
@@ -65,26 +71,9 @@ class SKUser {
           formattedFutureNotificationTime;
     }
 
-    if (notificationDays != null &&
-        notificationDays != this.student.notificationDays)
-      params['notification_days_notice'] = notificationDays;
-
-    if (isAssignmentPostNotifications != null &&
-        isAssignmentPostNotifications != this.student.isAssignPostNotifications)
-      params['is_assign_post_notifications'] = isAssignmentPostNotifications;
-
-    if (primarySchool != null &&
-        primarySchool.id != this.student.primarySchool?.id)
-      params['primary_school_id'] = primarySchool.id;
-
-    if (primaryPeriod != null &&
-        primaryPeriod.id != this.student.primaryPeriod?.id)
-      params['primary_period_id'] = primaryPeriod.id;
-
-    if (params['primary_period_id'] == null && params['primary_school_id'] != null)
+    if (params['primary_period_id'] == null &&
+        params['primary_school_id'] != null)
       params['primary_period_id'] = primarySchool.periods?.first?.id;
-
-    if (fieldsOfStudy != null) params['fields_of_study'] = fieldsOfStudy;
 
     if (params.length == 1) {
       return Future.value(true);
@@ -125,6 +114,8 @@ class Student {
   int id;
   int points;
   int notificationDays;
+  int todoDaysFuture;
+  int todoDaysPast;
   bool isAssignPostNotifications;
 
   bool isVerified;
@@ -186,6 +177,8 @@ class Student {
     bio = content['bio'];
     organizations = content['organization'];
     enrollmentLink = content['enrollment_link'];
+    todoDaysFuture = content['todo_days_future'];
+    todoDaysPast = content['todo_days_past'];
 
     primarySchool = content['primary_school'] != null
         ? School._fromJsonObj(content['primary_school'])

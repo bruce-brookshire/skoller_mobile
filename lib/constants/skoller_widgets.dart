@@ -46,6 +46,7 @@ class SKNavBar extends StatelessWidget {
   final bool leftIsPop;
 
   final String title;
+  final Widget titleOption;
 
   final Color titleColor;
 
@@ -65,70 +66,80 @@ class SKNavBar extends StatelessWidget {
     this.callbackRight,
     this.callbackLeft,
     this.callbackTitle,
+    this.titleOption,
   });
 
-  Widget build(BuildContext context) => Container(
-        height: 44,
-        decoration: BoxDecoration(boxShadow: [
-          BoxShadow(
-            color: Color(0x1C000000),
-            offset: Offset(0, 3.5),
-            blurRadius: 2,
-          )
-        ], color: Colors.white),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: <Widget>[
-            GestureDetector(
-              behavior: HitTestBehavior.opaque,
-              onTapUp: (details) {
-                if (callbackLeft != null)
-                  callbackLeft();
-                else if (leftIsPop) Navigator.pop(context);
-              },
-              child: Container(
-                padding: EdgeInsets.only(left: 4),
-                child: leftBtn != null ? Center(child: leftBtn) : null,
-                width: 44,
-                height: 44,
-              ),
-            ),
-            GestureDetector(
-              behavior: HitTestBehavior.opaque,
-              onTapUp: (details) {
-                if (callbackTitle != null) callbackTitle();
-              },
-              child: Text(
-                title,
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.w800,
-                  color: titleColor,
-                  letterSpacing: 0.5,
-                ),
-              ),
-            ),
-            GestureDetector(
-              behavior: HitTestBehavior.opaque,
-              onTapUp: (details) {
-                if (callbackRight != null) callbackRight();
-              },
-              child: Container(
-                padding: EdgeInsets.only(right: 4),
-                child: rightBtn != null ? Center(child: rightBtn) : null,
-                width: 44,
-                height: 44,
-              ),
-            ),
-          ],
+  Widget build(BuildContext context) {
+    final titleWidget = GestureDetector(
+      behavior: HitTestBehavior.opaque,
+      onTapUp: (details) {
+        if (callbackTitle != null) callbackTitle();
+      },
+      child: Text(
+        title,
+        style: TextStyle(
+          fontSize: 18,
+          fontWeight: FontWeight.w800,
+          color: titleColor,
+          letterSpacing: 0.5,
         ),
-      );
+      ),
+    );
+
+    return Container(
+      height: 44,
+      decoration: BoxDecoration(boxShadow: [
+        BoxShadow(
+          color: Color(0x1C000000),
+          offset: Offset(0, 3.5),
+          blurRadius: 2,
+        )
+      ], color: Colors.white),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: <Widget>[
+          GestureDetector(
+            behavior: HitTestBehavior.opaque,
+            onTapUp: (details) {
+              if (callbackLeft != null)
+                callbackLeft();
+              else if (leftIsPop) Navigator.pop(context);
+            },
+            child: Container(
+              padding: EdgeInsets.only(left: 4),
+              child: leftBtn != null ? Center(child: leftBtn) : null,
+              width: 44,
+              height: 44,
+            ),
+          ),
+          titleOption == null
+              ? titleWidget
+              : Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[titleWidget, titleOption]),
+          GestureDetector(
+            behavior: HitTestBehavior.opaque,
+            onTapUp: (details) {
+              if (callbackRight != null) callbackRight();
+            },
+            child: Container(
+              padding: EdgeInsets.only(right: 4),
+              child: rightBtn != null ? Center(child: rightBtn) : null,
+              width: 44,
+              height: 44,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 }
 
 class SKNavView extends StatelessWidget {
   final bool isPop;
 
   final String title;
+  final Widget titleOption;
 
   final Widget rightBtn;
   final Widget leftBtn;
@@ -153,6 +164,7 @@ class SKNavView extends StatelessWidget {
     this.callbackLeft,
     this.callbackTitle,
     this.backgroundColor,
+    this.titleOption,
   });
 
   Widget build(BuildContext context) {
@@ -166,6 +178,7 @@ class SKNavView extends StatelessWidget {
       callbackRight: callbackRight,
       callbackLeft: callbackLeft,
       callbackTitle: callbackTitle,
+      titleOption: titleOption,
     );
     return Scaffold(
       backgroundColor: Colors.white,
@@ -1057,12 +1070,18 @@ class SKPickerModal extends StatefulWidget {
   final String subtitle;
   final List<String> items;
   final IntCallback onSelect;
+  final Widget optionChild;
+  final VoidCallback onOptionChildTapped;
+  final int startIndex;
 
   SKPickerModal({
     @required this.title,
     this.subtitle,
     @required this.items,
     @required this.onSelect,
+    this.optionChild,
+    this.onOptionChildTapped,
+    this.startIndex = 0,
   });
 
   @override
@@ -1105,6 +1124,7 @@ class _SKPickerModalState extends State<SKPickerModal> {
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             ...children,
             Container(
@@ -1113,6 +1133,9 @@ class _SKPickerModalState extends State<SKPickerModal> {
               child: CupertinoPicker.builder(
                 backgroundColor: Colors.white,
                 childCount: widget.items.length,
+                scrollController: FixedExtentScrollController(
+                  initialItem: widget.startIndex,
+                ),
                 itemBuilder: (context, index) => Container(
                   alignment: Alignment.center,
                   child: Text(
@@ -1124,6 +1147,18 @@ class _SKPickerModalState extends State<SKPickerModal> {
                 onSelectedItemChanged: (index) => this._selectedIndex = index,
               ),
             ),
+            if (widget.optionChild != null)
+              GestureDetector(
+                behavior: HitTestBehavior.opaque,
+                onTapUp: (_) {
+                  Navigator.pop(context);
+                  widget.onOptionChildTapped();
+                },
+                child: Padding(
+                  padding: EdgeInsets.symmetric(vertical: 4),
+                  child: widget.optionChild,
+                ),
+              ),
             Row(
               children: <Widget>[
                 Expanded(

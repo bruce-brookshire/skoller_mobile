@@ -4,16 +4,14 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:intl/intl.dart';
 import 'package:skoller/constants/constants.dart';
-import 'package:skoller/screens/main_app/activity/update_info_view.dart';
-import 'package:skoller/screens/main_app/activity/mod_modal.dart';
-import 'package:skoller/screens/main_app/calendar/calendar.dart';
-import 'package:skoller/screens/main_app/menu/add_classes_view.dart';
-import 'package:skoller/screens/main_app/tutorial/todo_tutorial_view.dart';
-import 'package:skoller/tools.dart';
+import 'package:skoller/screens/main_app/tasks/dateless_assignments_modal.dart';
+import 'package:skoller/screens/main_app/tasks/todo_preferences_modal.dart';
+import '../activity/mod_modal.dart';
+import '../menu/add_classes_view.dart';
+import '../tutorial/todo_tutorial_view.dart';
 import '../classes/assignment_info_view.dart';
 import '../classes/assignment_weight_view.dart';
-
-enum Todo { tenDay, thirtyDay, all }
+import 'package:skoller/tools.dart';
 
 class TodoView extends StatefulWidget {
   State createState() => _TodoState();
@@ -21,7 +19,8 @@ class TodoView extends StatefulWidget {
 
 class _TodoState extends State<TodoView> {
   List<_TaskLikeItem> _taskItems = [];
-  Todo todo = Todo.tenDay;
+  List<int> _datelessAssignments = [];
+
   bool showingCompletedTasks = false;
   bool completedTasksAvailable = false;
 
@@ -109,13 +108,7 @@ class _TodoState extends State<TodoView> {
       tasks.addAll(temp);
     }
 
-    int outlook;
-    if (Todo == Todo.all)
-      outlook = 365;
-    else if (Todo == Todo.thirtyDay)
-      outlook = 30;
-    else
-      outlook = 10;
+    int outlook = SKUser.current.student.todoDaysFuture;
 
     if (newCompletedTasksAvailable && outlook < minDaysOutCompleted)
       newCompletedTasksAvailable = false;
@@ -140,6 +133,12 @@ class _TodoState extends State<TodoView> {
 
     _taskItems = tasks;
     completedTasksAvailable = newCompletedTasksAvailable;
+
+    _datelessAssignments = Assignment.currentAssignments.values
+        .where((a) => a.due == null)
+        .map((a) => a.id)
+        .toList();
+
     if (mounted) setState(() {});
   }
 
@@ -161,10 +160,34 @@ class _TodoState extends State<TodoView> {
     final result = await showDialog(
       context: context,
       builder: (context) => SKPickerModal(
-        title: 'Select a class',
-        subtitle: 'Choose a class to add an assignment to',
+        title: 'Add Assignment',
+        subtitle: 'Select a class',
         items: classes.map((cl) => cl.name).toList(),
         onSelect: (newIndex) => selectedIndex = newIndex,
+        onOptionChildTapped: () => DartNotificationCenter.post(
+            channel: NotificationChannels.presentViewOverTabBar,
+            options: AddClassesView()),
+        optionChild: Container(
+          margin: EdgeInsets.symmetric(horizontal: 24),
+          padding: EdgeInsets.only(top: 4, bottom: 4),
+          decoration: BoxDecoration(
+            border: Border(
+                top: BorderSide(color: SKColors.border_gray),
+                bottom: BorderSide(color: SKColors.border_gray)),
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text('Can\'t find your class? ',
+                  style: TextStyle(fontWeight: FontWeight.w300)),
+              Text(
+                'Add class',
+                style: TextStyle(
+                    color: SKColors.skoller_blue, fontWeight: FontWeight.w600),
+              )
+            ],
+          ),
+        ),
       ),
     );
 
@@ -211,28 +234,13 @@ class _TodoState extends State<TodoView> {
       return;
     }
 
-    int selectedIndex;
-
-    final results = await showDialog(
-      barrierDismissible: false,
-      context: context,
-      builder: (context) => SKPickerModal(
-        title: 'To-Do\'s',
-        subtitle: 'How far out do you want to look?',
-        items: ['10-day', '30-day', 'Semester outlook'],
-        onSelect: (selection) => selectedIndex = selection,
-      ),
+    final result = await Navigator.push(
+      context,
+      SKNavOverlayRoute(builder: (_) => TodoPreferencesModal()),
     );
 
-    if (results is bool && results && selectedIndex != null) {
-      if (selectedIndex == 0)
-        todo = Todo.tenDay;
-      else if (selectedIndex == 1)
-        todo = Todo.thirtyDay;
-      else
-        todo = Todo.all;
-
-      loadTasks();
+    if (result is bool && result) {
+      setState(() {});
     }
   }
 
@@ -249,18 +257,32 @@ class _TodoState extends State<TodoView> {
         StudentClass.currentClasses.values
             .any((c) => c.status.id == ClassStatuses.needs_setup);
 
-    String TodoStr;
-    switch (todo) {
-      case Todo.tenDay:
-        TodoStr = '10';
-        break;
-      case Todo.thirtyDay:
-        TodoStr = '30';
-        break;
-      case Todo.all:
-        TodoStr = '';
-        break;
-    }
+    final titleOption = _datelessAssignments.length == 0
+        ? null
+        : GestureDetector(
+            onTapUp: (_) => Navigator.push(
+              context,
+              SKNavOverlayRoute(
+                  builder: (context) =>
+                      DatelessAssignmentsModal(_datelessAssignments)),
+            ),
+            child: Container(
+              padding: EdgeInsets.all(6),
+              margin: EdgeInsets.only(left: 4, top: 2),
+              alignment: Alignment.center,
+              decoration: BoxDecoration(
+                  shape: BoxShape.circle, color: SKColors.alert_orange),
+              child: Text(
+                '!',
+                style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 13,
+                    fontWeight: FontWeight.w800),
+              ),
+            ),
+          );
+
+    final todoDaysFuture = SKUser.current.student.todoDaysFuture;
 
     return SKNavView(
       title: 'To-Do\'s',
@@ -270,6 +292,7 @@ class _TodoState extends State<TodoView> {
       },
       rightBtn: Image.asset(ImageNames.rightNavImages.plus),
       callbackRight: tappedAdd,
+      titleOption: titleOption,
       children: <Widget>[
         Expanded(
           child: RefreshIndicator(
@@ -295,21 +318,9 @@ class _TodoState extends State<TodoView> {
                             mainAxisSize: MainAxisSize.min,
                             crossAxisAlignment: CrossAxisAlignment.stretch,
                             children: <Widget>[
-                              Row(
-                                children: [
-                                  Expanded(
-                                    child: Text(
-                                      'Happy $day, ${SKUser.current.student.nameFirst}!',
-                                      style: TextStyle(fontSize: 17),
-                                    ),
-                                  ),
-                                  Padding(
-                                    padding:
-                                        EdgeInsets.symmetric(horizontal: 4),
-                                    child: Image.asset(
-                                        ImageNames.todoImages.forecast),
-                                  ),
-                                ],
+                              Text(
+                                'Happy $day, ${SKUser.current.student.nameFirst}!',
+                                style: TextStyle(fontSize: 17),
                               ),
                               Padding(
                                 padding: EdgeInsets.only(top: 4),
@@ -341,13 +352,13 @@ class _TodoState extends State<TodoView> {
                                                       fontWeight:
                                                           FontWeight.bold),
                                                 ),
-                                                Todo == Todo.all
+                                                todoDaysFuture == 180
                                                     ? TextSpan(
                                                         text: ' left to do.',
                                                       )
                                                     : TextSpan(
                                                         text:
-                                                            ' due in the next $TodoStr days.',
+                                                            ' due in the next $todoDaysFuture days.',
                                                       ),
                                               ],
                                             ),
@@ -397,7 +408,7 @@ class _TodoState extends State<TodoView> {
                         child: Container(
                           margin: EdgeInsets.only(bottom: 7),
                           padding:
-                              EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                              EdgeInsets.symmetric(vertical: 8, horizontal: 12),
                           decoration: BoxDecoration(
                               border: Border.all(
                                   color: StudentClass.currentClasses.length == 1
@@ -413,12 +424,23 @@ class _TodoState extends State<TodoView> {
                                   'Join your 2nd class 👌',
                                   style: TextStyle(color: Colors.white),
                                 )
-                              : Text(
-                                  Todo == Todo.all
-                                      ? 'Semester outlook'
-                                      : '$TodoStr-day outlook',
-                                  style:
-                                      TextStyle(color: SKColors.skoller_blue),
+                              : Row(
+                                  children: [
+                                    Padding(
+                                      padding: EdgeInsets.only(right: 4),
+                                      child: Icon(
+                                        Icons.calendar_view_day,
+                                        color: SKColors.skoller_blue,
+                                      ),
+                                    ),
+                                    Text(
+                                      todoDaysFuture == 180
+                                          ? 'Full semester'
+                                          : 'Next $todoDaysFuture days',
+                                      style: TextStyle(
+                                          color: SKColors.skoller_blue),
+                                    ),
+                                  ],
                                 ),
                         ),
                       ),
@@ -565,7 +587,7 @@ class _TodoRowState extends State<_TodoRow> {
           );
         else
           nextRoute = CupertinoPageRoute(
-            builder: (context) => AssignmentInfoView(assignment_id: task.id),
+            builder: (context) => AssignmentInfoView(assignmentId: task.id),
             settings: RouteSettings(
                 name:
                     mods.length == 1 ? 'UpdateInfoView' : 'AssignmentInfoView'),
@@ -749,7 +771,7 @@ class _TodoRowState extends State<_TodoRow> {
           Navigator.push(
             context,
             CupertinoPageRoute(
-              builder: (context) => AssignmentInfoView(assignment_id: task.id),
+              builder: (context) => AssignmentInfoView(assignmentId: task.id),
               settings: RouteSettings(name: 'AssignmentInfoView'),
             ),
           );
