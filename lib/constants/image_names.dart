@@ -162,4 +162,7 @@ class _ClassInfoImages {
   static const _base = 'image_assets/class_info_assets';
 
   final clipboard = '${_base}/clipboard.png';
+  final syllabus_gray = '${_base}/syllabus_gray.png';
+  final syllabus_red = '${_base}/syllabus_red.png';
+  final syllabus_orange = '${_base}/syllabus_orange.png';
 }

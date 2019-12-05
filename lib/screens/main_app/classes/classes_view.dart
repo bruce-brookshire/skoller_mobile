@@ -61,7 +61,7 @@ class _ClassesState extends State<ClassesView> {
       ClassStatuses.needs_setup: this.needsSetup,
       ClassStatuses.syllabus_submitted: this.processingSyllabus,
       ClassStatuses.needs_student_input: this.diyOnly,
-      ClassStatuses.class_setup: this.createCompleteCard,
+      ClassStatuses.class_setup: this.processingSyllabus, //this.createCompleteCard,
       ClassStatuses.class_issue: this.createCompleteCard,
     };
 
@@ -140,9 +140,11 @@ class _ClassesState extends State<ClassesView> {
     this.promptPeriod = (SKUser.current.student.primarySchool.periods
           ..removeWhere((p) => !p.isMainPeriod)
           ..sort((p1, p2) => p1.startDate.compareTo(p2.startDate)))
-        .firstWhere((p) =>
-            p.startDate.millisecondsSinceEpoch >
-            DateTime.now().millisecondsSinceEpoch, orElse: () => null);
+        .firstWhere(
+            (p) =>
+                p.startDate.millisecondsSinceEpoch >
+                DateTime.now().millisecondsSinceEpoch,
+            orElse: () => null);
 
     final now = DateTime.now();
     final today = DateTime(now.year, now.month, now.day);
@@ -515,20 +517,7 @@ class _ClassesState extends State<ClassesView> {
     final needsAssignments = (studentClass.weights ?? []).length > 0 &&
         (studentClass.assignments ?? []).length == 0;
     return GestureDetector(
-      onTapDown: (_) {
-        setState(() {
-          selectedIndex = index;
-        });
-      },
-      onTapCancel: () {
-        setState(() {
-          selectedIndex = null;
-        });
-      },
       onTapUp: (_) {
-        setState(() {
-          selectedIndex = null;
-        });
         needsAssignments
             ? tappedAddAssignment(studentClass.id)
             : tappedSammiExplanation(
@@ -538,6 +527,10 @@ class _ClassesState extends State<ClassesView> {
         decoration: BoxDecoration(
             color:
                 selectedIndex == index ? SKColors.selected_gray : Colors.white,
+            gradient: LinearGradient(colors: [
+              Color(0xFFfbcbd3),
+              SKColors.warning_red,
+            ]),
             borderRadius: BorderRadius.circular(5),
             border: Border.all(
               color: SKColors.border_gray,
@@ -556,9 +549,10 @@ class _ClassesState extends State<ClassesView> {
                       topLeft: Radius.circular(5),
                       bottomLeft: Radius.circular(5))),
               child: Image.asset(
-                needsAssignments
-                    ? ImageNames.peopleImages.people_white
-                    : ImageNames.peopleImages.person_edit,
+                ImageNames.classInfoImages.syllabus_red,
+                // needsAssignments
+                //     ? ImageNames.peopleImages.people_white
+                //     : ImageNames.peopleImages.person_edit,
                 fit: BoxFit.fitWidth,
               ),
             ),
@@ -569,8 +563,7 @@ class _ClassesState extends State<ClassesView> {
                     border: needsAssignments
                         ? null
                         : Border(
-                            left: BorderSide(
-                                color: SKColors.skoller_blue, width: 2))),
+                            left: BorderSide(color: Colors.white, width: 2))),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -582,21 +575,27 @@ class _ClassesState extends State<ClassesView> {
                         textScaleFactor: 1,
                         style: TextStyle(
                             fontSize: 17,
-                            color: needsAssignments
-                                ? studentClass.getColor()
-                                : SKColors.dark_gray),
+                            color: Colors.white,
+                            fontWeight: FontWeight.w800,
+                            letterSpacing: 1
+                            // needsAssignments
+                            //     ? studentClass.getColor()
+                            //     : SKColors.dark_gray
+                            ),
                       ),
                     ),
                     Text(
                       needsAssignments
                           ? 'Add your first assignment'
-                          : 'Set up this class',
+                          : 'Send the syllabus!',
                       textScaleFactor: 1,
                       style: TextStyle(
-                          color: needsAssignments
-                              ? SKColors.dark_gray
-                              : SKColors.warning_red,
-                          fontSize: 14),
+                          color: Colors.white,
+                          // needsAssignments
+                          //     ? SKColors.dark_gray
+                          //     : SKColors.warning_red,
+                          fontSize: 13,
+                          fontWeight: FontWeight.w500),
                     )
                   ],
                 ),
@@ -628,13 +627,20 @@ class _ClassesState extends State<ClassesView> {
       },
       child: Container(
         decoration: BoxDecoration(
-            color:
-                selectedIndex == index ? SKColors.selected_gray : Colors.white,
-            borderRadius: BorderRadius.circular(5),
-            border: Border.all(
-              color: SKColors.border_gray,
-            ),
-            boxShadow: UIAssets.boxShadow),
+          color: selectedIndex == index ? SKColors.selected_gray : Colors.white,
+          gradient: LinearGradient(colors: [
+            Colors.white,
+            Color(0xFFf9946c),
+          ], stops: [
+            0.3,
+            1.5
+          ]),
+          borderRadius: BorderRadius.circular(5),
+          border: Border.all(
+            color: SKColors.border_gray,
+          ),
+          boxShadow: UIAssets.boxShadow,
+        ),
         margin: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
         child: Row(
           children: <Widget>[
@@ -643,7 +649,7 @@ class _ClassesState extends State<ClassesView> {
               width: 58,
               alignment: Alignment.center,
               child: Image.asset(
-                ImageNames.statusImages.diy,
+                ImageNames.classInfoImages.syllabus_orange,
                 fit: BoxFit.fitWidth,
               ),
             ),
@@ -664,15 +670,20 @@ class _ClassesState extends State<ClassesView> {
                       child: Text(
                         studentClass.name,
                         textScaleFactor: 1,
-                        style:
-                            TextStyle(fontSize: 17, color: SKColors.dark_gray),
+                        style: TextStyle(
+                            fontSize: 17,
+                            letterSpacing: 1,
+                            color: SKColors.dark_gray,
+                            fontWeight: FontWeight.w800),
                       ),
                     ),
                     Text(
-                      'DIY required',
+                      'We need your help...',
                       textScaleFactor: 1,
-                      style:
-                          TextStyle(color: SKColors.alert_orange, fontSize: 14),
+                      style: TextStyle(
+                          color: SKColors.alert_orange,
+                          fontSize: 13,
+                          fontWeight: FontWeight.w400),
                     )
                   ],
                 ),
@@ -706,31 +717,40 @@ class _ClassesState extends State<ClassesView> {
       },
       child: Container(
         decoration: BoxDecoration(
-            color:
-                selectedIndex == index ? SKColors.selected_gray : Colors.white,
-            borderRadius: BorderRadius.circular(5),
-            border: Border.all(
-              color: SKColors.border_gray,
-            ),
-            boxShadow: UIAssets.boxShadow),
+          color: selectedIndex == index ? SKColors.selected_gray : Colors.white,
+          gradient: LinearGradient(colors: [
+            Colors.white,
+            Color(0xFFcccccc),
+          ], stops: [
+            0.3,
+            1.5
+          ]),
+          borderRadius: BorderRadius.circular(5),
+          border: Border.all(
+            color: SKColors.border_gray,
+          ),
+          boxShadow: UIAssets.boxShadow,
+        ),
         margin: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
         child: Row(
           children: <Widget>[
             Container(
-                height: 66,
-                width: 58,
-                alignment: Alignment.center,
-                child: Image.asset(
-                  ImageNames.statusImages.clock,
-                  fit: BoxFit.fitWidth,
-                )),
+              height: 66,
+              width: 58,
+              alignment: Alignment.center,
+              child: Image.asset(
+                ImageNames.classInfoImages.syllabus_gray,
+                fit: BoxFit.fitWidth,
+              ),
+            ),
             Expanded(
               child: Container(
                 padding: EdgeInsets.only(left: 8, right: 8, bottom: 1),
                 decoration: BoxDecoration(
-                    border: Border(
-                        left: BorderSide(
-                            color: SKColors.text_light_gray, width: 2))),
+                  border: Border(
+                    left: BorderSide(color: SKColors.light_gray, width: 2),
+                  ),
+                ),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -740,16 +760,20 @@ class _ClassesState extends State<ClassesView> {
                       child: Text(
                         studentClass.name,
                         textScaleFactor: 1,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style:
-                            TextStyle(fontSize: 17, color: SKColors.dark_gray),
+                        style: TextStyle(
+                            fontSize: 17,
+                            letterSpacing: 1,
+                            color: SKColors.dark_gray,
+                            fontWeight: FontWeight.w800),
                       ),
                     ),
                     Text(
                       'Syllabus in review',
                       textScaleFactor: 1,
-                      style: TextStyle(color: SKColors.dark_gray, fontSize: 14),
+                      style: TextStyle(
+                          color: SKColors.light_gray,
+                          fontSize: 13,
+                          fontWeight: FontWeight.w400),
                     )
                   ],
                 ),
