@@ -116,12 +116,12 @@ class _SkollerAppState extends State<SkollerApp> {
               color: SKColors.dark_gray,
               fontSize: 15,
               fontWeight: FontWeight.bold,
-              letterSpacing: 0),
+              letterSpacing: 0.15),
           body2: TextStyle(
               color: SKColors.skoller_blue,
               fontSize: 15,
               fontWeight: FontWeight.bold,
-              letterSpacing: 0),
+              letterSpacing: 0.15),
           button: TextStyle(color: Colors.white),
         ),
       );

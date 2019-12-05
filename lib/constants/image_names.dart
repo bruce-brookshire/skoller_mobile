@@ -11,7 +11,7 @@ class ImageNames {
   static final chatImages = _ChatImages();
   static final sammiImages = _SammiImages();
   static final menuImages = _MenuImages();
-  static final forecastImages = _ForecastImages();
+  static final todoImages = _TodoImages();
   static final tutorialImages = _TutorialImages();
   static final classInfoImages = _ClassInfoImages();
 }
@@ -24,7 +24,7 @@ class _MenuImages {
   final reminders = '${_base}/reminders.png';
 }
 
-class _ForecastImages {
+class _TodoImages {
   static const _base = 'image_assets/forecast_assets';
 
   final forecast = '${_base}/forecast.png';
@@ -139,6 +139,7 @@ class _PeopleImages {
   final person_edit = '${_base}/user_edit.png';
   final people_white = '${_base}/people_white.png';
   final people_gray = '${_base}/people_gray.png';
+  final people_gray_large = '${_base}/people_gray_large.png';
   final people_blue = '${_base}/people_blue.png';
   final static_profile = '${_base}/static_profile.png';
 }

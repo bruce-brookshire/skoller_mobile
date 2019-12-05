@@ -337,7 +337,7 @@ class _CalendarState extends State<CalendarView> {
       Navigator.push(
         context,
         CupertinoPageRoute(
-          builder: (context) => AssignmentInfoView(assignment_id: result.id),
+          builder: (context) => AssignmentInfoView(assignmentId: result.id),
           settings: RouteSettings(name: 'AssignmentInfoView'),
         ),
       );
@@ -386,7 +386,7 @@ class _CalendarState extends State<CalendarView> {
           .toList();
 }
 
-typedef List<Assignment> AssignmentsForDateCallback(DateTime time);
+
 
 class _CalendarBody extends StatelessWidget {
   final DateTime firstOfMonth;

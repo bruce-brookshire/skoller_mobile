@@ -473,7 +473,7 @@ class _ClassDetailState extends State<ClassDetailView> {
           context,
           CupertinoPageRoute(
             builder: (context) =>
-                AssignmentInfoView(assignment_id: assignment.id),
+                AssignmentInfoView(assignmentId: assignment.id),
             settings: RouteSettings(name: 'AssignmentInfoView'),
           ),
         );

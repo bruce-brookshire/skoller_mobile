@@ -13,7 +13,7 @@ class Assignment {
   double weight;
   double grade;
 
-  bool completed;
+  bool isCompleted;
   bool _dueDateShifted = false;
   bool isPostNotifications;
 
@@ -39,6 +39,10 @@ class Assignment {
     return StudentClass.currentClasses[classId];
   }
 
+  Weight get weightObject {
+    return Weight.currentWeights[weight_id];
+  }
+
   Assignment(
     this.id,
     this.name,
@@ -47,7 +51,7 @@ class Assignment {
     this.weight,
     this.weight_id,
     this.grade,
-    this.completed,
+    this.isCompleted,
     this.posts,
     this._parent_assignment_id,
     this.isPostNotifications,
@@ -55,7 +59,7 @@ class Assignment {
   );
 
   Future<bool> toggleComplete() {
-    final newComplete = !(completed ?? false);
+    final newComplete = !(isCompleted ?? false);
 
     return SKRequests.put(
       '/assignments/${id}',
@@ -65,7 +69,7 @@ class Assignment {
       final success = response.wasSuccessful();
 
       if (success) {
-        Assignment.currentAssignments[id].completed = response.obj.completed;
+        Assignment.currentAssignments[id].isCompleted = response.obj.isCompleted;
       }
       return success;
     });
@@ -93,7 +97,7 @@ class Assignment {
     ).then((response) {
       if (response.wasSuccessful()) {
         Assignment.currentAssignments[id].grade = response.obj.grade;
-        Assignment.currentAssignments[id].completed = response.obj.completed;
+        Assignment.currentAssignments[id].isCompleted = response.obj.isCompleted;
         parentClass.refetchSelf();
       }
 

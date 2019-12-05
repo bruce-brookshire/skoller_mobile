@@ -1,8 +1,8 @@
 library requests_core;
 
-import 'package:skoller/screens/main_app/classes/modals/class_link_sharing_modal.dart';
+import '../screens/main_app/classes/modals/class_link_sharing_modal.dart';
 import 'package:dart_notification_center/dart_notification_center.dart';
-import 'package:skoller/screens/main_app/menu/my_points_view.dart';
+import '../screens/main_app/menu/my_points_view.dart';
 import 'package:time_machine/time_machine.dart' as time_machine;
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -31,8 +31,8 @@ part 'user.dart';
 part 'mod.dart';
 part 'auth.dart';
 
-const bool isProd = true;
-const bool isLocal = false;
+const bool isProd = false;
+const bool isLocal = true;
 
 class RequestResponse<T> {
   int status;

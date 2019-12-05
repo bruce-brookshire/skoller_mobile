@@ -46,6 +46,7 @@ class SKNavBar extends StatelessWidget {
   final bool leftIsPop;
 
   final String title;
+  final Widget titleOption;
 
   final Color titleColor;
 
@@ -65,71 +66,80 @@ class SKNavBar extends StatelessWidget {
     this.callbackRight,
     this.callbackLeft,
     this.callbackTitle,
+    this.titleOption,
   });
 
-  Widget build(BuildContext context) => Container(
-        height: 44,
-        decoration: BoxDecoration(boxShadow: [
-          BoxShadow(
-            color: Color(0x1C000000),
-            offset: Offset(0, 3.5),
-            blurRadius: 2,
-          )
-        ], color: Colors.white),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: <Widget>[
-            GestureDetector(
-              behavior: HitTestBehavior.opaque,
-              onTapUp: (details) {
-                if (callbackLeft != null)
-                  callbackLeft();
-                else if (leftIsPop) Navigator.pop(context);
-              },
-              child: Container(
-                padding: EdgeInsets.only(left: 4),
-                child: leftBtn != null ? Center(child: leftBtn) : null,
-                width: 44,
-                height: 44,
-              ),
-            ),
-            GestureDetector(
-              behavior: HitTestBehavior.opaque,
-              onTapUp: (details) {
-                if (callbackTitle != null) callbackTitle();
-              },
-              child: Text(
-                title,
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.w800,
-                  color: titleColor,
-                  letterSpacing: 0.5,
-                ),
-                
-              ),
-            ),
-            GestureDetector(
-              behavior: HitTestBehavior.opaque,
-              onTapUp: (details) {
-                if (callbackRight != null) callbackRight();
-              },
-              child: Container(
-                padding: EdgeInsets.only(right: 4),
-                child: rightBtn != null ? Center(child: rightBtn) : null,
-                width: 44,
-                height: 44,
-              ),
-            ),
-          ],
+  Widget build(BuildContext context) {
+    final titleWidget = GestureDetector(
+      behavior: HitTestBehavior.opaque,
+      onTapUp: (details) {
+        if (callbackTitle != null) callbackTitle();
+      },
+      child: Text(
+        title,
+        style: TextStyle(
+          fontSize: 18,
+          fontWeight: FontWeight.w800,
+          color: titleColor,
+          letterSpacing: 0.5,
         ),
-      );
+      ),
+    );
+
+    return Container(
+      height: 44,
+      decoration: BoxDecoration(boxShadow: [
+        BoxShadow(
+          color: Color(0x1C000000),
+          offset: Offset(0, 3.5),
+          blurRadius: 2,
+        )
+      ], color: Colors.white),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: <Widget>[
+          GestureDetector(
+            behavior: HitTestBehavior.opaque,
+            onTapUp: (details) {
+              if (callbackLeft != null)
+                callbackLeft();
+              else if (leftIsPop) Navigator.pop(context);
+            },
+            child: Container(
+              padding: EdgeInsets.only(left: 4),
+              child: leftBtn != null ? Center(child: leftBtn) : null,
+              width: 44,
+              height: 44,
+            ),
+          ),
+          titleOption == null
+              ? titleWidget
+              : Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[titleWidget, titleOption]),
+          GestureDetector(
+            behavior: HitTestBehavior.opaque,
+            onTapUp: (details) {
+              if (callbackRight != null) callbackRight();
+            },
+            child: Container(
+              padding: EdgeInsets.only(right: 4),
+              child: rightBtn != null ? Center(child: rightBtn) : null,
+              width: 44,
+              height: 44,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 }
 
 class SKNavView extends StatelessWidget {
   final bool isPop;
 
   final String title;
+  final Widget titleOption;
 
   final Widget rightBtn;
   final Widget leftBtn;
@@ -154,6 +164,7 @@ class SKNavView extends StatelessWidget {
     this.callbackLeft,
     this.callbackTitle,
     this.backgroundColor,
+    this.titleOption,
   });
 
   Widget build(BuildContext context) {
@@ -167,6 +178,7 @@ class SKNavView extends StatelessWidget {
       callbackRight: callbackRight,
       callbackLeft: callbackLeft,
       callbackTitle: callbackTitle,
+      titleOption: titleOption,
     );
     return Scaffold(
       backgroundColor: Colors.white,
@@ -916,14 +928,14 @@ class SKColorPicker extends StatefulWidget {
   final ColorCallback callback;
   final Widget child;
   final List<Color> colors = [
-    Color(0xFF9B55E5),
-    Color(0xFFFF71A8),
-    Color(0xFF1088B3),
-    Color(0xFF4CD8BD),
-    Color(0xFF4CCC58),
-    Color(0xFFF7D300),
-    Color(0xFFFFAE42),
-    Color(0xFFDD4A63),
+    Color(0xFFAE77BD),
+    Color(0xFFE882AC),
+    Color(0xFF3484E3),
+    Color(0xFF61D8A0),
+    Color(0xFF19A394),
+    Color(0xFFF1AA39),
+    Color(0xFFE2762D),
+    Color(0xFFD73F76),
   ];
 
   SKColorPicker({this.callback, this.child});
@@ -1058,12 +1070,18 @@ class SKPickerModal extends StatefulWidget {
   final String subtitle;
   final List<String> items;
   final IntCallback onSelect;
+  final Widget optionChild;
+  final VoidCallback onOptionChildTapped;
+  final int startIndex;
 
   SKPickerModal({
     @required this.title,
     this.subtitle,
     @required this.items,
     @required this.onSelect,
+    this.optionChild,
+    this.onOptionChildTapped,
+    this.startIndex = 0,
   });
 
   @override
@@ -1106,6 +1124,7 @@ class _SKPickerModalState extends State<SKPickerModal> {
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             ...children,
             Container(
@@ -1114,6 +1133,9 @@ class _SKPickerModalState extends State<SKPickerModal> {
               child: CupertinoPicker.builder(
                 backgroundColor: Colors.white,
                 childCount: widget.items.length,
+                scrollController: FixedExtentScrollController(
+                  initialItem: widget.startIndex,
+                ),
                 itemBuilder: (context, index) => Container(
                   alignment: Alignment.center,
                   child: Text(
@@ -1125,6 +1147,18 @@ class _SKPickerModalState extends State<SKPickerModal> {
                 onSelectedItemChanged: (index) => this._selectedIndex = index,
               ),
             ),
+            if (widget.optionChild != null)
+              GestureDetector(
+                behavior: HitTestBehavior.opaque,
+                onTapUp: (_) {
+                  Navigator.pop(context);
+                  widget.onOptionChildTapped();
+                },
+                child: Padding(
+                  padding: EdgeInsets.symmetric(vertical: 4),
+                  child: widget.optionChild,
+                ),
+              ),
             Row(
               children: <Widget>[
                 Expanded(
@@ -1391,16 +1425,24 @@ class SKAssignmentImpactGraph extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     _ImpactLevel level;
+    String impactDesc;
 
-    if (completion == null || completion < 0.05)
+    if ((completion ?? 0.0) == 0.0) {
+      level = _ImpactLevel.none;
+      impactDesc = 'None';
+    } else if (completion < 0.05) {
       level = _ImpactLevel.low;
-    else if (completion < 0.15)
+      impactDesc = 'Low';
+    } else if (completion < 0.15) {
       level = _ImpactLevel.medium;
-    else
+      impactDesc = 'Medium';
+    } else {
       level = _ImpactLevel.high;
+      impactDesc = 'High';
+    }
 
     final double width = size == ImpactGraphSize.large ? 40 : 32;
-    final double height = size == ImpactGraphSize.large ? 26 : 18;
+    final double height = size == ImpactGraphSize.large ? 28 : 23;
 
     return Column(
       mainAxisSize: MainAxisSize.min,
@@ -1417,9 +1459,7 @@ class SKAssignmentImpactGraph extends StatelessWidget {
           Padding(
             padding: EdgeInsets.only(top: 2),
             child: Text(
-              level == _ImpactLevel.low
-                  ? 'Low'
-                  : (level == _ImpactLevel.medium ? 'Medium' : 'High'),
+              impactDesc,
               style: TextStyle(
                 fontSize: 9,
               ),
@@ -1430,7 +1470,7 @@ class SKAssignmentImpactGraph extends StatelessWidget {
   }
 }
 
-enum _ImpactLevel { low, medium, high }
+enum _ImpactLevel { none, low, medium, high }
 
 class _SKImpactGraphPainter extends CustomPainter {
   final Color color;
@@ -1441,7 +1481,7 @@ class _SKImpactGraphPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final fillPaint1 = Paint()
-      ..color = color.withOpacity(0.5)
+      ..color = color.withOpacity(0.25)
       ..style = PaintingStyle.fill
       ..isAntiAlias = true;
 
@@ -1461,25 +1501,38 @@ class _SKImpactGraphPainter extends CustomPainter {
       ..isAntiAlias = true;
 
     final oneThird = size.height / 3;
-    final width = (size.width - 6) / 3;
+    final width = (size.width) / 3;
 
-    final smallRect = Rect.fromLTWH(0, size.height - oneThird, width, oneThird);
-    final mediumRect = Rect.fromLTWH(width + 3, oneThird, width, oneThird * 2);
-    final largeRect = Rect.fromLTWH((width + 3) * 2, 0, width, size.height);
+    final smallRect =
+        _buildRRect(Rect.fromLTWH(0, size.height - oneThird, width, oneThird));
+    final mediumRect =
+        _buildRRect(Rect.fromLTWH(width, oneThird, width, oneThird * 2));
+    final largeRect =
+        _buildRRect(Rect.fromLTWH((width) * 2, 0, width, size.height));
 
-    canvas.drawRect(smallRect, fillPaint1);
+    canvas.drawRRect(smallRect, fillPaint1);
 
-    if (impact.index > 0) {
-      canvas.drawRect(mediumRect, fillPaint2);
+    final rects = [smallRect, mediumRect, largeRect];
+    final paints = [fillPaint1, fillPaint2, fillPaint3];
 
-      if (impact.index > 1)
-        canvas.drawRect(largeRect, fillPaint3);
-      else
-        canvas.drawRect(largeRect, emptyPaint);
-    } else {
-      canvas.drawRect(mediumRect, emptyPaint);
-      canvas.drawRect(largeRect, emptyPaint);
+    int currIndex = 1;
+
+    while (currIndex <= impact.index) {
+      final typeIndex = currIndex - 1;
+
+      canvas.drawRRect(rects[typeIndex], paints[typeIndex]);
+      currIndex++;
     }
+
+    while (currIndex <= _ImpactLevel.high.index) {
+      canvas.drawRRect(rects[currIndex - 1], emptyPaint);
+      currIndex++;
+    }
+  }
+
+  RRect _buildRRect(Rect rect) {
+    return RRect.fromRectAndCorners(rect,
+        topLeft: Radius.circular(2), topRight: Radius.circular(2));
   }
 
   @override
@@ -1908,4 +1961,67 @@ class SKHeaderCard extends StatelessWidget {
           ],
         ),
       );
+}
+
+class ShakeAnimation extends StatefulWidget {
+  final Widget child;
+
+  ShakeAnimation({this.child}) : super(key: UniqueKey());
+
+  @override
+  State<StatefulWidget> createState() => _ShakeAnimationState();
+}
+
+class _ShakeAnimationState extends State<ShakeAnimation>
+    with SingleTickerProviderStateMixin {
+  AnimationController _controller;
+  Animation _animation;
+
+  @override
+  void initState() {
+    super.initState();
+
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 1000),
+    )..addListener(() => setState(() {}));
+
+    _animation = CurvedAnimation(
+      curve: Curves.easeInToLinear,
+      parent: _controller,
+    )
+      ..addStatusListener((status) {
+        if (status == AnimationStatus.completed) {
+          if (mounted)
+            Timer(
+              Duration(seconds: 3),
+              () {
+                if (mounted) _controller.forward(from: 0);
+              },
+            );
+        }
+      })
+      ..addListener(() => setState(() {}));
+
+    _controller.forward();
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  ///Then you can get a shake type motion like so;
+  double get translation {
+    double progress = _animation.value;
+    return sin(progress * pi * 3) * 0.2;
+    // return Matrix4.rotationZ(offset);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Transform.rotate(
+        angle: translation, alignment: Alignment.center, child: widget.child);
+  }
 }

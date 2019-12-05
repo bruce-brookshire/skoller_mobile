@@ -2,6 +2,7 @@ import 'package:dart_notification_center/dart_notification_center.dart';
 import 'package:dropdown_banner/dropdown_banner.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:skoller/screens/main_app/activity/mod_modal.dart';
 import 'package:skoller/screens/main_app/activity/update_info_view.dart';
 import 'package:skoller/screens/main_app/menu/add_classes_view.dart';
 import 'package:skoller/screens/main_app/tutorial/activity_tutorial_view.dart';
@@ -23,7 +24,29 @@ class _ActivityState extends State<ActivityView> {
     super.initState();
 
     stackedMods = stackAndSortMods(Mod.currentMods.values.toList());
+    fetchMods();
 
+    DartNotificationCenter.subscribe(
+      observer: this,
+      channel: NotificationChannels.modsChanged,
+      onNotification: fetchMods,
+    );
+
+    DartNotificationCenter.subscribe(
+      observer: this,
+      channel: NotificationChannels.assignmentChanged,
+      onNotification: fetchMods,
+    );
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+
+    DartNotificationCenter.unsubscribe(observer: this);
+  }
+
+  Future<void> fetchMods([_]) async {
     Mod.fetchMods().then((response) {
       if (response.wasSuccessful()) {
         final mods = stackAndSortMods(response.obj ?? []);
@@ -149,8 +172,7 @@ class _ActivityState extends State<ActivityView> {
             : Expanded(
                 child: RefreshIndicator(
                   key: _refreshIndicatorKey,
-                  onRefresh: () async =>
-                      stackAndSortMods(Mod.currentMods.values.toList()),
+                  onRefresh: fetchMods,
                   child: ListView.builder(
                     padding: EdgeInsets.only(top: 4),
                     itemCount: stackedMods.length,
@@ -200,17 +222,27 @@ class _ActivityState extends State<ActivityView> {
   }
 
   Widget buildListItem(BuildContext context, int index) {
-    Mod mod = stackedMods[index][0];
+    final mod = stackedMods[index][0];
 
     return GestureDetector(
       onTapUp: (details) {
-        Navigator.push(
-          context,
-          CupertinoPageRoute(
-            builder: (context) => UpdateInfoView(stackedMods[index]),
-            settings: RouteSettings(name: 'UpdateInfoView'),
-          ),
-        );
+        final mods = stackedMods[index];
+
+        if (mods.length == 1 && mods.first.isAccepted == null)
+          Navigator.push(
+            context,
+            SKNavOverlayRoute(
+              builder: (context) => ModModal(mods.first),
+            ),
+          );
+        else
+          Navigator.push(
+            context,
+            CupertinoPageRoute(
+              builder: (context) => UpdateInfoView(stackedMods[index]),
+              settings: RouteSettings(name: 'UpdateInfoView'),
+            ),
+          );
       },
       child: Container(
         margin: EdgeInsets.fromLTRB(7, 3, 7, 4),

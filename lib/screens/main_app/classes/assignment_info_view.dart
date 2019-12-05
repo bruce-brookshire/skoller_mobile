@@ -17,9 +17,9 @@ import 'dart:async';
 import 'dart:math';
 
 class AssignmentInfoView extends StatefulWidget {
-  final int assignment_id;
+  final int assignmentId;
 
-  AssignmentInfoView({Key key, this.assignment_id}) : super(key: key);
+  AssignmentInfoView({Key key, this.assignmentId}) : super(key: key);
 
   @override
   State createState() => _AssignmentInfoState();
@@ -36,7 +36,7 @@ class _AssignmentInfoState extends State<AssignmentInfoView> {
   void initState() {
     super.initState();
 
-    assignment = Assignment.currentAssignments[widget.assignment_id];
+    assignment = Assignment.currentAssignments[widget.assignmentId];
 
     for (final mod in Mod.currentMods.values) {
       if (mod.modType != ModType.newAssignment &&
@@ -84,14 +84,14 @@ class _AssignmentInfoState extends State<AssignmentInfoView> {
     assignment.toggleComplete().then((success) {
       if (!success) {
         setState(() {
-          assignment.completed = !assignment.completed;
+          assignment.isCompleted = !assignment.isCompleted;
         });
       } else
         DartNotificationCenter.post(
             channel: NotificationChannels.assignmentChanged);
     });
     setState(() {
-      assignment.completed = !assignment.completed;
+      assignment.isCompleted = !assignment.isCompleted;
     });
   }
 
@@ -237,7 +237,7 @@ class _AssignmentInfoState extends State<AssignmentInfoView> {
 
       if (response != null && response) {
         setState(() =>
-            assignment = Assignment.currentAssignments[widget.assignment_id]);
+            assignment = Assignment.currentAssignments[widget.assignmentId]);
       }
       loader.fadeOut();
     }
@@ -256,7 +256,7 @@ class _AssignmentInfoState extends State<AssignmentInfoView> {
         if (result.wasSuccessful()) {
           if (await assignment.refetchSelf())
             setState(() => assignment =
-                Assignment.currentAssignments[widget.assignment_id]);
+                Assignment.currentAssignments[widget.assignmentId]);
 
           loader.fadeOut();
           DartNotificationCenter.post(
@@ -611,7 +611,7 @@ class _AssignmentInfoState extends State<AssignmentInfoView> {
       _GradeShakeAnimation(
         onTap: tappedGradeSelector,
         text: assignment.grade == null ? '--%' : '${assignment.grade}%',
-        isAlert: assignment.grade == null && assignment.completed,
+        isAlert: assignment.grade == null && assignment.isCompleted,
       )
     ];
 
@@ -663,7 +663,7 @@ class _AssignmentInfoState extends State<AssignmentInfoView> {
                 Padding(
                   padding: EdgeInsets.only(top: 2),
                   child: Text(
-                    assignment.completed ? 'Completed' : 'Not completed',
+                    assignment.isCompleted ? 'Completed' : 'Not completed',
                     style: TextStyle(
                         color: SKColors.light_gray,
                         fontWeight: FontWeight.normal,
@@ -671,7 +671,7 @@ class _AssignmentInfoState extends State<AssignmentInfoView> {
                   ),
                 ),
                 Switch(
-                  value: assignment.completed ?? true,
+                  value: assignment.isCompleted ?? true,
                   activeColor: SKColors.skoller_blue,
                   onChanged: (val) {
                     toggleComplete();
