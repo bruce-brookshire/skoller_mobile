@@ -64,60 +64,69 @@ class _TodoState extends State<TodoView> {
   Future loadTasks([dynamic options]) async {
     Future<RequestResponse> modsRequest = Mod.fetchNewAssignmentMods();
 
+    final student = SKUser.current.student;
+
     final now = DateTime.now();
     final today = DateTime(now.year, now.month, now.day);
 
-    int minDaysOutCompleted;
+    final overdueDate = today.subtract(Duration(days: student.todoDaysPast));
+    final outlookDate = today.add(Duration(days: student.todoDaysFuture));
+
+    int minDaysOutCompleted = 1000;
     bool newCompletedTasksAvailable = false;
+
     List<_TaskLikeItem> tasks = (Assignment.currentAssignments.values.toList()
-          ..removeWhere(
-              (a) => (a.due?.isBefore(today) ?? true) || a.parentClass == null)
+          ..removeWhere((a) =>
+              (a.due?.isBefore(overdueDate) ?? true) || a.parentClass == null)
           ..removeWhere((a) {
             if (a.isCompleted) {
               newCompletedTasksAvailable = true;
 
               int daysOut = a.due.difference(today).inDays;
-              if (daysOut < (minDaysOutCompleted ?? 1000))
+              print(daysOut);
+              if (daysOut < minDaysOutCompleted && daysOut >= 0) {
+                print(a.name);
+                print(daysOut);
                 minDaysOutCompleted = daysOut;
+              }
             }
-            return !showingCompletedTasks && a.isCompleted;
+            // Remove if we are not showing completed tasks and the task is completed,
+            // OR if we are showing completed tasks and the task's due date is before today
+            return a.isCompleted &&
+                (!showingCompletedTasks || a.due.isBefore(today));
           }))
         .map((a) => _TaskLikeItem(a.id, false, a.due))
         .toList();
 
+    // If there are tasks that are completed before its due date, show the
+    // 'view completed assignments' button
+    if (newCompletedTasksAvailable &&
+        minDaysOutCompleted > student.todoDaysFuture)
+      newCompletedTasksAvailable = false;
+
+    // Fetch mods
     RequestResponse modResponse = await modsRequest;
 
+    // If mods fetched successfully, process and add to task list
     if (modResponse.wasSuccessful()) {
       List<_TaskLikeItem> temp = (modResponse.obj as List<Mod>)
-          .map(
-            (mod) => _TaskLikeItem(
-              mod.id,
-              true,
-              mod.data.due,
-            ),
-          )
+          .map((m) => _TaskLikeItem(m.id, true, m.data.due))
           .toList();
 
-      final now = DateTime.now();
-      final referenceDate = DateTime(now.year, now.month, now.day);
-
+      // Remove mods that are past due and that have not been accepted yet
       temp.removeWhere((task) =>
-          task.dueDate.isBefore(referenceDate) ||
-          task.getParent?.isAccepted != null);
+          task.dueDate.isBefore(today) || task.getParent?.isAccepted != null);
 
       tasks.addAll(temp);
     }
 
-    int outlook = SKUser.current.student.todoDaysFuture;
-
-    if (newCompletedTasksAvailable && outlook < minDaysOutCompleted)
-      newCompletedTasksAvailable = false;
-
+    // Remove where the parent object does not exist or the assignment/task
+    // is due after the max outlook date
     tasks
       ..removeWhere((task) {
         if (task.getParent == null) return true;
 
-        return task.dueDate.difference(today).inDays > outlook;
+        return task.dueDate.isAfter(outlookDate);
       })
       ..sort((task1, task2) {
         if (task1.dueDate == null && task2.dueDate == null) {
@@ -239,9 +248,7 @@ class _TodoState extends State<TodoView> {
       SKNavOverlayRoute(builder: (_) => TodoPreferencesModal()),
     );
 
-    if (result is bool && result) {
-      setState(() {});
-    }
+    if (result is bool && result) loadTasks();
   }
 
   @override
@@ -491,10 +498,16 @@ class _TodoRowState extends State<_TodoRow> {
 
     final mods = Mod.modsByAssignmentId[task.id];
 
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+    final isOverdue = task.due.isBefore(today);
+
     if ((mods ?? []).length > 0)
       return buildTaskUpdatesCell(task, mods);
     else if (isChecked || task.isCompleted)
       return buildTaskCheckedCell(task);
+    else if (isOverdue)
+      return buildTaskOverdueCell(task);
     else
       return buildTasksNormalCell(task);
   }
@@ -643,6 +656,18 @@ class _TodoRowState extends State<_TodoRow> {
   }
 
   Widget buildTaskCheckedCell(Assignment task) => GestureDetector(
+        onTapUp: task.isCompleted
+            ? (_) {
+                Navigator.push(
+                  context,
+                  CupertinoPageRoute(
+                    builder: (context) =>
+                        AssignmentInfoView(assignmentId: task.id),
+                    settings: RouteSettings(name: 'AssignmentInfoView'),
+                  ),
+                );
+              }
+            : null,
         child: Container(
           margin: EdgeInsets.fromLTRB(7, 3, 7, 4),
           padding: EdgeInsets.only(left: 10),
@@ -746,6 +771,107 @@ class _TodoRowState extends State<_TodoRow> {
                                 fontSize: 10),
                           ),
                         ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+
+  Widget buildTaskOverdueCell(Assignment task) => GestureDetector(
+        onTapDown: (details) {
+          setState(() {
+            isTapped = true;
+          });
+        },
+        onTapCancel: () {
+          setState(() {
+            isTapped = false;
+          });
+        },
+        onTapUp: (details) {
+          setState(() {
+            isTapped = false;
+          });
+          Navigator.push(
+            context,
+            CupertinoPageRoute(
+              builder: (context) => AssignmentInfoView(assignmentId: task.id),
+              settings: RouteSettings(name: 'AssignmentInfoView'),
+            ),
+          );
+        },
+        child: Container(
+          margin: EdgeInsets.fromLTRB(7, 3, 7, 4),
+          padding: EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(5),
+            border: Border.all(color: SKColors.border_gray, width: 1),
+            boxShadow: UIAssets.boxShadow,
+            color: isTapped ? SKColors.selected_gray : SKColors.border_gray,
+          ),
+          child: Row(
+            children: <Widget>[
+              GestureDetector(
+                behavior: HitTestBehavior.opaque,
+                onTapUp: (_) => setState(() => isChecked = true),
+                child: Container(
+                  child: Container(
+                    margin:
+                        EdgeInsets.only(right: 8, top: 10, bottom: 10, left: 2),
+                    decoration: BoxDecoration(
+                      border: Border.all(color: SKColors.warning_red),
+                      borderRadius: BorderRadius.circular(10),
+                      color: Colors.white,
+                    ),
+                    width: 20,
+                    height: 20,
+                  ),
+                ),
+              ),
+              Expanded(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Padding(
+                      padding: EdgeInsets.only(top: 3),
+                      child: Text(
+                        task?.name ?? 'N/A',
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                            color: SKColors.dark_gray,
+                            fontWeight: FontWeight.w800,
+                            letterSpacing: 1,
+                            fontSize: 17),
+                      ),
+                    ),
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        Text(
+                          DateUtilities.getPastRelativeString(task.due),
+                          style: TextStyle(
+                              fontSize: 12,
+                              fontWeight: FontWeight.w700,
+                              color: SKColors.warning_red),
+                        ),
+                        Expanded(
+                          child: Text(
+                            task?.parentClass?.name ?? 'N/A',
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            textAlign: TextAlign.right,
+                            style: TextStyle(
+                                color: SKColors.light_gray,
+                                fontWeight: FontWeight.w500,
+                                fontSize: 12),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
                 ),
               ),
             ],
