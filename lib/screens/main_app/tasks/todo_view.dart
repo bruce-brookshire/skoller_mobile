@@ -309,77 +309,21 @@ class _TodoState extends State<TodoView> {
               children: [
                 ListView.builder(
                   padding: EdgeInsets.only(top: 4, bottom: 64),
-                  itemCount:
-                      _taskItems.length + (completedTasksAvailable ? 2 : 1),
+                  itemCount: _taskItems.length == 0
+                      ? 2
+                      : (_taskItems.length + (completedTasksAvailable ? 2 : 1)),
                   itemBuilder: (context, index) {
-                    if (index == 0) {
-                      final day = DateFormat('EEEE').format(DateTime.now());
-                      final assignments = _taskItems.length;
-
-                      return Padding(
-                        key: Key('top item'),
-                        padding: EdgeInsets.fromLTRB(0, 0, 0, 4),
-                        child: SammiSpeechBubble(
-                          sammiPersonality: SammiPersonality.smile,
-                          speechBubbleContents: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            crossAxisAlignment: CrossAxisAlignment.stretch,
-                            children: <Widget>[
-                              Text(
-                                'Happy $day, ${SKUser.current.student.nameFirst}!',
-                                style: TextStyle(fontSize: 17),
-                              ),
-                              Padding(
-                                padding: EdgeInsets.only(top: 4),
-                                child: setupSecondClass
-                                    ? Text(
-                                        'Todo works best when all of you’re classes are set up.',
-                                        style: TextStyle(
-                                            fontWeight: FontWeight.normal,
-                                            fontSize: 14),
-                                      )
-                                    : (assignments == 0
-                                        ? Text(
-                                            'You’re all caught up! 😃',
-                                            style: TextStyle(
-                                                fontWeight: FontWeight.normal,
-                                                fontSize: 14),
-                                          )
-                                        : Text.rich(
-                                            TextSpan(
-                                              text: 'Your personal Todo shows ',
-                                              style: TextStyle(
-                                                  fontWeight: FontWeight.normal,
-                                                  fontSize: 13),
-                                              children: [
-                                                TextSpan(
-                                                  text:
-                                                      '${assignments} assignment${assignments == 1 ? '' : 's'}',
-                                                  style: TextStyle(
-                                                      fontWeight:
-                                                          FontWeight.bold),
-                                                ),
-                                                todoDaysFuture == 180
-                                                    ? TextSpan(
-                                                        text: ' left to do.',
-                                                      )
-                                                    : TextSpan(
-                                                        text:
-                                                            ' due in the next $todoDaysFuture days.',
-                                                      ),
-                                              ],
-                                            ),
-                                          )),
-                              ),
-                            ],
-                          ),
-                        ),
-                      );
-                    } else if (index <= _taskItems.length)
+                    if (index == 0)
+                      return createSammiPrompt(
+                          setupSecondClass, todoDaysFuture);
+                    else if (index <= _taskItems.length)
                       return _TodoRow(
                         _taskItems[index - 1],
                         this.onCompleteAssignment,
                       );
+                    else if (_taskItems.length == 0)
+                      return Image.asset(
+                          ImageNames.todoImages.students_in_pool);
                     else
                       return GestureDetector(
                         key: Key('bottom item'),
@@ -459,6 +403,91 @@ class _TodoState extends State<TodoView> {
           ),
         ),
       ],
+    );
+  }
+
+  Widget createSammiPrompt(bool setupSecondClass, int todoDaysFuture) {
+    final day = DateFormat('EEEE').format(DateTime.now());
+    final assignments = _taskItems.length;
+
+    Widget sammiBody;
+
+    if (setupSecondClass)
+      sammiBody = Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: <Widget>[
+          Text(
+            'Get your classes set up 💪',
+            style: TextStyle(fontSize: 17),
+          ),
+          Padding(
+            padding: EdgeInsets.only(top: 4),
+            child: Text.rich(
+              TextSpan(
+                text: 'To-do\'s works best when ',
+                children: [
+                  TextSpan(
+                    text: 'all your classes ',
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                  TextSpan(text: 'are setup on Skoller.'),
+                ],
+              ),
+              style: TextStyle(fontWeight: FontWeight.normal, fontSize: 13),
+            ),
+          ),
+        ],
+      );
+    else
+      sammiBody = Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: <Widget>[
+          Text(
+            'Happy $day, ${SKUser.current.student.nameFirst}!',
+            style: TextStyle(fontSize: 17),
+          ),
+          Padding(
+            padding: EdgeInsets.only(top: 4),
+            child: assignments == 0
+                ? Text(
+                    'You’re all caught up! 😃',
+                    style:
+                        TextStyle(fontWeight: FontWeight.normal, fontSize: 14),
+                  )
+                : Text.rich(
+                    TextSpan(
+                      text: 'You have ',
+                      style: TextStyle(
+                          fontWeight: FontWeight.normal, fontSize: 13),
+                      children: [
+                        TextSpan(
+                          text:
+                              '${assignments} assignment${assignments == 1 ? '' : 's'}',
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                        todoDaysFuture == 180
+                            ? TextSpan(
+                                text: ' left to do.',
+                              )
+                            : TextSpan(
+                                text: ' due in the next $todoDaysFuture days.',
+                              ),
+                      ],
+                    ),
+                  ),
+          ),
+        ],
+      );
+
+    return Padding(
+      key: Key('top item'),
+      padding: EdgeInsets.fromLTRB(0, 4, 0, 6),
+      child: SammiSpeechBubble(
+        sammiPersonality: SammiPersonality.smile,
+        speechBubbleContents: sammiBody,
+      ),
     );
   }
 }
