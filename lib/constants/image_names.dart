@@ -25,10 +25,10 @@ class _MenuImages {
 }
 
 class _TodoImages {
-  static const _base = 'image_assets/forecast_assets';
+  static const _base = 'image_assets/todo_assets';
 
-  final forecast = '${_base}/forecast.png';
   final harry_potter = '${_base}/harry_potter.png';
+  final students_in_pool = '${_base}/students_in_pool.png';
 }
 
 class _TutorialImages {

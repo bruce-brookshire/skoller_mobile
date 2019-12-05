@@ -20,7 +20,7 @@ class _TutorialTabState extends State<TutorialTab> {
   List<StatelessWidget> views;
 
   final List<String> _indexIconPartialPaths = [
-    'forecast_',
+    'todos_',
     'calendar_',
     'chat_',
     'classes_',
