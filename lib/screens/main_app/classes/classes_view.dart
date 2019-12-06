@@ -61,7 +61,7 @@ class _ClassesState extends State<ClassesView> {
       ClassStatuses.needs_setup: this.needsSetup,
       ClassStatuses.syllabus_submitted: this.processingSyllabus,
       ClassStatuses.needs_student_input: this.diyOnly,
-      ClassStatuses.class_setup: this.processingSyllabus, //this.createCompleteCard,
+      ClassStatuses.class_setup: this.createCompleteCard,
       ClassStatuses.class_issue: this.createCompleteCard,
     };
 
@@ -454,7 +454,7 @@ class _ClassesState extends State<ClassesView> {
             ),
             Expanded(
               child: Container(
-                padding: EdgeInsets.only(left: 8, right: 8, bottom: 1),
+                padding: EdgeInsets.only(left: 8, right: 8, bottom: 2),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -466,6 +466,8 @@ class _ClassesState extends State<ClassesView> {
                         textScaleFactor: 1,
                         style: TextStyle(
                             fontSize: 17,
+                            letterSpacing: 0.4,
+                            fontWeight: FontWeight.w800,
                             color: isCurrent
                                 ? studentClass.getColor()
                                 : SKColors.dark_gray),
@@ -476,27 +478,10 @@ class _ClassesState extends State<ClassesView> {
                         Container(
                           padding: EdgeInsets.only(right: 5, bottom: 2),
                           child: Image.asset(
-                              ImageNames.peopleImages.person_dark_gray),
+                              ImageNames.peopleImages.people_gray),
                         ),
                         Text(
-                          '${studentClass.enrollment - 1} classmate${studentClass.enrollment == 1 ? '' : 's'}',
-                          textScaleFactor: 1,
-                          style: TextStyle(
-                              fontWeight: FontWeight.normal, fontSize: 14),
-                        ),
-                      ],
-                    ),
-                    Row(
-                      children: <Widget>[
-                        Padding(
-                          padding: EdgeInsets.only(bottom: 1, right: 4),
-                          child: ClassCompletionChart(
-                            studentClass.completion,
-                            SKColors.dark_gray,
-                          ),
-                        ),
-                        Text(
-                          '${(studentClass.completion * 100).round()}% complete',
+                          '${studentClass.enrollment - 1} classmate${studentClass.enrollment == 2 ? '' : 's'}',
                           textScaleFactor: 1,
                           style: TextStyle(
                               fontWeight: FontWeight.normal, fontSize: 14),
@@ -720,7 +705,7 @@ class _ClassesState extends State<ClassesView> {
           color: selectedIndex == index ? SKColors.selected_gray : Colors.white,
           gradient: LinearGradient(colors: [
             Colors.white,
-            Color(0xFFcccccc),
+            Color(0xFFCCCCCC),
           ], stops: [
             0.3,
             1.5

@@ -40,6 +40,8 @@ class SKUser {
     int todoDaysPast,
     int todoDaysFuture,
     List<int> fieldsOfStudy,
+    String gradYear,
+    TypeObject degreeType,
   }) {
     Map<String, dynamic> params = {
       'id': this.student.id,
@@ -54,6 +56,8 @@ class SKUser {
       'fields_of_study': fieldsOfStudy,
       'todo_days_future': todoDaysFuture,
       'todo_days_past': todoDaysPast,
+      'grad_year': gradYear,
+      'degree_type_id': degreeType?.id,
     };
 
     params.removeWhere((_, v) => v == null);
@@ -116,8 +120,8 @@ class Student {
   int notificationDays;
   int todoDaysFuture;
   int todoDaysPast;
-  bool isAssignPostNotifications;
 
+  bool isAssignPostNotifications;
   bool isVerified;
 
   String nameFirst;
@@ -134,6 +138,7 @@ class Student {
 
   School primarySchool;
   Period primaryPeriod;
+  TypeObject degreeType;
 
   DateTime notificationTime;
   DateTime futureNotificationTime;
@@ -179,6 +184,10 @@ class Student {
     enrollmentLink = content['enrollment_link'];
     todoDaysFuture = content['todo_days_future'];
     todoDaysPast = content['todo_days_past'];
+
+    degreeType = content['degree_type'] != null
+        ? TypeObject._fromJsonObj(content['degree_type'])
+        : null;
 
     primarySchool = content['primary_school'] != null
         ? School._fromJsonObj(content['primary_school'])
@@ -300,4 +309,17 @@ class PublicUser {
       content['avatar'],
     );
   }
+}
+
+class TypeObject {
+  int id;
+  String name;
+
+  TypeObject(this.id, this.name);
+
+  static TypeObject _fromJsonObj(Map content) =>
+      TypeObject(content['id'], content['name']);
+
+  static Future<RequestResponse> getDegreeTypes() =>
+      SKRequests.get('/skoller-jobs/types/degrees', _fromJsonObj);
 }

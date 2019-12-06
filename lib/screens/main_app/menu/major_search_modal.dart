@@ -127,6 +127,7 @@ class MajorSelectorState extends State<MajorSelector> {
                   Row(
                     children: <Widget>[
                       GestureDetector(
+                        behavior: HitTestBehavior.opaque,
                         onTapUp: tappedDismiss,
                         child: Container(
                           alignment: Alignment.centerLeft,
@@ -143,6 +144,7 @@ class MajorSelectorState extends State<MajorSelector> {
                         ),
                       ),
                       GestureDetector(
+                        behavior: HitTestBehavior.opaque,
                         onTapUp: tappedSave,
                         child: Container(
                           alignment: Alignment.centerRight,

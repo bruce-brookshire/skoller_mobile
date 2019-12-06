@@ -1419,30 +1419,41 @@ class SKAssignmentImpactGraph extends StatelessWidget {
   final ImpactGraphSize size;
   final Color color;
 
+  final ImpactLevel level;
+
   SKAssignmentImpactGraph(this.completion, this.color,
-      {this.size = ImpactGraphSize.large});
+      {this.size = ImpactGraphSize.large})
+      : this.level = null;
+
+  SKAssignmentImpactGraph.byLevel(this.level, this.color, this.size)
+      : this.completion = null;
 
   @override
   Widget build(BuildContext context) {
-    _ImpactLevel level;
+    ImpactLevel level;
     String impactDesc;
 
-    if ((completion ?? 0.0) == 0.0) {
-      level = _ImpactLevel.none;
-      impactDesc = 'None';
-    } else if (completion < 0.05) {
-      level = _ImpactLevel.low;
-      impactDesc = 'Low';
-    } else if (completion < 0.15) {
-      level = _ImpactLevel.medium;
-      impactDesc = 'Medium';
+    if (this.level != null) {
+      level = this.level;
+      impactDesc = ["None", "Low", "Medium", "High"][level.index];
     } else {
-      level = _ImpactLevel.high;
-      impactDesc = 'High';
+      if ((completion ?? 0.0) == 0.0) {
+        level = ImpactLevel.none;
+        impactDesc = 'None';
+      } else if (completion < 0.05) {
+        level = ImpactLevel.low;
+        impactDesc = 'Low';
+      } else if (completion < 0.15) {
+        level = ImpactLevel.medium;
+        impactDesc = 'Medium';
+      } else {
+        level = ImpactLevel.high;
+        impactDesc = 'High';
+      }
     }
 
-    final double width = size == ImpactGraphSize.large ? 40 : 32;
-    final double height = size == ImpactGraphSize.large ? 28 : 23;
+    final double width = size == ImpactGraphSize.large ? 36 : 32;
+    final double height = size == ImpactGraphSize.large ? 24 : 20;
 
     return Column(
       mainAxisSize: MainAxisSize.min,
@@ -1461,8 +1472,7 @@ class SKAssignmentImpactGraph extends StatelessWidget {
             child: Text(
               impactDesc,
               style: TextStyle(
-                fontSize: 9,
-              ),
+                  fontSize: 9, letterSpacing: 1, color: SKColors.light_gray),
             ),
           )
       ],
@@ -1470,11 +1480,11 @@ class SKAssignmentImpactGraph extends StatelessWidget {
   }
 }
 
-enum _ImpactLevel { none, low, medium, high }
+enum ImpactLevel { none, low, medium, high }
 
 class _SKImpactGraphPainter extends CustomPainter {
   final Color color;
-  final _ImpactLevel impact;
+  final ImpactLevel impact;
 
   _SKImpactGraphPainter(this.color, this.impact);
 
@@ -1524,7 +1534,7 @@ class _SKImpactGraphPainter extends CustomPainter {
       currIndex++;
     }
 
-    while (currIndex <= _ImpactLevel.high.index) {
+    while (currIndex <= ImpactLevel.high.index) {
       canvas.drawRRect(rects[currIndex - 1], emptyPaint);
       currIndex++;
     }

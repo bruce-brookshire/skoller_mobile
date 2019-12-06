@@ -81,14 +81,10 @@ class _TodoState extends State<TodoView> {
           ..removeWhere((a) {
             if (a.isCompleted) {
               newCompletedTasksAvailable = true;
-
               int daysOut = a.due.difference(today).inDays;
-              print(daysOut);
-              if (daysOut < minDaysOutCompleted && daysOut >= 0) {
-                print(a.name);
-                print(daysOut);
+              
+              if (daysOut < minDaysOutCompleted && daysOut >= 0)
                 minDaysOutCompleted = daysOut;
-              }
             }
             // Remove if we are not showing completed tasks and the task is completed,
             // OR if we are showing completed tasks and the task's due date is before today
