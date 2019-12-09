@@ -712,7 +712,7 @@ class SKNavOverlayRoute extends ModalRoute<Object> {
   bool get barrierDismissible => isBarrierDismissible;
 
   @override
-  Color get barrierColor => Colors.black.withOpacity(0.3);
+  Color get barrierColor => Colors.black.withOpacity(0.2);
 
   @override
   String get barrierLabel => null;

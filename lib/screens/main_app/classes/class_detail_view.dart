@@ -3,6 +3,7 @@ import 'package:dropdown_banner/dropdown_banner.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:auto_size_text/auto_size_text.dart';
+import 'package:skoller/screens/main_app/classes/class_menu_modal.dart';
 import 'package:skoller/screens/main_app/classes/modals/add_grade_scale_modal.dart';
 import './modals/class_link_sharing_modal.dart';
 import 'package:skoller/screens/main_app/classes/classmates_view.dart';
@@ -163,6 +164,8 @@ class _ClassDetailState extends State<ClassDetailView> {
         : '${studentClass.grade}%';
     final classmates = studentClass.enrollment;
 
+    final classColor = studentClass.getColor();
+
     return Scaffold(
       backgroundColor: Colors.white,
       body: Stack(
@@ -172,13 +175,13 @@ class _ClassDetailState extends State<ClassDetailView> {
             child: SafeArea(
               bottom: false,
               child: Container(
-                margin: EdgeInsets.only(top: 96),
+                margin: EdgeInsets.only(top: 72),
                 color: SKColors.background_gray,
                 child: RefreshIndicator(
                   key: _refreshIndicatorKey,
                   onRefresh: fetchClass,
                   child: ListView.builder(
-                    padding: EdgeInsets.only(top: 6, bottom: 64),
+                    padding: EdgeInsets.only(top: 18, bottom: 64),
                     itemCount: studentClass.assignments.length,
                     itemBuilder: assignmentCellBuilder,
                   ),
@@ -191,191 +194,144 @@ class _ClassDetailState extends State<ClassDetailView> {
             child: SafeArea(
               bottom: false,
               child: Container(
-                height: 96,
-                padding: EdgeInsets.only(
-                  bottom: 8,
-                  left: 4,
-                  right: 4,
+                height: 86,
+                padding: EdgeInsets.only(top: 4),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.only(
+                    bottomLeft: Radius.circular(15),
+                    bottomRight: Radius.circular(15),
+                  ),
+                  boxShadow: [
+                    BoxShadow(
+                        color: Color(0x2F000000),
+                        offset: Offset(0, 3),
+                        blurRadius: 1,
+                        spreadRadius: 1)
+                  ],
+                  color: Colors.white,
                 ),
-                decoration: BoxDecoration(boxShadow: [
-                  BoxShadow(
-                    color: Color(0x1C000000),
-                    offset: Offset(0, 3.5),
-                    blurRadius: 3.5,
-                  )
-                ], color: Colors.white),
                 child: Center(
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
                       Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        // crossAxisAlignment: CrossAxisAlignment.end,
                         children: <Widget>[
-                          Row(
-                            children: <Widget>[
-                              GestureDetector(
-                                onTapUp: (details) {
-                                  Navigator.pop(context);
-                                },
-                                child: Container(
-                                  child: Image.asset(
-                                      ImageNames.navArrowImages.left),
-                                  width: 36,
-                                  height: 44,
-                                ),
-                              ),
-                              GestureDetector(
-                                onTapUp: tappedLink,
-                                child: Container(
-                                  child: Image.asset(
-                                      ImageNames.rightNavImages.link),
-                                  width: 36,
-                                  height: 44,
-                                ),
-                              ),
-                            ],
+                          GestureDetector(
+                            onTapUp: (details) {
+                              Navigator.pop(context);
+                            },
+                            child: Container(
+                              child:
+                                  Image.asset(ImageNames.navArrowImages.left),
+                              width: 36,
+                              height: 36,
+                            ),
                           ),
                           Expanded(
                             child: AutoSizeText(
-                              studentClass.name,
-                              textAlign: TextAlign.center,
+                              'Macroeconomics 101',
+                              textAlign: TextAlign.left,
                               maxLines: 1,
                               minFontSize: 10,
                               style: TextStyle(
-                                  fontSize: 18,
+                                  fontSize: 22,
                                   fontWeight: FontWeight.bold,
-                                  color: studentClass.getColor()),
+                                  color: classColor),
                             ),
                           ),
-                          Row(
-                            children: <Widget>[
-                              GestureDetector(
-                                onTapUp: (details) {
-                                  Navigator.push(
-                                      context,
-                                      CupertinoPageRoute(
-                                        builder: (context) =>
-                                            ClassInfoView(studentClass.id),
-                                        settings: RouteSettings(
-                                            name: 'ClassInfoView'),
-                                      ));
-                                },
-                                child: SizedBox(
-                                  child: Image.asset(
-                                      ImageNames.rightNavImages.info),
-                                  width: 36,
-                                  height: 40,
-                                ),
+                          // Navigator.push(
+                          //   context,
+                          //   SKNavOverlayRoute(
+                          //     builder: (_) =>
+                          //         ClassMenuModal(this.studentClass),
+
+                          // CupertinoPageRoute(
+                          //   builder: (context) =>
+                          //       ClassInfoView(studentClass.id),
+                          // settings: RouteSettings(
+                          //     name: 'ClassInfoView'),
+                          //   ),
+                          // );
+                          GestureDetector(
+                            onTapUp: (details) => Navigator.push(
+                              context,
+                              CupertinoPageRoute(
+                                builder: (context) =>
+                                    AssignmentWeightView(studentClass.id),
+                                settings:
+                                    RouteSettings(name: 'AssignmentWeightView'),
                               ),
-                              GestureDetector(
-                                behavior: HitTestBehavior.opaque,
-                                onTapUp: (details) => Navigator.push(
-                                  context,
-                                  CupertinoPageRoute(
-                                    builder: (context) =>
-                                        AssignmentWeightView(studentClass.id),
-                                    settings: RouteSettings(
-                                        name: 'AssignmentWeightView'),
-                                  ),
-                                ),
-                                child: SizedBox(
-                                  child: createPlusButton(),
-                                  width: 36,
-                                  height: 40,
-                                ),
+                            ),
+                            child: Container(
+                              padding: EdgeInsets.all(3.5),
+                              margin: EdgeInsets.only(right: 8),
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: Colors.white,
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Color(0x4F000000),
+                                    offset: Offset(0, 1.75),
+                                    blurRadius: 3.5,
+                                  )
+                                ],
                               ),
-                            ],
+                              child: Icon(
+                                Icons.add,
+                                color: SKColors.skoller_blue,
+                              ),
+                            ),
                           ),
                         ],
                       ),
                       Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: <Widget>[
-                          Expanded(
-                            flex: 1,
-                            child: GestureDetector(
-                              onTapUp: tappedSpeculate,
-                              child: Container(
-                                alignment: Alignment.center,
-                                child: GestureDetector(
-                                  child: Text(
-                                    'Speculate Grade',
-                                    style: TextStyle(
-                                        color: SKColors.skoller_blue,
-                                        fontWeight: FontWeight.normal,
-                                        fontSize: 14),
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                          SKColorPicker(
-                            callback: (newColor) {
-                              studentClass.setColor(newColor).then((response) =>
-                                  DartNotificationCenter.post(
-                                      channel:
-                                          NotificationChannels.classChanged));
-                              setState(() {});
-                            },
-                            child: Container(
-                              width: 80,
-                              alignment: Alignment.center,
-                              padding: EdgeInsets.symmetric(vertical: 8),
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(5),
-                                boxShadow: UIAssets.boxShadow,
-                                color: studentClass.getColor(),
-                              ),
-                              child: Text(
-                                '${grade}',
-                                style: TextStyle(
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.normal,
-                                    fontSize: 18),
-                              ),
-                            ),
-                          ),
-                          Expanded(
-                            flex: 1,
-                            child: Container(
-                              height: 44,
-                              alignment: Alignment.center,
-                              child: GestureDetector(
-                                onTapUp: (details) {
-                                  Navigator.push(
-                                    context,
-                                    CupertinoPageRoute(
-                                      builder: (context) =>
-                                          WeightsInfoView(studentClass.id),
-                                      settings: RouteSettings(
-                                          name: 'WeightsInfoView'),
-                                    ),
-                                  );
-                                },
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: <Widget>[
-                                    Container(
-                                      padding:
-                                          EdgeInsets.only(right: 4, bottom: 1),
-                                      child: ClassCompletionChart(
-                                        studentClass.completion,
-                                        SKColors.skoller_blue,
-                                      ),
-                                    ),
-                                    Text(
-                                      '${(studentClass.completion * 100).round()}% complete',
-                                      style: TextStyle(
-                                          color: SKColors.skoller_blue,
-                                          fontWeight: FontWeight.normal,
-                                          fontSize: 14),
-                                    ),
-                                  ],
-                                ),
-                              ),
+                          Padding(
+                            padding: EdgeInsets.only(left: 36),
+                            child: Text(
+                              '${grade}',
+                              style: TextStyle(
+                                  color: SKColors.dark_gray,
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: 18),
                             ),
                           ),
                         ],
+                      ),
+                      Spacer(),
+                      GestureDetector(
+                        onTapUp: (_) => DartNotificationCenter.post(
+                          channel:
+                              NotificationChannels.presentModalViewOverTabBar,
+                          options: ClassMenuModal(this.studentClass),
+                        ),
+                        child: Container(
+                          alignment: Alignment.center,
+                          decoration: BoxDecoration(
+                            // gradient: LinearGradient(
+                            //   begin: Alignment.topCenter,
+                            //   end: Alignment.bottomCenter,
+                            //   colors: [
+                            //     Colors.white,
+                            //     SKColors.text_light_gray,
+                            //     SKColors.light_gray
+                            //   ],
+                            // ),
+                            // color: ,
+                            borderRadius: BorderRadius.only(
+                              bottomLeft: Radius.circular(15),
+                              bottomRight: Radius.circular(15),
+                            ),
+                          ),
+                          child: Icon(
+                            Icons.keyboard_arrow_down,
+                            color: SKColors.light_gray,
+                            size: 24,
+                          ),
+                        ),
                       ),
                     ],
                   ),

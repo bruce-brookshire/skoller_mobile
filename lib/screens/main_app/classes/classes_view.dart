@@ -44,7 +44,6 @@ class _ClassesState extends State<ClassesView> {
   Map<int, _CardConstruct> cardConstructors;
 
   final _refreshIndicatorKey = GlobalKey<RefreshIndicatorState>();
-  final semesterPrompt = 'sk_semester_prompt_enrollment';
 
   @override
   void initState() {

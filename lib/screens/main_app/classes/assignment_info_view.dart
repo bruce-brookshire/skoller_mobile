@@ -5,7 +5,6 @@ import 'package:skoller/constants/constants.dart';
 import 'package:skoller/screens/main_app/classes/weights_info_view.dart';
 import 'package:skoller/screens/main_app/menu/major_search_modal.dart';
 import './modals/assignment_notes_modal.dart';
-import './modals/student_profile_modal.dart';
 import './modals/assignment_edit_modal.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/widgets.dart';

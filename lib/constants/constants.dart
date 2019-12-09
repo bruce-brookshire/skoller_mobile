@@ -38,6 +38,25 @@ class SKColors {
   static const success = Color(0xFF0FB25C);
   static const alert_orange = Color(0xFFEF4B0A);
   static const warning_red = Color(0xFFEF183D);
+
+  static Color darken(Color color, [double amount = 0.2]) {
+    assert(amount >= 0 && amount <= 1);
+
+    final hsl = HSLColor.fromColor(color);
+    final hslDark = hsl.withLightness((hsl.lightness - amount).clamp(0.0, 1.0));
+
+    return hslDark.toColor();
+  }
+
+  static Color lighten(Color color, [double amount = 0.2]) {
+    assert(amount >= 0 && amount <= 1);
+
+    final hsl = HSLColor.fromColor(color);
+    final hslLight =
+        hsl.withLightness((hsl.lightness + amount).clamp(0.0, 1.0));
+
+    return hslLight.toColor();
+  }
 }
 
 class Analytics {
