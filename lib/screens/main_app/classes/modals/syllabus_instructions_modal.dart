@@ -11,7 +11,7 @@ class SyllabusInstructionsModal extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Widget body = Text('');;
+    Widget body;
 
     switch (type) {
       case SammiExplanationType.diy:
