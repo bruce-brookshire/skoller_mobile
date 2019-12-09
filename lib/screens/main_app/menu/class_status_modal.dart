@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:share/share.dart';
 import 'package:skoller/screens/main_app/classes/assignment_weight_view.dart';
 import 'package:skoller/screens/main_app/classes/weight_extraction_view.dart';
+import 'package:skoller/screens/main_app/classes/modals/syllabus_instructions_modal.dart';
 import 'package:skoller/tools.dart';
 
 class _SyllabusAction {

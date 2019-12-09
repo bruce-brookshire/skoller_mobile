@@ -14,6 +14,7 @@ class ImageNames {
   static final todoImages = _TodoImages();
   static final tutorialImages = _TutorialImages();
   static final classInfoImages = _ClassInfoImages();
+  static final classesImages = _ClassesImages();
 }
 
 class _MenuImages {
@@ -162,7 +163,17 @@ class _ClassInfoImages {
   static const _base = 'image_assets/class_info_assets';
 
   final clipboard = '${_base}/clipboard.png';
+}
+
+class _ClassesImages {
+  static const _base = 'image_assets/classes_assets';
+
   final syllabus_gray = '${_base}/syllabus_gray.png';
   final syllabus_red = '${_base}/syllabus_red.png';
   final syllabus_orange = '${_base}/syllabus_orange.png';
+
+  final syllabus_in_review = '$_base/syllabus_in_review.png';
+  final syllabus_upload = '$_base/syllabus_upload.png';
+  final syllabus_diy = '$_base/syllabus_diy.png';
+  final syllabus_overload = '$_base/syllabus_overload.png';
 }

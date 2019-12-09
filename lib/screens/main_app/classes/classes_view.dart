@@ -8,6 +8,7 @@ import 'package:skoller/screens/main_app/menu/add_classes_view.dart';
 import 'package:skoller/screens/main_app/menu/class_search_settings_modal.dart';
 import 'package:skoller/tools.dart';
 import 'package:url_launcher/url_launcher.dart';
+import './modals/syllabus_instructions_modal.dart';
 import 'class_detail_view.dart';
 
 enum _CardType {
@@ -534,7 +535,7 @@ class _ClassesState extends State<ClassesView> {
                       topLeft: Radius.circular(5),
                       bottomLeft: Radius.circular(5))),
               child: Image.asset(
-                ImageNames.classInfoImages.syllabus_red,
+                ImageNames.classesImages.syllabus_red,
                 // needsAssignments
                 //     ? ImageNames.peopleImages.people_white
                 //     : ImageNames.peopleImages.person_edit,
@@ -608,7 +609,7 @@ class _ClassesState extends State<ClassesView> {
         setState(() {
           selectedIndex = null;
         });
-        tappedSammiExplanation(SammiExplanationType.diy, studentClass.id);
+        tappedSammiExplanation(SammiExplanationType.syllabusOverload, studentClass.id);
       },
       child: Container(
         decoration: BoxDecoration(
@@ -634,7 +635,7 @@ class _ClassesState extends State<ClassesView> {
               width: 58,
               alignment: Alignment.center,
               child: Image.asset(
-                ImageNames.classInfoImages.syllabus_orange,
+                ImageNames.classesImages.syllabus_orange,
                 fit: BoxFit.fitWidth,
               ),
             ),
@@ -724,7 +725,7 @@ class _ClassesState extends State<ClassesView> {
               width: 58,
               alignment: Alignment.center,
               child: Image.asset(
-                ImageNames.classInfoImages.syllabus_gray,
+                ImageNames.classesImages.syllabus_gray,
                 fit: BoxFit.fitWidth,
               ),
             ),
