@@ -82,7 +82,7 @@ class _TodoState extends State<TodoView> {
             if (a.isCompleted) {
               newCompletedTasksAvailable = true;
               int daysOut = a.due.difference(today).inDays;
-              
+
               if (daysOut < minDaysOutCompleted && daysOut >= 0)
                 minDaysOutCompleted = daysOut;
             }
@@ -735,15 +735,21 @@ class _TodoRowState extends State<_TodoRow> {
                   children: <Widget>[
                     Padding(
                       padding: EdgeInsets.only(top: 3),
-                      child: Text(
-                        task?.name ?? 'N/A',
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: TextStyle(
-                            color: task.parentClass.getColor(),
-                            fontWeight: FontWeight.w800,
-                            letterSpacing: 1,
-                            fontSize: 17),
+                      child: Hero(
+                        tag: 'TaskName${task.id}',
+                        child: Material(
+                          type: MaterialType.transparency,
+                          child: Text(
+                            task?.name ?? 'N/A',
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(
+                                color: task.parentClass.getColor(),
+                                fontWeight: FontWeight.w800,
+                                letterSpacing: 1,
+                                fontSize: 17),
+                          ),
+                        ),
                       ),
                     ),
                     Text(
@@ -861,15 +867,21 @@ class _TodoRowState extends State<_TodoRow> {
                   children: <Widget>[
                     Padding(
                       padding: EdgeInsets.only(top: 3),
-                      child: Text(
-                        task?.name ?? 'N/A',
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: TextStyle(
-                            color: SKColors.dark_gray,
-                            fontWeight: FontWeight.w800,
-                            letterSpacing: 1,
-                            fontSize: 17),
+                      child: Hero(
+                        tag: 'TaskName${task.id}',
+                        child: Material(
+                          type: MaterialType.transparency,
+                          child: Text(
+                            task?.name ?? 'N/A',
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(
+                                color: SKColors.dark_gray,
+                                fontWeight: FontWeight.w800,
+                                letterSpacing: 1,
+                                fontSize: 17),
+                          ),
+                        ),
                       ),
                     ),
                     Row(
@@ -963,15 +975,21 @@ class _TodoRowState extends State<_TodoRow> {
                       crossAxisAlignment: CrossAxisAlignment.end,
                       children: <Widget>[
                         Expanded(
-                          child: Text(
-                            task?.name ?? 'N/A',
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: TextStyle(
-                                color: task.parentClass.getColor(),
-                                fontWeight: FontWeight.w800,
-                                letterSpacing: 1,
-                                fontSize: 17),
+                          child: Hero(
+                            tag: 'TaskName${task.id}',
+                            child: Material(
+                              type: MaterialType.transparency,
+                              child: Text(
+                                task?.name ?? 'N/A',
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: TextStyle(
+                                    color: task.parentClass.getColor(),
+                                    fontWeight: FontWeight.w800,
+                                    letterSpacing: 1,
+                                    fontSize: 17),
+                              ),
+                            ),
                           ),
                         ),
                         SKAssignmentImpactGraph(

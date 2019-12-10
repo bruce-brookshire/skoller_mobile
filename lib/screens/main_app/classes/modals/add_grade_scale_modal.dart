@@ -135,66 +135,113 @@ class _AddGradeScaleModalState extends State<AddGradeScaleModal> {
 
   @override
   Widget build(BuildContext context) {
-    final children = isCustom ? createGradeScale() : selectGradeScale();
-
-    return Material(
-      color: Colors.black.withOpacity(0.3),
-      child: SafeArea(
-        child: Container(
-          margin: EdgeInsets.all(24),
-          padding: EdgeInsets.all(8),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(10),
-            border: Border.all(color: SKColors.border_gray),
-            color: Colors.white,
-            boxShadow: UIAssets.boxShadow,
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: <Widget>[
-                  GestureDetector(
-                    behavior: HitTestBehavior.opaque,
-                    onTapUp: isCustom ? tappedCustom : tappedDismiss,
-                    child: Container(
-                      width: 32,
-                      height: 32,
-                      alignment: Alignment.center,
-                      child: Image.asset(isCustom
-                          ? ImageNames.navArrowImages.left
-                          : ImageNames.navArrowImages.down),
+    if (isCustom) {
+      return Material(
+        color: Colors.black.withOpacity(0.3),
+        type: MaterialType.transparency,
+        child: SafeArea(
+          child: Container(
+            margin: EdgeInsets.all(24),
+            padding: EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(10),
+              border: Border.all(color: SKColors.border_gray),
+              color: Colors.white,
+              boxShadow: UIAssets.boxShadow,
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    GestureDetector(
+                      behavior: HitTestBehavior.opaque,
+                      onTapUp: tappedCustom,
+                      child: Container(
+                        width: 32,
+                        height: 32,
+                        alignment: Alignment.center,
+                        child: Image.asset(ImageNames.navArrowImages.left),
+                      ),
                     ),
-                  ),
-                  Text(
-                    isCustom ? 'Custom Grade Scale' : 'Select Grade Scale',
-                    style: TextStyle(fontSize: 16),
-                  ),
-                  isCustom
-                      ? GestureDetector(
+                    Text(
+                      'Custom Grade Scale',
+                      style: TextStyle(fontSize: 16),
+                    ),
+                    GestureDetector(
+                      behavior: HitTestBehavior.opaque,
+                      onTapUp: tappedAdd,
+                      child: Container(
+                        width: 32,
+                        height: 32,
+                        alignment: Alignment.center,
+                        child: Image.asset(ImageNames.rightNavImages.plus),
+                      ),
+                    ),
+                  ],
+                ),
+                ...createGradeScale(),
+              ],
+            ),
+          ),
+        ),
+      );
+    } else {
+      return Column(
+        children: [
+          Material(
+            color: Colors.black.withOpacity(0.3),
+            type: MaterialType.transparency,
+            child: SafeArea(
+              child: Container(
+                margin: EdgeInsets.all(24),
+                padding: EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(10),
+                  border: Border.all(color: SKColors.border_gray),
+                  color: Colors.white,
+                  boxShadow: UIAssets.boxShadow,
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: <Widget>[
+                        GestureDetector(
                           behavior: HitTestBehavior.opaque,
-                          onTapUp: tappedAdd,
+                          onTapUp: tappedDismiss,
                           child: Container(
                             width: 32,
                             height: 32,
                             alignment: Alignment.center,
-                            child: Image.asset(ImageNames.rightNavImages.plus),
+                            child: Image.asset(isCustom
+                                ? ImageNames.navArrowImages.left
+                                : ImageNames.navArrowImages.down),
                           ),
-                        )
-                      : SizedBox(
+                        ),
+                        Text(
+                          'Select Grade Scale',
+                          style: TextStyle(fontSize: 16),
+                        ),
+                        SizedBox(
                           width: 32,
                           height: 32,
                         ),
-                ],
+                      ],
+                    ),
+                    ...selectGradeScale(),
+                  ],
+                ),
               ),
-              ...children,
-            ],
+            ),
           ),
-        ),
-      ),
-    );
+        ],
+      );
+    }
   }
 
   List<Widget> selectGradeScale() {

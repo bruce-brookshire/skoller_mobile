@@ -23,7 +23,6 @@ class ClassDetailView extends StatefulWidget {
 }
 
 class _ClassDetailState extends State<ClassDetailView> {
-  int _selectedIndex;
   int weightsWithoutAssignments = 0;
 
   StudentClass get studentClass => StudentClass.currentClasses[widget.classId];
@@ -81,78 +80,6 @@ class _ClassDetailState extends State<ClassDetailView> {
     if (mounted) setState(() {});
   }
 
-  void tappedLink(TapUpDetails details) {
-    showDialog(
-        context: context,
-        builder: (context) => ClassLinkSharingModal(widget.classId));
-  }
-
-  void tappedSpeculate(TapUpDetails details) async {
-    bool shouldProceed = true;
-
-    if (studentClass.gradeScale == null) {
-      final result = await showGradeScalePicker();
-      if (result == null || !result) {
-        shouldProceed = false;
-      }
-    }
-
-    if (shouldProceed) {
-      showSpeculate();
-    }
-  }
-
-  Future showGradeScalePicker() {
-    return Navigator.push(
-      context,
-      SKNavOverlayRoute(
-        isBarrierDismissible: false,
-        builder: (context) => AddGradeScaleModal(
-          classId: widget.classId,
-          onCompletionShowGradeScale: false,
-        ),
-      ),
-    );
-  }
-
-  void showSpeculate() async {
-    final speculate = await studentClass.speculateClass().then(
-      (response) {
-        if (response.wasSuccessful())
-          return response.obj;
-        else
-          throw 'Unable to get speculation';
-      },
-    ).catchError((onError) {
-      DropdownBanner.showBanner(
-        text: onError is String ? onError : 'Failed to get speculation',
-        color: SKColors.warning_red,
-        textStyle: TextStyle(color: Colors.white),
-      );
-    });
-
-    if (!(speculate is List)) {
-      return;
-    }
-
-    (speculate as List).sort(
-      (elem1, elem2) =>
-          (elem2['speculation'] as num).compareTo(elem1['speculation'] as num),
-    );
-
-    showDialog(
-      context: context,
-      builder: (context) => Dialog(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.all(Radius.circular(10)),
-        ),
-        child: _SpeculateModalView(
-          speculate,
-        ),
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     final studentClass = this.studentClass;
@@ -162,9 +89,10 @@ class _ClassDetailState extends State<ClassDetailView> {
     final grade = (studentClass.grade == null || studentClass.grade == 0)
         ? '-- %'
         : '${studentClass.grade}%';
-    final classmates = studentClass.enrollment;
 
     final classColor = studentClass.getColor();
+
+    final assignments = studentClass.assignments;
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -175,15 +103,16 @@ class _ClassDetailState extends State<ClassDetailView> {
             child: SafeArea(
               bottom: false,
               child: Container(
-                margin: EdgeInsets.only(top: 72),
+                margin: EdgeInsets.only(top: 67),
                 color: SKColors.background_gray,
                 child: RefreshIndicator(
                   key: _refreshIndicatorKey,
                   onRefresh: fetchClass,
                   child: ListView.builder(
-                    padding: EdgeInsets.only(top: 18, bottom: 64),
+                    padding: EdgeInsets.only(top: 16, bottom: 64),
                     itemCount: studentClass.assignments.length,
-                    itemBuilder: assignmentCellBuilder,
+                    itemBuilder: (_, index) =>
+                        _AssignmentCell(assignments[index].id, classColor),
                   ),
                 ),
               ),
@@ -194,7 +123,7 @@ class _ClassDetailState extends State<ClassDetailView> {
             child: SafeArea(
               bottom: false,
               child: Container(
-                height: 86,
+                height: 78,
                 padding: EdgeInsets.only(top: 4),
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.only(
@@ -203,10 +132,9 @@ class _ClassDetailState extends State<ClassDetailView> {
                   ),
                   boxShadow: [
                     BoxShadow(
-                        color: Color(0x2F000000),
+                        color: Color(0x21000000),
                         offset: Offset(0, 3),
-                        blurRadius: 1,
-                        spreadRadius: 1)
+                        blurRadius: 1.5)
                   ],
                   color: Colors.white,
                 ),
@@ -216,7 +144,6 @@ class _ClassDetailState extends State<ClassDetailView> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
                       Row(
-                        // crossAxisAlignment: CrossAxisAlignment.end,
                         children: <Widget>[
                           GestureDetector(
                             onTapUp: (details) {
@@ -230,30 +157,41 @@ class _ClassDetailState extends State<ClassDetailView> {
                             ),
                           ),
                           Expanded(
-                            child: AutoSizeText(
-                              'Macroeconomics 101',
-                              textAlign: TextAlign.left,
-                              maxLines: 1,
-                              minFontSize: 10,
-                              style: TextStyle(
-                                  fontSize: 22,
-                                  fontWeight: FontWeight.bold,
-                                  color: classColor),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.stretch,
+                              children: <Widget>[
+                                Hero(
+                                  tag: 'ClassName${studentClass.id}',
+                                  child: Material(
+                                    type: MaterialType.transparency,
+                                    child: Text(
+                                      studentClass.name,
+                                      textAlign: TextAlign.left,
+                                      maxLines: 1,
+                                      // minFontSize: 10,
+                                      style: TextStyle(
+                                          fontSize: 22,
+                                          fontWeight: FontWeight.bold,
+                                          color: classColor),
+                                    ),
+                                  ),
+                                ),
+                                Hero(
+                                  tag: 'ClassGrade${studentClass.id}',
+                                  child: Material(
+                                    type: MaterialType.transparency,
+                                    child: Text(
+                                      '${grade}',
+                                      style: TextStyle(
+                                          color: SKColors.dark_gray,
+                                          fontWeight: FontWeight.w600,
+                                          fontSize: 18),
+                                    ),
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
-                          // Navigator.push(
-                          //   context,
-                          //   SKNavOverlayRoute(
-                          //     builder: (_) =>
-                          //         ClassMenuModal(this.studentClass),
-
-                          // CupertinoPageRoute(
-                          //   builder: (context) =>
-                          //       ClassInfoView(studentClass.id),
-                          // settings: RouteSettings(
-                          //     name: 'ClassInfoView'),
-                          //   ),
-                          // );
                           GestureDetector(
                             onTapUp: (details) => Navigator.push(
                               context,
@@ -264,44 +202,10 @@ class _ClassDetailState extends State<ClassDetailView> {
                                     RouteSettings(name: 'AssignmentWeightView'),
                               ),
                             ),
-                            child: Container(
-                              padding: EdgeInsets.all(3.5),
-                              margin: EdgeInsets.only(right: 8),
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                color: Colors.white,
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Color(0x4F000000),
-                                    offset: Offset(0, 1.75),
-                                    blurRadius: 3.5,
-                                  )
-                                ],
-                              ),
-                              child: Icon(
-                                Icons.add,
-                                color: SKColors.skoller_blue,
-                              ),
-                            ),
+                            child: createPlusButton(),
                           ),
                         ],
                       ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: <Widget>[
-                          Padding(
-                            padding: EdgeInsets.only(left: 36),
-                            child: Text(
-                              '${grade}',
-                              style: TextStyle(
-                                  color: SKColors.dark_gray,
-                                  fontWeight: FontWeight.w600,
-                                  fontSize: 18),
-                            ),
-                          ),
-                        ],
-                      ),
-                      Spacer(),
                       GestureDetector(
                         onTapUp: (_) => DartNotificationCenter.post(
                           channel:
@@ -311,16 +215,6 @@ class _ClassDetailState extends State<ClassDetailView> {
                         child: Container(
                           alignment: Alignment.center,
                           decoration: BoxDecoration(
-                            // gradient: LinearGradient(
-                            //   begin: Alignment.topCenter,
-                            //   end: Alignment.bottomCenter,
-                            //   colors: [
-                            //     Colors.white,
-                            //     SKColors.text_light_gray,
-                            //     SKColors.light_gray
-                            //   ],
-                            // ),
-                            // color: ,
                             borderRadius: BorderRadius.only(
                               bottomLeft: Radius.circular(15),
                               bottomRight: Radius.circular(15),
@@ -339,91 +233,141 @@ class _ClassDetailState extends State<ClassDetailView> {
               ),
             ),
           ),
-          Align(
-            alignment: Alignment.bottomCenter,
-            child: GestureDetector(
-              // behavior: HitTestBehavior.opaque,
-              onTapUp: (details) {
-                Navigator.push(
-                  context,
-                  CupertinoPageRoute(
-                    builder: (context) => ClassmatesView(widget.classId),
-                    settings: RouteSettings(name: 'ClassmatesView'),
-                  ),
-                );
-              },
-              child: Container(
-                decoration: BoxDecoration(
-                    color:
-                        classmates < 4 ? studentClass.getColor() : Colors.white,
-                    boxShadow: UIAssets.boxShadow,
-                    border: Border.all(
-                      color:
-                          classmates < 4 ? Colors.white : SKColors.skoller_blue,
-                    ),
-                    borderRadius: BorderRadius.circular(5)),
-                padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                margin: EdgeInsets.only(bottom: 16),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  mainAxisSize: MainAxisSize.min,
-                  children: <Widget>[
-                    Container(
-                      padding: EdgeInsets.only(right: 8),
-                      child: Image.asset(classmates < 4
-                          ? ImageNames.peopleImages.people_white
-                          : ImageNames.peopleImages.people_blue),
-                    ),
-                    Text(
-                      classmates < 4
-                          ? '${4 - classmates} classmate${(4 - classmates) == 1 ? '' : 's'} away'
-                          : '${classmates} classmate${classmates == 1 ? '' : 's'}',
-                      style: TextStyle(
-                          color: classmates < 4
-                              ? Colors.white
-                              : SKColors.skoller_blue,
-                          fontSize: 15),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ),
         ],
       ),
     );
   }
 
-  Widget assignmentCellBuilder(BuildContext context, int index) {
-    final assignment_id = studentClass.assignments[index].id;
-    final assignment = Assignment.currentAssignments[assignment_id];
-    double pre_weight =
-        assignment.weight != null ? assignment.weight * 100 : null;
-    String weight;
+  Widget createPlusButton() {
+    final child = Container(
+      padding: EdgeInsets.all(3.5),
+      margin: EdgeInsets.all(8),
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        color: SKColors.skoller_blue,
+        boxShadow: [
+          BoxShadow(
+            color: Color(0x2F000000),
+            offset: Offset(0, 1.75),
+            blurRadius: 3.5,
+          )
+        ],
+      ),
+      child: Icon(
+        Icons.add,
+        color: Colors.white,
+      ),
+    );
+    if (weightsWithoutAssignments == 0)
+      return child;
+    else
+      return Stack(
+        alignment: Alignment.topRight,
+        children: [
+          child,
+          Container(
+            alignment: Alignment.center,
+            margin: EdgeInsets.only(top: 6, right: 5.5),
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: SKColors.warning_red,
+            ),
+            width: 14,
+            height: 14,
+            child: Text(
+              '$weightsWithoutAssignments',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 9,
+                  fontWeight: FontWeight.normal),
+            ),
+          ),
+        ],
+      );
+  }
+}
 
-    if (pre_weight == null) {
-      weight = '';
-    } else if (pre_weight == 0 && assignment.weight_id == null) {
-      weight = 'Not graded';
-    } else if (pre_weight % 1 == 0) {
-      weight = '${pre_weight.round()}%';
-    } else {
-      weight = '${(assignment.weight * 1000).roundToDouble() / 10}%';
-    }
+class _AssignmentCell extends StatefulWidget {
+  final int assignmentId;
+  final Color classColor;
+
+  _AssignmentCell(this.assignmentId, this.classColor);
+
+  @override
+  State createState() => _AssignmentCellState();
+}
+
+class _AssignmentCellState extends State<_AssignmentCell> {
+  bool isTapped = false;
+
+  @override
+  Widget build(BuildContext context) {
+    final assignment = Assignment.currentAssignments[widget.assignmentId];
+    final isPromptGrade = assignment.isCompleted && assignment.grade == null;
+
+    final gradeSquare = isPromptGrade
+        ? Container(
+            padding: EdgeInsets.symmetric(vertical: 18),
+            width: 46,
+            alignment: Alignment.center,
+            decoration:
+                BoxDecoration(border: Border(right: BorderSide(color: SKColors.border_gray))),
+            child: Text(
+              '--%',
+              textScaleFactor: 1,
+              style: TextStyle(
+                  color: SKColors.warning_red,
+                  fontWeight: FontWeight.normal,
+                  fontSize: 13,
+                  letterSpacing: -0.75),
+            ),
+          )
+        : Container(
+            padding: EdgeInsets.symmetric(vertical: 18),
+            width: 46,
+            alignment: Alignment.center,
+            decoration: BoxDecoration(
+              color: assignment.grade == null
+                  ? (assignment.isCompleted
+                      ? Colors.white
+                      : SKColors.light_gray)
+                  : widget.classColor,
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(5),
+                bottomLeft: Radius.circular(5),
+              ),
+              border: isPromptGrade
+                  ? Border.all(color: SKColors.border_gray)
+                  : null,
+            ),
+            child: Text(
+              assignment.grade == null
+                  ? '--'
+                  : '${(assignment.grade).round()}%',
+              textScaleFactor: 1,
+              style: TextStyle(
+                  color: isPromptGrade ? SKColors.warning_red : Colors.white,
+                  fontWeight: FontWeight.normal,
+                  fontSize: 13,
+                  letterSpacing: -0.75),
+            ),
+          );
+
     return GestureDetector(
       onTapDown: (details) {
         setState(() {
-          _selectedIndex = index;
+          isTapped = true;
         });
       },
       onTapCancel: () {
         setState(() {
-          _selectedIndex = null;
+          isTapped = false;
         });
       },
       onTapUp: (details) {
         setState(() {
-          _selectedIndex = null;
+          isTapped = false;
         });
         Navigator.push(
           context,
@@ -436,106 +380,56 @@ class _ClassDetailState extends State<ClassDetailView> {
       },
       child: Container(
         decoration: BoxDecoration(
-            color:
-                _selectedIndex == index ? SKColors.selected_gray : Colors.white,
+            color: isTapped ? SKColors.selected_gray : Colors.white,
             boxShadow: UIAssets.boxShadow,
             borderRadius: BorderRadius.circular(5),
             border: Border.all(color: SKColors.border_gray)),
         margin: EdgeInsets.fromLTRB(6, 3, 6, 3),
         child: Row(
           children: <Widget>[
-            Container(
-              padding: EdgeInsets.symmetric(vertical: 18),
-              width: 46,
-              alignment: Alignment.center,
-              decoration: BoxDecoration(
-                  color: assignment.grade == null
-                      ? SKColors.light_gray
-                      : studentClass.getColor(),
-                  borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(5),
-                      bottomLeft: Radius.circular(5))),
-              child: Text(
-                assignment.grade == null
-                    ? '--'
-                    : '${(assignment.grade).round()}%',
-                textScaleFactor: 1,
-                style: TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.normal,
-                    fontSize: 13,
-                    letterSpacing: -0.75),
-              ),
-            ),
+            gradeSquare,
             Expanded(
               child: Container(
                 padding: EdgeInsets.symmetric(horizontal: 8),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                child: Row(
                   children: <Widget>[
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        Expanded(
-                          child: Text(
-                            assignment.name,
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            textScaleFactor: 1,
-                          ),
-                        ),
-                        Text(
-                          assignment.due == null
-                              ? 'Add due date'
-                              : DateUtilities.getFutureRelativeString(
-                                  assignment.due),
-                          textScaleFactor: 1,
-                          style: TextStyle(
-                              fontSize: 12,
-                              fontWeight: FontWeight.normal,
-                              color: assignment.due == null
-                                  ? SKColors.alert_orange
-                                  : SKColors.dark_gray),
-                        ),
-                      ],
-                    ),
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      children: <Widget>[
-                        Expanded(
-                          child: Container(
-                            padding: EdgeInsets.only(top: 2),
-                            child: Text(
-                              assignment.weight == null
-                                  ? ''
-                                  : (assignment.weight == 0
-                                      ? 'Not graded'
-                                      : weight),
-                              textScaleFactor: 1,
-                              style: TextStyle(
-                                fontWeight: FontWeight.normal,
-                                fontSize: 13,
+                    Expanded(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          Hero(
+                            tag: 'TaskName${assignment.id}',
+                            child: Material(
+                              type: MaterialType.transparency,
+                              child: Text(
+                                assignment.name,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                textScaleFactor: 1,
                               ),
                             ),
                           ),
-                        ),
-                        Padding(
-                          padding: EdgeInsets.only(right: 2),
-                          child: assignment.posts.length == 0
-                              ? null
-                              : Image.asset(
-                                  ImageNames.chatImages.commented_gray),
-                        ),
-                        Text(
-                          '${assignment.posts.length == 0 ? '' : assignment.posts.length}',
-                          textScaleFactor: 1,
-                          style: TextStyle(
-                              fontSize: 12,
-                              fontWeight: FontWeight.normal,
-                              color: SKColors.light_gray),
-                        ),
-                      ],
+                          Text(
+                            assignment.due == null
+                                ? 'Add due date'
+                                : DateUtilities.getFutureRelativeString(
+                                    assignment.due),
+                            textScaleFactor: 1,
+                            style: TextStyle(
+                                fontSize: 13,
+                                fontWeight: FontWeight.normal,
+                                color: assignment.due == null
+                                    ? SKColors.alert_orange
+                                    : SKColors.light_gray),
+                          ),
+                        ],
+                      ),
+                    ),
+                    SKAssignmentImpactGraph(
+                      assignment.weight,
+                      assignment.parentClass.getColor(),
+                      size: ImpactGraphSize.small,
                     ),
                   ],
                 ),
@@ -543,153 +437,6 @@ class _ClassDetailState extends State<ClassDetailView> {
             ),
           ],
         ),
-      ),
-    );
-  }
-
-  Widget createPlusButton() {
-    if (weightsWithoutAssignments == 0)
-      return Image.asset(ImageNames.rightNavImages.plus);
-    else
-      return Stack(
-        children: [
-          Align(
-            alignment: Alignment.center,
-            child: Container(
-              child: Image.asset(ImageNames.rightNavImages.plus),
-            ),
-          ),
-          Align(
-            alignment: Alignment.topRight,
-            child: Container(
-              alignment: Alignment.center,
-              margin: EdgeInsets.only(top: 4, right: 2),
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: SKColors.warning_red,
-              ),
-              width: 12.75,
-              height: 12.75,
-              child: Text(
-                '${weightsWithoutAssignments}',
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 9,
-                    fontWeight: FontWeight.normal),
-              ),
-            ),
-          )
-        ],
-      );
-  }
-}
-
-class _SpeculateModalView extends StatefulWidget {
-  final List speculate;
-
-  _SpeculateModalView(this.speculate);
-
-  @override
-  State createState() => _SpeculateModalState();
-}
-
-class _SpeculateModalState extends State<_SpeculateModalView> {
-  int selectedIndex = 0;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: EdgeInsets.only(top: 12),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(10),
-        border: Border.all(
-          color: SKColors.border_gray,
-        ),
-      ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Text(
-            'Speculate',
-            style: TextStyle(fontSize: 17),
-          ),
-          Padding(
-            padding: EdgeInsets.fromLTRB(24, 8, 24, 0),
-            child: Text(
-              'What grade do you want to make in this class?',
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.normal,
-              ),
-            ),
-          ),
-          Container(
-            height: 140,
-            child: CupertinoPicker.builder(
-              backgroundColor: Colors.white,
-              childCount: widget.speculate.length,
-              itemBuilder: (context, index) => Container(
-                alignment: Alignment.center,
-                child: Text(
-                  '${widget.speculate[index]['grade']}',
-                  style: TextStyle(
-                    color: SKColors.dark_gray,
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
-              itemExtent: 32,
-              onSelectedItemChanged: (index) {
-                setState(() {
-                  selectedIndex = index;
-                });
-              },
-            ),
-          ),
-          Padding(
-            padding: EdgeInsets.symmetric(horizontal: 16),
-            child: Text.rich(
-              TextSpan(
-                children: [
-                  TextSpan(
-                    text: 'You need to average at least a ',
-                    style: TextStyle(fontWeight: FontWeight.normal),
-                  ),
-                  TextSpan(
-                      text:
-                          '${widget.speculate[selectedIndex]['speculation']}%'),
-                  TextSpan(
-                    text:
-                        ' on your remaining assignments to achieve the grade ',
-                    style: TextStyle(fontWeight: FontWeight.normal),
-                  ),
-                  TextSpan(
-                      text: '${widget.speculate[selectedIndex]['grade']}.'),
-                ],
-              ),
-              textAlign: TextAlign.center,
-            ),
-          ),
-          GestureDetector(
-            onTapUp: (details) => Navigator.pop(context),
-            child: Container(
-              margin: EdgeInsets.only(top: 24, left: 16, right: 16),
-              padding: EdgeInsets.symmetric(vertical: 12),
-              decoration: BoxDecoration(
-                  border: Border(top: BorderSide(color: SKColors.border_gray))),
-              alignment: Alignment.center,
-              child: Text(
-                'Dismiss',
-                style: TextStyle(
-                  color: SKColors.skoller_blue,
-                ),
-              ),
-            ),
-          )
-        ],
       ),
     );
   }

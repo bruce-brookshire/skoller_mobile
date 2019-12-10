@@ -498,15 +498,21 @@ class _AssignmentInfoState extends State<AssignmentInfoView> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
                 Expanded(
-                  child: Text(
-                    assignment.name,
-                    // maxLines: 1,
-                    // overflow: TextOverflow.ellipsis,
-                    style: TextStyle(
-                      fontSize: 17,
-                      fontWeight: FontWeight.w800,
-                      color: assignment.parentClass.getColor(),
-                      letterSpacing: 1,
+                  child: Hero(
+                    tag: 'TaskName${assignment.id}',
+                    child: Material(
+                      type: MaterialType.transparency,
+                      child: Text(
+                        assignment.name,
+                        // maxLines: 1,
+                        // overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                          fontSize: 17,
+                          fontWeight: FontWeight.w800,
+                          color: assignment.parentClass.getColor(),
+                          letterSpacing: 1,
+                        ),
+                      ),
                     ),
                   ),
                 ),
@@ -881,7 +887,8 @@ class _AssignmentInfoState extends State<AssignmentInfoView> {
               padding: EdgeInsets.symmetric(vertical: 4),
               child: GestureDetector(
                 behavior: HitTestBehavior.opaque,
-                onTapUp: (_) => Share.share(assignment.parentClass.shareMessage),
+                onTapUp: (_) =>
+                    Share.share(assignment.parentClass.shareMessage),
                 child: Container(
                   padding: EdgeInsets.symmetric(vertical: 6, horizontal: 24),
                   decoration: BoxDecoration(

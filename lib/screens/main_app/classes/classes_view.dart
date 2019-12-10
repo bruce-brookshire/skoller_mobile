@@ -441,15 +441,21 @@ class _ClassesState extends State<ClassesView> {
                   borderRadius: BorderRadius.only(
                       topLeft: Radius.circular(5),
                       bottomLeft: Radius.circular(5))),
-              child: Text(
-                grade == null
-                    ? '--%'
-                    : '${NumberUtilities.formatGradeAsPercent(grade)}',
-                textScaleFactor: 1,
-                style: TextStyle(
-                    color: isCurrent ? Colors.white : SKColors.dark_gray,
-                    fontSize: 17,
-                    letterSpacing: -0.75),
+              child: Hero(
+                tag: 'ClassGrade${studentClass.id}',
+                child: Material(
+                  type: MaterialType.transparency,
+                  child: Text(
+                    grade == null
+                        ? '--%'
+                        : '${NumberUtilities.formatGradeAsPercent(grade)}',
+                    textScaleFactor: 1,
+                    style: TextStyle(
+                        color: isCurrent ? Colors.white : SKColors.dark_gray,
+                        fontSize: 17,
+                        letterSpacing: -0.75),
+                  ),
+                ),
               ),
             ),
             Expanded(
@@ -461,24 +467,30 @@ class _ClassesState extends State<ClassesView> {
                   children: <Widget>[
                     Container(
                       padding: EdgeInsets.only(bottom: 1),
-                      child: Text(
-                        studentClass.name,
-                        textScaleFactor: 1,
-                        style: TextStyle(
-                            fontSize: 17,
-                            letterSpacing: 0.4,
-                            fontWeight: FontWeight.w800,
-                            color: isCurrent
-                                ? studentClass.getColor()
-                                : SKColors.dark_gray),
+                      child: Hero(
+                        tag: 'ClassName${studentClass.id}',
+                        child: Material(
+                          type: MaterialType.transparency,
+                          child: Text(
+                            studentClass.name,
+                            textScaleFactor: 1,
+                            style: TextStyle(
+                                fontSize: 17,
+                                letterSpacing: 1,
+                                fontWeight: FontWeight.w800,
+                                color: isCurrent
+                                    ? studentClass.getColor()
+                                    : SKColors.dark_gray),
+                          ),
+                        ),
                       ),
                     ),
                     Row(
                       children: <Widget>[
                         Container(
                           padding: EdgeInsets.only(right: 5, bottom: 2),
-                          child: Image.asset(
-                              ImageNames.peopleImages.people_gray),
+                          child:
+                              Image.asset(ImageNames.peopleImages.people_gray),
                         ),
                         Text(
                           '${studentClass.enrollment - 1} classmate${studentClass.enrollment == 2 ? '' : 's'}',
@@ -608,7 +620,8 @@ class _ClassesState extends State<ClassesView> {
         setState(() {
           selectedIndex = null;
         });
-        tappedSammiExplanation(SammiExplanationType.syllabusOverload, studentClass.id);
+        tappedSammiExplanation(
+            SammiExplanationType.syllabusOverload, studentClass.id);
       },
       child: Container(
         decoration: BoxDecoration(

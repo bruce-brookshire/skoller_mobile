@@ -745,6 +745,58 @@ class SKNavOverlayRoute extends ModalRoute<Object> {
   }
 }
 
+class SKCoverSheetNav extends ModalRoute<Object> {
+  final WidgetBuilder builder;
+  final bool isBarrierDismissible;
+
+  SKCoverSheetNav({@required this.builder, this.isBarrierDismissible = true});
+
+  @override
+  Duration get transitionDuration => Duration(milliseconds: 300);
+
+  @override
+  bool get opaque => false;
+
+  @override
+  bool get barrierDismissible => isBarrierDismissible;
+
+  @override
+  Color get barrierColor => Colors.black.withOpacity(0.2);
+
+  @override
+  String get barrierLabel => null;
+
+  @override
+  bool get maintainState => true;
+
+  @override
+  Widget buildPage(
+    BuildContext context,
+    Animation<double> animation,
+    Animation<double> secondaryAnimation,
+  ) {
+    // This makes sure that text and other content follows the material style
+    return builder(context);
+  }
+
+  @override
+  Widget buildTransitions(BuildContext context, Animation<double> animation,
+      Animation<double> secondaryAnimation, Widget child) {
+    // You can add your own animations for the overlay content
+
+    return FadeTransition(
+      opacity: animation,
+      child: SlideTransition(
+        position: Tween<Offset>(
+          begin: Offset(0, -1),
+          end: Offset.zero,
+        ).animate(animation),
+        child: child,
+      ),
+    );
+  }
+}
+
 class SKLoadingScreen extends ModalRoute<void> {
   static SKLoadingScreen fadeIn(BuildContext context) {
     final loadingScreen = SKLoadingScreen();
