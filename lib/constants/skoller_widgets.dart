@@ -1008,8 +1008,16 @@ class _SKColorPickerState extends State<SKColorPicker> {
 
   OverlayEntry _createOverlayEntry() {
     RenderBox renderBox = context.findRenderObject();
-    var size = renderBox.size;
-    var offset = renderBox.localToGlobal(Offset.zero);
+
+    final size = renderBox.size;
+    final offset = renderBox.localToGlobal(Offset.zero);
+    final screenWidth = MediaQuery.of(context).size.width;
+
+    final halfRenderWidth = size.width / 2;
+    final midPoint = offset.dx + halfRenderWidth;
+    final isLeft = midPoint < screenWidth / 2;
+    final left = midPoint - 148;
+    final right = screenWidth - (midPoint + 148);
 
     return OverlayEntry(
       builder: (context) => GestureDetector(
@@ -1027,7 +1035,8 @@ class _SKColorPickerState extends State<SKColorPicker> {
             ),
             Positioned(
               top: offset.dy + size.height + 13,
-              left: (offset.dx + (size.width / 2)) - 148,
+              left: isLeft ? (left < 8 ? 8 : left) : null,
+              right: isLeft ? null : (right < 8 ? 8 : right),
               child: Container(
                 padding: EdgeInsets.all(4),
                 decoration: BoxDecoration(

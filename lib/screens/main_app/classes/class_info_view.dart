@@ -105,8 +105,7 @@ class ClassInfoView extends StatelessWidget {
                     ),
                     child: Text(
                       'Edit',
-                      style:
-                          TextStyle(color: SKColors.skoller_blue, fontSize: 14),
+                      style: TextStyle(color: SKColors.skoller_blue),
                     ),
                   ),
                 ],

@@ -396,6 +396,14 @@ class _ClassesState extends State<ClassesView> {
       StudentClass studentClass, int index, bool isCurrent) {
     final grade = studentClass.grade == 0 ? null : studentClass.grade;
 
+    Map<int, int> weightDensity = {};
+
+    studentClass.weights.map((w) => weightDensity[w.id] = 0);
+    studentClass.assignments.map((a) => weightDensity[a.weight_id]++);
+
+    final weightsWithoutAssignments = weightDensity.values
+        .fold(0, (acc, elem) => elem == 0 ? (acc + 1) : acc);
+
     return GestureDetector(
       onTapDown: (_) {
         setState(() {
@@ -504,6 +512,25 @@ class _ClassesState extends State<ClassesView> {
                 ),
               ),
             ),
+            if (weightsWithoutAssignments > 0)
+              Container(
+                alignment: Alignment.center,
+                margin: EdgeInsets.only(left: 4, right: 8),
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: SKColors.warning_red,
+                ),
+                width: 18,
+                height: 18,
+                child: Text(
+                  '$weightsWithoutAssignments',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 10,
+                      fontWeight: FontWeight.normal),
+                ),
+              ),
           ],
         ),
       ),

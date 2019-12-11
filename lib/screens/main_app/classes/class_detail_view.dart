@@ -1,17 +1,10 @@
 import 'package:dart_notification_center/dart_notification_center.dart';
-import 'package:dropdown_banner/dropdown_banner.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:auto_size_text/auto_size_text.dart';
 import 'package:skoller/screens/main_app/classes/class_menu_modal.dart';
-import 'package:skoller/screens/main_app/classes/modals/add_grade_scale_modal.dart';
-import './modals/class_link_sharing_modal.dart';
-import 'package:skoller/screens/main_app/classes/classmates_view.dart';
-import 'package:skoller/screens/main_app/classes/weights_info_view.dart';
 import 'package:skoller/tools.dart';
 import 'assignment_info_view.dart';
 import 'assignment_weight_view.dart';
-import 'class_info_view.dart';
 
 class ClassDetailView extends StatefulWidget {
   final int classId;
@@ -210,7 +203,7 @@ class _ClassDetailState extends State<ClassDetailView> {
                         onTapUp: (_) => DartNotificationCenter.post(
                           channel:
                               NotificationChannels.presentModalViewOverTabBar,
-                          options: ClassMenuModal(this.studentClass),
+                          options: ClassMenuModal(this.studentClass.id),
                         ),
                         child: Container(
                           alignment: Alignment.center,

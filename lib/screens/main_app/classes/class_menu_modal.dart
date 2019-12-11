@@ -1,7 +1,9 @@
 import 'package:auto_size_text/auto_size_text.dart';
+import 'package:dart_notification_center/dart_notification_center.dart';
 import 'package:dropdown_banner/dropdown_banner.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:skoller/screens/main_app/classes/class_document_view.dart';
 import 'package:skoller/screens/main_app/classes/class_info_view.dart';
 import 'package:skoller/screens/main_app/classes/classmates_view.dart';
@@ -10,12 +12,26 @@ import 'package:skoller/screens/main_app/classes/modals/add_grade_scale_modal.da
 import 'package:skoller/screens/main_app/classes/modals/class_link_sharing_modal.dart';
 import 'package:skoller/screens/main_app/classes/weights_info_view.dart';
 import 'package:skoller/tools.dart';
+import 'package:url_launcher/url_launcher.dart';
 
-class ClassMenuModal extends StatelessWidget {
-  final StudentClass studentClass;
+class ClassMenuModal extends StatefulWidget {
   final int classId;
 
-  ClassMenuModal(this.studentClass) : classId = studentClass.id;
+  ClassMenuModal(this.classId);
+
+  @override
+  State createState() => _ClassMenuState();
+}
+
+class _ClassMenuState extends State<ClassMenuModal> {
+  StudentClass studentClass;
+
+  @override
+  void initState() {
+    super.initState();
+
+    studentClass = StudentClass.currentClasses[widget.classId];
+  }
 
   void tappedLink(BuildContext context) {
     Navigator.push(
@@ -96,7 +112,7 @@ class ClassMenuModal extends StatelessWidget {
     Navigator.push(
       context,
       CupertinoPageRoute(
-        builder: (context) => ClassmatesView(classId),
+        builder: (context) => ClassmatesView(widget.classId),
         settings: RouteSettings(name: 'ClassmatesView'),
       ),
     );
@@ -106,20 +122,20 @@ class ClassMenuModal extends StatelessWidget {
     Navigator.push(
       context,
       CupertinoPageRoute(
-        builder: (_) => ClassInfoView(classId),
+        builder: (_) => ClassInfoView(widget.classId),
       ),
     );
   }
 
   void tappedGradeScale(BuildContext context) async {
-    StudentClass studentClass = StudentClass.currentClasses[classId];
+    StudentClass studentClass = StudentClass.currentClasses[widget.classId];
 
     if (studentClass.gradeScale == null) {
       await Navigator.push(
         context,
         SKNavOverlayRoute(
           builder: (context) => AddGradeScaleModal(
-            classId: classId,
+            classId: widget.classId,
             onCompletionShowGradeScale: true,
           ),
         ),
@@ -128,7 +144,7 @@ class ClassMenuModal extends StatelessWidget {
       Navigator.push(
         context,
         CupertinoPageRoute(
-          builder: (context) => GradeScaleView(classId),
+          builder: (context) => GradeScaleView(widget.classId),
         ),
       );
     }
@@ -138,13 +154,13 @@ class ClassMenuModal extends StatelessWidget {
     Navigator.push(
       context,
       CupertinoPageRoute(
-        builder: (_) => WeightsInfoView(classId),
+        builder: (_) => WeightsInfoView(widget.classId),
       ),
     );
   }
 
   void tappedClassDocuments(BuildContext context) {
-    final docs = StudentClass.currentClasses[classId].documents;
+    final docs = StudentClass.currentClasses[widget.classId].documents;
 
     showDialog(
       context: context,
@@ -160,6 +176,29 @@ class ClassMenuModal extends StatelessWidget {
         items: docs.map((d) => d.name).toList(),
       ),
     );
+  }
+
+  void tappedContactUs(_) async {
+    final url = 'mailto:support@skoller.co';
+
+    if (await canLaunch(url))
+      launch(url);
+    else
+      Navigator.push(
+        context,
+        SKNavOverlayRoute(
+          builder: (context) => SKAlertDialog(
+            title: 'Contact us',
+            subTitle:
+                'Email support@skoller.co with your question and we will get back to you asap!',
+            confirmText: 'Copy email',
+            cancelText: 'Dismiss',
+            getResults: () => Clipboard.setData(
+              ClipboardData(text: 'support@skoller.co'),
+            ),
+          ),
+        ),
+      );
   }
 
   @override
@@ -207,7 +246,9 @@ class ClassMenuModal extends StatelessWidget {
                     buildInfo,
                     buildGradeScale,
                     buildWeights,
-                    if ((StudentClass.currentClasses[classId].documents ?? [])
+                    if ((StudentClass
+                                    .currentClasses[widget.classId].documents ??
+                                [])
                             .length >
                         0)
                       buildClassDocuments,
@@ -222,13 +263,17 @@ class ClassMenuModal extends StatelessWidget {
                     'Need help?',
                     style: TextStyle(fontWeight: FontWeight.w300, fontSize: 13),
                   ),
-                  Text(
-                    ' Let us know',
-                    style: TextStyle(
-                        fontWeight: FontWeight.w600,
-                        fontSize: 13,
-                        color: SKColors.skoller_blue),
-                  )
+                  GestureDetector(
+                    behavior: HitTestBehavior.opaque,
+                    onTapUp: tappedContactUs,
+                    child: Text(
+                      ' Let us know',
+                      style: TextStyle(
+                          fontWeight: FontWeight.w600,
+                          fontSize: 13,
+                          color: SKColors.skoller_blue),
+                    ),
+                  ),
                 ],
               ),
               GestureDetector(
@@ -237,20 +282,10 @@ class ClassMenuModal extends StatelessWidget {
                   alignment: Alignment.center,
                   margin: EdgeInsets.only(top: 12),
                   decoration: BoxDecoration(
-                    // gradient: LinearGradient(
-                    //     colors: [
-                    //       Colors.white,
-                    //       SKColors.text_light_gray,
-                    //       SKColors.light_gray
-                    //     ],
-                    //     begin: Alignment.topCenter,
-                    //     end: Alignment.bottomCenter,
-                    //     stops: [0.0, 0.35, 0.65]),
                     borderRadius: BorderRadius.only(
                       bottomLeft: Radius.circular(15),
                       bottomRight: Radius.circular(15),
                     ),
-                    // color: SKColors.light_gray),
                   ),
                   child: Icon(
                     Icons.keyboard_arrow_up,
@@ -494,6 +529,12 @@ class ClassMenuModal extends StatelessWidget {
       );
 
   Widget buildClassColor(_) => SKColorPicker(
+        callback: (newColor) {
+          studentClass.setColor(newColor).then((response) =>
+              DartNotificationCenter.post(
+                  channel: NotificationChannels.classChanged));
+          setState(() {});
+        },
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: <Widget>[
