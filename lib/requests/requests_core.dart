@@ -26,13 +26,13 @@ import 'dart:io';
 part 'student_class.dart';
 part 'assignment.dart';
 part 'school.dart';
-part 'chat.dart';
 part 'user.dart';
 part 'mod.dart';
+part 'jobs.dart';
 part 'auth.dart';
 
 const bool isProd = false;
-const bool isLocal = false;
+const bool isLocal = true;
 
 class RequestResponse<T> {
   int status;

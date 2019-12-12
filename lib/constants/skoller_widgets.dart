@@ -712,7 +712,7 @@ class SKNavOverlayRoute extends ModalRoute<Object> {
   bool get barrierDismissible => isBarrierDismissible;
 
   @override
-  Color get barrierColor => Colors.black.withOpacity(0.3);
+  Color get barrierColor => Colors.black.withOpacity(0.2);
 
   @override
   String get barrierLabel => null;
@@ -739,6 +739,58 @@ class SKNavOverlayRoute extends ModalRoute<Object> {
       opacity: animation,
       child: CupertinoFullscreenDialogTransition(
         animation: animation,
+        child: child,
+      ),
+    );
+  }
+}
+
+class SKCoverSheetNav extends ModalRoute<Object> {
+  final WidgetBuilder builder;
+  final bool isBarrierDismissible;
+
+  SKCoverSheetNav({@required this.builder, this.isBarrierDismissible = true});
+
+  @override
+  Duration get transitionDuration => Duration(milliseconds: 300);
+
+  @override
+  bool get opaque => false;
+
+  @override
+  bool get barrierDismissible => isBarrierDismissible;
+
+  @override
+  Color get barrierColor => Colors.black.withOpacity(0.2);
+
+  @override
+  String get barrierLabel => null;
+
+  @override
+  bool get maintainState => true;
+
+  @override
+  Widget buildPage(
+    BuildContext context,
+    Animation<double> animation,
+    Animation<double> secondaryAnimation,
+  ) {
+    // This makes sure that text and other content follows the material style
+    return builder(context);
+  }
+
+  @override
+  Widget buildTransitions(BuildContext context, Animation<double> animation,
+      Animation<double> secondaryAnimation, Widget child) {
+    // You can add your own animations for the overlay content
+
+    return FadeTransition(
+      opacity: animation,
+      child: SlideTransition(
+        position: Tween<Offset>(
+          begin: Offset(0, -1),
+          end: Offset.zero,
+        ).animate(animation),
         child: child,
       ),
     );
@@ -956,8 +1008,16 @@ class _SKColorPickerState extends State<SKColorPicker> {
 
   OverlayEntry _createOverlayEntry() {
     RenderBox renderBox = context.findRenderObject();
-    var size = renderBox.size;
-    var offset = renderBox.localToGlobal(Offset.zero);
+
+    final size = renderBox.size;
+    final offset = renderBox.localToGlobal(Offset.zero);
+    final screenWidth = MediaQuery.of(context).size.width;
+
+    final halfRenderWidth = size.width / 2;
+    final midPoint = offset.dx + halfRenderWidth;
+    final isLeft = midPoint < screenWidth / 2;
+    final left = midPoint - 148;
+    final right = screenWidth - (midPoint + 148);
 
     return OverlayEntry(
       builder: (context) => GestureDetector(
@@ -975,7 +1035,8 @@ class _SKColorPickerState extends State<SKColorPicker> {
             ),
             Positioned(
               top: offset.dy + size.height + 13,
-              left: (offset.dx + (size.width / 2)) - 148,
+              left: isLeft ? (left < 8 ? 8 : left) : null,
+              right: isLeft ? null : (right < 8 ? 8 : right),
               child: Container(
                 padding: EdgeInsets.all(4),
                 decoration: BoxDecoration(
@@ -1419,30 +1480,41 @@ class SKAssignmentImpactGraph extends StatelessWidget {
   final ImpactGraphSize size;
   final Color color;
 
+  final ImpactLevel level;
+
   SKAssignmentImpactGraph(this.completion, this.color,
-      {this.size = ImpactGraphSize.large});
+      {this.size = ImpactGraphSize.large})
+      : this.level = null;
+
+  SKAssignmentImpactGraph.byLevel(this.level, this.color, this.size)
+      : this.completion = null;
 
   @override
   Widget build(BuildContext context) {
-    _ImpactLevel level;
+    ImpactLevel level;
     String impactDesc;
 
-    if ((completion ?? 0.0) == 0.0) {
-      level = _ImpactLevel.none;
-      impactDesc = 'None';
-    } else if (completion < 0.05) {
-      level = _ImpactLevel.low;
-      impactDesc = 'Low';
-    } else if (completion < 0.15) {
-      level = _ImpactLevel.medium;
-      impactDesc = 'Medium';
+    if (this.level != null) {
+      level = this.level;
+      impactDesc = ["None", "Low", "Medium", "High"][level.index];
     } else {
-      level = _ImpactLevel.high;
-      impactDesc = 'High';
+      if ((completion ?? 0.0) == 0.0) {
+        level = ImpactLevel.none;
+        impactDesc = 'None';
+      } else if (completion < 0.05) {
+        level = ImpactLevel.low;
+        impactDesc = 'Low';
+      } else if (completion < 0.15) {
+        level = ImpactLevel.medium;
+        impactDesc = 'Medium';
+      } else {
+        level = ImpactLevel.high;
+        impactDesc = 'High';
+      }
     }
 
-    final double width = size == ImpactGraphSize.large ? 40 : 32;
-    final double height = size == ImpactGraphSize.large ? 28 : 23;
+    final double width = size == ImpactGraphSize.large ? 36 : 32;
+    final double height = size == ImpactGraphSize.large ? 24 : 20;
 
     return Column(
       mainAxisSize: MainAxisSize.min,
@@ -1461,8 +1533,7 @@ class SKAssignmentImpactGraph extends StatelessWidget {
             child: Text(
               impactDesc,
               style: TextStyle(
-                fontSize: 9,
-              ),
+                  fontSize: 9, letterSpacing: 1, color: SKColors.light_gray),
             ),
           )
       ],
@@ -1470,11 +1541,11 @@ class SKAssignmentImpactGraph extends StatelessWidget {
   }
 }
 
-enum _ImpactLevel { none, low, medium, high }
+enum ImpactLevel { none, low, medium, high }
 
 class _SKImpactGraphPainter extends CustomPainter {
   final Color color;
-  final _ImpactLevel impact;
+  final ImpactLevel impact;
 
   _SKImpactGraphPainter(this.color, this.impact);
 
@@ -1524,7 +1595,7 @@ class _SKImpactGraphPainter extends CustomPainter {
       currIndex++;
     }
 
-    while (currIndex <= _ImpactLevel.high.index) {
+    while (currIndex <= ImpactLevel.high.index) {
       canvas.drawRRect(rects[currIndex - 1], emptyPaint);
       currIndex++;
     }
@@ -1539,385 +1610,19 @@ class _SKImpactGraphPainter extends CustomPainter {
   bool shouldRepaint(CustomPainter oldDelegate) => false;
 }
 
-enum SammiExplanationType { needsSetup, diy, inReview }
-
-class SyllabusInstructionsModal extends StatelessWidget {
-  final SammiExplanationType type;
-  final VoidCallback startExtractionCallback;
-
-  SyllabusInstructionsModal(this.type, this.startExtractionCallback);
-
-  @override
-  Widget build(BuildContext context) {
-    Widget body = Text('');
-    Text sammiText;
-
-    switch (type) {
-      case SammiExplanationType.diy:
-        sammiText = Text.rich(
-          TextSpan(
-            text: 'I received the syllabus but ',
-            children: [
-              TextSpan(
-                  text: 'there wasn\'t enough info ',
-                  style: TextStyle(fontWeight: FontWeight.bold)),
-              TextSpan(
-                  text:
-                      'on it to set up the class. Knock it out in a few minutes!'),
-            ],
-          ),
-          style: TextStyle(fontWeight: FontWeight.normal, fontSize: 14),
-        );
-
-        body = Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          mainAxisSize: MainAxisSize.min,
-          children: <Widget>[
-            Container(
-              padding: EdgeInsets.fromLTRB(12, 12, 12, 8),
-              margin: EdgeInsets.only(bottom: 8),
-              decoration: BoxDecoration(
-                color: SKColors.selected_gray,
-                borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(10),
-                  topRight: Radius.circular(10),
-                ),
-              ),
-              child: Row(children: [
-                Padding(
-                  padding: EdgeInsets.only(right: 8),
-                  child: Image.asset(ImageNames.peopleImages.people_gray),
-                ),
-                Text(
-                  'Set up this class',
-                  style: TextStyle(fontSize: 17),
-                ),
-              ]),
-            ),
-            Padding(
-              padding: EdgeInsets.symmetric(vertical: 4),
-              child: Text(
-                'Instant setup',
-                textAlign: TextAlign.center,
-              ),
-            ),
-            Padding(
-              padding: EdgeInsets.only(bottom: 4),
-              child: Text(
-                'Do it yourself!',
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                    color: SKColors.light_gray,
-                    fontSize: 14,
-                    fontWeight: FontWeight.normal),
-              ),
-            ),
-            GestureDetector(
-              onTapUp: (details) => startExtractionCallback(),
-              child: Container(
-                alignment: Alignment.center,
-                padding: EdgeInsets.symmetric(vertical: 8),
-                margin: EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-                decoration: BoxDecoration(
-                  color: SKColors.skoller_blue,
-                  borderRadius: BorderRadius.circular(5),
-                  boxShadow: UIAssets.boxShadow,
-                ),
-                child: Text(
-                  'Start',
-                  style: TextStyle(color: Colors.white),
-                ),
-              ),
-            ),
-          ],
-        );
-        break;
-      case SammiExplanationType.inReview:
-        sammiText = Text.rich(
-          TextSpan(
-            text: 'I\'ve got the syllabus... ',
-            children: [
-              TextSpan(
-                  text: 'You will get a notification ',
-                  style: TextStyle(fontWeight: FontWeight.bold)),
-              TextSpan(text: 'when I\'m done setting up the class!'),
-            ],
-          ),
-          style: TextStyle(fontWeight: FontWeight.normal, fontSize: 14),
-        );
-
-        body = Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          mainAxisSize: MainAxisSize.min,
-          children: <Widget>[
-            Container(
-              padding: EdgeInsets.fromLTRB(12, 12, 12, 8),
-              margin: EdgeInsets.only(bottom: 8),
-              decoration: BoxDecoration(
-                color: SKColors.selected_gray,
-                borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(10),
-                  topRight: Radius.circular(10),
-                ),
-              ),
-              child: Row(children: [
-                Padding(
-                  padding: EdgeInsets.only(right: 8),
-                  child: Image.asset(ImageNames.peopleImages.people_gray),
-                ),
-                Text(
-                  'Set up this class',
-                  style: TextStyle(fontSize: 17),
-                ),
-              ]),
-            ),
-            Padding(
-              padding: EdgeInsets.symmetric(vertical: 4),
-              child: Text(
-                'The syllabus is in review 👍',
-                textAlign: TextAlign.center,
-              ),
-            ),
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 24, vertical: 8),
-              child: Row(
-                children: <Widget>[
-                  Expanded(
-                      child: Container(color: SKColors.light_gray, height: 1)),
-                  Padding(
-                    padding: EdgeInsets.symmetric(vertical: 4, horizontal: 4),
-                    child: Text(
-                      'Don\'t want to wait?',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                          color: SKColors.light_gray,
-                          fontWeight: FontWeight.normal,
-                          fontStyle: FontStyle.italic),
-                    ),
-                  ),
-                  Expanded(
-                      child: Container(color: SKColors.light_gray, height: 1)),
-                ],
-              ),
-            ),
-            Padding(
-              padding: EdgeInsets.symmetric(vertical: 4),
-              child: Text(
-                'Instant setup',
-                textAlign: TextAlign.center,
-              ),
-            ),
-            Padding(
-              padding: EdgeInsets.only(bottom: 4),
-              child: Text(
-                'Do it yourself! ',
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                    color: SKColors.light_gray,
-                    fontSize: 14,
-                    fontWeight: FontWeight.normal),
-              ),
-            ),
-            GestureDetector(
-              onTapUp: (details) => startExtractionCallback(),
-              child: Container(
-                alignment: Alignment.center,
-                padding: EdgeInsets.symmetric(vertical: 8),
-                margin: EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-                decoration: BoxDecoration(
-                  color: SKColors.skoller_blue,
-                  borderRadius: BorderRadius.circular(5),
-                  boxShadow: UIAssets.boxShadow,
-                ),
-                child: Text(
-                  'Start',
-                  style: TextStyle(color: Colors.white),
-                ),
-              ),
-            ),
-          ],
-        );
-        break;
-      case SammiExplanationType.needsSetup:
-        sammiText = Text.rich(
-          TextSpan(
-            text: 'Send us the syllabus and ',
-            children: [
-              TextSpan(
-                  text: 'WE will set up the class',
-                  style: TextStyle(fontWeight: FontWeight.bold)),
-            ],
-          ),
-          style: TextStyle(fontWeight: FontWeight.normal, fontSize: 15),
-        );
-
-        body = Padding(
-          padding: EdgeInsets.all(24),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-              Row(
-                children: <Widget>[
-                  Image.asset(ImageNames.statusImages.computer_monitor),
-                  Expanded(
-                    child: Padding(
-                      padding: EdgeInsets.only(left: 16),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        mainAxisSize: MainAxisSize.min,
-                        children: <Widget>[
-                          Text('Syllabus Online?'),
-                          Text.rich(
-                            TextSpan(
-                                text: 'Hop on your computer and ',
-                                children: [
-                                  TextSpan(
-                                    text: 'login at skoller.co',
-                                    style:
-                                        TextStyle(fontWeight: FontWeight.bold),
-                                  ),
-                                  TextSpan(text: ' to '),
-                                  TextSpan(
-                                    text: 'drag-and-drop ',
-                                    style:
-                                        TextStyle(fontWeight: FontWeight.bold),
-                                  ),
-                                  TextSpan(text: 'your syllabus'),
-                                ],
-                                style: TextStyle(
-                                    fontWeight: FontWeight.normal,
-                                    fontSize: 14)),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-              Padding(
-                padding: EdgeInsets.symmetric(vertical: 12),
-                child: Row(
-                  children: <Widget>[
-                    Expanded(
-                        child:
-                            Container(color: SKColors.light_gray, height: 1)),
-                    Padding(
-                      padding: EdgeInsets.symmetric(vertical: 4, horizontal: 4),
-                      child: Text(
-                        'OR',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                            color: SKColors.light_gray,
-                            fontWeight: FontWeight.normal,
-                            fontStyle: FontStyle.italic),
-                      ),
-                    ),
-                    Expanded(
-                        child:
-                            Container(color: SKColors.light_gray, height: 1)),
-                  ],
-                ),
-              ),
-              GestureDetector(
-                onTapUp: (details) => startExtractionCallback(),
-                child: Row(
-                  children: <Widget>[
-                    Container(
-                      width: 40,
-                      alignment: Alignment.center,
-                      margin: EdgeInsets.only(right: 16),
-                      child:
-                          Image.asset(ImageNames.statusImages.check_clipboard),
-                    ),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        mainAxisSize: MainAxisSize.min,
-                        children: <Widget>[
-                          Text(
-                            'Ready to go?',
-                            style: TextStyle(color: SKColors.skoller_blue),
-                          ),
-                          Text.rich(
-                            TextSpan(
-                                text: 'Set up your class ',
-                                children: [
-                                  TextSpan(
-                                    text: 'NOW!',
-                                    style:
-                                        TextStyle(fontWeight: FontWeight.bold),
-                                  ),
-                                ],
-                                style: TextStyle(
-                                    fontWeight: FontWeight.normal,
-                                    fontSize: 14)),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              GestureDetector(
-                onTapUp: (details) => startExtractionCallback(),
-                child: Container(
-                  padding: EdgeInsets.symmetric(vertical: 8),
-                  margin: EdgeInsets.only(top: 16),
-                  alignment: Alignment.center,
-                  decoration: BoxDecoration(
-                    color: SKColors.skoller_blue,
-                    borderRadius: BorderRadius.circular(5),
-                    boxShadow: UIAssets.boxShadow,
-                  ),
-                  child: Text(
-                    'Get started',
-                    style: TextStyle(color: Colors.white),
-                  ),
-                ),
-              )
-            ],
-          ),
-        );
-        break;
-    }
-    return Column(
-      children: [
-        Spacer(flex: 1),
-        Material(
-          color: Colors.white.withAlpha(0),
-          child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: 24),
-            child: SammiSpeechBubble(
-                sammiPersonality: SammiPersonality.smile,
-                speechBubbleContents: sammiText),
-          ),
-        ),
-        Dialog(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10),
-            side: BorderSide(color: SKColors.border_gray),
-          ),
-          backgroundColor: Colors.white,
-          child: body,
-        ),
-        Spacer(flex: 2)
-      ],
-    );
-  }
-}
-
 class SKHeaderCard extends StatelessWidget {
   final Widget leftHeaderItem;
   final Widget rightHeaderItem;
   final List<Widget> children;
   final EdgeInsets margin;
+  final EdgeInsets padding;
 
   SKHeaderCard({
     @required this.leftHeaderItem,
     this.rightHeaderItem,
     @required this.children,
     this.margin,
+    this.padding,
   });
 
   @override
@@ -1951,7 +1656,7 @@ class SKHeaderCard extends StatelessWidget {
               ),
             ),
             Padding(
-              padding: EdgeInsets.all(10),
+              padding: padding ?? EdgeInsets.all(10),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 mainAxisSize: MainAxisSize.min,

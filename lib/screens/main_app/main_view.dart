@@ -1,5 +1,6 @@
 import 'package:dart_notification_center/dart_notification_center.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:skoller/screens/main_app/classes/class_menu_modal.dart';
 import 'package:skoller/screens/main_app/menu/add_classes_view.dart';
 import 'package:skoller/screens/main_app/menu/major_search_modal.dart';
 import 'package:skoller/screens/main_app/tutorial/tutorial.dart';
@@ -320,10 +321,11 @@ class _MainState extends State<MainView> {
   void presentModalWidgetOverMainView(dynamic viewToPresent) {
     if (menuShowing) toggleMenu(null);
 
-    Navigator.push(
-      context,
-      SKNavOverlayRoute(builder: (context) => viewToPresent),
-    );
+    final route = viewToPresent is ClassMenuModal
+        ? SKCoverSheetNav(builder: (_) => viewToPresent)
+        : SKNavOverlayRoute(builder: (_) => viewToPresent);
+
+    Navigator.push(context, route);
   }
 
   @override
