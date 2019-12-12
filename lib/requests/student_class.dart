@@ -302,19 +302,6 @@ class StudentClass {
     );
   }
 
-  Future<RequestResponse> createStudentChat(String post) {
-    return SKRequests.post(
-      '/classes/$id/posts',
-      {'post': post},
-      Chat._fromJsonObj,
-    ).then((response) {
-      if (response.wasSuccessful()) {
-        Chat.currentChats[response.obj.id] = response.obj;
-      }
-      return response;
-    });
-  }
-
   Future<RequestResponse> addGradeScale(Map scale) {
     return SKRequests.put(
       '/classes/$id',
@@ -438,16 +425,6 @@ class StudentClass {
 
   static bool classesLoaded = false;
   static Map<int, StudentClass> currentClasses = {};
-  static final List<Color> colors = [
-    Color(0xFFdd4a63), //Red
-    Color(0xFFFFAE42), //orange
-    Color(0xFFF7D300), //yellow
-    Color(0xFF4ADD58), //green
-    Color(0xFF4CD8BD), //mint
-    Color(0xFF57B9E4), //blue
-    Color(0xFFFF71A8), //pink
-    Color(0xFF9B55E5), //purple
-  ];
 
   static StudentClass _fromJsonObj(Map content) {
     if (content == null) {
@@ -528,6 +505,7 @@ class StudentClass {
     return SKRequests.get(
       '/students/${SKUser.current.student.id}/classes/${id}',
       _fromJsonObj,
+      postRequestAction: () => Assignment.currentAssignments.removeWhere((_, a) => a.classId == id),
     );
   }
 

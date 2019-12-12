@@ -15,6 +15,7 @@ class ImageNames {
   static final tutorialImages = _TutorialImages();
   static final classInfoImages = _ClassInfoImages();
   static final classesImages = _ClassesImages();
+  static final jobsImages = _JobsImages();
 }
 
 class _MenuImages {
@@ -177,3 +178,11 @@ class _ClassesImages {
   final syllabus_diy = '$_base/syllabus_diy.png';
   final syllabus_overload = '$_base/syllabus_overload.png';
 }
+
+class _JobsImages {
+  static const _base = 'image_assets/jobs_assets';
+
+  final jobs_cover_art = '$_base/jobs_cover_art.png';
+}
+
+

@@ -1,6 +1,7 @@
 import 'package:dart_notification_center/dart_notification_center.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:skoller/screens/main_app/activity/mod_modal.dart';
 import 'package:skoller/screens/main_app/classes/class_menu_modal.dart';
 import 'package:skoller/tools.dart';
 import 'assignment_info_view.dart';
@@ -16,10 +17,11 @@ class ClassDetailView extends StatefulWidget {
 }
 
 class _ClassDetailState extends State<ClassDetailView> {
-  int weightsWithoutAssignments = 0;
-
-  StudentClass get studentClass => StudentClass.currentClasses[widget.classId];
   final _refreshIndicatorKey = GlobalKey<RefreshIndicatorState>();
+
+  List<_AssignmentLikeItem> items = [];
+
+  int weightsWithoutAssignments = 0;
 
   @override
   void initState() {
@@ -31,17 +33,17 @@ class _ClassDetailState extends State<ClassDetailView> {
     DartNotificationCenter.subscribe(
         observer: this,
         channel: NotificationChannels.assignmentChanged,
-        onNotification: loadClass);
+        onNotification: fetchClass);
 
     DartNotificationCenter.subscribe(
         observer: this,
         channel: NotificationChannels.modsChanged,
-        onNotification: loadClass);
+        onNotification: fetchClass);
 
     DartNotificationCenter.subscribe(
         observer: this,
         channel: NotificationChannels.classChanged,
-        onNotification: loadClass);
+        onNotification: fetchClass);
   }
 
   @override
@@ -50,12 +52,20 @@ class _ClassDetailState extends State<ClassDetailView> {
     DartNotificationCenter.unsubscribe(observer: this);
   }
 
-  Future fetchClass() async {
-    await studentClass.refetchSelf();
-    if (mounted) setState(() {});
+  Future fetchClass([_]) async {
+    final classRefresh =
+        StudentClass.currentClasses[widget.classId].refetchSelf();
+    final modRefresh = Mod.fetchMods();
+
+    await classRefresh;
+    await modRefresh;
+
+    await loadClass();
   }
 
-  Future loadClass([dynamic options]) async {
+  Future loadClass([_]) async {
+    final studentClass = StudentClass.currentClasses[widget.classId];
+
     Map<int, int> weightDensity = {};
 
     for (final Assignment assignment in studentClass?.assignments ?? []) {
@@ -70,12 +80,33 @@ class _ClassDetailState extends State<ClassDetailView> {
     for (final Weight weight in studentClass?.weights ?? [])
       if (weightDensity[weight.id] == null) weightsWithoutAssignments += 1;
 
+    final assignments = studentClass.assignments;
+
+    final items = assignments
+        .map((a) => _AssignmentLikeItem(a.id, false, a.due))
+        .toList();
+
+    final newAssignmentMods = Mod.currentMods.values
+        .where((m) =>
+            m.modType == ModType.newAssignment &&
+            m.parentClass.id == studentClass.id)
+        .map((m) => _AssignmentLikeItem(m.id, true, (m.data as Assignment).due))
+        .toList();
+
+    items
+      ..addAll(newAssignmentMods)
+      ..sort(
+        (t1, t2) => t2.due == null ? 1 : (t1.due?.compareTo(t2.due) ?? -1),
+      );
+
+    this.items = items;
+
     if (mounted) setState(() {});
   }
 
   @override
   Widget build(BuildContext context) {
-    final studentClass = this.studentClass;
+    final studentClass = StudentClass.currentClasses[widget.classId];
 
     if (studentClass == null) return Scaffold(backgroundColor: Colors.white);
 
@@ -84,8 +115,6 @@ class _ClassDetailState extends State<ClassDetailView> {
         : '${studentClass.grade}%';
 
     final classColor = studentClass.getColor();
-
-    final assignments = studentClass.assignments;
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -103,9 +132,9 @@ class _ClassDetailState extends State<ClassDetailView> {
                   onRefresh: fetchClass,
                   child: ListView.builder(
                     padding: EdgeInsets.only(top: 16, bottom: 64),
-                    itemCount: studentClass.assignments.length,
+                    itemCount: items.length,
                     itemBuilder: (_, index) =>
-                        _AssignmentCell(assignments[index].id, classColor),
+                        _AssignmentCell(items[index], classColor),
                   ),
                 ),
               ),
@@ -203,7 +232,7 @@ class _ClassDetailState extends State<ClassDetailView> {
                         onTapUp: (_) => DartNotificationCenter.post(
                           channel:
                               NotificationChannels.presentModalViewOverTabBar,
-                          options: ClassMenuModal(this.studentClass.id),
+                          options: ClassMenuModal(studentClass.id),
                         ),
                         child: Container(
                           alignment: Alignment.center,
@@ -281,11 +310,19 @@ class _ClassDetailState extends State<ClassDetailView> {
   }
 }
 
+class _AssignmentLikeItem {
+  final int id;
+  final bool isMod;
+  final DateTime due;
+
+  _AssignmentLikeItem(this.id, this.isMod, this.due);
+}
+
 class _AssignmentCell extends StatefulWidget {
-  final int assignmentId;
+  final _AssignmentLikeItem item;
   final Color classColor;
 
-  _AssignmentCell(this.assignmentId, this.classColor);
+  _AssignmentCell(this.item, this.classColor);
 
   @override
   State createState() => _AssignmentCellState();
@@ -296,7 +333,167 @@ class _AssignmentCellState extends State<_AssignmentCell> {
 
   @override
   Widget build(BuildContext context) {
-    final assignment = Assignment.currentAssignments[widget.assignmentId];
+    if (widget.item.isMod) {
+      return createNewAssignmentCard();
+    } else {
+      final assignment = Assignment.currentAssignments[widget.item.id];
+
+      if (assignment == null) return Container();
+
+      final mods = Mod.modsByAssignmentId[assignment.id];
+
+      if ((mods ?? []).length > 0)
+        return createModCard(mods, assignment);
+      else
+        return createAssignmentCard(assignment);
+    }
+  }
+
+  Widget createNewAssignmentCard() {
+    final mod = Mod.currentMods[widget.item.id];
+    final task = mod.data;
+
+    return GestureDetector(
+      onTapUp: (details) {
+        Navigator.push(
+          context,
+          SKNavOverlayRoute(builder: (context) => ModModal(mod)),
+        );
+      },
+      child: Container(
+        margin: EdgeInsets.fromLTRB(7, 3, 7, 4),
+        padding: EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+        decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(5),
+            border: Border.all(color: SKColors.text_light_gray, width: 1),
+            boxShadow: UIAssets.boxShadow,
+            color: Colors.white,
+            gradient: LinearGradient(colors: [
+              task.parentClass.getColor(),
+              task.parentClass.getColor().withAlpha(100)
+            ])),
+        child: Row(
+          children: <Widget>[
+            Expanded(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Text(
+                    'New Assignment ALERT',
+                    style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 18),
+                  ),
+                  Text(
+                    'TAP HERE to view!',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w300,
+                      fontSize: 13,
+                    ),
+                  )
+                ],
+              ),
+            ),
+            Padding(
+              padding: EdgeInsets.all(4),
+              child: Image.asset(ImageNames.peopleImages.people_white),
+            )
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget createModCard(List<Mod> mods, Assignment assignment) {
+    String modDesc;
+
+    if (mods.length == 1)
+      switch (mods.first.modType) {
+        case ModType.due:
+          modDesc = 'Due Date Change ALERT';
+          break;
+        case ModType.weight:
+          modDesc = 'Weight Change ALERT';
+          break;
+        case ModType.delete:
+          modDesc = 'Delete Change ALERT';
+          break;
+        default:
+          modDesc = '';
+      }
+    else
+      modDesc = 'Multiple changes';
+
+    return GestureDetector(
+      onTapUp: (details) {
+        Route nextRoute;
+
+        if (mods.length == 1)
+          nextRoute = SKNavOverlayRoute(
+            builder: (context) => ModModal(mods.first),
+          );
+        else
+          nextRoute = CupertinoPageRoute(
+            builder: (context) =>
+                AssignmentInfoView(assignmentId: assignment.id),
+            settings: RouteSettings(
+                name:
+                    mods.length == 1 ? 'UpdateInfoView' : 'AssignmentInfoView'),
+          );
+
+        Navigator.push(context, nextRoute);
+      },
+      child: Container(
+        margin: EdgeInsets.fromLTRB(7, 3, 7, 4),
+        padding: EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+        decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(5),
+            border: Border.all(color: SKColors.text_light_gray, width: 1),
+            boxShadow: UIAssets.boxShadow,
+            color: Colors.white,
+            gradient: LinearGradient(colors: [
+              assignment.parentClass.getColor(),
+              assignment.parentClass.getColor().withAlpha(100)
+            ])),
+        child: Row(
+          children: <Widget>[
+            Expanded(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Text(
+                    modDesc,
+                    style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 18),
+                  ),
+                  Text(
+                    'TAP HERE to view!',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w300,
+                      fontSize: 13,
+                    ),
+                  )
+                ],
+              ),
+            ),
+            Padding(
+              padding: EdgeInsets.all(4),
+              child: Image.asset(ImageNames.peopleImages.people_white),
+            )
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget createAssignmentCard(Assignment assignment) {
     final isPromptGrade = assignment.isCompleted && assignment.grade == null;
 
     final gradeSquare = isPromptGrade
@@ -304,8 +501,8 @@ class _AssignmentCellState extends State<_AssignmentCell> {
             padding: EdgeInsets.symmetric(vertical: 18),
             width: 46,
             alignment: Alignment.center,
-            decoration:
-                BoxDecoration(border: Border(right: BorderSide(color: SKColors.border_gray))),
+            decoration: BoxDecoration(
+                border: Border(right: BorderSide(color: SKColors.border_gray))),
             child: Text(
               '--%',
               textScaleFactor: 1,

@@ -156,8 +156,6 @@ class Auth {
 
     Assignment.currentAssignments = {};
     StudentClass.currentClasses = {};
-    Chat.currentChats = {};
-    InboxNotification.currentInbox = [];
     Mod.currentMods = {};
     School.currentSchools = {};
     Period.currentPeriods = {};
@@ -302,9 +300,6 @@ class Auth {
       if (PushNotificationCategories.isClasses(category)) {
         channel = NotificationChannels.selectTab;
         options = CLASSES_TAB;
-      } else if (PushNotificationCategories.isChat(category)) {
-        channel = NotificationChannels.selectTab;
-        options = CHAT_TAB;
       } else if (PushNotificationCategories.isActivity(category)) {
         channel = NotificationChannels.selectTab;
         options = ACTIVITY_TAB;

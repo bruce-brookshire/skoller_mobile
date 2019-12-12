@@ -1615,12 +1615,14 @@ class SKHeaderCard extends StatelessWidget {
   final Widget rightHeaderItem;
   final List<Widget> children;
   final EdgeInsets margin;
+  final EdgeInsets padding;
 
   SKHeaderCard({
     @required this.leftHeaderItem,
     this.rightHeaderItem,
     @required this.children,
     this.margin,
+    this.padding,
   });
 
   @override
@@ -1654,7 +1656,7 @@ class SKHeaderCard extends StatelessWidget {
               ),
             ),
             Padding(
-              padding: EdgeInsets.all(10),
+              padding: padding ?? EdgeInsets.all(10),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 mainAxisSize: MainAxisSize.min,

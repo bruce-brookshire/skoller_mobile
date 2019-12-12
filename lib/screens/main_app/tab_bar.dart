@@ -4,11 +4,11 @@ import 'package:firebase_analytics/observer.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/material.dart';
+import 'package:skoller/screens/main_app/jobs/jobs_view.dart';
 import 'activity/activity_view.dart';
 import 'tasks/todo_view.dart';
 import 'package:skoller/tools.dart';
 import 'classes/classes_view.dart';
-import 'chat/chat_list_view.dart';
 import 'calendar/calendar.dart';
 
 class SKTabBar extends StatefulWidget {
@@ -20,9 +20,9 @@ class _SKTabBarState extends State<SKTabBar> {
   final _widgetOptions = [
     TodoView(),
     CalendarView(),
-    ChatListView(),
     ClassesView(),
     ActivityView(),
+    JobsView(),
   ];
 
   final List<GlobalKey<NavigatorState>> _navigatorKeys = [
@@ -44,9 +44,9 @@ class _SKTabBarState extends State<SKTabBar> {
   final List<String> _indexIconPartialPaths = [
     'todos_',
     'calendar_',
-    'chat_',
     'classes_',
     'activity_',
+    'jobs_'
   ];
 
   List<bool> _indexNeedsDot = [false, false, false, false, false];

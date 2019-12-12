@@ -18,13 +18,17 @@ part 'image_names.dart';
 
 const FORECAST_TAB = 0;
 const CALENDAR_TAB = 1;
-const CHAT_TAB = 2;
-const CLASSES_TAB = 3;
-const ACTIVITY_TAB = 4;
+const CLASSES_TAB = 2;
+const ACTIVITY_TAB = 3;
+const JOBS_TAB = 4;
 
 const PARTY_SIZE = 4;
 
 class SKColors {
+  static const skoller_blue = Color(0xFF57B9E4);
+  static const menu_blue = Color(0xFFEDFAFF);
+
+  // General
   static const dark_gray = Color(0xFF4A4A4A);
   static const background_gray = Color(0xFFF5F7F9);
   static const selected_gray = Color(0xFFF8F8F8);
@@ -33,11 +37,13 @@ class SKColors {
   static const text_light_gray = Color(0xFFC7C7CD);
   static const inactive_gray = Color(0xFFEEEEEE);
 
-  static const skoller_blue = Color(0xFF57B9E4);
-  static const menu_blue = Color(0xFFEDFAFF);
   static const success = Color(0xFF0FB25C);
   static const alert_orange = Color(0xFFEF4B0A);
   static const warning_red = Color(0xFFEF183D);
+
+  // Skoller Jobs
+  static Color jobs_dark_green = Color(0xFF19A394);
+  static Color jobs_light_green = Color(0xFF61D8A0);
 
   static Color darken(Color color, [double amount = 0.2]) {
     assert(amount >= 0 && amount <= 1);
@@ -130,9 +136,6 @@ class PushNotificationCategories {
   // Other
   static const custom = 'Manual.Custom';
   static const signupLinkUsed = 'SignupLink.Used';
-
-  static bool isChat(String category) => _validateMember(
-      [chatComment, chatPost, chatReply, secondClass], category);
 
   static bool isClasses(String category) => _validateMember(
       [classComplete, classPrompt, needsSyllabus, classStart], category);
