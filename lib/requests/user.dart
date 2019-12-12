@@ -322,4 +322,9 @@ class TypeObject {
 
   static Future<RequestResponse> getDegreeTypes() =>
       SKRequests.get('/skoller-jobs/types/degrees', _fromJsonObj);
+  
+  static Future<RequestResponse> getJobTypes() =>
+      SKRequests.get('/skoller-jobs/types/job_search', _fromJsonObj);
+
+
 }
