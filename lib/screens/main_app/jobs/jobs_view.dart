@@ -2,6 +2,7 @@ import 'package:dart_notification_center/dart_notification_center.dart';
 import 'package:dropdown_banner/dropdown_banner.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:intl/intl.dart';
 import 'package:skoller/screens/main_app/menu/major_search_modal.dart';
 import 'package:skoller/tools.dart';
 
@@ -21,10 +22,27 @@ class _JobsViewState extends State<JobsView> {
   void initState() {
     super.initState();
 
+    if (SKUser.current.student.gradYear != null)
+      graduationDate =
+          DateTime.parse('${SKUser.current.student.gradYear}-05-01');
+
     if (JobProfile.currentProfile == null) profileState = _ProfileState.intro;
   }
 
-  void tappedMonth(_) {}
+  void tappedGradDate(_) async {
+    final result = await showDialog(
+      context: context,
+      builder: (_) => _GraduationDatePicker(
+        startDate: graduationDate,
+      ),
+    );
+
+    if (result is DateTime) {
+      setState(() {
+        graduationDate = result;
+      });
+    }
+  }
 
   void tappedMajors(_) async {
     final loader = SKLoadingScreen.fadeIn(context);
@@ -233,52 +251,31 @@ class _JobsViewState extends State<JobsView> {
                   ),
                 ),
               ),
-              Row(
-                children: <Widget>[
-                  Expanded(
-                    child: Container(
-                      padding: EdgeInsets.all(6),
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(5),
-                        border: Border.all(color: SKColors.jobs_dark_green),
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            'Month',
-                            style: TextStyle(color: SKColors.jobs_dark_green),
-                          ),
-                          Image.asset(ImageNames.navArrowImages.dropdown_blue)
-                        ],
-                      ),
-                    ),
+              GestureDetector(
+                onTapUp: tappedGradDate,
+                behavior: HitTestBehavior.opaque,
+                child: Container(
+                  padding: EdgeInsets.all(6),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(5),
+                    border: Border.all(color: SKColors.jobs_dark_green),
                   ),
-                  Expanded(
-                    child: Container(
-                      padding: EdgeInsets.all(6),
-                      margin: EdgeInsets.only(left: 12),
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(5),
-                        border: Border.all(color: SKColors.jobs_dark_green),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        graduationDate == null
+                            ? 'Select...'
+                            : DateFormat('MMMM yyyy').format(graduationDate),
+                        style: TextStyle(
+                            color: graduationDate == null
+                                ? SKColors.jobs_light_green
+                                : SKColors.jobs_dark_green),
                       ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          // Padding(
-                          // padding: EdgeInsets.only(right: 24),
-                          // child:
-                          Text(
-                            'Year',
-                            style: TextStyle(color: SKColors.jobs_dark_green),
-                          ),
-                          // ),
-                          Image.asset(ImageNames.navArrowImages.dropdown_blue)
-                        ],
-                      ),
-                    ),
+                      Image.asset(ImageNames.navArrowImages.dropdown_green)
+                    ],
                   ),
-                ],
+                ),
               ),
               Padding(
                 padding: EdgeInsets.only(left: 6, bottom: 4, top: 16),
@@ -306,7 +303,10 @@ class _JobsViewState extends State<JobsView> {
                       Expanded(
                         child: Text(
                           fieldsBody,
-                          style: TextStyle(color: SKColors.jobs_dark_green),
+                          style: TextStyle(
+                              color: fields.length == 0
+                                  ? SKColors.jobs_light_green
+                                  : SKColors.jobs_dark_green),
                         ),
                       ),
                       Image.asset(ImageNames.rightNavImages.magnifying_glass)
@@ -339,9 +339,13 @@ class _JobsViewState extends State<JobsView> {
                     children: [
                       Text(
                         SKUser.current.student.degreeType?.name ?? 'Select...',
-                        style: TextStyle(color: SKColors.jobs_dark_green),
+                        style: TextStyle(
+                            color:
+                                SKUser.current.student.degreeType?.name == null
+                                    ? SKColors.jobs_light_green
+                                    : SKColors.jobs_dark_green),
                       ),
-                      Image.asset(ImageNames.navArrowImages.dropdown_blue)
+                      Image.asset(ImageNames.navArrowImages.dropdown_green)
                     ],
                   ),
                 ),
@@ -371,9 +375,12 @@ class _JobsViewState extends State<JobsView> {
                     children: [
                       Text(
                         jobType?.name ?? 'Select...',
-                        style: TextStyle(color: SKColors.jobs_dark_green),
+                        style: TextStyle(
+                            color: jobType?.name == null
+                                ? SKColors.jobs_light_green
+                                : SKColors.jobs_dark_green),
                       ),
-                      Image.asset(ImageNames.navArrowImages.dropdown_blue)
+                      Image.asset(ImageNames.navArrowImages.dropdown_green)
                     ],
                   ),
                 ),
@@ -384,12 +391,15 @@ class _JobsViewState extends State<JobsView> {
                 padding: EdgeInsets.symmetric(vertical: 6),
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(5),
-                  color: isValid ? SKColors.jobs_dark_green : SKColors.inactive_gray,
+                  color: isValid
+                      ? SKColors.jobs_dark_green
+                      : SKColors.inactive_gray,
                   boxShadow: UIAssets.boxShadow,
                 ),
                 child: Text(
                   'Next',
-                  style: TextStyle(color: isValid ? Colors.white : SKColors.dark_gray),
+                  style: TextStyle(
+                      color: isValid ? Colors.white : SKColors.dark_gray),
                 ),
               )
             ],
@@ -397,5 +407,183 @@ class _JobsViewState extends State<JobsView> {
         ),
       ),
     ];
+  }
+}
+
+class _GraduationDatePicker extends StatefulWidget {
+  final DateTime startDate;
+
+  _GraduationDatePicker({this.startDate});
+
+  @override
+  State createState() => _GraduationDatePickerState();
+}
+
+class _GraduationDatePickerState extends State<_GraduationDatePicker> {
+  int monthIndex;
+  String year;
+
+  List<String> months;
+  List<String> years;
+
+  ScrollController monthController;
+  ScrollController yearController;
+
+  @override
+  void initState() {
+    super.initState();
+
+    final currentYear = DateTime.now().year;
+
+    years = List.generate(6, (index) => '${currentYear + index}');
+
+    months = [
+      'Jan.',
+      'Feb.',
+      'Mar.',
+      'Apr.',
+      'May',
+      'Jun.',
+      'Jul.',
+      'Aug.',
+      'Sept.',
+      'Oct.',
+      'Nov.',
+      'Dec.',
+    ];
+
+    if (widget.startDate != null) {
+      monthIndex = widget.startDate.month - 1;
+      year = '${widget.startDate.year}';
+    } else {
+      monthIndex = 0;
+      year = years.first;
+    }
+
+    monthController = FixedExtentScrollController(initialItem: monthIndex);
+    yearController =
+        FixedExtentScrollController(initialItem: years.indexOf(year));
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Dialog(
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(10),
+        side: BorderSide(color: SKColors.border_gray),
+      ),
+      backgroundColor: Colors.white,
+      child: Padding(
+        padding: EdgeInsets.only(top: 16),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            Text(
+              'Graduation Date',
+              style: TextStyle(fontSize: 16),
+            ),
+            Text(
+              'When do you expect to graduate?',
+              style: TextStyle(fontWeight: FontWeight.normal, fontSize: 14),
+            ),
+            Padding(
+              padding: EdgeInsets.symmetric(vertical: 16),
+              child: SizedBox(
+                height: 96,
+                width: 164,
+                child: Row(
+                  children: <Widget>[
+                    Expanded(
+                      child: CupertinoPicker.builder(
+                        backgroundColor: Colors.white,
+                        itemExtent: 24,
+                        scrollController: monthController,
+                        onSelectedItemChanged: (monthIndex) =>
+                            this.monthIndex = monthIndex,
+                        childCount: 12,
+                        itemBuilder: (_, index) => Container(
+                          alignment: Alignment.center,
+                          child: Text(
+                            months[index],
+                            style: Theme.of(context)
+                                .textTheme
+                                .body1
+                                .copyWith(fontWeight: FontWeight.normal),
+                          ),
+                        ),
+                      ),
+                    ),
+                    Expanded(
+                      child: CupertinoPicker.builder(
+                        backgroundColor: Colors.white,
+                        itemExtent: 24,
+                        scrollController: yearController,
+                        onSelectedItemChanged: (yearIndex) =>
+                            this.year = years[yearIndex],
+                        childCount: years.length,
+                        itemBuilder: (_, index) => Container(
+                          alignment: Alignment.center,
+                          child: Text(
+                            years[index],
+                            style: Theme.of(context)
+                                .textTheme
+                                .body1
+                                .copyWith(fontWeight: FontWeight.normal),
+                          ),
+                        ),
+                      ),
+                    )
+                  ],
+                ),
+              ),
+            ),
+            SizedBox(
+              height: 44,
+              child: Row(
+                children: <Widget>[
+                  Expanded(
+                    child: GestureDetector(
+                      behavior: HitTestBehavior.opaque,
+                      onTapUp: (_) => Navigator.pop(context),
+                      child: Container(
+                        alignment: Alignment.center,
+                        child: Text(
+                          'Cancel',
+                          style: TextStyle(
+                            fontWeight: FontWeight.normal,
+                            color: SKColors.warning_red,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                  Expanded(
+                    child: GestureDetector(
+                      behavior: HitTestBehavior.opaque,
+                      onTapUp: (_) {
+                        final monthNum = monthIndex + 1;
+                        String monthStr = '$monthNum';
+                        if (monthNum < 10) monthStr = '0$monthNum';
+
+                        final gradDate = DateTime.parse('${year}-$monthStr-01');
+
+                        Navigator.pop(context, gradDate);
+                      },
+                      child: Container(
+                        alignment: Alignment.center,
+                        child: Text(
+                          'Select',
+                          style: TextStyle(color: SKColors.jobs_light_green),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            )
+          ],
+        ),
+      ),
+    );
   }
 }

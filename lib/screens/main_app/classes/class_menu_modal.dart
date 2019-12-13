@@ -277,19 +277,19 @@ class _ClassMenuState extends State<ClassMenuModal> {
                 ],
               ),
               GestureDetector(
+                behavior: HitTestBehavior.opaque,
                 onTapUp: (_) => Navigator.pop(context),
+                onVerticalDragEnd: (details) {
+                  if (details.primaryVelocity < 0) Navigator.pop(context);
+                },
                 child: Container(
                   alignment: Alignment.center,
-                  margin: EdgeInsets.only(top: 12),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.only(
-                      bottomLeft: Radius.circular(15),
-                      bottomRight: Radius.circular(15),
+                  padding: EdgeInsets.only(top: 8, bottom: 8),
+                  child: RotatedBox(
+                    quarterTurns: 2,
+                    child: Image.asset(
+                      ImageNames.navArrowImages.pulldown_gray,
                     ),
-                  ),
-                  child: Icon(
-                    Icons.keyboard_arrow_up,
-                    color: SKColors.dark_gray,
                   ),
                 ),
               ),
