@@ -63,6 +63,7 @@ flutter:
    - image_assets/people_assets/
    - image_assets/status_assets/
    - image_assets/activity_assets/
+   - image_assets/sammi_jobs_personality_assets/
    - image_assets/class_info_assets/
    - image_assets/sammi_personality_assets/
    - image_assets/menu_assets/

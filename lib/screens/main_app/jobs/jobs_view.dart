@@ -5,6 +5,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:intl/intl.dart';
 import 'package:skoller/screens/main_app/menu/major_search_modal.dart';
 import 'package:skoller/tools.dart';
+import 'dart:math';
 
 class JobsView extends StatefulWidget {
   State createState() => _JobsViewState();
@@ -136,7 +137,7 @@ class _JobsViewState extends State<JobsView> {
         children = createResumeInstructions();
         break;
       case _ProfileState.profile:
-        children = createIntro();
+        children = createProfile();
         break;
     }
 
@@ -227,7 +228,7 @@ class _JobsViewState extends State<JobsView> {
       Padding(
         padding: EdgeInsets.all(16),
         child: SammiSpeechBubble(
-          sammiPersonality: SammiPersonality.cool,
+          sammiPersonality: SammiPersonality.jobsCool,
           speechBubbleContents: Text(
             'So... What\'s the plan?',
             style: TextStyle(fontSize: 16),
@@ -435,24 +436,21 @@ class _JobsViewState extends State<JobsView> {
         Padding(
           padding: EdgeInsets.all(16),
           child: SammiSpeechBubble(
-            sammiPersonality: SammiPersonality.smile,
+            sammiPersonality: SammiPersonality.jobsSmile,
             speechBubbleContents: Text('Almost there!'),
           ),
         ),
         SKHeaderCard(
-          leftHeaderItem: Text('Submit your resumé', style: TextStyle(fontSize: 17),),
-            margin: EdgeInsets.fromLTRB(16, 0, 16, 16),
-            // padding: EdgeInsets.fromLTRB(16, 8, 16, 16),
+          leftHeaderItem: Text(
+            'Submit your resumé',
+            style: TextStyle(fontSize: 17),
+          ),
+          margin: EdgeInsets.fromLTRB(16, 0, 16, 16),
+          // padding: EdgeInsets.fromLTRB(16, 8, 16, 16),
           children: <Widget>[
-            Icon(
-              Icons.cloud_upload,
-              size: 88,
-              color: SKColors.jobs_dark_green,
-            ),
-            Icon(
-              Icons.insert_drive_file,
-              size: 44,
-              color: SKColors.dark_gray,
+            Padding(
+              padding: EdgeInsets.symmetric(vertical: 12, horizontal: 48),
+              child: Image.asset(ImageNames.jobsImages.submit_resume_graphic),
             ),
             Padding(
               padding: EdgeInsets.fromLTRB(24, 24, 24, 12),
@@ -472,6 +470,74 @@ class _JobsViewState extends State<JobsView> {
             ),
           ],
         )
+      ];
+
+  List<Widget> createProfile() => [
+        Padding(
+          padding: EdgeInsets.all(16),
+          child: SammiSpeechBubble(
+            sammiPersonality: SammiPersonality.jobsOoo,
+            speechBubbleContents: Text.rich(
+              TextSpan(
+                text: 'You are ',
+                children: [
+                  TextSpan(
+                    text: 'ACTIVE',
+                    style: TextStyle(color: SKColors.jobs_dark_green),
+                  ),
+                  TextSpan(text: ' on Skoller Jobs')
+                ],
+              ),
+            ),
+          ),
+        ),
+        SKHeaderCard(
+          padding: EdgeInsets.all(16),
+          margin: EdgeInsets.fromLTRB(16, 0, 16, 16),
+          leftHeaderItem: Text(
+            'Profile Strength',
+            style: TextStyle(fontSize: 17),
+          ),
+          rightHeaderItem: Text(
+            'Active',
+            style: TextStyle(color: SKColors.jobs_dark_green),
+          ),
+          children: <Widget>[
+            Padding(
+              padding: EdgeInsets.fromLTRB(72, 16, 72, 32),
+              child: AspectRatio(
+                aspectRatio: 1,
+                child: Container(
+                  alignment: Alignment.center,
+                  child: _SKJobProfileCompletionCircle(
+                    completion: 0.86,
+                  ),
+                ),
+              ),
+            ),
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 24),
+              child: Row(
+                children: <Widget>[
+                  Icon(
+                    Icons.computer,
+                    size: 56,
+                    color: SKColors.dark_gray,
+                  ),
+                  SizedBox(
+                    width: 24,
+                  ),
+                  Expanded(
+                    child: Text(
+                      'Hop on your computer and log in at skoller.co to get the full experience for jobs!',
+                      style: TextStyle(fontWeight: FontWeight.w500),
+                    ),
+                  )
+                ],
+              ),
+            ),
+          ],
+        ),
       ];
 }
 
@@ -663,4 +729,61 @@ class _GraduationDatePickerState extends State<_GraduationDatePicker> {
       ),
     );
   }
+}
+
+class _SKJobProfileCompletionCircle extends StatelessWidget {
+  final num completion;
+
+  _SKJobProfileCompletionCircle({this.completion});
+
+  @override
+  Widget build(BuildContext context) {
+    return CustomPaint(
+      painter: _SKCompletionCirclePainter(completion),
+      child: Container(
+        alignment: Alignment.center,
+        child: Text(
+          '${completion * 100 ~/ 1}%',
+          style: TextStyle(
+              color: SKColors.jobs_dark_green,
+              fontWeight: FontWeight.w800,
+              letterSpacing: 1,
+              fontSize: 28),
+        ),
+      ),
+    );
+  }
+}
+
+class _SKCompletionCirclePainter extends CustomPainter {
+  final num completion;
+
+  _SKCompletionCirclePainter(this.completion);
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    print(size.width);
+    final fillPaint = Paint()
+      ..color = SKColors.jobs_dark_green
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 18
+      ..isAntiAlias = true;
+
+    final outerRadius = (size.width);
+    final half_pi = pi / 2;
+    final sweepAngle = (2 * pi * completion);
+
+    canvas.drawArc(
+      Rect.fromLTWH(0, 0, outerRadius, outerRadius),
+      -half_pi,
+      sweepAngle,
+      false,
+      fillPaint,
+    );
+  }
+
+  @override
+  bool shouldRepaint(CustomPainter oldDelegate) =>
+      oldDelegate is _SKCompletionCirclePainter &&
+      oldDelegate.completion != this.completion;
 }

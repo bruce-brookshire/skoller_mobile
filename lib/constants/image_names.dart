@@ -15,6 +15,7 @@ class ImageNames {
   static final classInfoImages = _ClassInfoImages();
   static final classesImages = _ClassesImages();
   static final jobsImages = _JobsImages();
+  static final sammiJobsImages = _SammiJobsImages();
 }
 
 class _MenuImages {
@@ -87,6 +88,19 @@ class _SammiImages {
   final intro = '${_base}/intro_sammi.png';
   final big_smile = '${_base}/big_smile_sammi.png';
   // final school = '${_base}/school_sammi.png';
+}
+
+class _SammiJobsImages {
+  static const _base = 'image_assets/sammi_jobs_personality_assets';
+
+  final big_smile = '${_base}/big_smile.png';
+final sad = '${_base}/sad.png';
+final side_eye = '${_base}/side_eye.png';
+final smile = '${_base}/smile.png';
+final stare = '${_base}/stare.png';
+final surprise = '${_base}/surprise.png';
+final swag = '${_base}/swag.png';
+final yikes = '${_base}/yikes.png';
 }
 
 class _RightNavImages {
@@ -166,6 +180,7 @@ class _JobsImages {
   static const _base = 'image_assets/jobs_assets';
 
   final jobs_cover_art = '$_base/jobs_cover_art.png';
+  final submit_resume_graphic = '$_base/submit_resume_graphic.png';
 }
 
 
