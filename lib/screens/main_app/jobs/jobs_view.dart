@@ -26,7 +26,12 @@ class _JobsViewState extends State<JobsView> {
       graduationDate =
           DateTime.parse('${SKUser.current.student.gradYear}-05-01');
 
-    if (JobProfile.currentProfile == null) profileState = _ProfileState.intro;
+    if (JobProfile.currentProfile == null)
+      profileState = _ProfileState.intro;
+    else if (JobProfile.currentProfile.resume_url == null)
+      profileState = _ProfileState.resume;
+    else
+      profileState = _ProfileState.profile;
   }
 
   void tappedGradDate(_) async {
@@ -128,7 +133,7 @@ class _JobsViewState extends State<JobsView> {
         children = createStart();
         break;
       case _ProfileState.resume:
-        children = createIntro();
+        children = createResumeInstructions();
         break;
       case _ProfileState.profile:
         children = createIntro();
@@ -238,7 +243,7 @@ class _JobsViewState extends State<JobsView> {
               style: TextStyle(fontSize: 17),
             ),
             margin: EdgeInsets.fromLTRB(16, 0, 16, 16),
-            padding: EdgeInsets.all(24),
+            padding: EdgeInsets.fromLTRB(16, 8, 16, 16),
             children: <Widget>[
               Padding(
                 padding: EdgeInsets.only(left: 6, bottom: 4),
@@ -278,7 +283,7 @@ class _JobsViewState extends State<JobsView> {
                 ),
               ),
               Padding(
-                padding: EdgeInsets.only(left: 6, bottom: 4, top: 16),
+                padding: EdgeInsets.only(left: 6, bottom: 4, top: 12),
                 child: Text(
                   'Major(s)',
                   style: TextStyle(
@@ -309,13 +314,14 @@ class _JobsViewState extends State<JobsView> {
                                   : SKColors.jobs_dark_green),
                         ),
                       ),
-                      Image.asset(ImageNames.rightNavImages.magnifying_glass)
+                      Image.asset(
+                          ImageNames.rightNavImages.magnifying_glass_green)
                     ],
                   ),
                 ),
               ),
               Padding(
-                padding: EdgeInsets.only(left: 6, bottom: 4, top: 16),
+                padding: EdgeInsets.only(left: 6, bottom: 4, top: 12),
                 child: Text(
                   'Pursuing degree',
                   style: TextStyle(
@@ -351,7 +357,7 @@ class _JobsViewState extends State<JobsView> {
                 ),
               ),
               Padding(
-                padding: EdgeInsets.only(left: 6, bottom: 4, top: 16),
+                padding: EdgeInsets.only(left: 6, bottom: 4, top: 12),
                 child: Text(
                   'Your next job',
                   style: TextStyle(
@@ -385,29 +391,88 @@ class _JobsViewState extends State<JobsView> {
                   ),
                 ),
               ),
-              Container(
-                margin: EdgeInsets.only(top: 24),
-                alignment: Alignment.center,
-                padding: EdgeInsets.symmetric(vertical: 6),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(5),
-                  color: isValid
-                      ? SKColors.jobs_dark_green
-                      : SKColors.inactive_gray,
-                  boxShadow: UIAssets.boxShadow,
+              GestureDetector(
+                onTapUp: (_) async {
+                  final loader = SKLoadingScreen.fadeIn(context);
+                  final response = await JobProfile.createProfile(
+                    jobType: jobType,
+                    graduationDate: graduationDate,
+                  );
+                  loader.fadeOut();
+
+                  if (response.wasSuccessful()) {
+                    setState(() {
+                      profileState = _ProfileState.resume;
+                    });
+                  }
+                },
+                child: Container(
+                  margin: EdgeInsets.only(top: 24),
+                  alignment: Alignment.center,
+                  padding: EdgeInsets.symmetric(vertical: 6),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(5),
+                    color: isValid
+                        ? SKColors.jobs_light_green
+                        : SKColors.inactive_gray,
+                    boxShadow: UIAssets.boxShadow,
+                  ),
+                  child: Text(
+                    'Next',
+                    style: TextStyle(
+                        color: isValid ? Colors.white : SKColors.dark_gray),
+                  ),
                 ),
-                child: Text(
-                  'Next',
-                  style: TextStyle(
-                      color: isValid ? Colors.white : SKColors.dark_gray),
-                ),
-              )
+              ),
             ],
           ),
         ),
       ),
     ];
   }
+
+  List<Widget> createResumeInstructions() => [
+        Padding(
+          padding: EdgeInsets.all(16),
+          child: SammiSpeechBubble(
+            sammiPersonality: SammiPersonality.smile,
+            speechBubbleContents: Text('Almost there!'),
+          ),
+        ),
+        SKHeaderCard(
+          leftHeaderItem: Text('Submit your resumé', style: TextStyle(fontSize: 17),),
+            margin: EdgeInsets.fromLTRB(16, 0, 16, 16),
+            // padding: EdgeInsets.fromLTRB(16, 8, 16, 16),
+          children: <Widget>[
+            Icon(
+              Icons.cloud_upload,
+              size: 88,
+              color: SKColors.jobs_dark_green,
+            ),
+            Icon(
+              Icons.insert_drive_file,
+              size: 44,
+              color: SKColors.dark_gray,
+            ),
+            Padding(
+              padding: EdgeInsets.fromLTRB(24, 24, 24, 12),
+              child: Text.rich(
+                TextSpan(
+                  text: 'Hop on your computer and login at skoller.co to ',
+                  children: [
+                    TextSpan(
+                      text: 'SUBMIT YOUR RESUMÉ',
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    )
+                  ],
+                  style: TextStyle(fontWeight: FontWeight.w300),
+                ),
+                textAlign: TextAlign.center,
+              ),
+            ),
+          ],
+        )
+      ];
 }
 
 class _GraduationDatePicker extends StatefulWidget {
@@ -513,6 +578,7 @@ class _GraduationDatePickerState extends State<_GraduationDatePicker> {
                         ),
                       ),
                     ),
+                    SizedBox(width: 8),
                     Expanded(
                       child: CupertinoPicker.builder(
                         backgroundColor: Colors.white,
@@ -540,6 +606,7 @@ class _GraduationDatePickerState extends State<_GraduationDatePicker> {
             SizedBox(
               height: 44,
               child: Row(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: <Widget>[
                   Expanded(
                     child: GestureDetector(
@@ -547,6 +614,9 @@ class _GraduationDatePickerState extends State<_GraduationDatePicker> {
                       onTapUp: (_) => Navigator.pop(context),
                       child: Container(
                         alignment: Alignment.center,
+                        decoration: BoxDecoration(
+                            border: Border(
+                                top: BorderSide(color: SKColors.border_gray))),
                         child: Text(
                           'Cancel',
                           style: TextStyle(
@@ -556,6 +626,10 @@ class _GraduationDatePickerState extends State<_GraduationDatePicker> {
                         ),
                       ),
                     ),
+                  ),
+                  Container(
+                    width: 1,
+                    color: SKColors.border_gray,
                   ),
                   Expanded(
                     child: GestureDetector(
@@ -571,6 +645,9 @@ class _GraduationDatePickerState extends State<_GraduationDatePicker> {
                       },
                       child: Container(
                         alignment: Alignment.center,
+                        decoration: BoxDecoration(
+                            border: Border(
+                                top: BorderSide(color: SKColors.border_gray))),
                         child: Text(
                           'Select',
                           style: TextStyle(color: SKColors.jobs_light_green),

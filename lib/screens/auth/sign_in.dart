@@ -49,6 +49,7 @@ class _SignInState extends State<SignIn> {
       if (result is bool && result) {
         Session.startSession();
         await StudentClass.getStudentClasses();
+        SKUser.current.getJobProfile();
 
         Navigator.popUntil(context, (route) => route.isFirst);
         DartNotificationCenter.post(

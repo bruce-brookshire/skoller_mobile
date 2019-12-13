@@ -65,6 +65,8 @@ class _LoadingState extends State<LoadingView> {
       if (nextState != null) {
         if (nextState == AppState.main) {
           final classResult = await StudentClass.getStudentClasses();
+          SKUser.current.getJobProfile();
+          
           if (!classResult.wasSuccessful()) {
             return;
           }
