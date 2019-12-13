@@ -134,7 +134,7 @@ class _JobsViewState extends State<JobsView> {
         children = createStart();
         break;
       case _ProfileState.resume:
-        children = createResumeInstructions();
+        children = createProfile(); //createResumeInstructions();
         break;
       case _ProfileState.profile:
         children = createProfile();
@@ -510,7 +510,7 @@ class _JobsViewState extends State<JobsView> {
                 child: Container(
                   alignment: Alignment.center,
                   child: _SKJobProfileCompletionCircle(
-                    completion: 0.86,
+                    completion: JobProfile.currentProfile.profile_score,
                   ),
                 ),
               ),

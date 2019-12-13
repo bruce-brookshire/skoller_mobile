@@ -7,6 +7,7 @@ class JobProfile {
   int startup_interest;
 
   num gpa;
+  num profile_score;
 
   bool veteran;
   bool disability;
@@ -51,6 +52,7 @@ class JobProfile {
     this.sat_score,
     this.startup_interest,
     this.gpa,
+    this.profile_score,
     this.veteran,
     this.disability,
     this.first_gen_college,
@@ -119,6 +121,7 @@ class JobProfile {
       content['sat_score'],
       content['startup_interest'],
       content['gpa'],
+      content['profile_score'],
       content['veteran'],
       content['disability'],
       content['first_gen_college'],
