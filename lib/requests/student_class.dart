@@ -81,7 +81,7 @@ class StudentClass {
         : 'This new app takes our syllabus and sends reminders about upcoming due dates, organizes assignments into a calendar, and much more. Our class $name is already set up. Sign up using this link to join me!\n\n$enrollmentLink';
   }
 
-  School getSchool() => School.currentSchools[classPeriod.schoolId];
+  School get parentSchool => School.currentSchools[classPeriod.schoolId];
 
   Color getColor() {
     final colorizer = (String colorStr) {
@@ -188,7 +188,7 @@ class StudentClass {
         ? null
         : await TimeZoneManager.convertUtcOffsetFromLocalToSchool(
             dueDate,
-            getSchool().timezone,
+            parentSchool.timezone,
           );
 
     if (correctedDueDate != null) {
@@ -226,7 +226,7 @@ class StudentClass {
         ? null
         : await TimeZoneManager.convertUtcOffsetFromLocalToSchool(
             dueDate,
-            getSchool().timezone,
+            parentSchool.timezone,
           );
 
     if (correctedDueDate != null) {
