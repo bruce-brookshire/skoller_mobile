@@ -1,6 +1,6 @@
 name: skoller
 description: A new Flutter project.
-version: 5.5.0+28
+version: 6.0.0+29
 
 environment:
   sdk: ">=2.3.0 <3.0.0"
@@ -63,7 +63,7 @@ flutter:
    - image_assets/people_assets/
    - image_assets/status_assets/
    - image_assets/activity_assets/
-   - image_assets/chat_assets/
+   - image_assets/sammi_jobs_personality_assets/
    - image_assets/class_info_assets/
    - image_assets/sammi_personality_assets/
    - image_assets/menu_assets/

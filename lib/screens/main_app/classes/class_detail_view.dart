@@ -146,7 +146,7 @@ class _ClassDetailState extends State<ClassDetailView> {
               bottom: false,
               child: Container(
                 height: 78,
-                padding: EdgeInsets.only(top: 4),
+                padding: EdgeInsets.only(top: 6),
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.only(
                     bottomLeft: Radius.circular(15),
@@ -229,24 +229,25 @@ class _ClassDetailState extends State<ClassDetailView> {
                         ],
                       ),
                       GestureDetector(
+                        behavior: HitTestBehavior.opaque,
                         onTapUp: (_) => DartNotificationCenter.post(
                           channel:
                               NotificationChannels.presentModalViewOverTabBar,
                           options: ClassMenuModal(studentClass.id),
                         ),
+                        onVerticalDragEnd: (details) {
+                          if (details.primaryVelocity > 0)
+                            DartNotificationCenter.post(
+                              channel: NotificationChannels
+                                  .presentModalViewOverTabBar,
+                              options: ClassMenuModal(studentClass.id),
+                            );
+                        },
                         child: Container(
                           alignment: Alignment.center,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.only(
-                              bottomLeft: Radius.circular(15),
-                              bottomRight: Radius.circular(15),
-                            ),
-                          ),
-                          child: Icon(
-                            Icons.keyboard_arrow_down,
-                            color: SKColors.light_gray,
-                            size: 24,
-                          ),
+                          padding: EdgeInsets.only(top: 8, bottom: 7),
+                          child: Image.asset(
+                              ImageNames.navArrowImages.pulldown_gray),
                         ),
                       ),
                     ],

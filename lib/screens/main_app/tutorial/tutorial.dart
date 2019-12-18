@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:skoller/screens/main_app/tutorial/activity_tutorial_view.dart';
 import 'package:skoller/screens/main_app/tutorial/calendar_tutorial_view.dart';
-import 'package:skoller/screens/main_app/tutorial/chat_tutorial_view.dart';
 import 'package:skoller/screens/main_app/tutorial/todo_tutorial_view.dart';
 import 'package:skoller/tools.dart';
 
@@ -22,7 +21,6 @@ class _TutorialTabState extends State<TutorialTab> {
   final List<String> _indexIconPartialPaths = [
     'todos_',
     'calendar_',
-    'chat_',
     'classes_',
     'activity_',
   ];
@@ -34,7 +32,6 @@ class _TutorialTabState extends State<TutorialTab> {
     views = [
       TodoTutorialView(() => widget.onTapDismiss(context), widget.promptMsg),
       CalendarTutorialView(() => widget.onTapDismiss(context), widget.promptMsg),
-      ChatTutorialView(() => widget.onTapDismiss(context), widget.promptMsg),
       _ViewFour(() => widget.onTapDismiss(context), widget.promptMsg),
       ActivityTutorialView(() => widget.onTapDismiss(context), widget.promptMsg),
     ];

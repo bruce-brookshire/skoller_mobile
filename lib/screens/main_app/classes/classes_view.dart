@@ -738,7 +738,11 @@ class _ClassesState extends State<ClassesView> {
           selectedIndex = null;
         });
 
-        tappedSammiExplanation(SammiExplanationType.inReview, studentClass.id);
+        final type = studentClass.parentSchool.isSyllabusOverload
+            ? SammiExplanationType.syllabusOverload
+            : SammiExplanationType.inReview;
+
+        tappedSammiExplanation(type, studentClass.id);
       },
       child: Container(
         decoration: BoxDecoration(

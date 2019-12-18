@@ -2,15 +2,21 @@ part of 'requests_core.dart';
 
 class School {
   int id;
+
+  bool isSyllabusOverload;
+
   List<Period> periods;
+
   String timezone;
   String name;
   String adrRegion;
   String adrLocality;
+
   Color color;
 
   School(
     this.id,
+    this.isSyllabusOverload,
     this.timezone,
     this.periods,
     this.name,
@@ -73,6 +79,7 @@ class School {
 
     return School(
       content['id'],
+      content['is_syllabus_overload'],
       content['timezone'],
       period_list,
       content['name'],

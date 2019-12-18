@@ -112,6 +112,9 @@ class SKUser {
     return SKRequests.get(
         '/email_domains/$emailDomain/check', School._fromJsonObj);
   }
+
+  Future<RequestResponse> getJobProfile() =>
+      SKRequests.get('/users/$id/job-profile', JobProfile._fromJsonObj);
 }
 
 class Student {
@@ -322,4 +325,7 @@ class TypeObject {
 
   static Future<RequestResponse> getDegreeTypes() =>
       SKRequests.get('/skoller-jobs/types/degrees', _fromJsonObj);
+
+  static Future<RequestResponse> getJobTypes() =>
+      SKRequests.get('/skoller-jobs/types/job_search', _fromJsonObj);
 }

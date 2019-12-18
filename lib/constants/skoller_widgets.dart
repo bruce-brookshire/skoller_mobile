@@ -1284,7 +1284,7 @@ class SKHeaderProfilePhoto extends StatelessWidget {
       );
 }
 
-enum SammiPersonality { cool, smile, wow, ooo, school }
+enum SammiPersonality { cool, smile, wow, ooo, school, jobsSmile, jobsOoo, jobsCool }
 enum SammiSide { left, right }
 
 class SammiSpeechBubble extends StatelessWidget {
@@ -1396,6 +1396,12 @@ class SammiSpeechBubble extends StatelessWidget {
         return Image.asset(ImageNames.sammiImages.shocked);
       case SammiPersonality.school:
         return Image.asset(ImageNames.sammiImages.smile);
+      case SammiPersonality.jobsCool:
+        return Image.asset(ImageNames.sammiJobsImages.swag);
+      case SammiPersonality.jobsOoo:
+        return Image.asset(ImageNames.sammiJobsImages.stare);
+      case SammiPersonality.jobsSmile:
+        return Image.asset(ImageNames.sammiJobsImages.smile);
     }
     return null;
   }

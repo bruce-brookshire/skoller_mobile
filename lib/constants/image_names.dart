@@ -8,7 +8,6 @@ class ImageNames {
   static final peopleImages = _PeopleImages();
   static final statusImages = _StatusImages();
   static final activityImages = _ActivityImages();
-  static final chatImages = _ChatImages();
   static final sammiImages = _SammiImages();
   static final menuImages = _MenuImages();
   static final todoImages = _TodoImages();
@@ -16,6 +15,7 @@ class ImageNames {
   static final classInfoImages = _ClassInfoImages();
   static final classesImages = _ClassesImages();
   static final jobsImages = _JobsImages();
+  static final sammiJobsImages = _SammiJobsImages();
 }
 
 class _MenuImages {
@@ -37,26 +37,6 @@ class _TutorialImages {
   static const _base = 'image_assets/tutorial_assets';
 
   final syllabus = '${_base}/syllabus.png';
-}
-
-class _ChatImages {
-  static const _base = 'image_assets/chat_assets';
-
-  final star_yellow = '${_base}/star_yellow.png';
-  final commented_blue = '${_base}/commented_blue.png';
-  final commented_gray = '${_base}/commented_gray.png';
-  final commented_white = '${_base}/commented_white.png';
-  final compose = '${_base}/compose.png';
-  final filter = '${_base}/filter.png';
-  final inbox_unread = '${_base}/inbox_unread.png';
-  final inbox = '${_base}/inbox.png';
-  final like_blue = '${_base}/like_blue.png';
-  final like_gray = '${_base}/like_gray.png';
-  final reply_back_gray = '${_base}/reply_back_gray.png';
-  final reply_down_gray = '${_base}/reply_down_gray.png';
-  final reply_down_white = '${_base}/reply_down_white.png';
-  final reply_forward_gray = '${_base}/reply_forward_gray.png';
-  final star_gray = '${_base}/star_gray.png';
 }
 
 class _ActivityImages {
@@ -81,6 +61,7 @@ class _SignUpImages {
   final text_verify = '${_base}/text_verify.png';
   final syllabus_activity = '${_base}/syllabus_activity.png';
   final activities = '${_base}/activities.png';
+  final star_yellow = '${_base}/star_yellow.png';
   final logo_wide_blue = '${_base}/logo_wide_blue.png';
   final search_back_arrow = '${_base}/search_back_arrow.png';
 }
@@ -93,6 +74,8 @@ class _NavigationArrowImages {
   final right = '${_base}/right.png';
   final dropdown_blue = '${_base}/dropdown_blue.png';
   final dropdown_gray = '${_base}/dropdown_gray.png';
+  final dropdown_green = '${_base}/dropdown_green.png';
+  final pulldown_gray = '${_base}/pulldown_gray.png';
 }
 
 class _SammiImages {
@@ -107,6 +90,19 @@ class _SammiImages {
   // final school = '${_base}/school_sammi.png';
 }
 
+class _SammiJobsImages {
+  static const _base = 'image_assets/sammi_jobs_personality_assets';
+
+  final big_smile = '${_base}/big_smile.png';
+final sad = '${_base}/sad.png';
+final side_eye = '${_base}/side_eye.png';
+final smile = '${_base}/smile.png';
+final stare = '${_base}/stare.png';
+final surprise = '${_base}/surprise.png';
+final swag = '${_base}/swag.png';
+final yikes = '${_base}/yikes.png';
+}
+
 class _RightNavImages {
   static const _base = 'image_assets/right_button_assets';
 
@@ -114,6 +110,7 @@ class _RightNavImages {
   final info = '${_base}/info.png';
   final link = '${_base}/link.png';
   final magnifying_glass = '${_base}/magnifying_glass.png';
+  final magnifying_glass_green = '${_base}/magnifying_glass_green.png';
   final filter_bars = '${_base}/filter_bars.png';
   final add_class = '${_base}/add_class.png';
 }
@@ -183,6 +180,7 @@ class _JobsImages {
   static const _base = 'image_assets/jobs_assets';
 
   final jobs_cover_art = '$_base/jobs_cover_art.png';
+  final submit_resume_graphic = '$_base/submit_resume_graphic.png';
 }
 
 

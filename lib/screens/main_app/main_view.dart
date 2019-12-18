@@ -202,7 +202,7 @@ class _MainState extends State<MainView> {
                   5,
                   (_) => Padding(
                     padding: EdgeInsets.symmetric(horizontal: 4),
-                    child: Image.asset(ImageNames.chatImages.star_yellow),
+                    child: Image.asset(ImageNames.signUpImages.star_yellow),
                   ),
                 ),
               ),

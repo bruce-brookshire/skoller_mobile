@@ -25,12 +25,12 @@ class Assignment {
   List<AssignmentChat> posts;
 
   Future configureDateTimeOffset() async {
-    if (!_dueDateShifted && due != null && parentClass.getSchool() != null) {
+    if (!_dueDateShifted && due != null && parentClass.parentSchool != null) {
       _dueDateShifted = true;
 
       due = await TimeZoneManager.createLocalRelativeAssignmentDueDate(
         due,
-        parentClass.getSchool().timezone,
+        parentClass.parentSchool.timezone,
       );
     }
   }
@@ -159,7 +159,7 @@ class Assignment {
     DateTime correctedDueDate =
         await TimeZoneManager.convertUtcOffsetFromLocalToSchool(
       dueDate,
-      parentClass.getSchool().timezone,
+      parentClass.parentSchool.timezone,
     );
 
     if (correctedDueDate != null) {
@@ -182,7 +182,7 @@ class Assignment {
     DateTime correctedDueDate =
         await TimeZoneManager.convertUtcOffsetFromLocalToSchool(
       dueDate,
-      parentClass.getSchool().timezone,
+      parentClass.parentSchool.timezone,
     );
 
     if (correctedDueDate != null) {
