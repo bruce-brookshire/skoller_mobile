@@ -69,7 +69,8 @@ class Assignment {
       final success = response.wasSuccessful();
 
       if (success) {
-        Assignment.currentAssignments[id].isCompleted = response.obj.isCompleted;
+        Assignment.currentAssignments[id].isCompleted =
+            response.obj.isCompleted;
       }
       return success;
     });
@@ -97,7 +98,8 @@ class Assignment {
     ).then((response) {
       if (response.wasSuccessful()) {
         Assignment.currentAssignments[id].grade = response.obj.grade;
-        Assignment.currentAssignments[id].isCompleted = response.obj.isCompleted;
+        Assignment.currentAssignments[id].isCompleted =
+            response.obj.isCompleted;
         parentClass.refetchSelf();
       }
 
@@ -164,16 +166,22 @@ class Assignment {
 
     if (correctedDueDate != null) {
       tzCorrectedString = correctedDueDate.toIso8601String();
-    }
+      final now = DateTime.now();
+      final today = DateTime(now.year, now.month, now.day);
+      final body = {
+          'is_private': isPrivate,
+          'due': tzCorrectedString,
+          if (dueDate.isAfter(today) && this.due.isBefore(today) && this.isCompleted)
+            'is_completed': false,
+        };
 
-    return SKRequests.put(
-      '/assignments/${id}',
-      {
-        'is_private': isPrivate,
-        'due': tzCorrectedString,
-      },
-      Assignment._fromJsonObj,
-    );
+      return SKRequests.put(
+        '/assignments/${id}',
+        body,
+        Assignment._fromJsonObj,
+      );
+    } else
+      return Future.value(RequestResponse(500, null));
   }
 
   Future<RequestResponse> addDueDate(DateTime dueDate) async {

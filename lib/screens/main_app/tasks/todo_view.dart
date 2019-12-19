@@ -18,7 +18,7 @@ class TodoView extends StatefulWidget {
 }
 
 class _TodoState extends State<TodoView> {
-  List<_TaskLikeItem> _taskItems = [];
+  List<_TaskLikeItem> _taskItems = null;
   List<int> _datelessAssignments = [];
 
   bool showingCompletedTasks = false;
@@ -305,8 +305,8 @@ class _TodoState extends State<TodoView> {
               children: [
                 ListView.builder(
                   padding: EdgeInsets.only(top: 4, bottom: 64),
-                  itemCount: _taskItems.length == 0
-                      ? 2
+                  itemCount: (_taskItems?.length ?? 0) == 0
+                      ? _taskItems == null ? 1 : 2
                       : (_taskItems.length + (completedTasksAvailable ? 2 : 1)),
                   itemBuilder: (context, index) {
                     if (index == 0)
@@ -404,7 +404,7 @@ class _TodoState extends State<TodoView> {
 
   Widget createSammiPrompt(bool setupSecondClass, int todoDaysFuture) {
     final day = DateFormat('EEEE').format(DateTime.now());
-    final assignments = _taskItems.length;
+    final assignments = _taskItems?.length ?? 0;
 
     Widget sammiBody;
 
@@ -680,134 +680,175 @@ class _TodoRowState extends State<_TodoRow> {
     );
   }
 
-  Widget buildTaskCheckedCell(Assignment task) => GestureDetector(
-        onTapUp: task.isCompleted
-            ? (_) {
-                Navigator.push(
-                  context,
-                  CupertinoPageRoute(
-                    builder: (context) =>
-                        AssignmentInfoView(assignmentId: task.id),
-                    settings: RouteSettings(name: 'AssignmentInfoView'),
-                  ),
-                );
-              }
-            : null,
-        child: Container(
-          margin: EdgeInsets.fromLTRB(7, 3, 7, 4),
-          padding: EdgeInsets.only(left: 10),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(5),
-            border: Border.all(color: SKColors.border_gray, width: 1),
-            boxShadow: UIAssets.boxShadow,
-            color: SKColors.menu_blue,
+  Widget buildTaskCheckedCell(Assignment task) {
+    List<Widget> children;
+
+    if (task.isCompleted)
+      children = [
+        GestureDetector(
+          behavior: HitTestBehavior.opaque,
+          onTapUp: (_) => widget.onCompleted(task),
+          child: Container(
+            margin: EdgeInsets.only(right: 8, top: 18, bottom: 18, left: 2),
+            decoration: BoxDecoration(
+              border: Border.all(color: SKColors.text_light_gray),
+              borderRadius: BorderRadius.circular(10),
+              color: SKColors.skoller_blue,
+            ),
+            width: 20,
+            height: 20,
+            child: Icon(
+              Icons.check,
+              size: 12,
+              color: Colors.white,
+            ),
           ),
-          child: Row(
+        ),
+        Expanded(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-              GestureDetector(
-                behavior: HitTestBehavior.opaque,
-                onTapUp: (_) => setState(() => isChecked = false),
-                child: Container(
-                  child: Container(
-                    margin:
-                        EdgeInsets.only(right: 8, top: 10, bottom: 10, left: 2),
-                    decoration: BoxDecoration(
-                      border: Border.all(color: SKColors.text_light_gray),
-                      borderRadius: BorderRadius.circular(10),
-                      color: task.isCompleted
-                          ? SKColors.dark_gray
-                          : SKColors.skoller_blue,
-                    ),
-                    width: 20,
-                    height: 20,
-                    child: Icon(
-                      Icons.check,
-                      size: 12,
-                      color: Colors.white,
+              Padding(
+                padding: EdgeInsets.only(top: 3),
+                child: Hero(
+                  tag: 'TaskName${task.id}',
+                  child: Material(
+                    type: MaterialType.transparency,
+                    child: Text(
+                      task?.name ?? 'N/A',
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                          color: task.parentClass.getColor(),
+                          fontWeight: FontWeight.w800,
+                          letterSpacing: 1,
+                          fontSize: 17),
                     ),
                   ),
                 ),
               ),
-              Expanded(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    Padding(
-                      padding: EdgeInsets.only(top: 3),
-                      child: Hero(
-                        tag: 'TaskName${task.id}',
-                        child: Material(
-                          type: MaterialType.transparency,
-                          child: Text(
-                            task?.name ?? 'N/A',
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: TextStyle(
-                                color: task.parentClass.getColor(),
-                                fontWeight: FontWeight.w800,
-                                letterSpacing: 1,
-                                fontSize: 17),
-                          ),
-                        ),
-                      ),
-                    ),
-                    Text(
-                      task.isCompleted
-                          ? 'Completed'
-                          : DateUtilities.getFutureRelativeString(task.due),
-                      style:
-                          TextStyle(fontSize: 12, fontWeight: FontWeight.w700),
-                    ),
-                  ],
-                ),
-              ),
-              GestureDetector(
-                behavior: HitTestBehavior.opaque,
-                onTapUp: (_) {
-                  widget.onCompleted(task);
-                  setState(() {
-                    isChecked = false;
-                  });
-                },
-                child: Container(
-                  height: 56,
-                  width: 56,
-                  alignment: Alignment.center,
-                  decoration: BoxDecoration(
-                    color: task.isCompleted
-                        ? SKColors.dark_gray
-                        : SKColors.skoller_blue,
-                    borderRadius: BorderRadius.only(
-                      topRight: Radius.circular(5),
-                      bottomRight: Radius.circular(5),
-                    ),
-                  ),
-                  child: task.isCompleted
-                      ? Text(
-                          'Mark incomplete',
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.w700,
-                              fontSize: 10),
-                        )
-                      : ShakeAnimation(
-                          child: Text(
-                            'Mark as complete',
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                                color: Colors.white,
-                                fontWeight: FontWeight.w700,
-                                fontSize: 10),
-                          ),
-                        ),
-                ),
+              Text(
+                'Completed',
+                style: TextStyle(fontSize: 12, fontWeight: FontWeight.w700),
               ),
             ],
           ),
         ),
-      );
+      ];
+    else
+      children = [
+        GestureDetector(
+          behavior: HitTestBehavior.opaque,
+          onTapUp: (_) => setState(() => isChecked = false),
+          child: Container(
+            child: Container(
+              margin: EdgeInsets.only(right: 8, top: 10, bottom: 10, left: 2),
+              decoration: BoxDecoration(
+                border: Border.all(color: SKColors.text_light_gray),
+                borderRadius: BorderRadius.circular(10),
+                color: SKColors.skoller_blue,
+              ),
+              width: 20,
+              height: 20,
+              child: Icon(
+                Icons.check,
+                size: 12,
+                color: Colors.white,
+              ),
+            ),
+          ),
+        ),
+        Expanded(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Padding(
+                padding: EdgeInsets.only(top: 3),
+                child: Hero(
+                  tag: 'TaskName${task.id}',
+                  child: Material(
+                    type: MaterialType.transparency,
+                    child: Text(
+                      task?.name ?? 'N/A',
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                          color: task.parentClass.getColor(),
+                          fontWeight: FontWeight.w800,
+                          letterSpacing: 1,
+                          fontSize: 17),
+                    ),
+                  ),
+                ),
+              ),
+              Text(
+                DateUtilities.getFutureRelativeString(task.due),
+                style: TextStyle(fontSize: 12, fontWeight: FontWeight.w700),
+              ),
+            ],
+          ),
+        ),
+        GestureDetector(
+          behavior: HitTestBehavior.opaque,
+          onTapUp: (_) {
+            widget.onCompleted(task);
+            setState(() {
+              isChecked = false;
+            });
+          },
+          child: Container(
+            height: 56,
+            width: 56,
+            alignment: Alignment.center,
+            decoration: BoxDecoration(
+              color: SKColors.skoller_blue,
+              borderRadius: BorderRadius.only(
+                topRight: Radius.circular(5),
+                bottomRight: Radius.circular(5),
+              ),
+            ),
+            child: ShakeAnimation(
+              child: Text(
+                'Mark as complete',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.w700,
+                    fontSize: 10),
+              ),
+            ),
+          ),
+        ),
+      ];
+
+    return GestureDetector(
+      onTapUp: task.isCompleted
+          ? (_) {
+              Navigator.push(
+                context,
+                CupertinoPageRoute(
+                  builder: (context) =>
+                      AssignmentInfoView(assignmentId: task.id),
+                  settings: RouteSettings(name: 'AssignmentInfoView'),
+                ),
+              );
+            }
+          : null,
+      child: Container(
+        margin: EdgeInsets.fromLTRB(7, 3, 7, 4),
+        padding: EdgeInsets.only(left: 10),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(5),
+          border: Border.all(color: SKColors.border_gray, width: 1),
+          boxShadow: UIAssets.boxShadow,
+          color: SKColors.menu_blue,
+        ),
+        child: Row(children: children),
+      ),
+    );
+  }
 
   Widget buildTaskOverdueCell(Assignment task) => GestureDetector(
         onTapDown: (details) {
