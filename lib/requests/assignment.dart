@@ -169,11 +169,13 @@ class Assignment {
       final now = DateTime.now();
       final today = DateTime(now.year, now.month, now.day);
       final body = {
-          'is_private': isPrivate,
-          'due': tzCorrectedString,
-          if (dueDate.isAfter(today) && this.due.isBefore(today) && this.isCompleted)
-            'is_completed': false,
-        };
+        'is_private': isPrivate,
+        'due': tzCorrectedString,
+        if (dueDate.isAfter(today) &&
+            this.due.isBefore(today) &&
+            this.isCompleted)
+          'is_completed': false,
+      };
 
       return SKRequests.put(
         '/assignments/${id}',
@@ -261,12 +263,11 @@ class Assignment {
     if (content == null) {
       return null;
     }
-    final due = content['due'] != null ? DateTime.parse(content['due']) : null;
 
     Assignment assignment = Assignment(
       content['id'],
       content['name'],
-      due,
+      _dateParser(content['due']),
       content['class_id'],
       content['weight'],
       content['weight_id'],
@@ -315,9 +316,10 @@ class AssignmentChat {
 
   static AssignmentChat _fromJsonObj(Map content) {
     return AssignmentChat(
-        content['id'],
-        PublicStudent._fromJsonObj(content['student']),
-        content['post'],
-        DateTime.parse(content['inserted_at']));
+      content['id'],
+      PublicStudent._fromJsonObj(content['student']),
+      content['post'],
+      _dateParser(content['inserted_at']),
+    );
   }
 }

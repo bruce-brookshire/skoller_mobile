@@ -72,10 +72,6 @@ class Mod {
       return null;
     }
 
-    DateTime createdOn = content['mod_created_at'] == null
-        ? null
-        : DateTime.parse(content['mod_created_at']);
-
     ModType modType;
     dynamic data;
 
@@ -100,7 +96,7 @@ class Mod {
           break;
         case 'Due Date':
           modType = ModType.due;
-          data = DateTime.parse(content['data']['due']);
+          data = _dateParser(content['data']['due']);
           break;
         case 'New Assignment':
           modType = ModType.newAssignment;
@@ -124,7 +120,7 @@ class Mod {
       content['class']['id'],
       content['students_accepted_count'],
       content['short_msg'],
-      createdOn,
+      _dateParser(content['mod_created_at']),
       modType,
       content['is_accepted'],
       data,

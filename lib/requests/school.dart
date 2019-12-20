@@ -189,7 +189,7 @@ class Period {
   School getSchool() => School.currentSchools[schoolId];
 
   int get hashCode => id;
-  bool operator==(rhs) => rhs is Period && rhs.id == id;
+  bool operator ==(rhs) => rhs is Period && rhs.id == id;
 
   Future<RequestResponse> createClass({
     @required String className,
@@ -233,10 +233,8 @@ class Period {
       content['id'],
       content['school_id'],
       content['name'],
-      content['start_date'] != null
-          ? DateTime.parse(content['start_date'])
-          : null,
-      content['end_date'] != null ? DateTime.parse(content['end_date']) : null,
+      _dateParser(content['start_date']),
+      _dateParser(content['end_date']),
       content['is_main_period'] ?? false,
       content['class_period_status']['id'],
     );

@@ -107,14 +107,15 @@ class SKUser {
     return (await request.send()).statusCode;
   }
 
-  Future<RequestResponse> checkEmailDomain() {
-    final emailDomain = email.split('@')[1];
-    return SKRequests.get(
-        '/email_domains/$emailDomain/check', School._fromJsonObj);
-  }
+  Future<RequestResponse> checkEmailDomain() => SKRequests.get(
+        '/email_domains/${email.split('@')[1]}/check',
+        School._fromJsonObj,
+      );
 
-  Future<RequestResponse> getJobProfile() =>
-      SKRequests.get('/users/$id/job-profile', JobProfile._fromJsonObj);
+  Future<RequestResponse> getJobProfile() => SKRequests.get(
+        '/users/$id/job-profile',
+        JobProfile._fromJsonObj,
+      );
 }
 
 class Student {
@@ -142,6 +143,7 @@ class Student {
   School primarySchool;
   Period primaryPeriod;
   TypeObject degreeType;
+  RaiseEffort raiseEffort;
 
   DateTime notificationTime;
   DateTime futureNotificationTime;
@@ -153,6 +155,11 @@ class Student {
       return phone;
     }
   }
+
+  Future<RequestResponse> getSignupOrganization() => SKRequests.get(
+        '/students/$id/signup-organization',
+        Organization._fromJsonObject,
+      );
 
   Student._fromJson(Map content) {
     schools =
@@ -187,6 +194,7 @@ class Student {
     enrollmentLink = content['enrollment_link'];
     todoDaysFuture = content['todo_days_future'];
     todoDaysPast = content['todo_days_past'];
+    raiseEffort = content['raise_effort'] == null ? null : RaiseEffort._fromJsonObject(content['raise_effort']);
 
     degreeType = content['degree_type'] != null
         ? TypeObject._fromJsonObj(content['degree_type'])
@@ -328,4 +336,49 @@ class TypeObject {
 
   static Future<RequestResponse> getJobTypes() =>
       SKRequests.get('/skoller-jobs/types/job_search', _fromJsonObj);
+}
+
+class RaiseEffort {
+  final int personalSignups;
+  final int orgSignups;
+  final String orgName;
+  final int orgId;
+
+  RaiseEffort(this.personalSignups, this.orgSignups, this.orgName, this.orgId);
+
+  static RaiseEffort _fromJsonObject(Map content) => RaiseEffort(
+        content['personal_signups'],
+        content['org_signups'],
+        content['org_name'],
+        content['org_id'],
+      );
+}
+
+class Organization {
+  final int id;
+  final int signup_count;
+
+  final String name;
+  final String link;
+
+  final DateTime start_date;
+  final DateTime end_date;
+
+  Organization(
+    this.id,
+    this.signup_count,
+    this.name,
+    this.link,
+    this.start_date,
+    this.end_date,
+  );
+
+  static Organization _fromJsonObject(Map content) => Organization(
+        content['id'],
+        content['signup_count'],
+        content['name'],
+        content['link'],
+        _dateParser(content['start_date']),
+        _dateParser(content['end_date']),
+      );
 }

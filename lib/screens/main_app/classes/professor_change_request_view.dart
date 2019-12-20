@@ -99,9 +99,6 @@ class _ProfessorChangeRequestViewState
         availability: !origAvailability && availability != '' ? availability : null,
       );
 
-      print(change_response);
-      print(direct_response);
-
       if (direct_response && change_response) {
         await studentClass.refetchSelf();
 

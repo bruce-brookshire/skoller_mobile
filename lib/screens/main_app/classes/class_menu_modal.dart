@@ -9,8 +9,8 @@ import 'package:skoller/screens/main_app/classes/class_info_view.dart';
 import 'package:skoller/screens/main_app/classes/classmates_view.dart';
 import 'package:skoller/screens/main_app/classes/grade_scale_view.dart';
 import 'package:skoller/screens/main_app/classes/modals/add_grade_scale_modal.dart';
-import 'package:skoller/screens/main_app/classes/modals/class_link_sharing_modal.dart';
 import 'package:skoller/screens/main_app/classes/weights_info_view.dart';
+import 'package:skoller/screens/main_app/menu/profile_link_sharing_view.dart';
 import 'package:skoller/tools.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -37,7 +37,7 @@ class _ClassMenuState extends State<ClassMenuModal> {
     Navigator.push(
       context,
       SKNavOverlayRoute(
-        builder: (_) => ClassLinkSharingModal(studentClass.id),
+        builder: (_) => ProfileLinkSharingView(studentClass.id),
       ),
     );
   }

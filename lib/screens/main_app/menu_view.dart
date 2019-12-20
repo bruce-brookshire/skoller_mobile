@@ -121,13 +121,22 @@ class MenuView extends StatelessWidget {
                       child: GestureDetector(
                         behavior: HitTestBehavior.opaque,
                         onTapUp: (details) {
-                          if (row.containsKey('builder'))
+                          if (row.containsKey('builder')) {
+                            String channel;
+                            Widget view = (row['builder'] as Function)();
+
+                            if (view is ProfileLinkSharingView)
+                              channel = NotificationChannels
+                                  .presentModalViewOverTabBar;
+                            else
+                              channel =
+                                  NotificationChannels.presentViewOverTabBar;
+
                             DartNotificationCenter.post(
-                              channel:
-                                  NotificationChannels.presentViewOverTabBar,
-                              options: (row['builder'] as Function)(),
+                              channel: channel,
+                              options: view,
                             );
-                          else if (row.containsKey('action'))
+                          } else if (row.containsKey('action'))
                             (row['action'] as VoidCallback)();
                         },
                         child: Row(

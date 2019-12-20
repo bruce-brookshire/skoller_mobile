@@ -89,15 +89,6 @@ class JobProfile {
   static JobProfile currentProfile;
 
   static JobProfile _fromJsonObj(Map content) {
-    // Dates
-    final wakeupDate = content['wakeup_date'] == null
-        ? null
-        : DateTime.parse(content['wakeup_date']);
-
-    final graduationDate = content['graduation_date'] == null
-        ? null
-        : DateTime.parse(content['graduation_date']);
-
     // Types
     final degreeType = content['degree_type'] == null
         ? null
@@ -143,8 +134,8 @@ class JobProfile {
       jobSearchType,
       ethnicityType,
       jobProfileStatus,
-      wakeupDate,
-      graduationDate,
+      _dateParser(content['wakeup_date']),
+      _dateParser(content['graduation_date']),
       JsonListMaker.convert(
         Activity._fromJsonObj,
         content['volunteer_activities'] ?? [],

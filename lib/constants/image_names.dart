@@ -16,6 +16,7 @@ class ImageNames {
   static final classesImages = _ClassesImages();
   static final jobsImages = _JobsImages();
   static final sammiJobsImages = _SammiJobsImages();
+  static final shareImages = _ShareImages();
 }
 
 class _MenuImages {
@@ -184,3 +185,10 @@ class _JobsImages {
 }
 
 
+class _ShareImages {
+  static const _base = 'image_assets/share_assets';
+
+  final aoii_share_image = '$_base/aoii_share_image.png';
+  final asa_share_image = '$_base/asa_share_image.png';
+  final amazon_card_image = '$_base/amazon_share_image.png';
+}

@@ -762,7 +762,6 @@ class _SKCompletionCirclePainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    print(size.width);
     final fillPaint = Paint()
       ..color = SKColors.jobs_dark_green
       ..style = PaintingStyle.stroke
