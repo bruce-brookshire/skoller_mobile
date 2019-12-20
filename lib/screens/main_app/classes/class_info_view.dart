@@ -29,7 +29,7 @@ class ClassInfoView extends StatelessWidget {
         DartNotificationCenter.post(channel: NotificationChannels.classChanged);
 
         if (isClassesTab) {
-          Navigator.popUntil(context, (route) => route.isFirst);
+          Navigator.pop(context, true);
         } else {
           Navigator.pop(context);
         }

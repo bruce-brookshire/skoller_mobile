@@ -9,10 +9,13 @@ import 'package:skoller/tools.dart';
 class _SyllabusAction {
   final String header;
   final String subHeader;
+  final Text richSubHeader;
   final String prompt;
+  final Text richPrompt;
   final String imageName;
   final String primaryActionStr;
   final String secondaryActionStr;
+  final GifWrapper gifWrapper;
 
   final VoidCallback primaryAction;
   final VoidCallback secondaryAction;
@@ -22,13 +25,16 @@ class _SyllabusAction {
   _SyllabusAction({
     @required this.header,
     this.subHeader,
+    this.richSubHeader,
     this.prompt,
+    this.richPrompt,
     @required this.imageName,
     @required this.primaryActionStr,
     this.secondaryActionStr,
     @required this.primaryAction,
     this.secondaryAction,
     this.primaryActionImageName,
+    this.gifWrapper,
   });
 }
 
@@ -58,17 +64,38 @@ class ClassStatusModal extends StatelessWidget {
             .contains(statusId) &&
         (studentClass?.enrollment ?? 0) < 4) {
       status = _SyllabusAction(
-        header: 'You\'re in!',
-        subHeader: 'And this class is already set up 🙌',
-        prompt: 'Invite classmates using your class link 👇',
-        imageName: ImageNames.statusImages.setup_community,
-        primaryActionImageName: ImageNames.peopleImages.people_white,
-        primaryActionStr: 'Share with classmates',
-        secondaryActionStr: 'Join another class',
-        primaryAction: () {
-          Share.share(studentClass.shareMessage);
-        },
-        secondaryAction: () => Navigator.pop(context),
+        header: studentClass.name,
+        richSubHeader: Text.rich(
+          TextSpan(
+            text: 'This class is',
+            children: [
+              TextSpan(
+                text: ' ALREADY LIVE⚡️',
+                style: TextStyle(fontWeight: FontWeight.bold),
+              )
+            ],
+            style: TextStyle(fontWeight: FontWeight.normal),
+          ),
+          textAlign: TextAlign.center,
+        ),
+        richPrompt: Text.rich(
+          TextSpan(
+            text: '${studentClass.assignments?.length ?? 0} assignments ',
+            children: [
+              TextSpan(
+                text: 'have been\norganized in your To-Do\'s!',
+                style: TextStyle(fontWeight: FontWeight.normal),
+              )
+            ],
+          ),
+          textAlign: TextAlign.center,
+        ),
+        // imageName: ImageNames.statusImages.todolist_gif,
+        gifWrapper: GifWrapper('todolist_gif_assets', 188),
+        primaryActionStr: 'Add another class',
+        secondaryActionStr: 'Enter Skoller 👌',
+        primaryAction: () => Navigator.pop(context),
+        secondaryAction: () => Navigator.pop(context, true),
       );
     } else if ([ClassStatuses.class_setup, ClassStatuses.class_issue]
             .contains(statusId) &&
@@ -145,13 +172,21 @@ class ClassStatusModal extends StatelessWidget {
                 textAlign: TextAlign.center,
                 style: TextStyle(fontWeight: FontWeight.normal),
               ),
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 24),
-              child: Image.asset(
-                status.imageName,
-                fit: BoxFit.fitHeight,
+            if (status.richSubHeader != null) status.richSubHeader,
+            if (status.imageName != null)
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 24),
+                child: Image.asset(
+                  status.imageName,
+                  fit: BoxFit.fitHeight,
+                  gaplessPlayback: true,
+                ),
               ),
-            ),
+            if (status.gifWrapper != null)
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 24),
+                child: status.gifWrapper,
+              ),
             if (status.prompt != null)
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: 12),
@@ -161,6 +196,7 @@ class ClassStatusModal extends StatelessWidget {
                   style: TextStyle(fontSize: 15),
                 ),
               ),
+            if (status.richPrompt != null) status.richPrompt,
             GestureDetector(
               onTapUp: (details) => status.primaryAction(),
               child: Container(

@@ -70,5 +70,6 @@ flutter:
     - image_assets/jobs_assets/
     - image_assets/tutorial_assets/
     - image_assets/share_assets/
+    - image_assets/todolist_gif_assets/
     - packages/time_machine/data/cultures/cultures.bin
     - packages/time_machine/data/tzdb/tzdb.bin

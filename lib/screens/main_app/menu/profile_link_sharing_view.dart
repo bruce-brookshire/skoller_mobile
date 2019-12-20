@@ -43,6 +43,7 @@ class _ProfileLinkSharingState extends State<ProfileLinkSharingView> {
     final linkStripper = (String link) => link.split('//')[1];
 
     final raiseEffort = SKUser.current.student.raiseEffort;
+    print(raiseEffort.orgName);
 
     return SafeArea(
       child: Column(

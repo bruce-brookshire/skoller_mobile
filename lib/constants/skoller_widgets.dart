@@ -1284,7 +1284,16 @@ class SKHeaderProfilePhoto extends StatelessWidget {
       );
 }
 
-enum SammiPersonality { cool, smile, wow, ooo, school, jobsSmile, jobsOoo, jobsCool }
+enum SammiPersonality {
+  cool,
+  smile,
+  wow,
+  ooo,
+  school,
+  jobsSmile,
+  jobsOoo,
+  jobsCool
+}
 enum SammiSide { left, right }
 
 class SammiSpeechBubble extends StatelessWidget {
@@ -1734,5 +1743,51 @@ class _ShakeAnimationState extends State<ShakeAnimation>
   Widget build(BuildContext context) {
     return Transform.rotate(
         angle: translation, alignment: Alignment.center, child: widget.child);
+  }
+}
+
+class GifWrapper extends StatefulWidget {
+  final String baseGifName;
+  final int gifLength;
+
+  GifWrapper(this.baseGifName, this.gifLength);
+
+  @override
+  State createState() => new _GifWrapperState();
+}
+
+class _GifWrapperState extends State<GifWrapper> with TickerProviderStateMixin {
+  AnimationController _controller;
+  Animation<int> _animation;
+
+  @override
+  void initState() {
+    super.initState();
+
+    _controller =
+        AnimationController(vsync: this, duration: Duration(seconds: 5));
+    _animation = IntTween(begin: 0, end: widget.gifLength).animate(_controller);
+    
+    _controller.forward();
+  }
+
+  @override
+void dispose() {
+  super.dispose();
+
+  _controller.dispose();
+}
+
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+      animation: _animation,
+      builder: (BuildContext context, Widget child) {
+        String frame = _animation.value.toString().padLeft(3, '0');
+        return Image.asset(
+          'image_assets/${widget.baseGifName}/frame_${frame}_delay-0.04s.png',
+          gaplessPlayback: true,
+        );
+      },
+    );
   }
 }

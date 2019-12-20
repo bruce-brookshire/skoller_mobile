@@ -239,6 +239,8 @@ class _AddClassesState extends State<AddClassesView> {
                           //Should we propogate pop?
                           if (val is bool) {
                             Navigator.pop(context, val);
+                          } else {
+                            searchController.text = '';
                           }
                         });
                       DartNotificationCenter.post(
@@ -409,7 +411,11 @@ class _AddClassesState extends State<AddClassesView> {
   }
 
   Widget createHeader() {
-    final classCount = StudentClass.currentClasses.values.fold(0, (a, s) => a + (s.classPeriod == SKUser.current.student.primaryPeriod ? 1 : 0));
+    final classCount = StudentClass.currentClasses.values.fold(
+        0,
+        (a, s) =>
+            a +
+            (s.classPeriod == SKUser.current.student.primaryPeriod ? 1 : 0));
 
     return Container(
       height: 128,

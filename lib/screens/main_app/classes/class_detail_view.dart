@@ -54,7 +54,10 @@ class _ClassDetailState extends State<ClassDetailView> {
 
   Future fetchClass([_]) async {
     final classRefresh =
-        StudentClass.currentClasses[widget.classId].refetchSelf();
+        StudentClass.currentClasses[widget.classId]?.refetchSelf();
+
+    if (classRefresh == null) return;
+    
     final modRefresh = Mod.fetchMods();
 
     await classRefresh;

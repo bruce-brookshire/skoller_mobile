@@ -118,13 +118,16 @@ class _ClassMenuState extends State<ClassMenuModal> {
     );
   }
 
-  void tappedClassInfo(BuildContext context) {
-    Navigator.push(
+  void tappedClassInfo(BuildContext context) async {
+    final shouldPop = await Navigator.push(
       context,
       CupertinoPageRoute(
         builder: (_) => ClassInfoView(widget.classId),
       ),
     );
+
+    if (shouldPop is bool && shouldPop)
+      Navigator.popUntil(context, (route) => route.isFirst);
   }
 
   void tappedGradeScale(BuildContext context) async {

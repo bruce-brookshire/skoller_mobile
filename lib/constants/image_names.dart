@@ -156,6 +156,7 @@ class _StatusImages {
   final needs_syllabus = '${_base}/needs_syllabus.png';
   final setup_community = '${_base}/setup_community.png';
   final setup_live = '${_base}/setup_live.png';
+  final todolist_gif = '${_base}/todolist_gif.gif';
 }
 
 class _ClassInfoImages {
