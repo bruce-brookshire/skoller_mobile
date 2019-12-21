@@ -1,7 +1,6 @@
 import 'package:dart_notification_center/dart_notification_center.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:skoller/screens/main_app/jobs/jobs_view.dart';
 import 'package:skoller/screens/main_app/tutorial/activity_tutorial_view.dart';
 import 'package:skoller/screens/main_app/tutorial/calendar_tutorial_view.dart';
 import 'package:skoller/screens/main_app/tutorial/jobs_tutorial_view.dart';
