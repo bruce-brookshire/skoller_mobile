@@ -797,6 +797,38 @@ class SKCoverSheetNav extends ModalRoute<Object> {
   }
 }
 
+class SKNoAnimationRoute extends ModalRoute<Object> {
+  final WidgetBuilder builder;
+
+  SKNoAnimationRoute({@required this.builder});
+
+  @override
+  Duration get transitionDuration => Duration(milliseconds: 0);
+
+  @override
+  bool get opaque => false;
+
+  @override
+  bool get barrierDismissible => false;
+
+  @override
+  Color get barrierColor => Colors.black;
+
+  @override
+  String get barrierLabel => null;
+
+  @override
+  bool get maintainState => true;
+
+  @override
+  Widget buildPage(
+    BuildContext context,
+    Animation<double> _,
+    Animation<double> __,
+  ) =>
+      builder(context);
+}
+
 class SKLoadingScreen extends ModalRoute<void> {
   static SKLoadingScreen fadeIn(BuildContext context) {
     final loadingScreen = SKLoadingScreen();
@@ -1767,16 +1799,16 @@ class _GifWrapperState extends State<GifWrapper> with TickerProviderStateMixin {
     _controller =
         AnimationController(vsync: this, duration: Duration(seconds: 5));
     _animation = IntTween(begin: 0, end: widget.gifLength).animate(_controller);
-    
+
     _controller.forward();
   }
 
   @override
-void dispose() {
-  super.dispose();
+  void dispose() {
+    super.dispose();
 
-  _controller.dispose();
-}
+    _controller.dispose();
+  }
 
   Widget build(BuildContext context) {
     return AnimatedBuilder(

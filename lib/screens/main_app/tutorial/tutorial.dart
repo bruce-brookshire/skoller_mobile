@@ -1,7 +1,10 @@
+import 'package:dart_notification_center/dart_notification_center.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:skoller/screens/main_app/jobs/jobs_view.dart';
 import 'package:skoller/screens/main_app/tutorial/activity_tutorial_view.dart';
 import 'package:skoller/screens/main_app/tutorial/calendar_tutorial_view.dart';
+import 'package:skoller/screens/main_app/tutorial/jobs_tutorial_view.dart';
 import 'package:skoller/screens/main_app/tutorial/todo_tutorial_view.dart';
 import 'package:skoller/tools.dart';
 
@@ -23,25 +26,46 @@ class _TutorialTabState extends State<TutorialTab> {
     'calendar_',
     'classes_',
     'activity_',
+    'jobs_',
   ];
 
-  int _selectedIndex = 0;
+  final tabController = CupertinoTabController(initialIndex: 0);
 
   @override
   void initState() {
+    final tapDismiss = () => widget.onTapDismiss(context);
+
     views = [
-      TodoTutorialView(() => widget.onTapDismiss(context), widget.promptMsg),
-      CalendarTutorialView(() => widget.onTapDismiss(context), widget.promptMsg),
-      _ViewFour(() => widget.onTapDismiss(context), widget.promptMsg),
-      ActivityTutorialView(() => widget.onTapDismiss(context), widget.promptMsg),
+      TodoTutorialView(tapDismiss, widget.promptMsg),
+      CalendarTutorialView(tapDismiss, widget.promptMsg),
+      _ViewFour(tapDismiss, widget.promptMsg),
+      ActivityTutorialView(tapDismiss, widget.promptMsg),
+      JobsTutorialView(tapDismiss, widget.promptMsg)
     ];
+
+    DartNotificationCenter.subscribe(
+      observer: this,
+      channel: NotificationChannels.selectTab,
+      onNotification: (index) => setState(() => tabController.index = index),
+    );
 
     super.initState();
   }
 
   @override
+  void dispose() {
+    super.dispose();
+
+    DartNotificationCenter.unsubscribe(
+      channel: NotificationChannels.selectTab,
+      observer: this,
+    );
+  }
+
+  @override
   Widget build(BuildContext context) {
     return CupertinoTabScaffold(
+      controller: tabController,
       tabBuilder: (context, index) {
         return CupertinoTabView(builder: (context) {
           return CupertinoPageScaffold(child: views[index]);
@@ -50,8 +74,8 @@ class _TutorialTabState extends State<TutorialTab> {
       tabBar: CupertinoTabBar(
         backgroundColor: Colors.white,
         items: List.generate(5, createTabIndex),
-        currentIndex: _selectedIndex,
-        onTap: (index) => setState(() => _selectedIndex = index),
+        currentIndex: tabController.index,
+        onTap: (index) => setState(() => tabController.index = index),
       ),
     );
   }
@@ -59,7 +83,7 @@ class _TutorialTabState extends State<TutorialTab> {
   BottomNavigationBarItem createTabIndex(int index) {
     return BottomNavigationBarItem(
       icon: Image.asset(
-          'image_assets/tab_bar_assets/${_indexIconPartialPaths[index]}${_selectedIndex == index ? 'blue' : 'gray'}.png'),
+          'image_assets/tab_bar_assets/${_indexIconPartialPaths[index]}${tabController.index == index ? 'blue' : 'gray'}.png'),
     );
   }
 }
@@ -98,12 +122,8 @@ class _ViewFour extends StatelessWidget {
   _ViewFour(this.onTapDismiss, this.promptMsg);
 
   final classes = [
-    _GradesCellItem('Calculus I', 89, 9, 0.13, 0),
-    _GradesCellItem('Cultural Rhetorics of Film', 97, 7, 0.27, 6),
-    _GradesCellItem('Financial Accounting', 92, 16, 0.23, 1),
-    _GradesCellItem('Microeconomics', 88, 14, 0.4, 3),
-    _GradesCellItem('Philosophy 101', 94, 13, 0.68, 2),
-    _GradesCellItem('Research', 99, 5, 0.35, 4),
+    _GradesCellItem('Microeconomics', 88, 18, 0.4, 3),
+    _GradesCellItem('Philosophy 101', 94, 11, 0.68, 2),
   ];
 
   @override
@@ -125,46 +145,103 @@ class _ViewFour extends StatelessWidget {
           ],
         ),
         Container(color: Colors.black.withOpacity(0.5)),
-        Material(
-          color: Colors.transparent,
-          child: SafeArea(
-            bottom: false,
-            child: Column(
-              children: <Widget>[
-                Padding(
-                  padding: EdgeInsets.only(left: 12, right: 12, top: 48),
-                  child: SammiSpeechBubble(
-                    sammiPersonality: SammiPersonality.wow,
-                    speechBubbleContents: Text.rich(
-                      TextSpan(text: 'Classes', children: [
-                        TextSpan(
-                            text:
-                                ' includes a grade calculator so you stay on track.',
-                            style: TextStyle(fontWeight: FontWeight.normal))
-                      ]),
+        Align(
+          child: Material(
+            type: MaterialType.transparency,
+            child: Padding(
+              padding: EdgeInsets.fromLTRB(24, 24, 24, 0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: <Widget>[
+                  GestureDetector(
+                    onTapUp: (_) => DartNotificationCenter.post(
+                      channel: NotificationChannels.selectTab,
+                      options: 1,
+                    ),
+                    child: Container(
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(8),
+                          border: Border.all(color: Colors.white),
+                          color: SKColors.skoller_blue),
+                      padding: EdgeInsets.all(12),
+                      child: Icon(
+                        Icons.arrow_back_ios,
+                        color: Colors.white,
+                        size: 20,
+                      ),
                     ),
                   ),
-                ),
-                Spacer(),
-                GestureDetector(
-                  onTapUp: (details) => onTapDismiss(),
-                  child: Container(
-                    padding: EdgeInsets.symmetric(vertical: 8, horizontal: 24),
-                    margin: EdgeInsets.only(bottom: 48),
-                    decoration: BoxDecoration(
-                      color: SKColors.skoller_blue,
-                      borderRadius: BorderRadius.circular(5),
-                      border: Border.all(color: Colors.white),
-                      boxShadow: UIAssets.boxShadow,
+                  GestureDetector(
+                    onTapUp: (_) => DartNotificationCenter.post(
+                      channel: NotificationChannels.selectTab,
+                      options: 3,
                     ),
-                    child: Text(
-                      promptMsg,
-                      style: TextStyle(color: Colors.white, fontSize: 16),
+                    child: Container(
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(8),
+                          border: Border.all(color: Colors.white),
+                          color: SKColors.skoller_blue),
+                      padding: EdgeInsets.all(12),
+                      child: Icon(
+                        Icons.arrow_forward_ios,
+                        color: Colors.white,
+                        size: 20,
+                      ),
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
+          ),
+        ),
+        Align(
+          alignment: Alignment.bottomCenter,
+          child: GestureDetector(
+            onTapUp: (details) => onTapDismiss(),
+            child: Container(
+              padding: EdgeInsets.symmetric(vertical: 8, horizontal: 24),
+              margin: EdgeInsets.only(bottom: 48),
+              decoration: BoxDecoration(
+                color: SKColors.skoller_blue,
+                borderRadius: BorderRadius.circular(5),
+                border: Border.all(color: Colors.white),
+                boxShadow: UIAssets.boxShadow,
+              ),
+              child: Material(
+                type: MaterialType.transparency,
+                child: Text(
+                  promptMsg,
+                  style: TextStyle(color: Colors.white, fontSize: 16),
+                ),
+              ),
+            ),
+          ),
+        ),
+        Align(
+          alignment: Alignment.topCenter,
+          child: Column(
+            children: [
+              Material(
+                type: MaterialType.transparency,
+                child: SafeArea(
+                  bottom: false,
+                  child: Padding(
+                    padding: EdgeInsets.only(left: 12, right: 12, top: 48),
+                    child: SammiSpeechBubble(
+                      sammiPersonality: SammiPersonality.wow,
+                      speechBubbleContents: Text.rich(
+                        TextSpan(text: 'Classes', children: [
+                          TextSpan(
+                              text:
+                                  ' includes a grade calculator so you stay on track.',
+                              style: TextStyle(fontWeight: FontWeight.normal))
+                        ]),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ],
           ),
         ),
       ],
@@ -194,63 +271,57 @@ class _ViewFour extends StatelessWidget {
                 borderRadius: BorderRadius.only(
                     topLeft: Radius.circular(5),
                     bottomLeft: Radius.circular(5))),
-            child: Text(
-              grade == null
-                  ? '--%'
-                  : '${NumberUtilities.formatGradeAsPercent(grade)}',
-              textScaleFactor: 1,
-              style: TextStyle(
-                  color: Colors.white, fontSize: 17, letterSpacing: -0.75),
+            child: Material(
+              type: MaterialType.transparency,
+              child: Text(
+                grade == null
+                    ? '--%'
+                    : '${NumberUtilities.formatGradeAsPercent(grade)}',
+                textScaleFactor: 1,
+                style: TextStyle(
+                    color: Colors.white, fontSize: 17, letterSpacing: -0.75),
+              ),
             ),
           ),
-          Container(
-            padding: EdgeInsets.only(left: 8, right: 8, bottom: 1),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Container(
-                  padding: EdgeInsets.only(bottom: 1),
-                  child: Text(
-                    studentClass.name,
-                    textScaleFactor: 1,
-                    style: TextStyle(
-                        fontSize: 17, color: _colors[studentClass.color]),
-                  ),
-                ),
-                Row(
-                  children: <Widget>[
-                    Container(
-                      padding: EdgeInsets.only(right: 5, bottom: 2),
-                      child:
-                          Image.asset(ImageNames.peopleImages.person_dark_gray),
-                    ),
-                    Text(
-                      '${studentClass.classmates - 1} classmate${(studentClass.classmates - 1) == 1 ? '' : 's'}',
-                      textScaleFactor: 1,
-                      style: TextStyle(
-                          fontWeight: FontWeight.normal, fontSize: 14),
-                    ),
-                  ],
-                ),
-                Row(
-                  children: <Widget>[
-                    Padding(
-                      padding: EdgeInsets.only(bottom: 1, right: 4),
-                      child: ClassCompletionChart(
-                        studentClass.completion,
-                        SKColors.dark_gray,
+          Expanded(
+            child: Container(
+              padding: EdgeInsets.only(left: 8, right: 8, bottom: 2),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Container(
+                    padding: EdgeInsets.only(bottom: 1),
+                    child: Material(
+                      type: MaterialType.transparency,
+                      child: Text(
+                        studentClass.name,
+                        textScaleFactor: 1,
+                        style: TextStyle(
+                          fontSize: 17,
+                          letterSpacing: 1,
+                          fontWeight: FontWeight.w800,
+                          color: _colors[studentClass.color],
+                        ),
                       ),
                     ),
-                    Text(
-                      '${(studentClass.completion * 100).round()}% complete',
-                      textScaleFactor: 1,
-                      style: TextStyle(
-                          fontWeight: FontWeight.normal, fontSize: 14),
-                    ),
-                  ],
-                ),
-              ],
+                  ),
+                  Row(
+                    children: <Widget>[
+                      Container(
+                        padding: EdgeInsets.only(right: 5, bottom: 2),
+                        child: Image.asset(ImageNames.peopleImages.people_gray),
+                      ),
+                      Text(
+                        '${studentClass.classmates} classmate${studentClass.classmates == 1 ? '' : 's'}',
+                        textScaleFactor: 1,
+                        style: TextStyle(
+                            fontWeight: FontWeight.normal, fontSize: 14),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
             ),
           ),
         ],

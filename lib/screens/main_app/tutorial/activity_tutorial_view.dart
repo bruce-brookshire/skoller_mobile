@@ -1,3 +1,4 @@
+import 'package:dart_notification_center/dart_notification_center.dart';
 import 'package:flutter/material.dart';
 import 'package:skoller/tools.dart';
 
@@ -15,7 +16,6 @@ final _colors = [
 class _ActivityCellItem {
   final int color;
   final String date;
-  final bool isMod;
   final String className;
   final String msg;
 
@@ -27,7 +27,6 @@ class _ActivityCellItem {
   _ActivityCellItem(
     this.color,
     this.date,
-    this.isMod,
     this.className,
     this.msg, {
     this.modImg,
@@ -43,28 +42,10 @@ class ActivityTutorialView extends StatelessWidget {
   ActivityTutorialView(this.onTapDismiss, this.promptMsg);
 
   final items = [
-    _ActivityCellItem(0, '48 min.', true, 'Calculus I', 'Exam 2 added',
+    _ActivityCellItem(0, '48 min.', 'Calculus I', 'Exam 2 added',
         modImg: ImageNames.activityImages.add_white),
-    _ActivityCellItem(3, '2 hrs.', false, 'Microeconomics',
-        'replied to your comment on Homework 2 in',
-        postName: 'Lexie Brown',
-        postPost:
-            'I agree, but remember that you have to take inflation into account.'),
-    _ActivityCellItem(2, '7 hrs.', true, 'Philosophy 101',
-        'Reading Quiz 2 due date changed to Oct. 16th',
+    _ActivityCellItem(2, '7 hrs.', 'Philosophy 101', 'Due date change',
         modImg: ImageNames.activityImages.due_white),
-    _ActivityCellItem(
-        3, '2 days', true, 'Microeconomics', 'Reading Response added',
-        modImg: ImageNames.activityImages.add_white),
-    _ActivityCellItem(1, '4 days', false, 'Financial Accounting',
-        'replied to your comment on Midterm 2 in',
-        postName: 'Jack Rogers',
-        postPost:
-            'No, section 4 will not be on the exam, but section 5 will be. Good luck studying!'),
-    _ActivityCellItem(2, '5 days', false, 'Philosophy 101',
-        'replied to your comment on Reading Quiz 1 in',
-        postName: 'Janie Wilcox',
-        postPost: 'We actually only have to read pgs. 110-132 for the quiz!'),
   ];
 
   @override
@@ -79,60 +60,167 @@ class ActivityTutorialView extends StatelessWidget {
             Expanded(
               child: ListView(
                 padding: EdgeInsets.only(top: 72),
-                children: items.map(buildListItem).toList(),
+                children: items.map(createModCard).toList(),
               ),
             )
           ],
         ),
         Container(color: Colors.black.withOpacity(0.5)),
-        Material(
-          color: Colors.transparent,
-          child: SafeArea(
-            bottom: false,
-            child: Column(
-              children: <Widget>[
-                Padding(
-                  padding: EdgeInsets.only(left: 12, right: 12, top: 48),
-                  child: SammiSpeechBubble(
-                    sammiPersonality: SammiPersonality.smile,
-                    speechBubbleContents: Text.rich(
-                      TextSpan(text: 'Activity', children: [
-                        TextSpan(
-                            text:
-                                ' shows schedule updates from your classmates.',
-                            style: TextStyle(fontWeight: FontWeight.normal))
-                      ]),
+        Align(
+          child: Material(
+            type: MaterialType.transparency,
+            child: Padding(
+              padding: EdgeInsets.fromLTRB(24, 24, 24, 0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: <Widget>[
+                  GestureDetector(
+                    onTapUp: (_) => DartNotificationCenter.post(
+                      channel: NotificationChannels.selectTab,
+                      options: 2,
+                    ),
+                    child: Container(
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(8),
+                          border: Border.all(color: Colors.white),
+                          color: SKColors.skoller_blue),
+                      padding: EdgeInsets.all(12),
+                      child: Icon(
+                        Icons.arrow_back_ios,
+                        color: Colors.white,
+                        size: 20,
+                      ),
                     ),
                   ),
-                ),
-                Spacer(),
-                GestureDetector(
-                  onTapUp: (details) => onTapDismiss(),
-                  child: Container(
-                    padding: EdgeInsets.symmetric(vertical: 8, horizontal: 24),
-                    margin: EdgeInsets.only(bottom: 48),
-                    decoration: BoxDecoration(
-                      color: SKColors.skoller_blue,
-                      borderRadius: BorderRadius.circular(5),
-                      border: Border.all(color: Colors.white),
-                      boxShadow: UIAssets.boxShadow,
+                  GestureDetector(
+                    onTapUp: (_) => DartNotificationCenter.post(
+                      channel: NotificationChannels.selectTab,
+                      options: 4,
                     ),
-                    child: Text(
-                      promptMsg,
-                      style: TextStyle(color: Colors.white, fontSize: 16),
+                    child: Container(
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(8),
+                          border: Border.all(color: Colors.white),
+                          color: SKColors.skoller_blue),
+                      padding: EdgeInsets.all(12),
+                      child: Icon(
+                        Icons.arrow_forward_ios,
+                        color: Colors.white,
+                        size: 20,
+                      ),
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
+          ),
+        ),
+        Align(
+          alignment: Alignment.bottomCenter,
+          child: GestureDetector(
+            onTapUp: (details) => onTapDismiss(),
+            child: Container(
+              padding: EdgeInsets.symmetric(vertical: 8, horizontal: 24),
+              margin: EdgeInsets.only(bottom: 48),
+              decoration: BoxDecoration(
+                color: SKColors.skoller_blue,
+                borderRadius: BorderRadius.circular(5),
+                border: Border.all(color: Colors.white),
+                boxShadow: UIAssets.boxShadow,
+              ),
+              child: Material(
+                type: MaterialType.transparency,
+                child: Text(
+                  promptMsg,
+                  style: TextStyle(color: Colors.white, fontSize: 16),
+                ),
+              ),
+            ),
+          ),
+        ),
+        Align(
+          alignment: Alignment.topCenter,
+          child: Column(
+            children: [
+              Material(
+                type: MaterialType.transparency,
+                child: SafeArea(
+                  bottom: false,
+                  child: Padding(
+                    padding: EdgeInsets.only(left: 12, right: 12, top: 48),
+                    child: SammiSpeechBubble(
+                      sammiPersonality: SammiPersonality.ooo,
+                      speechBubbleContents: Text.rich(
+                        TextSpan(text: 'Calendar', children: [
+                          TextSpan(
+                              text:
+                                  ' gives a bird\'s eye view of your entire semester.',
+                              style: TextStyle(fontWeight: FontWeight.normal))
+                        ]),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+        Align(
+          alignment: Alignment.bottomCenter,
+          child: GestureDetector(
+            onTapUp: (details) => onTapDismiss(),
+            child: Container(
+              padding: EdgeInsets.symmetric(vertical: 8, horizontal: 24),
+              margin: EdgeInsets.only(bottom: 48),
+              decoration: BoxDecoration(
+                color: SKColors.skoller_blue,
+                borderRadius: BorderRadius.circular(5),
+                border: Border.all(color: Colors.white),
+                boxShadow: UIAssets.boxShadow,
+              ),
+              child: Material(
+                type: MaterialType.transparency,
+                child: Text(
+                  promptMsg,
+                  style: TextStyle(color: Colors.white, fontSize: 16),
+                ),
+              ),
+            ),
+          ),
+        ),
+        Align(
+          alignment: Alignment.topCenter,
+          child: Column(
+            children: [
+              Material(
+                type: MaterialType.transparency,
+                child: SafeArea(
+                  bottom: false,
+                  child: Padding(
+                    padding: EdgeInsets.only(left: 12, right: 12, top: 48),
+                    child: SammiSpeechBubble(
+                      sammiPersonality: SammiPersonality.smile,
+                      speechBubbleContents: Text.rich(
+                        TextSpan(
+                          text: 'Activity',
+                          children: [
+                            TextSpan(
+                                text:
+                                    ' shows schedule updates from your classmates.',
+                                style: TextStyle(fontWeight: FontWeight.normal))
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ],
           ),
         ),
       ],
     );
   }
-
-  Widget buildListItem(_ActivityCellItem item) =>
-      item.isMod ? createModCard(item) : createPostCard(item);
 
   Widget createPostCard(_ActivityCellItem post) => Container(
         margin: EdgeInsets.fromLTRB(7, 3, 7, 4),

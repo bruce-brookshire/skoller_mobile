@@ -1,3 +1,4 @@
+import 'package:dart_notification_center/dart_notification_center.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:skoller/tools.dart';
@@ -34,35 +35,20 @@ class CalendarTutorialView extends StatelessWidget {
 
   final Map<String, List<_CalendarItem>> assignments = {
     '10-2': [_CalendarItem('Reading Quiz 1', 3)],
-    '10-4': [
-      _CalendarItem('Assignment 1', 2),
-      _CalendarItem('Lab Quiz 1', 1),
-      _CalendarItem('Research Meeting', 4),
-    ],
-    '10-7': [_CalendarItem('Midterm', 1)],
+    '10-4': [_CalendarItem('Assignment 1', 2)],
     '10-8': [_CalendarItem('Speech Outline', 0)],
-    '10-10': [_CalendarItem('Reading Quiz 2', 3)],
-    '10-14': [
-      _CalendarItem('Speech Presentation', 0),
-      _CalendarItem('Assignment 2', 2),
-    ],
-    '10-16': [_CalendarItem('Lab Quiz 3', 1)],
-    '10-18': [
-      _CalendarItem('Lab Quiz 2', 1),
+    '10-14': [_CalendarItem('Assignment 2', 2)],
+    '10-11': [
+      _CalendarItem('Speech Outline', 0),
       _CalendarItem('Reading Quiz 3', 3),
     ],
-    '10-22': [
-      _CalendarItem('Reading Quiz 4', 3),
-      _CalendarItem('Group Presentation', 6),
-    ],
-    '10-24': [_CalendarItem('Assignment 3', 2)],
+    '10-22': [_CalendarItem('Reading Quiz 4', 3)],
     '10-25': [_CalendarItem('Lab Quiz 4', 1)],
     '10-28': [_CalendarItem('Final', 2)],
     '10-30': [
       _CalendarItem('Research Checkpoint', 4),
       _CalendarItem('Assignment 4', 2),
     ],
-    '10-31': [_CalendarItem('Reading Quiz 5', 3)],
   };
 
   List<_CalendarItem> assignmentsForDate(DateTime day) {
@@ -103,46 +89,102 @@ class CalendarTutorialView extends StatelessWidget {
             ],
           ),
           Container(color: Colors.black.withOpacity(0.5)),
-          Material(
-            color: Colors.transparent,
-            child: SafeArea(
-              bottom: false,
-              child: Column(
-                children: <Widget>[
-                  Padding(
-                    padding: EdgeInsets.only(left: 12, right: 12, top: 48),
-                    child: SammiSpeechBubble(
-                      sammiPersonality: SammiPersonality.ooo,
-                      speechBubbleContents: Text.rich(
-                        TextSpan(text: 'Calendar', children: [
-                          TextSpan(
-                              text:
-                                  ' gives a bird\'s eye view of your entire semester.',
-                              style: TextStyle(fontWeight: FontWeight.normal))
-                        ]),
+          Align(
+            child: Material(
+              type: MaterialType.transparency,
+              child: Padding(
+                padding: EdgeInsets.fromLTRB(24, 24, 24, 0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    GestureDetector(
+                      onTapUp: (_) => DartNotificationCenter.post(
+                        channel: NotificationChannels.selectTab,
+                        options: 0,
+                      ),
+                      child: Container(
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(8),
+                            border: Border.all(color: Colors.white),
+                            color: SKColors.skoller_blue),
+                        padding: EdgeInsets.all(12),
+                        child: Icon(
+                          Icons.arrow_back_ios,
+                          color: Colors.white,
+                          size: 20,
+                        ),
+                      ),
+                    ),
+                    GestureDetector(
+                      onTapUp: (_) => DartNotificationCenter.post(
+                        channel: NotificationChannels.selectTab,
+                        options: 2,
+                      ),
+                      child: Container(
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(8),
+                            border: Border.all(color: Colors.white),
+                            color: SKColors.skoller_blue),
+                        padding: EdgeInsets.all(12),
+                        child: Icon(
+                          Icons.arrow_forward_ios,
+                          color: Colors.white,
+                          size: 20,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+          Align(
+            alignment: Alignment.topCenter,
+            child: Column(
+              children: [
+                Material(
+                  type: MaterialType.transparency,
+                  child: SafeArea(
+                    bottom: false,
+                    child: Padding(
+                      padding: EdgeInsets.only(left: 12, right: 12, top: 48),
+                      child: SammiSpeechBubble(
+                        sammiPersonality: SammiPersonality.ooo,
+                        speechBubbleContents: Text.rich(
+                          TextSpan(text: 'Calendar', children: [
+                            TextSpan(
+                                text:
+                                    ' gives a bird\'s eye view of your entire semester.',
+                                style: TextStyle(fontWeight: FontWeight.normal))
+                          ]),
+                        ),
                       ),
                     ),
                   ),
-                  Spacer(),
-                  GestureDetector(
-                    onTapUp: (details) => onTapDismiss(),
-                    child: Container(
-                      padding:
-                          EdgeInsets.symmetric(vertical: 8, horizontal: 24),
-                      margin: EdgeInsets.only(bottom: 48),
-                      decoration: BoxDecoration(
-                        color: SKColors.skoller_blue,
-                        borderRadius: BorderRadius.circular(5),
-                        border: Border.all(color: Colors.white),
-                        boxShadow: UIAssets.boxShadow,
-                      ),
-                      child: Text(
-                        promptMsg,
-                        style: TextStyle(color: Colors.white, fontSize: 16),
-                      ),
-                    ),
+                ),
+              ],
+            ),
+          ),
+          Align(
+            alignment: Alignment.bottomCenter,
+            child: GestureDetector(
+              onTapUp: (details) => onTapDismiss(),
+              child: Container(
+                padding: EdgeInsets.symmetric(vertical: 8, horizontal: 24),
+                margin: EdgeInsets.only(bottom: 48),
+                decoration: BoxDecoration(
+                  color: SKColors.skoller_blue,
+                  borderRadius: BorderRadius.circular(5),
+                  border: Border.all(color: Colors.white),
+                  boxShadow: UIAssets.boxShadow,
+                ),
+                child: Material(
+                  type: MaterialType.transparency,
+                  child: Text(
+                    promptMsg,
+                    style: TextStyle(color: Colors.white, fontSize: 16),
                   ),
-                ],
+                ),
               ),
             ),
           ),
