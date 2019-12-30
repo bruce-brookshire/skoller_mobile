@@ -110,7 +110,6 @@ class _EditProfileState extends State<EditProfileView> {
                       style: TextStyle(
                         color: Colors.white,
                         fontSize: 22,
-                        letterSpacing: 1,
                       ),
                     )
                   : null,

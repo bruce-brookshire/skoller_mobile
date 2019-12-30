@@ -1,7 +1,6 @@
 import 'package:dart_notification_center/dart_notification_center.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:skoller/screens/main_app/tutorial/activity_tutorial_view.dart';
 import 'package:skoller/screens/main_app/tutorial/calendar_tutorial_view.dart';
 import 'package:skoller/screens/main_app/tutorial/jobs_tutorial_view.dart';
 import 'package:skoller/screens/main_app/tutorial/todo_tutorial_view.dart';
@@ -24,7 +23,6 @@ class _TutorialTabState extends State<TutorialTab> {
     'todos_',
     'calendar_',
     'classes_',
-    'activity_',
     'jobs_',
   ];
 
@@ -38,7 +36,6 @@ class _TutorialTabState extends State<TutorialTab> {
       TodoTutorialView(tapDismiss, widget.promptMsg),
       CalendarTutorialView(tapDismiss, widget.promptMsg),
       _ViewFour(tapDismiss, widget.promptMsg),
-      ActivityTutorialView(tapDismiss, widget.promptMsg),
       JobsTutorialView(tapDismiss, widget.promptMsg)
     ];
 
@@ -72,7 +69,7 @@ class _TutorialTabState extends State<TutorialTab> {
       },
       tabBar: CupertinoTabBar(
         backgroundColor: Colors.white,
-        items: List.generate(5, createTabIndex),
+        items: List.generate(4, createTabIndex),
         currentIndex: tabController.index,
         onTap: (index) => setState(() => tabController.index = index),
       ),
@@ -298,7 +295,6 @@ class _ViewFour extends StatelessWidget {
                         textScaleFactor: 1,
                         style: TextStyle(
                           fontSize: 17,
-                          letterSpacing: 1,
                           fontWeight: FontWeight.w800,
                           color: _colors[studentClass.color],
                         ),

@@ -57,7 +57,7 @@ class _ClassDetailState extends State<ClassDetailView> {
         StudentClass.currentClasses[widget.classId]?.refetchSelf();
 
     if (classRefresh == null) return;
-    
+
     final modRefresh = Mod.fetchMods();
 
     await classRefresh;
@@ -111,7 +111,11 @@ class _ClassDetailState extends State<ClassDetailView> {
   Widget build(BuildContext context) {
     final studentClass = StudentClass.currentClasses[widget.classId];
 
-    if (studentClass == null) return Scaffold(backgroundColor: Colors.white);
+    if (studentClass == null) {
+      WidgetsBinding.instance
+          .addPostFrameCallback((_) => Navigator.pop(context));
+      return Scaffold(backgroundColor: Colors.white);
+    }
 
     final grade = (studentClass.grade == null || studentClass.grade == 0)
         ? '-- %'

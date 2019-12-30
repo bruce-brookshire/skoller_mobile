@@ -96,11 +96,17 @@ class _SkollerAppState extends State<SkollerApp> {
         scaffoldBackgroundColor: SKColors.dark_gray,
         textTheme: TextTheme(
           body1: TextStyle(
-              color: Colors.white, fontSize: 15, fontWeight: FontWeight.bold),
+            color: Colors.white,
+            fontSize: 15,
+            fontWeight: FontWeight.bold,
+            letterSpacing: -0.35,
+          ),
           body2: TextStyle(
-              color: SKColors.skoller_blue,
-              fontSize: 15,
-              fontWeight: FontWeight.bold),
+            color: SKColors.skoller_blue,
+            fontSize: 15,
+            fontWeight: FontWeight.bold,
+            letterSpacing: -0.35,
+          ),
           button: TextStyle(color: Colors.white),
         ),
       );
@@ -112,15 +118,17 @@ class _SkollerAppState extends State<SkollerApp> {
         scaffoldBackgroundColor: SKColors.background_gray,
         textTheme: TextTheme(
           body1: TextStyle(
-              color: SKColors.dark_gray,
-              fontSize: 15,
-              fontWeight: FontWeight.bold,
-              letterSpacing: 0.15),
+            color: SKColors.dark_gray,
+            fontSize: 15,
+            fontWeight: FontWeight.bold,
+            letterSpacing: -0.35,
+          ),
           body2: TextStyle(
-              color: SKColors.skoller_blue,
-              fontSize: 15,
-              fontWeight: FontWeight.bold,
-              letterSpacing: 0.15),
+            color: SKColors.skoller_blue,
+            fontSize: 15,
+            fontWeight: FontWeight.bold,
+            letterSpacing: -0.35,
+          ),
           button: TextStyle(color: Colors.white),
         ),
       );
@@ -140,7 +148,10 @@ class _SkollerAppState extends State<SkollerApp> {
     }
 
     return MaterialApp(
-      builder: (context, widget) => Theme(data: currentTheme, child: widget),
+      builder: (context, widget) => MediaQuery(
+        child: Theme(data: currentTheme, child: widget),
+        data: MediaQuery.of(context).copyWith(textScaleFactor: 1.0),
+      ),
       theme: currentTheme,
       debugShowCheckedModeBanner: false,
       home: DropdownBanner(

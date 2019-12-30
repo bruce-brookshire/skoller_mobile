@@ -187,6 +187,7 @@ class _SubviewOneState extends State<_SubviewOne> {
     final studentClass = widget.subviewParent.studentClass;
 
     final shouldContinue = await showDialog(
+      barrierDismissible: false,
       context: context,
       builder: (context) => SKAlertDialog(
         title: 'Are you sure?',

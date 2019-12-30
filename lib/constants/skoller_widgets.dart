@@ -81,7 +81,7 @@ class SKNavBar extends StatelessWidget {
           fontSize: 18,
           fontWeight: FontWeight.w800,
           color: titleColor,
-          letterSpacing: 0.5,
+          letterSpacing: 0.1,
         ),
       ),
     );
@@ -1319,6 +1319,7 @@ class SKHeaderProfilePhoto extends StatelessWidget {
 enum SammiPersonality {
   cool,
   smile,
+  todo_smile,
   wow,
   ooo,
   school,
@@ -1347,17 +1348,18 @@ class SammiSpeechBubble extends StatelessWidget {
     final contents = Align(
       alignment: leftArrow ? Alignment.centerLeft : Alignment.centerRight,
       child: Container(
-          margin: leftArrow
-              ? EdgeInsets.only(left: 13)
-              : EdgeInsets.only(right: 13),
-          padding: EdgeInsets.all(8),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(7),
-            border: Border.all(color: SKColors.border_gray),
-            boxShadow: UIAssets.boxShadow,
-          ),
-          child: speechBubbleContents),
+        margin:
+            leftArrow ? EdgeInsets.only(left: 13) : EdgeInsets.only(right: 13),
+        padding: EdgeInsets.all(8),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(13),
+          border: Border.all(color: SKColors.border_gray),
+          boxShadow: UIAssets.boxShadow,
+        ),
+        child:  speechBubbleContents,
+
+      ),
     );
 
     final arrow = Align(
@@ -1431,6 +1433,8 @@ class SammiSpeechBubble extends StatelessWidget {
         return Image.asset(ImageNames.sammiImages.cool);
       case SammiPersonality.smile:
         return Image.asset(ImageNames.sammiImages.smile);
+      case SammiPersonality.todo_smile:
+        return Image.asset(ImageNames.sammiImages.todo_smile);
       case SammiPersonality.wow:
         return Image.asset(ImageNames.sammiImages.wow);
       case SammiPersonality.ooo:
@@ -1579,8 +1583,7 @@ class SKAssignmentImpactGraph extends StatelessWidget {
             padding: EdgeInsets.only(top: 2),
             child: Text(
               impactDesc,
-              style: TextStyle(
-                  fontSize: 9, letterSpacing: 1, color: SKColors.light_gray),
+              style: TextStyle(fontSize: 9, color: SKColors.light_gray),
             ),
           )
       ],
@@ -1805,9 +1808,9 @@ class _GifWrapperState extends State<GifWrapper> with TickerProviderStateMixin {
 
   @override
   void dispose() {
-    super.dispose();
-
     _controller.dispose();
+
+    super.dispose();
   }
 
   Widget build(BuildContext context) {

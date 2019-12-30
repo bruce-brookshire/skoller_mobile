@@ -44,7 +44,7 @@ class TodoTutorialView extends StatelessWidget {
       alignment: Alignment.center,
       children: <Widget>[
         SKNavView(
-          title: 'Todo',
+          title: 'To-Do\'s',
           leftBtn: Image.asset(ImageNames.peopleImages.static_profile),
           rightBtn: Image.asset(ImageNames.rightNavImages.plus),
           children: [
@@ -175,7 +175,7 @@ class TodoTutorialView extends StatelessWidget {
                     child: SammiSpeechBubble(
                       sammiPersonality: SammiPersonality.smile,
                       speechBubbleContents: Text.rich(
-                        TextSpan(text: 'Todo', children: [
+                        TextSpan(text: 'To-Do\'s', children: [
                           TextSpan(
                               text: ' snapshots YOUR upcoming assignments!',
                               style: TextStyle(fontWeight: FontWeight.normal))
@@ -245,7 +245,6 @@ class _TodoRow extends StatelessWidget {
                       style: TextStyle(
                           color: _colors[item.color],
                           fontWeight: FontWeight.w800,
-                          letterSpacing: 1,
                           fontSize: 17),
                     ),
                   ),
@@ -320,7 +319,6 @@ class _TodoRow extends StatelessWidget {
                             style: TextStyle(
                                 color: _colors[item.color],
                                 fontWeight: FontWeight.w800,
-                                letterSpacing: 1,
                                 fontSize: 17),
                           ),
                         ),

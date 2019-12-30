@@ -86,6 +86,7 @@ class _SammiImages {
   final shocked = '${_base}/ooo_sammi.png';
   final wow = '${_base}/wow_sammi.png';
   final smile = '${_base}/smile_sammi.png';
+  final todo_smile = '${_base}/todo_smile_sammi.png';
   final intro = '${_base}/intro_sammi.png';
   final big_smile = '${_base}/big_smile_sammi.png';
   // final school = '${_base}/school_sammi.png';

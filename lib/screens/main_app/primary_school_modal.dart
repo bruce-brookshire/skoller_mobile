@@ -238,11 +238,11 @@ class _PrimarySchoolState extends State<PrimarySchoolModal> {
                         Image.asset(
                             'image_assets/tab_bar_assets/calendar_gray.png'),
                         Image.asset(
-                            'image_assets/tab_bar_assets/chat_gray.png'),
-                        Image.asset(
                             'image_assets/tab_bar_assets/classes_gray.png'),
                         Image.asset(
                             'image_assets/tab_bar_assets/activity_gray.png'),
+                        Image.asset(
+                            'image_assets/tab_bar_assets/jobs_gray.png'),
                       ],
                     ),
                   )
@@ -304,12 +304,12 @@ class _PrimarySchoolState extends State<PrimarySchoolModal> {
                     children: <Widget>[
                       Text.rich(
                         TextSpan(
-                          text: 'My name is Sammi. I\'m ',
+                          text: 'I\'m Sammi. I\'ll be your guide to help you',
                           children: [
                             TextSpan(
-                                text: 'your guide',
+                                text: ' get the most ',
                                 style: TextStyle(fontWeight: FontWeight.bold)),
-                            TextSpan(text: ' to help you get through school!')
+                            TextSpan(text: 'out of college!')
                           ],
                           style: TextStyle(
                               fontSize: 17, fontWeight: FontWeight.normal),

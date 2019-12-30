@@ -237,7 +237,7 @@ class _AddClassesState extends State<AddClassesView> {
                           ),
                         ).then((val) {
                           //Should we propogate pop?
-                          if (val is bool) {
+                          if (val is bool && !val) {
                             Navigator.pop(context, val);
                           } else {
                             searchController.text = '';

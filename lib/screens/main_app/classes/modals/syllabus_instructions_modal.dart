@@ -12,6 +12,7 @@ class SyllabusInstructionsModal extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Widget body;
+    
 
     switch (type) {
       case SammiExplanationType.diy:
@@ -26,7 +27,7 @@ class SyllabusInstructionsModal extends StatelessWidget {
                 speechBubbleContents: Text(
                   'Oops... we have a problem!',
                   textAlign: TextAlign.left,
-                  style: TextStyle(fontSize: 18, letterSpacing: 0.25),
+                  style: TextStyle(fontSize: 17),
                 ),
               ),
               Padding(
@@ -92,7 +93,7 @@ class SyllabusInstructionsModal extends StatelessWidget {
                 speechBubbleContents: Text(
                   'Your syllabus is IN REVIEW',
                   textAlign: TextAlign.left,
-                  style: TextStyle(fontSize: 18, letterSpacing: 0.25),
+                  style: TextStyle(fontSize: 17),
                 ),
               ),
               Padding(
@@ -151,7 +152,7 @@ class SyllabusInstructionsModal extends StatelessWidget {
                       child: Text(
                         'Send us your syllabus',
                         textAlign: TextAlign.left,
-                        style: TextStyle(fontSize: 18, letterSpacing: 1),
+                        style: TextStyle(fontSize: 18),
                       ),
                     ),
                     Text(
@@ -195,17 +196,17 @@ class SyllabusInstructionsModal extends StatelessWidget {
               ),
               GestureDetector(
                 onTapUp: (details) => startExtractionCallback(),
+                behavior: HitTestBehavior.opaque,
                 child: Container(
                   padding: EdgeInsets.symmetric(vertical: 6, horizontal: 36),
                   margin: EdgeInsets.only(top: 4),
                   decoration: BoxDecoration(
-                    color: SKColors.skoller_blue,
+border: Border.all(color: SKColors.skoller_blue),
                     borderRadius: BorderRadius.circular(5),
-                    boxShadow: UIAssets.boxShadow,
                   ),
                   child: Text(
                     'Instant Setup',
-                    style: TextStyle(color: Colors.white),
+                    style: TextStyle(color: SKColors.skoller_blue),
                   ),
                 ),
               )
@@ -225,7 +226,7 @@ class SyllabusInstructionsModal extends StatelessWidget {
                 speechBubbleContents: Text(
                   'SYLLABUS OVERLOAD...',
                   textAlign: TextAlign.left,
-                  style: TextStyle(fontSize: 18, letterSpacing: 0.25),
+                  style: TextStyle(fontSize: 17),
                 ),
               ),
               Padding(

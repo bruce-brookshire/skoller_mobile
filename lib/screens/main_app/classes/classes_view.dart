@@ -206,29 +206,27 @@ class _ClassesState extends State<ClassesView> {
   }
 
   @override
-  Widget build(BuildContext context) {
-    return SKNavView(
-      title: 'Classes',
-      leftBtn: SKHeaderProfilePhoto(),
-      callbackLeft: () =>
-          DartNotificationCenter.post(channel: NotificationChannels.toggleMenu),
-      rightBtn: Image.asset(ImageNames.rightNavImages.add_class),
-      callbackRight: tappedAddClasses,
-      children: <Widget>[
-        Expanded(
-          child: RefreshIndicator(
-            key: _refreshIndicatorKey,
-            onRefresh: fetchClasses,
-            child: ListView.builder(
-              padding: EdgeInsets.only(top: 4),
-              itemCount: cardObjects.length,
-              itemBuilder: createObjectCard,
+  Widget build(BuildContext context) => SKNavView(
+        title: 'Classes',
+        leftBtn: SKHeaderProfilePhoto(),
+        callbackLeft: () => DartNotificationCenter.post(
+            channel: NotificationChannels.toggleMenu),
+        rightBtn: Image.asset(ImageNames.rightNavImages.add_class),
+        callbackRight: tappedAddClasses,
+        children: <Widget>[
+          Expanded(
+            child: RefreshIndicator(
+              key: _refreshIndicatorKey,
+              onRefresh: fetchClasses,
+              child: ListView.builder(
+                padding: EdgeInsets.only(top: 4),
+                itemCount: cardObjects.length,
+                itemBuilder: createObjectCard,
+              ),
             ),
           ),
-        ),
-      ],
-    );
-  }
+        ],
+      );
 
   Widget createObjectCard(BuildContext context, int index) {
     final object = cardObjects[index];
@@ -484,7 +482,6 @@ class _ClassesState extends State<ClassesView> {
                             textScaleFactor: 1,
                             style: TextStyle(
                                 fontSize: 17,
-                                letterSpacing: 1,
                                 fontWeight: FontWeight.w800,
                                 color: isCurrent
                                     ? studentClass.getColor()
@@ -551,10 +548,6 @@ class _ClassesState extends State<ClassesView> {
         decoration: BoxDecoration(
             color:
                 selectedIndex == index ? SKColors.selected_gray : Colors.white,
-            gradient: LinearGradient(colors: [
-              Color(0xFFfbcbd3),
-              SKColors.warning_red,
-            ]),
             borderRadius: BorderRadius.circular(5),
             border: Border.all(
               color: SKColors.border_gray,
@@ -572,22 +565,32 @@ class _ClassesState extends State<ClassesView> {
                   borderRadius: BorderRadius.only(
                       topLeft: Radius.circular(5),
                       bottomLeft: Radius.circular(5))),
-              child: Image.asset(
-                ImageNames.classesImages.syllabus_red,
-                // needsAssignments
-                //     ? ImageNames.peopleImages.people_white
-                //     : ImageNames.peopleImages.person_edit,
-                fit: BoxFit.fitWidth,
-              ),
+              child: needsAssignments
+                  ? Text(
+                      '--%',
+                      style: TextStyle(
+                          color: Colors.white,
+                          letterSpacing: -0.75,
+                          fontSize: 17),
+                    )
+                  : Image.asset(
+                      ImageNames.classesImages.syllabus_red,
+                      fit: BoxFit.fitWidth,
+                    ),
             ),
             Expanded(
               child: Container(
                 padding: EdgeInsets.only(left: 8, right: 8, bottom: 1),
                 decoration: BoxDecoration(
-                    border: needsAssignments
-                        ? null
-                        : Border(
-                            left: BorderSide(color: Colors.white, width: 2))),
+                  border: needsAssignments
+                      ? null
+                      : Border(
+                          left: BorderSide(
+                            color: SKColors.light_gray,
+                            width: 2,
+                          ),
+                        ),
+                ),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -596,30 +599,24 @@ class _ClassesState extends State<ClassesView> {
                       padding: EdgeInsets.only(bottom: 1),
                       child: Text(
                         studentClass.name,
-                        textScaleFactor: 1,
                         style: TextStyle(
                             fontSize: 17,
-                            color: Colors.white,
-                            fontWeight: FontWeight.w800,
-                            letterSpacing: 1
-                            // needsAssignments
-                            //     ? studentClass.getColor()
-                            //     : SKColors.dark_gray
-                            ),
+                            color: needsAssignments
+                                ? studentClass.getColor()
+                                : SKColors.dark_gray,
+                            fontWeight: FontWeight.w800),
                       ),
                     ),
                     Text(
                       needsAssignments
                           ? 'Add your first assignment'
                           : 'Send the syllabus!',
-                      textScaleFactor: 1,
                       style: TextStyle(
-                          color: Colors.white,
-                          // needsAssignments
-                          //     ? SKColors.dark_gray
-                          //     : SKColors.warning_red,
+                          color: needsAssignments
+                              ? SKColors.dark_gray
+                              : SKColors.warning_red,
                           fontSize: 13,
-                          fontWeight: FontWeight.w500),
+                          fontWeight: FontWeight.w700),
                     )
                   ],
                 ),
@@ -653,13 +650,6 @@ class _ClassesState extends State<ClassesView> {
       child: Container(
         decoration: BoxDecoration(
           color: selectedIndex == index ? SKColors.selected_gray : Colors.white,
-          gradient: LinearGradient(colors: [
-            Colors.white,
-            Color(0xFFf9946c),
-          ], stops: [
-            0.3,
-            1.5
-          ]),
           borderRadius: BorderRadius.circular(5),
           border: Border.all(
             color: SKColors.border_gray,
@@ -697,7 +687,6 @@ class _ClassesState extends State<ClassesView> {
                         textScaleFactor: 1,
                         style: TextStyle(
                             fontSize: 17,
-                            letterSpacing: 1,
                             color: SKColors.dark_gray,
                             fontWeight: FontWeight.w800),
                       ),
@@ -708,7 +697,7 @@ class _ClassesState extends State<ClassesView> {
                       style: TextStyle(
                           color: SKColors.alert_orange,
                           fontSize: 13,
-                          fontWeight: FontWeight.w400),
+                          fontWeight: FontWeight.w700),
                     )
                   ],
                 ),
@@ -747,13 +736,6 @@ class _ClassesState extends State<ClassesView> {
       child: Container(
         decoration: BoxDecoration(
           color: selectedIndex == index ? SKColors.selected_gray : Colors.white,
-          gradient: LinearGradient(colors: [
-            Colors.white,
-            Color(0xFFCCCCCC),
-          ], stops: [
-            0.3,
-            1.5
-          ]),
           borderRadius: BorderRadius.circular(5),
           border: Border.all(
             color: SKColors.border_gray,
@@ -791,7 +773,6 @@ class _ClassesState extends State<ClassesView> {
                         textScaleFactor: 1,
                         style: TextStyle(
                             fontSize: 17,
-                            letterSpacing: 1,
                             color: SKColors.dark_gray,
                             fontWeight: FontWeight.w800),
                       ),
@@ -802,7 +783,7 @@ class _ClassesState extends State<ClassesView> {
                       style: TextStyle(
                           color: SKColors.light_gray,
                           fontSize: 13,
-                          fontWeight: FontWeight.w400),
+                          fontWeight: FontWeight.w700),
                     )
                   ],
                 ),

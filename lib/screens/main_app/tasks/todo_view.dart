@@ -21,6 +21,8 @@ class _TodoState extends State<TodoView> {
   List<_TaskLikeItem> _taskItems = null;
   List<int> _datelessAssignments = [];
 
+  int numberCompleted = 0;
+
   bool showingCompletedTasks = false;
   bool completedTasksAvailable = false;
 
@@ -75,6 +77,8 @@ class _TodoState extends State<TodoView> {
     int minDaysOutCompleted = 1000;
     bool newCompletedTasksAvailable = false;
 
+    numberCompleted = 0;
+
     List<_TaskLikeItem> tasks = (Assignment.currentAssignments.values.toList()
           ..removeWhere((a) =>
               (a.due?.isBefore(overdueDate) ?? true) || a.parentClass == null)
@@ -82,6 +86,8 @@ class _TodoState extends State<TodoView> {
             if (a.isCompleted) {
               newCompletedTasksAvailable = true;
               int daysOut = a.due.difference(today).inDays;
+
+              ++numberCompleted;
 
               if (daysOut < minDaysOutCompleted && daysOut >= 0)
                 minDaysOutCompleted = daysOut;
@@ -263,6 +269,7 @@ class _TodoState extends State<TodoView> {
     final titleOption = _datelessAssignments.length == 0
         ? null
         : GestureDetector(
+            behavior: HitTestBehavior.opaque,
             onTapUp: (_) => Navigator.push(
               context,
               SKNavOverlayRoute(
@@ -271,7 +278,7 @@ class _TodoState extends State<TodoView> {
             ),
             child: Container(
               padding: EdgeInsets.all(6),
-              margin: EdgeInsets.only(left: 4, top: 2),
+              margin: EdgeInsets.only(left: 4, top: 2, right: 4),
               alignment: Alignment.center,
               decoration: BoxDecoration(
                   shape: BoxShape.circle, color: SKColors.alert_orange),
@@ -335,7 +342,7 @@ class _TodoState extends State<TodoView> {
                           child: Text(
                             showingCompletedTasks
                                 ? 'Hide completed tasks'
-                                : 'Show completed tasks',
+                                : 'Show completed (${numberCompleted})',
                             style: TextStyle(
                                 color: SKColors.skoller_blue,
                                 fontWeight: FontWeight.normal,
@@ -479,9 +486,9 @@ class _TodoState extends State<TodoView> {
 
     return Padding(
       key: Key('top item'),
-      padding: EdgeInsets.fromLTRB(0, 4, 0, 6),
+      padding: EdgeInsets.fromLTRB(2, 6, 0, 8),
       child: SammiSpeechBubble(
-        sammiPersonality: SammiPersonality.smile,
+        sammiPersonality: SammiPersonality.todo_smile,
         speechBubbleContents: sammiBody,
       ),
     );
@@ -512,7 +519,6 @@ class _TodoRow extends StatefulWidget {
 
 class _TodoRowState extends State<_TodoRow> {
   bool isTapped = false;
-  bool isChecked = false;
 
   @override
   Widget build(BuildContext context) =>
@@ -529,8 +535,8 @@ class _TodoRowState extends State<_TodoRow> {
 
     if ((mods ?? []).length > 0)
       return buildTaskUpdatesCell(task, mods);
-    else if (isChecked || task.isCompleted)
-      return buildTaskCheckedCell(task);
+    else if (task.isCompleted)
+      return buildTaskCompletedCell(task);
     else if (isOverdue)
       return buildTaskOverdueCell(task);
     else
@@ -680,172 +686,79 @@ class _TodoRowState extends State<_TodoRow> {
     );
   }
 
-  Widget buildTaskCheckedCell(Assignment task) {
-    List<Widget> children;
-
-    if (task.isCompleted)
-      children = [
-        GestureDetector(
-          behavior: HitTestBehavior.opaque,
-          onTapUp: (_) => widget.onCompleted(task),
-          child: Container(
-            margin: EdgeInsets.only(right: 8, top: 18, bottom: 18, left: 2),
-            decoration: BoxDecoration(
-              border: Border.all(color: SKColors.text_light_gray),
-              borderRadius: BorderRadius.circular(10),
-              color: SKColors.skoller_blue,
-            ),
-            width: 20,
-            height: 20,
-            child: Icon(
-              Icons.check,
-              size: 12,
-              color: Colors.white,
-            ),
-          ),
-        ),
-        Expanded(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              Padding(
-                padding: EdgeInsets.only(top: 3),
-                child: Hero(
-                  tag: 'TaskName${task.id}',
-                  child: Material(
-                    type: MaterialType.transparency,
-                    child: Text(
-                      task?.name ?? 'N/A',
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: TextStyle(
-                          color: task.parentClass.getColor(),
-                          fontWeight: FontWeight.w800,
-                          letterSpacing: 1,
-                          fontSize: 17),
-                    ),
-                  ),
-                ),
-              ),
-              Text(
-                'Completed',
-                style: TextStyle(fontSize: 12, fontWeight: FontWeight.w700),
-              ),
-            ],
-          ),
-        ),
-      ];
-    else
-      children = [
-        GestureDetector(
-          behavior: HitTestBehavior.opaque,
-          onTapUp: (_) => setState(() => isChecked = false),
-          child: Container(
-            child: Container(
-              margin: EdgeInsets.only(right: 8, top: 10, bottom: 10, left: 2),
-              decoration: BoxDecoration(
-                border: Border.all(color: SKColors.text_light_gray),
-                borderRadius: BorderRadius.circular(10),
-                color: SKColors.skoller_blue,
-              ),
-              width: 20,
-              height: 20,
-              child: Icon(
-                Icons.check,
-                size: 12,
-                color: Colors.white,
-              ),
-            ),
-          ),
-        ),
-        Expanded(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              Padding(
-                padding: EdgeInsets.only(top: 3),
-                child: Hero(
-                  tag: 'TaskName${task.id}',
-                  child: Material(
-                    type: MaterialType.transparency,
-                    child: Text(
-                      task?.name ?? 'N/A',
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: TextStyle(
-                          color: task.parentClass.getColor(),
-                          fontWeight: FontWeight.w800,
-                          letterSpacing: 1,
-                          fontSize: 17),
-                    ),
-                  ),
-                ),
-              ),
-              Text(
-                DateUtilities.getFutureRelativeString(task.due),
-                style: TextStyle(fontSize: 12, fontWeight: FontWeight.w700),
-              ),
-            ],
-          ),
-        ),
-        GestureDetector(
-          behavior: HitTestBehavior.opaque,
-          onTapUp: (_) {
-            widget.onCompleted(task);
-            setState(() {
-              isChecked = false;
-            });
-          },
-          child: Container(
-            height: 56,
-            width: 56,
-            alignment: Alignment.center,
-            decoration: BoxDecoration(
-              color: SKColors.skoller_blue,
-              borderRadius: BorderRadius.only(
-                topRight: Radius.circular(5),
-                bottomRight: Radius.circular(5),
-              ),
-            ),
-            child: ShakeAnimation(
-              child: Text(
-                'Mark as complete',
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.w700,
-                    fontSize: 10),
-              ),
-            ),
-          ),
-        ),
-      ];
-
+  Widget buildTaskCompletedCell(Assignment task) {
     return GestureDetector(
-      onTapUp: task.isCompleted
-          ? (_) {
-              Navigator.push(
-                context,
-                CupertinoPageRoute(
-                  builder: (context) =>
-                      AssignmentInfoView(assignmentId: task.id),
-                  settings: RouteSettings(name: 'AssignmentInfoView'),
-                ),
-              );
-            }
-          : null,
+      onTapUp: (_) {
+        Navigator.push(
+          context,
+          CupertinoPageRoute(
+            builder: (context) => AssignmentInfoView(assignmentId: task.id),
+            settings: RouteSettings(name: 'AssignmentInfoView'),
+          ),
+        );
+      },
       child: Container(
         margin: EdgeInsets.fromLTRB(7, 3, 7, 4),
-        padding: EdgeInsets.only(left: 10),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(5),
           border: Border.all(color: SKColors.border_gray, width: 1),
           boxShadow: UIAssets.boxShadow,
           color: SKColors.menu_blue,
         ),
-        child: Row(children: children),
+        child: Row(
+          children: [
+            GestureDetector(
+              behavior: HitTestBehavior.opaque,
+              onTapUp: (_) => widget.onCompleted(task),
+              child: Container(
+                margin:
+                    EdgeInsets.only(right: 8, top: 18, bottom: 18, left: 12),
+                decoration: BoxDecoration(
+                  border: Border.all(color: SKColors.text_light_gray),
+                  borderRadius: BorderRadius.circular(10),
+                  color: SKColors.skoller_blue,
+                ),
+                width: 20,
+                height: 20,
+                child: Icon(
+                  Icons.check,
+                  size: 12,
+                  color: Colors.white,
+                ),
+              ),
+            ),
+            Expanded(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Padding(
+                    padding: EdgeInsets.only(top: 3),
+                    child: Hero(
+                      tag: 'TaskName${task.id}',
+                      child: Material(
+                        type: MaterialType.transparency,
+                        child: Text(
+                          task?.name ?? 'N/A',
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                              color: task.parentClass.getColor(),
+                              fontWeight: FontWeight.w800,
+                              fontSize: 17),
+                        ),
+                      ),
+                    ),
+                  ),
+                  Text(
+                    'Completed',
+                    style: TextStyle(fontSize: 12, fontWeight: FontWeight.w700),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -875,7 +788,7 @@ class _TodoRowState extends State<_TodoRow> {
         },
         child: Container(
           margin: EdgeInsets.fromLTRB(7, 3, 7, 4),
-          padding: EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+          padding: EdgeInsets.fromLTRB(0, 8, 10, 8),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(5),
             border: Border.all(color: SKColors.border_gray, width: 1),
@@ -886,11 +799,11 @@ class _TodoRowState extends State<_TodoRow> {
             children: <Widget>[
               GestureDetector(
                 behavior: HitTestBehavior.opaque,
-                onTapUp: (_) => setState(() => isChecked = true),
+                onTapUp: (_) => widget.onCompleted(task),
                 child: Container(
                   child: Container(
                     margin:
-                        EdgeInsets.only(right: 8, top: 10, bottom: 10, left: 2),
+                        EdgeInsets.only(right: 8, top: 10, bottom: 10, left: 12),
                     decoration: BoxDecoration(
                       border: Border.all(color: SKColors.warning_red),
                       borderRadius: BorderRadius.circular(10),
@@ -919,7 +832,6 @@ class _TodoRowState extends State<_TodoRow> {
                             style: TextStyle(
                                 color: SKColors.dark_gray,
                                 fontWeight: FontWeight.w800,
-                                letterSpacing: 1,
                                 fontSize: 17),
                           ),
                         ),
@@ -982,7 +894,7 @@ class _TodoRowState extends State<_TodoRow> {
         },
         child: Container(
           margin: EdgeInsets.fromLTRB(7, 3, 7, 4),
-          padding: EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+          padding: EdgeInsets.fromLTRB(0, 8, 10, 8),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(5),
             border: Border.all(color: SKColors.border_gray, width: 1),
@@ -993,11 +905,11 @@ class _TodoRowState extends State<_TodoRow> {
             children: <Widget>[
               GestureDetector(
                 behavior: HitTestBehavior.opaque,
-                onTapUp: (_) => setState(() => isChecked = true),
+                onTapUp: (_) => widget.onCompleted(task),
                 child: Container(
                   child: Container(
                     margin:
-                        EdgeInsets.only(right: 8, top: 10, bottom: 10, left: 2),
+                        EdgeInsets.only(right: 8, top: 10, bottom: 10, left: 12),
                     decoration: BoxDecoration(
                       border: Border.all(color: SKColors.text_light_gray),
                       borderRadius: BorderRadius.circular(10),
@@ -1027,7 +939,6 @@ class _TodoRowState extends State<_TodoRow> {
                                 style: TextStyle(
                                     color: task.parentClass.getColor(),
                                     fontWeight: FontWeight.w800,
-                                    letterSpacing: 1,
                                     fontSize: 17),
                               ),
                             ),

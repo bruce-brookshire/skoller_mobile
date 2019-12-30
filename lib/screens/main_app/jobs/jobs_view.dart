@@ -516,7 +516,7 @@ class _JobsViewState extends State<JobsView> {
               ),
             ),
             Padding(
-              padding: EdgeInsets.symmetric(horizontal: 24),
+              padding: EdgeInsets.symmetric(horizontal: 12),
               child: Row(
                 children: <Widget>[
                   Icon(
@@ -747,7 +747,6 @@ class _SKJobProfileCompletionCircle extends StatelessWidget {
           style: TextStyle(
               color: SKColors.jobs_dark_green,
               fontWeight: FontWeight.w800,
-              letterSpacing: 1,
               fontSize: 28),
         ),
       ),

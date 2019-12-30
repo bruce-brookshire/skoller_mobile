@@ -48,8 +48,15 @@ class Mod {
     return _submitModResponse(false);
   }
 
-  Future<RequestResponse> acceptMod() {
-    return _submitModResponse(true);
+  Future<RequestResponse> acceptMod() async {
+    final response = await _submitModResponse(true);
+
+    if (response.wasSuccessful() &&
+        modType == ModType.due &&
+        (parentAssignment?.isCompleted ?? false))
+      await parentAssignment.toggleComplete();
+
+    return response;
   }
 
   Future<RequestResponse> _submitModResponse(bool withStatus) {

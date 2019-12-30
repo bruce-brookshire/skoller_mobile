@@ -504,7 +504,6 @@ class _AssignmentInfoState extends State<AssignmentInfoView> {
                           fontSize: 17,
                           fontWeight: FontWeight.w800,
                           color: assignment.parentClass.getColor(),
-                          letterSpacing: 1,
                         ),
                       ),
                     ),
@@ -866,7 +865,7 @@ class _AssignmentInfoState extends State<AssignmentInfoView> {
                       style: TextStyle(fontWeight: FontWeight.w600),
                     ),
                     TextSpan(
-                      text: ' away from a \n\$10 Starbucks® giftcard!',
+                      text: ' away from a \n\$10 Amazon.com® Gift Card!',
                     )
                   ],
                   style: TextStyle(
@@ -1362,7 +1361,7 @@ class _SKImpactGraphDescriptionModal extends StatelessWidget {
             Text(
               'Impact',
               style: TextStyle(
-                  fontWeight: FontWeight.w800, fontSize: 18, letterSpacing: 1),
+                  fontWeight: FontWeight.w800, fontSize: 18),
             ),
             Text(
               'How will this assignment impact\n your final grade?',

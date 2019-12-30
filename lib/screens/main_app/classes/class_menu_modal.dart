@@ -126,8 +126,7 @@ class _ClassMenuState extends State<ClassMenuModal> {
       ),
     );
 
-    if (shouldPop is bool && shouldPop)
-      Navigator.popUntil(context, (route) => route.isFirst);
+    if (shouldPop is bool && shouldPop) Navigator.pop(context, true);
   }
 
   void tappedGradeScale(BuildContext context) async {
@@ -206,6 +205,10 @@ class _ClassMenuState extends State<ClassMenuModal> {
 
   @override
   Widget build(BuildContext context) {
+    if (StudentClass.currentClasses[widget.classId] == null)
+      return Container(
+        color: Colors.white,
+      );
     return Padding(
       padding: EdgeInsets.only(bottom: 32),
       child: Material(

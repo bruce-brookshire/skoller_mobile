@@ -125,12 +125,16 @@ class _LoadingState extends State<LoadingView> {
                         valueColor: AlwaysStoppedAnimation(Colors.white),
                       )
                     : GestureDetector(
+                       behavior: HitTestBehavior.opaque,
                         onTapUp: (details) async {
+                          print('hi');
+                          print(isValidVersion);
                           if (isValidVersion)
                             attemptLogin();
                           else {
                             final url = 'appstore.com/skoller';
-
+                            print(await canLaunch(url))
+;
                             if (await canLaunch(url)) launch(url);
                           }
                         },

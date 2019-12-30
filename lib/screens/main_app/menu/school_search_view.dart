@@ -210,9 +210,9 @@ class _SchoolSearchState extends State<SchoolSearchView> {
                       return Padding(
                         padding: EdgeInsets.fromLTRB(18, 12, 0, 0),
                         child: SammiSpeechBubble(
-                          sammiPersonality: SammiPersonality.smile,
+                          sammiPersonality: SammiPersonality.todo_smile,
                           speechBubbleContents:
-                              Text('First off... find your school!'),
+                              Text('👆First off... find your school!', style: TextStyle(fontSize: 17),),
                         ),
                       );
                     if (index < searchedSchools.length)

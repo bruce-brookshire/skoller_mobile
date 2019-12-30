@@ -68,7 +68,7 @@ class _AssignmentBatchAddState extends State<AssignmentBatchAddView> {
 
     if (result != null) {
       int index = queuedAssignments.indexWhere(
-          (element) => element.dueDate?.isAfter(result.dueDate) ?? false);
+          (element) => result.dueDate == null ? true : element.dueDate?.isAfter(result.dueDate) ?? false);
 
       setState(() {
         queuedAssignments.insert(
@@ -480,6 +480,7 @@ class _AddAssignmentSubState extends State<_AddAssignmentSubview> {
               maxLines: 1,
               decoration: InputDecoration(hintText: 'Name'),
               style: TextStyle(fontSize: 14),
+              autofocus: true,
               onChanged: (newStr) {
                 checkState();
               },
@@ -500,7 +501,7 @@ class _AddAssignmentSubState extends State<_AddAssignmentSubview> {
                     !dateSelected
                         ? 'Select date'
                         : (dueDate == null
-                            ? 'No due date'
+                            ? 'Unknown'
                             : DateFormat('EEE, MMMM d').format(dueDate)),
                     style: TextStyle(
                         fontWeight: FontWeight.bold,

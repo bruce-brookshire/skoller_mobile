@@ -56,7 +56,6 @@ class StudentProfileModal extends StatelessWidget {
                           style: TextStyle(
                             color: Colors.white,
                             fontSize: 18,
-                            letterSpacing: 1,
                           ),
                         )
                       : null,

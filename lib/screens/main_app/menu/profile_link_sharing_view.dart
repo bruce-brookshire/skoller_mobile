@@ -15,7 +15,7 @@ class ProfileLinkSharingView extends StatefulWidget {
 enum _SharingType { classmates, anyone }
 
 class _ProfileLinkSharingState extends State<ProfileLinkSharingView> {
-  var sharingType = _SharingType.anyone;
+  var sharingType = _SharingType.classmates;
 
   StudentClass studentClass;
 
@@ -43,7 +43,6 @@ class _ProfileLinkSharingState extends State<ProfileLinkSharingView> {
     final linkStripper = (String link) => link.split('//')[1];
 
     final raiseEffort = SKUser.current.student.raiseEffort;
-    print(raiseEffort.orgName);
 
     return SafeArea(
       child: Column(
@@ -84,9 +83,9 @@ class _ProfileLinkSharingState extends State<ProfileLinkSharingView> {
                                     'Share Skoller',
                                     textAlign: TextAlign.center,
                                     style: TextStyle(
-                                        fontSize: 20,
-                                        fontWeight: FontWeight.w800,
-                                        letterSpacing: 1),
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.w800,
+                                    ),
                                   ),
                                   GestureDetector(
                                     onTapUp: (detail) {
@@ -144,7 +143,7 @@ class _ProfileLinkSharingState extends State<ProfileLinkSharingView> {
                                     text: 'Get ',
                                     children: [
                                       TextSpan(
-                                        text: '5 more classmates',
+                                        text: '5 classmates',
                                         style: TextStyle(
                                             fontWeight: FontWeight.bold),
                                       ),
@@ -199,7 +198,8 @@ class _ProfileLinkSharingState extends State<ProfileLinkSharingView> {
                                       style: TextStyle(
                                           fontWeight: FontWeight.bold)),
                                   TextSpan(
-                                      text: ' for the ${raiseEffort.orgName == 'AOII' ? 'Arthritis Foundation' : 'ASA Foundation'}!')
+                                      text:
+                                          ' for the ${raiseEffort.orgName == 'AOII' ? 'Arthritis Foundation' : 'ASA Foundation'}!')
                                 ],
                                 style: TextStyle(fontWeight: FontWeight.normal),
                               ),
