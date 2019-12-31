@@ -169,7 +169,7 @@ class _ProfileLinkSharingState extends State<ProfileLinkSharingView> {
                                       ),
                                       TextSpan(
                                           text:
-                                              ' by sharing\n with any student!')
+                                              ' by sharing\n with ${sharingType == _SharingType.anyone ? 'any student' : 'classmates'}!')
                                     ],
                                     style: TextStyle(
                                       fontWeight: FontWeight.w300,
@@ -194,7 +194,7 @@ class _ProfileLinkSharingState extends State<ProfileLinkSharingView> {
                                 text: 'You\'ve raised ',
                                 children: [
                                   TextSpan(
-                                      text: '\$${raiseEffort.orgSignups}',
+                                      text: '\$${raiseEffort.personalSignups}',
                                       style: TextStyle(
                                           fontWeight: FontWeight.bold)),
                                   TextSpan(

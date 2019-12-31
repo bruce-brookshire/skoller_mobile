@@ -488,7 +488,7 @@ class _TodoState extends State<TodoView> {
       key: Key('top item'),
       padding: EdgeInsets.fromLTRB(2, 6, 0, 8),
       child: SammiSpeechBubble(
-        sammiPersonality: SammiPersonality.todo_smile,
+        sammiPersonality: SammiPersonality.todoSmile,
         speechBubbleContents: sammiBody,
       ),
     );

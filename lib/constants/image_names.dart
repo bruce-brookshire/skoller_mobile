@@ -77,6 +77,7 @@ class _NavigationArrowImages {
   final dropdown_gray = '${_base}/dropdown_gray.png';
   final dropdown_green = '${_base}/dropdown_green.png';
   final pulldown_gray = '${_base}/pulldown_gray.png';
+  final pulldown_blue = '${_base}/pulldown_blue.png';
 }
 
 class _SammiImages {
@@ -96,6 +97,7 @@ class _SammiJobsImages {
   static const _base = 'image_assets/sammi_jobs_personality_assets';
 
   final big_smile = '${_base}/big_smile.png';
+  final large_big_smile = '${_base}/large_big_smile.png';
 final sad = '${_base}/sad.png';
 final side_eye = '${_base}/side_eye.png';
 final smile = '${_base}/smile.png';

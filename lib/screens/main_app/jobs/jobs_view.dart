@@ -122,6 +122,21 @@ class _JobsViewState extends State<JobsView> {
           textStyle: TextStyle(color: SKColors.warning_red));
   }
 
+  void tappedCreate(_) async {
+    final loader = SKLoadingScreen.fadeIn(context);
+    final response = await JobProfile.createProfile(
+      jobType: jobType,
+      graduationDate: graduationDate,
+    );
+    loader.fadeOut();
+
+    if (response.wasSuccessful()) {
+      setState(() {
+        profileState = _ProfileState.resume;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     List<Widget> children;
@@ -134,7 +149,7 @@ class _JobsViewState extends State<JobsView> {
         children = createStart();
         break;
       case _ProfileState.resume:
-        children = createProfile(); //createResumeInstructions();
+        children = createResumeInstructions();
         break;
       case _ProfileState.profile:
         children = createProfile();
@@ -393,20 +408,7 @@ class _JobsViewState extends State<JobsView> {
                 ),
               ),
               GestureDetector(
-                onTapUp: (_) async {
-                  final loader = SKLoadingScreen.fadeIn(context);
-                  final response = await JobProfile.createProfile(
-                    jobType: jobType,
-                    graduationDate: graduationDate,
-                  );
-                  loader.fadeOut();
-
-                  if (response.wasSuccessful()) {
-                    setState(() {
-                      profileState = _ProfileState.resume;
-                    });
-                  }
-                },
+                onTapUp: tappedCreate,
                 child: Container(
                   margin: EdgeInsets.only(top: 24),
                   alignment: Alignment.center,
@@ -476,7 +478,7 @@ class _JobsViewState extends State<JobsView> {
         Padding(
           padding: EdgeInsets.all(16),
           child: SammiSpeechBubble(
-            sammiPersonality: SammiPersonality.jobsOoo,
+            sammiPersonality: SammiPersonality.jobsLargeSmile,
             speechBubbleContents: Text.rich(
               TextSpan(
                 text: 'You are ',
@@ -594,6 +596,14 @@ class _GraduationDatePickerState extends State<_GraduationDatePicker> {
     monthController = FixedExtentScrollController(initialItem: monthIndex);
     yearController =
         FixedExtentScrollController(initialItem: years.indexOf(year));
+  }
+
+  @override
+  void dispose() {
+    monthController.dispose();
+    yearController.dispose();
+
+    super.dispose();
   }
 
   @override

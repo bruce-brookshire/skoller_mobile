@@ -254,7 +254,7 @@ class _ClassDetailState extends State<ClassDetailView> {
                           alignment: Alignment.center,
                           padding: EdgeInsets.only(top: 8, bottom: 7),
                           child: Image.asset(
-                              ImageNames.navArrowImages.pulldown_gray),
+                              ImageNames.navArrowImages.pulldown_blue),
                         ),
                       ),
                     ],

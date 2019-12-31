@@ -109,12 +109,10 @@ class School {
       ..removeWhere((period) => (period.endDate ?? today).isBefore(today));
 
     final findSemester = (int status) {
-      for (final Period period in periods) {
-        if (period.periodStatusId == status && period.isMainPeriod) {
-          return period;
-        }
-      }
-      return null;
+      return periods.firstWhere(
+        (period) => period.periodStatusId == status && period.isMainPeriod,
+        orElse: () => null,
+      );
     };
 
     Period activePeriod = findSemester(200);

@@ -214,7 +214,7 @@ class _ClassMenuState extends State<ClassMenuModal> {
       child: Material(
         color: Colors.transparent,
         child: Container(
-          padding: EdgeInsets.only(top: 24),
+          // padding: EdgeInsets.only(top: 24),
           decoration: BoxDecoration(
             color: SKColors.background_gray,
             borderRadius: BorderRadius.only(
@@ -225,17 +225,22 @@ class _ClassMenuState extends State<ClassMenuModal> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
-              Padding(
-                padding: EdgeInsets.only(top: 4, bottom: 8),
-                child: AutoSizeText(
-                  studentClass.name,
-                  textAlign: TextAlign.left,
-                  maxLines: 1,
-                  minFontSize: 10,
-                  style: TextStyle(
-                      fontSize: 22,
-                      fontWeight: FontWeight.bold,
-                      color: studentClass.getColor()),
+              Container(
+                // color: Colors.red,
+                child: SafeArea(
+                  child: Padding(
+                    padding: EdgeInsets.only(top: 4, bottom: 8),
+                    child: AutoSizeText(
+                      studentClass.name,
+                      textAlign: TextAlign.left,
+                      maxLines: 1,
+                      minFontSize: 10,
+                      style: TextStyle(
+                          fontSize: 22,
+                          fontWeight: FontWeight.bold,
+                          color: studentClass.getColor()),
+                    ),
+                  ),
                 ),
               ),
               Expanded(
@@ -294,7 +299,7 @@ class _ClassMenuState extends State<ClassMenuModal> {
                   child: RotatedBox(
                     quarterTurns: 2,
                     child: Image.asset(
-                      ImageNames.navArrowImages.pulldown_gray,
+                      ImageNames.navArrowImages.pulldown_blue,
                     ),
                   ),
                 ),

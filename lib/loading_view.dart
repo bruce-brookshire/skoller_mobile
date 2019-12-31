@@ -5,6 +5,7 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:skoller/tools.dart';
+import 'dart:io';
 
 class LoadingView extends StatefulWidget {
   @override
@@ -66,7 +67,7 @@ class _LoadingState extends State<LoadingView> {
         if (nextState == AppState.main) {
           final classResult = await StudentClass.getStudentClasses();
           SKUser.current.getJobProfile();
-          
+
           if (!classResult.wasSuccessful()) {
             return;
           }
@@ -116,43 +117,109 @@ class _LoadingState extends State<LoadingView> {
                 padding: EdgeInsets.symmetric(horizontal: 24),
                 child: Image.asset(ImageNames.signUpImages.logo_wide_white),
               ),
-              Container(
-                margin: EdgeInsets.fromLTRB(12, 24, 12, 48),
-                width: loading ? 32 : null,
-                height: loading ? 32 : null,
-                child: loading
-                    ? CircularProgressIndicator(
-                        valueColor: AlwaysStoppedAnimation(Colors.white),
-                      )
-                    : GestureDetector(
-                       behavior: HitTestBehavior.opaque,
-                        onTapUp: (details) async {
-                          print('hi');
-                          print(isValidVersion);
-                          if (isValidVersion)
-                            attemptLogin();
-                          else {
-                            final url = 'appstore.com/skoller';
-                            print(await canLaunch(url))
-;
-                            if (await canLaunch(url)) launch(url);
-                          }
-                        },
-                        child: Text(
-                          isValidVersion
-                              ? 'Failed loading. Tap to retry'
-                              : 'We have improvements that require an update. Tap here to do so!',
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.normal),
-                        ),
-                      ),
-              )
+              if (loading) createLoadingIndicator(),
+              if (!loading && isValidVersion) createRetryPrompt(),
+              if (!loading && !isValidVersion) ...createUpdatePrompt(),
             ],
           ),
         ),
       ),
     );
   }
+
+  Widget createLoadingIndicator() => Padding(
+        padding: EdgeInsets.fromLTRB(12, 24, 12, 48),
+        child: SizedBox(
+          width: 32,
+          height: 32,
+          child: CircularProgressIndicator(
+            valueColor: AlwaysStoppedAnimation(Colors.white),
+          ),
+        ),
+      );
+
+  Widget createRetryPrompt() => Padding(
+        padding: EdgeInsets.fromLTRB(12, 24, 12, 48),
+        child: GestureDetector(
+          behavior: HitTestBehavior.opaque,
+          onTapUp: (details) => attemptLogin(),
+          child: Container(
+            padding: EdgeInsets.symmetric(vertical: 8, horizontal: 24),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(10),
+              border: Border.all(color: SKColors.border_gray),
+              boxShadow: UIAssets.boxShadow,
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Padding(
+                  padding: EdgeInsets.only(right: 6),
+                  child: Icon(
+                    Icons.settings_backup_restore,
+                    color: SKColors.warning_red,
+                  ),
+                ),
+                Text(
+                  'Failed to load. Tap to retry',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    color: SKColors.warning_red,
+                    fontWeight: FontWeight.normal,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
+
+  List<Widget> createUpdatePrompt() => [
+        Padding(
+          padding: EdgeInsets.fromLTRB(12, 24, 12, 12),
+          child: Text(
+            'We have improvements that require an upgrade!',
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              color: Colors.white,
+              fontWeight: FontWeight.normal,
+            ),
+          ),
+        ),
+        GestureDetector(
+          behavior: HitTestBehavior.opaque,
+          onTapUp: (_) async {
+            final appleUrl = 'appstore.com/skoller';
+            if (Platform.isIOS && await canLaunch(appleUrl))
+              launch(appleUrl);
+            else
+              DropdownBanner.showBanner(
+                text:
+                    'Unable to open the ${Platform.isIOS ? 'App' : 'Google Play'} Store. Please manually update the app.',
+                color: SKColors.alert_orange,
+                textStyle: TextStyle(color: Colors.white),
+              );
+          },
+          child: Container(
+            padding: EdgeInsets.symmetric(vertical: 8, horizontal: 24),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(10),
+              border: Border.all(color: SKColors.border_gray),
+              boxShadow: UIAssets.boxShadow,
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Padding(
+                    padding: EdgeInsets.only(right: 4),
+                    child: Icon(Icons.cloud_download,
+                        color: SKColors.skoller_blue)),
+                Text('Update', style: TextStyle(color: SKColors.skoller_blue)),
+              ],
+            ),
+          ),
+        ),
+      ];
 }

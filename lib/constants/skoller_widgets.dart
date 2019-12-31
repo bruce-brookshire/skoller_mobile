@@ -1183,6 +1183,20 @@ class SKPickerModal extends StatefulWidget {
 
 class _SKPickerModalState extends State<SKPickerModal> {
   int _selectedIndex = 0;
+  ScrollController scrollController;
+
+  @override
+  void initState() {
+    super.initState();
+    scrollController =
+        FixedExtentScrollController(initialItem: widget.startIndex);
+  }
+
+  @override
+  void dispose() {
+    scrollController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -1226,9 +1240,7 @@ class _SKPickerModalState extends State<SKPickerModal> {
               child: CupertinoPicker.builder(
                 backgroundColor: Colors.white,
                 childCount: widget.items.length,
-                scrollController: FixedExtentScrollController(
-                  initialItem: widget.startIndex,
-                ),
+                scrollController: scrollController,
                 itemBuilder: (context, index) => Container(
                   alignment: Alignment.center,
                   child: Text(
@@ -1319,13 +1331,14 @@ class SKHeaderProfilePhoto extends StatelessWidget {
 enum SammiPersonality {
   cool,
   smile,
-  todo_smile,
+  todoSmile,
   wow,
   ooo,
   school,
   jobsSmile,
   jobsOoo,
-  jobsCool
+  jobsCool,
+  jobsLargeSmile
 }
 enum SammiSide { left, right }
 
@@ -1357,8 +1370,7 @@ class SammiSpeechBubble extends StatelessWidget {
           border: Border.all(color: SKColors.border_gray),
           boxShadow: UIAssets.boxShadow,
         ),
-        child:  speechBubbleContents,
-
+        child: speechBubbleContents,
       ),
     );
 
@@ -1433,7 +1445,7 @@ class SammiSpeechBubble extends StatelessWidget {
         return Image.asset(ImageNames.sammiImages.cool);
       case SammiPersonality.smile:
         return Image.asset(ImageNames.sammiImages.smile);
-      case SammiPersonality.todo_smile:
+      case SammiPersonality.todoSmile:
         return Image.asset(ImageNames.sammiImages.todo_smile);
       case SammiPersonality.wow:
         return Image.asset(ImageNames.sammiImages.wow);
@@ -1445,6 +1457,8 @@ class SammiSpeechBubble extends StatelessWidget {
         return Image.asset(ImageNames.sammiJobsImages.swag);
       case SammiPersonality.jobsOoo:
         return Image.asset(ImageNames.sammiJobsImages.stare);
+      case SammiPersonality.jobsLargeSmile:
+        return Image.asset(ImageNames.sammiJobsImages.large_big_smile);
       case SammiPersonality.jobsSmile:
         return Image.asset(ImageNames.sammiJobsImages.smile);
     }

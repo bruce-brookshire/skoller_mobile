@@ -61,25 +61,6 @@ class MenuView extends StatelessWidget {
     ],
     [
       {
-        'name': Text.rich(
-          TextSpan(
-            text: 'Skoller',
-            children: [
-              TextSpan(
-                text: 'Jobs',
-                style: TextStyle(
-                    fontWeight: FontWeight.normal, fontStyle: FontStyle.italic),
-              ),
-            ],
-            style: TextStyle(fontSize: 16),
-          ),
-        ),
-        'builder': () => SkollerJobsView(),
-        'image': Image.asset(ImageNames.menuImages.briefcase)
-      },
-    ],
-    [
-      {
         'name': Text(
           'Send us feedback',
           style: TextStyle(fontWeight: FontWeight.normal, fontSize: 16),
@@ -239,7 +220,7 @@ class MenuView extends StatelessWidget {
                         fontSize: 13),
                   ),
                   Text(
-                    '© 2019 Skoller, Inc.',
+                    '© 2020 Skoller, Inc.',
                     textAlign: TextAlign.center,
                     style: TextStyle(
                         color: SKColors.light_gray,

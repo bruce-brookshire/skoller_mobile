@@ -21,6 +21,7 @@ class _AddClassesState extends State<AddClassesView> {
   Period activePeriod;
 
   final searchController = TextEditingController();
+  final searchFocusNode = FocusNode();
 
   bool isSearching = false;
 
@@ -58,6 +59,7 @@ class _AddClassesState extends State<AddClassesView> {
     super.dispose();
     DartNotificationCenter.unsubscribe(observer: this);
     searchController.dispose();
+    searchFocusNode.dispose();
   }
 
   void didTypeInSearch(String searchText) {
@@ -241,6 +243,7 @@ class _AddClassesState extends State<AddClassesView> {
                             Navigator.pop(context, val);
                           } else {
                             searchController.text = '';
+                            searchFocusNode.requestFocus();
                           }
                         });
                       DartNotificationCenter.post(
@@ -504,6 +507,7 @@ class _AddClassesState extends State<AddClassesView> {
                   child: CupertinoTextField(
                     onChanged: didTypeInSearch,
                     controller: searchController,
+                    focusNode: searchFocusNode,
                     clearButtonMode: OverlayVisibilityMode.editing,
                     cursorColor: SKColors.skoller_blue,
                     decoration: BoxDecoration(border: null),

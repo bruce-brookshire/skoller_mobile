@@ -267,7 +267,7 @@ class ClassStatusModal extends StatelessWidget {
           ),
         ),
         GestureDetector(
-          onTapUp: (details) => Navigator.pop(context, false),
+          onTapUp: (details) => Navigator.pop(context, true),
           child: Container(
             alignment: Alignment.center,
             padding: EdgeInsets.symmetric(vertical: 4),

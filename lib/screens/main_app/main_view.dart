@@ -85,13 +85,18 @@ class _MainState extends State<MainView> {
     super.dispose();
   }
 
-  void showPrimarySchoolModal() {
-    Navigator.push(
+  void showPrimarySchoolModal() async {
+    await Navigator.push(
       context,
       SKNavOverlayRoute(
         builder: (context) => PrimarySchoolModal(),
         isBarrierDismissible: false,
       ),
+    );
+
+    DartNotificationCenter.post(
+      channel: NotificationChannels.presentViewOverTabBar,
+      options: AddClassesView(),
     );
   }
 

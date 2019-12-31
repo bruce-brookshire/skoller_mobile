@@ -945,9 +945,10 @@ class _ClassesState extends State<ClassesView> {
     if (SKUser.current.student.primaryPeriod.endDate.millisecondsSinceEpoch <
             timeless.millisecondsSinceEpoch &&
         promptPeriod != null) {
-      await showDialog(
-          context: context,
-          builder: (_) => ClassSearchSettingsModal(promptPeriod.id));
+         await  Navigator.push(context, SKNavOverlayRoute(builder: (_) => ClassSearchSettingsModal(promptPeriod.id)));
+      // await showDialog(
+      //     context: context,
+      //     builder: );
     }
     DartNotificationCenter.post(
       channel: NotificationChannels.presentViewOverTabBar,
