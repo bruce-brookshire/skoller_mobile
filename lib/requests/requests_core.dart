@@ -1,8 +1,8 @@
 library requests_core;
 
-import 'package:skoller/screens/main_app/classes/modals/class_link_sharing_modal.dart';
 import 'package:dart_notification_center/dart_notification_center.dart';
-import 'package:skoller/screens/main_app/menu/my_points_view.dart';
+import 'package:skoller/screens/main_app/menu/profile_link_sharing_view.dart';
+import '../screens/main_app/menu/my_points_view.dart';
 import 'package:time_machine/time_machine.dart' as time_machine;
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -26,9 +26,9 @@ import 'dart:io';
 part 'student_class.dart';
 part 'assignment.dart';
 part 'school.dart';
-part 'chat.dart';
 part 'user.dart';
 part 'mod.dart';
+part 'jobs.dart';
 part 'auth.dart';
 
 const bool isProd = true;
@@ -73,17 +73,16 @@ class RequestResponse<T> {
 typedef T _DecodableConstructor<T>(Map content);
 
 class JsonListMaker {
-  static List convert<T>(_DecodableConstructor<T> maker, List content) {
-    return content.map<T>((obj) => maker(obj)).toList();
-  }
+  static List convert<T>(_DecodableConstructor<T> maker, List content) =>
+      content.map<T>((obj) => maker(obj)).toList();
 }
+
+DateTime _dateParser(String date) => date == null ? null : DateTime.parse(date);
 
 class SKRequests {
   static const String _environment = isProd
       ? 'https://api.skoller.co'
-      : (isLocal
-          ? 'http://127.0.0.1:4000'
-          : 'https://api-staging.skoller.co');
+      : (isLocal ? 'http://127.0.0.1:4000' : 'https://api-staging.skoller.co');
 
   static final String _baseUrl = '$_environment/api/v1';
 

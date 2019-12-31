@@ -16,6 +16,7 @@ class _PrimarySchoolState extends State<PrimarySchoolModal> {
   Period selectedPeriod;
 
   bool showingGreeting = true;
+  bool loading;
 
   @override
   void initState() {
@@ -26,6 +27,8 @@ class _PrimarySchoolState extends State<PrimarySchoolModal> {
       selectedPeriod = eligibleSchools.first.getBestCurrentPeriod();
       showingGreeting = false;
     } else {
+      loading = true;
+
       SKUser.current.checkEmailDomain().then((response) async {
         if (response.wasSuccessful()) {
           final List<School> obj = response.obj;
@@ -36,11 +39,13 @@ class _PrimarySchoolState extends State<PrimarySchoolModal> {
             await SKUser.current.update(primarySchool: obj.first);
           } else if (obj.length == 0 && !showingGreeting) tappedSearch(null);
 
-          setState(() {
-            eligibleSchools = obj;
-          });
+          eligibleSchools = obj;
         }
-      });
+
+        setState(() {
+          loading = false;
+        });
+      }).catchError((_) => setState(() => loading = false));
     }
   }
 
@@ -50,14 +55,10 @@ class _PrimarySchoolState extends State<PrimarySchoolModal> {
       SKNavFadeUpRoute(builder: (context) => SchoolSearchView()),
     );
 
-    if (SKUser.current.student.primarySchool != null &&
-        SKUser.current.student.primaryPeriod != null)
-      Navigator.pop(context);
-    else if (SKUser.current.student.primarySchool != null)
-      setState(() {
-        eligibleSchools = [SKUser.current.student.primarySchool];
-        selectedPeriod = eligibleSchools.first.getBestCurrentPeriod();
-      });
+    setState(() {
+      eligibleSchools = [SKUser.current.student.primarySchool];
+      selectedPeriod = eligibleSchools.first.getBestCurrentPeriod();
+    });
   }
 
   void tappedPeriodSelect(TapUpDetails detail) {
@@ -96,8 +97,9 @@ class _PrimarySchoolState extends State<PrimarySchoolModal> {
 
       Navigator.pop(context);
     } else if (selectedSchoolId != null) {
-      final school =
-          eligibleSchools.firstWhere((school) => school.id == selectedSchoolId, orElse: () => eligibleSchools.first);
+      final school = eligibleSchools.firstWhere(
+          (school) => school.id == selectedSchoolId,
+          orElse: () => eligibleSchools.first);
 
       await SKUser.current.update(primarySchool: school);
 
@@ -234,15 +236,15 @@ class _PrimarySchoolState extends State<PrimarySchoolModal> {
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
                       children: <Widget>[
                         Image.asset(
-                            'image_assets/tab_bar_assets/forecast_blue.png'),
+                            'image_assets/tab_bar_assets/todos_blue.png'),
                         Image.asset(
                             'image_assets/tab_bar_assets/calendar_gray.png'),
-                        Image.asset(
-                            'image_assets/tab_bar_assets/chat_gray.png'),
                         Image.asset(
                             'image_assets/tab_bar_assets/classes_gray.png'),
                         Image.asset(
                             'image_assets/tab_bar_assets/activity_gray.png'),
+                        Image.asset(
+                            'image_assets/tab_bar_assets/jobs_gray.png'),
                       ],
                     ),
                   )
@@ -304,12 +306,12 @@ class _PrimarySchoolState extends State<PrimarySchoolModal> {
                     children: <Widget>[
                       Text.rich(
                         TextSpan(
-                          text: 'My name is Sammi. I\'m ',
+                          text: 'I\'m Sammi. I\'ll be your guide to help you',
                           children: [
                             TextSpan(
-                                text: 'your guide',
+                                text: ' get the most ',
                                 style: TextStyle(fontWeight: FontWeight.bold)),
-                            TextSpan(text: ' to help you get through school!')
+                            TextSpan(text: 'out of college!')
                           ],
                           style: TextStyle(
                               fontSize: 17, fontWeight: FontWeight.normal),
@@ -319,25 +321,35 @@ class _PrimarySchoolState extends State<PrimarySchoolModal> {
                   ),
                 ),
               ),
-              GestureDetector(
-                onTapUp: (details) {
-                  if (eligibleSchools.length == 0) tappedSearch(null);
-                  setState(() => showingGreeting = false);
-                },
-                child: Container(
-                  alignment: Alignment.center,
-                  padding: EdgeInsets.symmetric(vertical: 10),
-                  margin: EdgeInsets.symmetric(horizontal: 24, vertical: 8),
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(5),
-                      color: SKColors.skoller_blue,
-                      boxShadow: UIAssets.boxShadow),
-                  child: Text(
-                    'Get started',
-                    style: TextStyle(color: Colors.white),
-                  ),
-                ),
-              )
+              loading
+                  ? Padding(
+                      padding: EdgeInsets.symmetric(vertical: 8),
+                      child: SizedBox(
+                        width: 32,
+                        height: 32,
+                        child: CircularProgressIndicator(),
+                      ),
+                    )
+                  : GestureDetector(
+                      onTapUp: (details) {
+                        if (eligibleSchools.length == 0) tappedSearch(null);
+                        setState(() => showingGreeting = false);
+                      },
+                      child: Container(
+                        alignment: Alignment.center,
+                        padding: EdgeInsets.symmetric(vertical: 10),
+                        margin:
+                            EdgeInsets.symmetric(horizontal: 24, vertical: 8),
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(5),
+                            color: SKColors.skoller_blue,
+                            boxShadow: UIAssets.boxShadow),
+                        child: Text(
+                          'Get started',
+                          style: TextStyle(color: Colors.white),
+                        ),
+                      ),
+                    )
             ],
           ),
         ),
@@ -582,8 +594,7 @@ class _PrimarySchoolState extends State<PrimarySchoolModal> {
         ),
       ),
       Flexible(
-        child: 
-        LayoutBuilder(
+        child: LayoutBuilder(
           builder: (BuildContext context, BoxConstraints constraints) =>
               Scrollbar(
             child: SingleChildScrollView(

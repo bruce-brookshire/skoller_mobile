@@ -9,6 +9,7 @@ import '../requests/requests_core.dart';
 import 'package:intl/intl.dart';
 import 'dart:ui' as dartUI;
 import 'dart:async';
+import 'dart:math';
 
 part 'skoller_widgets.dart';
 part 'utilities.dart';
@@ -17,13 +18,17 @@ part 'image_names.dart';
 
 const FORECAST_TAB = 0;
 const CALENDAR_TAB = 1;
-const CHAT_TAB = 2;
-const CLASSES_TAB = 3;
-const ACTIVITY_TAB = 4;
+const CLASSES_TAB = 2;
+const ACTIVITY_TAB = 3;
+const JOBS_TAB = 4;
 
 const PARTY_SIZE = 4;
 
 class SKColors {
+  static const skoller_blue = Color(0xFF57B9E4);
+  static const menu_blue = Color(0xFFEDFAFF);
+
+  // General
   static const dark_gray = Color(0xFF4A4A4A);
   static const background_gray = Color(0xFFF5F7F9);
   static const selected_gray = Color(0xFFF8F8F8);
@@ -32,11 +37,32 @@ class SKColors {
   static const text_light_gray = Color(0xFFC7C7CD);
   static const inactive_gray = Color(0xFFEEEEEE);
 
-  static const skoller_blue = Color(0xFF57B9E4);
-  static const menu_blue = Color(0xFFEDFAFF);
-  static const success = Color(0xFF4ADD58);
-  static const alert_orange = Color(0xFFFF6D00);
-  static const warning_red = Color(0xFFFF4159);
+  static const success = Color(0xFF0FB25C);
+  static const alert_orange = Color(0xFFEF4B0A);
+  static const warning_red = Color(0xFFEF183D);
+
+  // Skoller Jobs
+  static Color jobs_dark_green = Color(0xFF19A394);
+  static Color jobs_light_green = Color(0xFF61D8A0);
+
+  static Color darken(Color color, [double amount = 0.2]) {
+    assert(amount >= 0 && amount <= 1);
+
+    final hsl = HSLColor.fromColor(color);
+    final hslDark = hsl.withLightness((hsl.lightness - amount).clamp(0.0, 1.0));
+
+    return hslDark.toColor();
+  }
+
+  static Color lighten(Color color, [double amount = 0.2]) {
+    assert(amount >= 0 && amount <= 1);
+
+    final hsl = HSLColor.fromColor(color);
+    final hslLight =
+        hsl.withLightness((hsl.lightness + amount).clamp(0.0, 1.0));
+
+    return hslLight.toColor();
+  }
 }
 
 class Analytics {
@@ -46,7 +72,7 @@ class Analytics {
 class UIAssets {
   static final boxShadow = [
     BoxShadow(
-      color: Color(0x1F000000),
+      color: Color(0x21000000),
       offset: Offset(0, 1.75),
       blurRadius: 3.5,
     )
@@ -110,9 +136,6 @@ class PushNotificationCategories {
   // Other
   static const custom = 'Manual.Custom';
   static const signupLinkUsed = 'SignupLink.Used';
-
-  static bool isChat(String category) => _validateMember(
-      [chatComment, chatPost, chatReply, secondClass], category);
 
   static bool isClasses(String category) => _validateMember(
       [classComplete, classPrompt, needsSyllabus, classStart], category);

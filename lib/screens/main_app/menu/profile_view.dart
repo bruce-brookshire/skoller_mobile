@@ -74,7 +74,6 @@ class _ProfileState extends State<ProfileView> {
                         style: TextStyle(
                           color: Colors.white,
                           fontSize: 22,
-                          letterSpacing: 1,
                         ),
                       )
                     : null,

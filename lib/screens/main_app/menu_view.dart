@@ -61,25 +61,6 @@ class MenuView extends StatelessWidget {
     ],
     [
       {
-        'name': Text.rich(
-          TextSpan(
-            text: 'Skoller',
-            children: [
-              TextSpan(
-                text: 'Jobs',
-                style: TextStyle(
-                    fontWeight: FontWeight.normal, fontStyle: FontStyle.italic),
-              ),
-            ],
-            style: TextStyle(fontSize: 16),
-          ),
-        ),
-        'builder': () => SkollerJobsView(),
-        'image': Image.asset(ImageNames.menuImages.briefcase)
-      },
-    ],
-    [
-      {
         'name': Text(
           'Send us feedback',
           style: TextStyle(fontWeight: FontWeight.normal, fontSize: 16),
@@ -121,13 +102,22 @@ class MenuView extends StatelessWidget {
                       child: GestureDetector(
                         behavior: HitTestBehavior.opaque,
                         onTapUp: (details) {
-                          if (row.containsKey('builder'))
+                          if (row.containsKey('builder')) {
+                            String channel;
+                            Widget view = (row['builder'] as Function)();
+
+                            if (view is ProfileLinkSharingView)
+                              channel = NotificationChannels
+                                  .presentModalViewOverTabBar;
+                            else
+                              channel =
+                                  NotificationChannels.presentViewOverTabBar;
+
                             DartNotificationCenter.post(
-                              channel:
-                                  NotificationChannels.presentViewOverTabBar,
-                              options: (row['builder'] as Function)(),
+                              channel: channel,
+                              options: view,
                             );
-                          else if (row.containsKey('action'))
+                          } else if (row.containsKey('action'))
                             (row['action'] as VoidCallback)();
                         },
                         child: Row(
@@ -230,7 +220,7 @@ class MenuView extends StatelessWidget {
                         fontSize: 13),
                   ),
                   Text(
-                    '© 2019 Skoller, Inc.',
+                    '© 2020 Skoller, Inc.',
                     textAlign: TextAlign.center,
                     style: TextStyle(
                         color: SKColors.light_gray,

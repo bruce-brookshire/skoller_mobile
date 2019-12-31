@@ -48,8 +48,15 @@ class Mod {
     return _submitModResponse(false);
   }
 
-  Future<RequestResponse> acceptMod() {
-    return _submitModResponse(true);
+  Future<RequestResponse> acceptMod() async {
+    final response = await _submitModResponse(true);
+
+    if (response.wasSuccessful() &&
+        modType == ModType.due &&
+        (parentAssignment?.isCompleted ?? false))
+      await parentAssignment.toggleComplete();
+
+    return response;
   }
 
   Future<RequestResponse> _submitModResponse(bool withStatus) {
@@ -71,10 +78,6 @@ class Mod {
     if (content == null) {
       return null;
     }
-
-    DateTime createdOn = content['mod_created_at'] == null
-        ? null
-        : DateTime.parse(content['mod_created_at']);
 
     ModType modType;
     dynamic data;
@@ -100,7 +103,7 @@ class Mod {
           break;
         case 'Due Date':
           modType = ModType.due;
-          data = DateTime.parse(content['data']['due']);
+          data = _dateParser(content['data']['due']);
           break;
         case 'New Assignment':
           modType = ModType.newAssignment;
@@ -124,7 +127,7 @@ class Mod {
       content['class']['id'],
       content['students_accepted_count'],
       content['short_msg'],
-      createdOn,
+      _dateParser(content['mod_created_at']),
       modType,
       content['is_accepted'],
       data,

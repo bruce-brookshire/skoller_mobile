@@ -35,14 +35,14 @@ class StudentClass {
   static time_machine.DateTimeZoneProvider tzdb;
 
   static final _classColors = [
-    '9b55e5ff', // purple
-    'ff71a8ff', // pink
-    '1088b3ff', // blue
-    '4cd8bdff', // mint
-    '4add58ff', // green
-    'f7d300ff', // yellow
-    'ffae42ff', // orange
-    'dd4a63ff', // red
+    'AE77BDFF', // Lavendar
+    'E882ACFF', // Pink
+    '3484E3FF', // Blue
+    '61D8A0FF', // Mint
+    '19A394FF', // Teal
+    'F1AA39FF', // Yello
+    'E2762DFF', // Orange
+    'D73F76FF', // Magenta
   ];
 
   //----------------//
@@ -81,7 +81,7 @@ class StudentClass {
         : 'This new app takes our syllabus and sends reminders about upcoming due dates, organizes assignments into a calendar, and much more. Our class $name is already set up. Sign up using this link to join me!\n\n$enrollmentLink';
   }
 
-  School getSchool() => School.currentSchools[classPeriod.schoolId];
+  School get parentSchool => School.currentSchools[classPeriod.schoolId];
 
   Color getColor() {
     final colorizer = (String colorStr) {
@@ -188,7 +188,7 @@ class StudentClass {
         ? null
         : await TimeZoneManager.convertUtcOffsetFromLocalToSchool(
             dueDate,
-            getSchool().timezone,
+            parentSchool.timezone,
           );
 
     if (correctedDueDate != null) {
@@ -226,7 +226,7 @@ class StudentClass {
         ? null
         : await TimeZoneManager.convertUtcOffsetFromLocalToSchool(
             dueDate,
-            getSchool().timezone,
+            parentSchool.timezone,
           );
 
     if (correctedDueDate != null) {
@@ -300,19 +300,6 @@ class StudentClass {
       {"is_completed": isCompleted},
       null,
     );
-  }
-
-  Future<RequestResponse> createStudentChat(String post) {
-    return SKRequests.post(
-      '/classes/$id/posts',
-      {'post': post},
-      Chat._fromJsonObj,
-    ).then((response) {
-      if (response.wasSuccessful()) {
-        Chat.currentChats[response.obj.id] = response.obj;
-      }
-      return response;
-    });
   }
 
   Future<RequestResponse> addGradeScale(Map scale) {
@@ -438,16 +425,6 @@ class StudentClass {
 
   static bool classesLoaded = false;
   static Map<int, StudentClass> currentClasses = {};
-  static final List<Color> colors = [
-    Color(0xFFdd4a63), //Red
-    Color(0xFFFFAE42), //orange
-    Color(0xFFF7D300), //yellow
-    Color(0xFF4ADD58), //green
-    Color(0xFF4CD8BD), //mint
-    Color(0xFF57B9E4), //blue
-    Color(0xFFFF71A8), //pink
-    Color(0xFF9B55E5), //purple
-  ];
 
   static StudentClass _fromJsonObj(Map content) {
     if (content == null) {
@@ -528,6 +505,7 @@ class StudentClass {
     return SKRequests.get(
       '/students/${SKUser.current.student.id}/classes/${id}',
       _fromJsonObj,
+      postRequestAction: () => Assignment.currentAssignments.removeWhere((_, a) => a.classId == id),
     );
   }
 
@@ -646,16 +624,21 @@ class Weight {
 
   Weight(this.id, this.weight, this.name);
 
+  static Map<int, Weight> currentWeights = {};
+
   static Weight _fromJsonObj(Map content) {
     if (content == null) {
       return null;
     }
 
-    return Weight(
+    final weight = Weight(
       content['id'],
       content['weight'],
       content['name'],
     );
+
+    currentWeights[weight.id] = weight;
+    return weight;
   }
 }
 

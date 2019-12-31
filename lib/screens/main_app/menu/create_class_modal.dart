@@ -151,7 +151,6 @@ class _CreateClassModalState extends State<CreateClassModal> {
         child: Center(
           child: Padding(
             padding: EdgeInsets.fromLTRB(24, 0, 24, 0),
-            //TODO: remove gesture detector here for a button
             child: GestureDetector(
               behavior: HitTestBehavior.opaque,
               onTapUp: (_) {},

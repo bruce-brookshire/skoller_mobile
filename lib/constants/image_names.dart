@@ -8,12 +8,15 @@ class ImageNames {
   static final peopleImages = _PeopleImages();
   static final statusImages = _StatusImages();
   static final activityImages = _ActivityImages();
-  static final chatImages = _ChatImages();
   static final sammiImages = _SammiImages();
   static final menuImages = _MenuImages();
-  static final forecastImages = _ForecastImages();
+  static final todoImages = _TodoImages();
   static final tutorialImages = _TutorialImages();
   static final classInfoImages = _ClassInfoImages();
+  static final classesImages = _ClassesImages();
+  static final jobsImages = _JobsImages();
+  static final sammiJobsImages = _SammiJobsImages();
+  static final shareImages = _ShareImages();
 }
 
 class _MenuImages {
@@ -24,37 +27,17 @@ class _MenuImages {
   final reminders = '${_base}/reminders.png';
 }
 
-class _ForecastImages {
-  static const _base = 'image_assets/forecast_assets';
+class _TodoImages {
+  static const _base = 'image_assets/todo_assets';
 
-  final forecast = '${_base}/forecast.png';
   final harry_potter = '${_base}/harry_potter.png';
+  final students_in_pool = '${_base}/students_in_pool.png';
 }
 
 class _TutorialImages {
   static const _base = 'image_assets/tutorial_assets';
 
   final syllabus = '${_base}/syllabus.png';
-}
-
-class _ChatImages {
-  static const _base = 'image_assets/chat_assets';
-
-  final star_yellow = '${_base}/star_yellow.png';
-  final commented_blue = '${_base}/commented_blue.png';
-  final commented_gray = '${_base}/commented_gray.png';
-  final commented_white = '${_base}/commented_white.png';
-  final compose = '${_base}/compose.png';
-  final filter = '${_base}/filter.png';
-  final inbox_unread = '${_base}/inbox_unread.png';
-  final inbox = '${_base}/inbox.png';
-  final like_blue = '${_base}/like_blue.png';
-  final like_gray = '${_base}/like_gray.png';
-  final reply_back_gray = '${_base}/reply_back_gray.png';
-  final reply_down_gray = '${_base}/reply_down_gray.png';
-  final reply_down_white = '${_base}/reply_down_white.png';
-  final reply_forward_gray = '${_base}/reply_forward_gray.png';
-  final star_gray = '${_base}/star_gray.png';
 }
 
 class _ActivityImages {
@@ -79,6 +62,7 @@ class _SignUpImages {
   final text_verify = '${_base}/text_verify.png';
   final syllabus_activity = '${_base}/syllabus_activity.png';
   final activities = '${_base}/activities.png';
+  final star_yellow = '${_base}/star_yellow.png';
   final logo_wide_blue = '${_base}/logo_wide_blue.png';
   final search_back_arrow = '${_base}/search_back_arrow.png';
 }
@@ -91,6 +75,9 @@ class _NavigationArrowImages {
   final right = '${_base}/right.png';
   final dropdown_blue = '${_base}/dropdown_blue.png';
   final dropdown_gray = '${_base}/dropdown_gray.png';
+  final dropdown_green = '${_base}/dropdown_green.png';
+  final pulldown_gray = '${_base}/pulldown_gray.png';
+  final pulldown_blue = '${_base}/pulldown_blue.png';
 }
 
 class _SammiImages {
@@ -100,9 +87,24 @@ class _SammiImages {
   final shocked = '${_base}/ooo_sammi.png';
   final wow = '${_base}/wow_sammi.png';
   final smile = '${_base}/smile_sammi.png';
+  final todo_smile = '${_base}/todo_smile_sammi.png';
   final intro = '${_base}/intro_sammi.png';
   final big_smile = '${_base}/big_smile_sammi.png';
   // final school = '${_base}/school_sammi.png';
+}
+
+class _SammiJobsImages {
+  static const _base = 'image_assets/sammi_jobs_personality_assets';
+
+  final big_smile = '${_base}/big_smile.png';
+  final large_big_smile = '${_base}/large_big_smile.png';
+final sad = '${_base}/sad.png';
+final side_eye = '${_base}/side_eye.png';
+final smile = '${_base}/smile.png';
+final stare = '${_base}/stare.png';
+final surprise = '${_base}/surprise.png';
+final swag = '${_base}/swag.png';
+final yikes = '${_base}/yikes.png';
 }
 
 class _RightNavImages {
@@ -112,6 +114,7 @@ class _RightNavImages {
   final info = '${_base}/info.png';
   final link = '${_base}/link.png';
   final magnifying_glass = '${_base}/magnifying_glass.png';
+  final magnifying_glass_green = '${_base}/magnifying_glass_green.png';
   final filter_bars = '${_base}/filter_bars.png';
   final add_class = '${_base}/add_class.png';
 }
@@ -139,6 +142,7 @@ class _PeopleImages {
   final person_edit = '${_base}/user_edit.png';
   final people_white = '${_base}/people_white.png';
   final people_gray = '${_base}/people_gray.png';
+  final people_gray_large = '${_base}/people_gray_large.png';
   final people_blue = '${_base}/people_blue.png';
   final static_profile = '${_base}/static_profile.png';
 }
@@ -155,10 +159,40 @@ class _StatusImages {
   final needs_syllabus = '${_base}/needs_syllabus.png';
   final setup_community = '${_base}/setup_community.png';
   final setup_live = '${_base}/setup_live.png';
+  final todolist_gif = '${_base}/todolist_gif.gif';
 }
 
 class _ClassInfoImages {
   static const _base = 'image_assets/class_info_assets';
 
   final clipboard = '${_base}/clipboard.png';
+}
+
+class _ClassesImages {
+  static const _base = 'image_assets/classes_assets';
+
+  final syllabus_gray = '${_base}/syllabus_gray.png';
+  final syllabus_red = '${_base}/syllabus_red.png';
+  final syllabus_orange = '${_base}/syllabus_orange.png';
+
+  final syllabus_in_review = '$_base/syllabus_in_review.png';
+  final syllabus_upload = '$_base/syllabus_upload.png';
+  final syllabus_diy = '$_base/syllabus_diy.png';
+  final syllabus_overload = '$_base/syllabus_overload.png';
+}
+
+class _JobsImages {
+  static const _base = 'image_assets/jobs_assets';
+
+  final jobs_cover_art = '$_base/jobs_cover_art.png';
+  final submit_resume_graphic = '$_base/submit_resume_graphic.png';
+}
+
+
+class _ShareImages {
+  static const _base = 'image_assets/share_assets';
+
+  final aoii_share_image = '$_base/aoii_share_image.png';
+  final asa_share_image = '$_base/asa_share_image.png';
+  final amazon_card_image = '$_base/amazon_share_image.png';
 }

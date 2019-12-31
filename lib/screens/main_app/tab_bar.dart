@@ -4,11 +4,10 @@ import 'package:firebase_analytics/observer.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/material.dart';
-import 'activity/activity_view.dart';
-import 'forecast/forecast_view.dart';
+import 'package:skoller/screens/main_app/jobs/jobs_view.dart';
+import 'tasks/todo_view.dart';
 import 'package:skoller/tools.dart';
 import 'classes/classes_view.dart';
-import 'chat/chat_list_view.dart';
 import 'calendar/calendar.dart';
 
 class SKTabBar extends StatefulWidget {
@@ -18,15 +17,13 @@ class SKTabBar extends StatefulWidget {
 
 class _SKTabBarState extends State<SKTabBar> {
   final _widgetOptions = [
-    ForecastView(),
+    TodoView(),
     CalendarView(),
-    ChatListView(),
     ClassesView(),
-    ActivityView(),
+    JobsView(),
   ];
 
   final List<GlobalKey<NavigatorState>> _navigatorKeys = [
-    GlobalKey<NavigatorState>(),
     GlobalKey<NavigatorState>(),
     GlobalKey<NavigatorState>(),
     GlobalKey<NavigatorState>(),
@@ -38,18 +35,16 @@ class _SKTabBarState extends State<SKTabBar> {
     FirebaseAnalyticsObserver(analytics: Analytics.analytics),
     FirebaseAnalyticsObserver(analytics: Analytics.analytics),
     FirebaseAnalyticsObserver(analytics: Analytics.analytics),
-    FirebaseAnalyticsObserver(analytics: Analytics.analytics),
   ];
 
   final List<String> _indexIconPartialPaths = [
-    'forecast_',
+    'todos_',
     'calendar_',
-    'chat_',
     'classes_',
-    'activity_',
+    'jobs_'
   ];
 
-  List<bool> _indexNeedsDot = [false, false, false, false, false];
+  List<bool> _indexNeedsDot = [false, false, false, false];
 
   CupertinoTabController controller;
 
@@ -131,7 +126,7 @@ class _SKTabBarState extends State<SKTabBar> {
         },
         tabBar: CupertinoTabBar(
           backgroundColor: Colors.white,
-          items: List.generate(5, createTabIndex),
+          items: List.generate(4, createTabIndex),
           onTap: _onItemTapped,
         ),
       ),

@@ -68,7 +68,7 @@ class _AssignmentBatchAddState extends State<AssignmentBatchAddView> {
 
     if (result != null) {
       int index = queuedAssignments.indexWhere(
-          (element) => element.dueDate?.isAfter(result.dueDate) ?? false);
+          (element) => result.dueDate == null ? true : element.dueDate?.isAfter(result.dueDate) ?? false);
 
       setState(() {
         queuedAssignments.insert(
@@ -343,7 +343,7 @@ class _AssignmentBatchAddState extends State<AssignmentBatchAddView> {
               child: Container(
                 margin: EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                    color: SKColors.skoller_blue,
+                    border: Border.all(color: SKColors.skoller_blue),
                     borderRadius: BorderRadius.circular(5)),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -352,7 +352,7 @@ class _AssignmentBatchAddState extends State<AssignmentBatchAddView> {
                       padding: EdgeInsets.symmetric(vertical: 6),
                       child: Text(
                         "Review",
-                        style: TextStyle(color: Colors.white),
+                        style: TextStyle(color: SKColors.skoller_blue),
                       ),
                     ),
                   ],
@@ -480,6 +480,7 @@ class _AddAssignmentSubState extends State<_AddAssignmentSubview> {
               maxLines: 1,
               decoration: InputDecoration(hintText: 'Name'),
               style: TextStyle(fontSize: 14),
+              autofocus: true,
               onChanged: (newStr) {
                 checkState();
               },
@@ -500,7 +501,7 @@ class _AddAssignmentSubState extends State<_AddAssignmentSubview> {
                     !dateSelected
                         ? 'Select date'
                         : (dueDate == null
-                            ? 'No due date'
+                            ? 'Unknown'
                             : DateFormat('EEE, MMMM d').format(dueDate)),
                     style: TextStyle(
                         fontWeight: FontWeight.bold,

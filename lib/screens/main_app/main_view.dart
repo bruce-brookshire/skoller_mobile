@@ -1,5 +1,6 @@
 import 'package:dart_notification_center/dart_notification_center.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:skoller/screens/main_app/classes/class_menu_modal.dart';
 import 'package:skoller/screens/main_app/menu/add_classes_view.dart';
 import 'package:skoller/screens/main_app/menu/major_search_modal.dart';
 import 'package:skoller/screens/main_app/tutorial/tutorial.dart';
@@ -84,13 +85,18 @@ class _MainState extends State<MainView> {
     super.dispose();
   }
 
-  void showPrimarySchoolModal() {
-    Navigator.push(
+  void showPrimarySchoolModal() async {
+    await Navigator.push(
       context,
       SKNavOverlayRoute(
         builder: (context) => PrimarySchoolModal(),
         isBarrierDismissible: false,
       ),
+    );
+
+    DartNotificationCenter.post(
+      channel: NotificationChannels.presentViewOverTabBar,
+      options: AddClassesView(),
     );
   }
 
@@ -141,7 +147,7 @@ class _MainState extends State<MainView> {
             curCount);
 
     final assignmentCompleted = Assignment.currentAssignments.values
-        .any((a) => (a.due?.isBefore(now) ?? false) || a.completed);
+        .any((a) => (a.due?.isBefore(now) ?? false) || a.isCompleted);
 
     final shouldReview = numSetupClasses >= 2 && assignmentCompleted;
 
@@ -201,7 +207,7 @@ class _MainState extends State<MainView> {
                   5,
                   (_) => Padding(
                     padding: EdgeInsets.symmetric(horizontal: 4),
-                    child: Image.asset(ImageNames.chatImages.star_yellow),
+                    child: Image.asset(ImageNames.signUpImages.star_yellow),
                   ),
                 ),
               ),
@@ -320,10 +326,11 @@ class _MainState extends State<MainView> {
   void presentModalWidgetOverMainView(dynamic viewToPresent) {
     if (menuShowing) toggleMenu(null);
 
-    Navigator.push(
-      context,
-      SKNavOverlayRoute(builder: (context) => viewToPresent),
-    );
+    final route = viewToPresent is ClassMenuModal
+        ? SKCoverSheetNav(builder: (_) => viewToPresent)
+        : SKNavOverlayRoute(builder: (_) => viewToPresent);
+
+    Navigator.push(context, route);
   }
 
   @override

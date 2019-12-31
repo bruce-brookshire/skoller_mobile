@@ -13,7 +13,7 @@ class Assignment {
   double weight;
   double grade;
 
-  bool completed;
+  bool isCompleted;
   bool _dueDateShifted = false;
   bool isPostNotifications;
 
@@ -25,18 +25,22 @@ class Assignment {
   List<AssignmentChat> posts;
 
   Future configureDateTimeOffset() async {
-    if (!_dueDateShifted && due != null && parentClass.getSchool() != null) {
+    if (!_dueDateShifted && due != null && parentClass.parentSchool != null) {
       _dueDateShifted = true;
 
       due = await TimeZoneManager.createLocalRelativeAssignmentDueDate(
         due,
-        parentClass.getSchool().timezone,
+        parentClass.parentSchool.timezone,
       );
     }
   }
 
   StudentClass get parentClass {
     return StudentClass.currentClasses[classId];
+  }
+
+  Weight get weightObject {
+    return Weight.currentWeights[weight_id];
   }
 
   Assignment(
@@ -47,7 +51,7 @@ class Assignment {
     this.weight,
     this.weight_id,
     this.grade,
-    this.completed,
+    this.isCompleted,
     this.posts,
     this._parent_assignment_id,
     this.isPostNotifications,
@@ -55,7 +59,7 @@ class Assignment {
   );
 
   Future<bool> toggleComplete() {
-    final newComplete = !(completed ?? false);
+    final newComplete = !(isCompleted ?? false);
 
     return SKRequests.put(
       '/assignments/${id}',
@@ -65,7 +69,8 @@ class Assignment {
       final success = response.wasSuccessful();
 
       if (success) {
-        Assignment.currentAssignments[id].completed = response.obj.completed;
+        Assignment.currentAssignments[id].isCompleted =
+            response.obj.isCompleted;
       }
       return success;
     });
@@ -93,7 +98,8 @@ class Assignment {
     ).then((response) {
       if (response.wasSuccessful()) {
         Assignment.currentAssignments[id].grade = response.obj.grade;
-        Assignment.currentAssignments[id].completed = response.obj.completed;
+        Assignment.currentAssignments[id].isCompleted =
+            response.obj.isCompleted;
         parentClass.refetchSelf();
       }
 
@@ -155,21 +161,29 @@ class Assignment {
     DateTime correctedDueDate =
         await TimeZoneManager.convertUtcOffsetFromLocalToSchool(
       dueDate,
-      parentClass.getSchool().timezone,
+      parentClass.parentSchool.timezone,
     );
 
     if (correctedDueDate != null) {
       tzCorrectedString = correctedDueDate.toIso8601String();
-    }
-
-    return SKRequests.put(
-      '/assignments/${id}',
-      {
+      final now = DateTime.now();
+      final today = DateTime(now.year, now.month, now.day);
+      final body = {
         'is_private': isPrivate,
         'due': tzCorrectedString,
-      },
-      Assignment._fromJsonObj,
-    );
+        if (dueDate.isAfter(today) &&
+            this.due.isBefore(today) &&
+            this.isCompleted)
+          'is_completed': false,
+      };
+
+      return SKRequests.put(
+        '/assignments/${id}',
+        body,
+        Assignment._fromJsonObj,
+      );
+    } else
+      return Future.value(RequestResponse(500, null));
   }
 
   Future<RequestResponse> addDueDate(DateTime dueDate) async {
@@ -178,7 +192,7 @@ class Assignment {
     DateTime correctedDueDate =
         await TimeZoneManager.convertUtcOffsetFromLocalToSchool(
       dueDate,
-      parentClass.getSchool().timezone,
+      parentClass.parentSchool.timezone,
     );
 
     if (correctedDueDate != null) {
@@ -249,12 +263,11 @@ class Assignment {
     if (content == null) {
       return null;
     }
-    final due = content['due'] != null ? DateTime.parse(content['due']) : null;
 
     Assignment assignment = Assignment(
       content['id'],
       content['name'],
-      due,
+      _dateParser(content['due']),
       content['class_id'],
       content['weight'],
       content['weight_id'],
@@ -303,9 +316,10 @@ class AssignmentChat {
 
   static AssignmentChat _fromJsonObj(Map content) {
     return AssignmentChat(
-        content['id'],
-        PublicStudent._fromJsonObj(content['student']),
-        content['post'],
-        DateTime.parse(content['inserted_at']));
+      content['id'],
+      PublicStudent._fromJsonObj(content['student']),
+      content['post'],
+      _dateParser(content['inserted_at']),
+    );
   }
 }

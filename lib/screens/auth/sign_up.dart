@@ -88,7 +88,7 @@ class _SignUpState extends State<SignUp> {
           );
         } else if (result is bool && result) {
           Session.startSession();
-          
+
           Navigator.popUntil(context, (route) => route.isFirst);
 
           DartNotificationCenter.post(
@@ -96,6 +96,7 @@ class _SignUpState extends State<SignUp> {
             options: AppState.main,
           );
         } else {
+          setState(() => validState = false);
           DropdownBanner.showBanner(
             text: 'Failed to authenticate',
             color: SKColors.warning_red,
@@ -103,19 +104,17 @@ class _SignUpState extends State<SignUp> {
           );
         }
       } else {
-        if ([422, 401].contains(response.status)) {
-          DropdownBanner.showBanner(
-              text:
-                  'A user already exists with that phone number or email. Try logging in!',
-              color: SKColors.warning_red,
-              textStyle: TextStyle(color: Colors.white));
-        } else {
-          DropdownBanner.showBanner(
-              text:
-                  'Failed to create account. Try again later, or visit skoller.co',
-              color: SKColors.warning_red,
-              textStyle: TextStyle(color: Colors.white));
-        }
+        setState(() => validState = false);
+        
+        String message = [422, 401].contains(response.status)
+            ? 'A user already exists with that phone number or email. Try logging in!'
+            : 'Failed to create account. Try again later, or visit skoller.co';
+
+        DropdownBanner.showBanner(
+          text: message,
+          color: SKColors.warning_red,
+          textStyle: TextStyle(color: Colors.white),
+        );
       }
     });
   }

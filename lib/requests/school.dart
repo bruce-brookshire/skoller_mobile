@@ -2,15 +2,21 @@ part of 'requests_core.dart';
 
 class School {
   int id;
+
+  bool isSyllabusOverload;
+
   List<Period> periods;
+
   String timezone;
   String name;
   String adrRegion;
   String adrLocality;
+
   Color color;
 
   School(
     this.id,
+    this.isSyllabusOverload,
     this.timezone,
     this.periods,
     this.name,
@@ -73,6 +79,7 @@ class School {
 
     return School(
       content['id'],
+      content['is_syllabus_overload'],
       content['timezone'],
       period_list,
       content['name'],
@@ -102,12 +109,10 @@ class School {
       ..removeWhere((period) => (period.endDate ?? today).isBefore(today));
 
     final findSemester = (int status) {
-      for (final Period period in periods) {
-        if (period.periodStatusId == status && period.isMainPeriod) {
-          return period;
-        }
-      }
-      return null;
+      return periods.firstWhere(
+        (period) => period.periodStatusId == status && period.isMainPeriod,
+        orElse: () => null,
+      );
     };
 
     Period activePeriod = findSemester(200);
@@ -182,7 +187,7 @@ class Period {
   School getSchool() => School.currentSchools[schoolId];
 
   int get hashCode => id;
-  bool operator==(rhs) => rhs is Period && rhs.id == id;
+  bool operator ==(rhs) => rhs is Period && rhs.id == id;
 
   Future<RequestResponse> createClass({
     @required String className,
@@ -226,10 +231,8 @@ class Period {
       content['id'],
       content['school_id'],
       content['name'],
-      content['start_date'] != null
-          ? DateTime.parse(content['start_date'])
-          : null,
-      content['end_date'] != null ? DateTime.parse(content['end_date']) : null,
+      _dateParser(content['start_date']),
+      _dateParser(content['end_date']),
       content['is_main_period'] ?? false,
       content['class_period_status']['id'],
     );

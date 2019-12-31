@@ -21,6 +21,7 @@ class _AddClassesState extends State<AddClassesView> {
   Period activePeriod;
 
   final searchController = TextEditingController();
+  final searchFocusNode = FocusNode();
 
   bool isSearching = false;
 
@@ -58,6 +59,7 @@ class _AddClassesState extends State<AddClassesView> {
     super.dispose();
     DartNotificationCenter.unsubscribe(observer: this);
     searchController.dispose();
+    searchFocusNode.dispose();
   }
 
   void didTypeInSearch(String searchText) {
@@ -237,8 +239,11 @@ class _AddClassesState extends State<AddClassesView> {
                           ),
                         ).then((val) {
                           //Should we propogate pop?
-                          if (val is bool) {
+                          if (val is bool && !val) {
                             Navigator.pop(context, val);
+                          } else {
+                            searchController.text = '';
+                            searchFocusNode.requestFocus();
                           }
                         });
                       DartNotificationCenter.post(
@@ -409,7 +414,11 @@ class _AddClassesState extends State<AddClassesView> {
   }
 
   Widget createHeader() {
-    final classCount = StudentClass.currentClasses.values.fold(0, (a, s) => a + (s.classPeriod == SKUser.current.student.primaryPeriod ? 1 : 0));
+    final classCount = StudentClass.currentClasses.values.fold(
+        0,
+        (a, s) =>
+            a +
+            (s.classPeriod == SKUser.current.student.primaryPeriod ? 1 : 0));
 
     return Container(
       height: 128,
@@ -498,6 +507,7 @@ class _AddClassesState extends State<AddClassesView> {
                   child: CupertinoTextField(
                     onChanged: didTypeInSearch,
                     controller: searchController,
+                    focusNode: searchFocusNode,
                     clearButtonMode: OverlayVisibilityMode.editing,
                     cursorColor: SKColors.skoller_blue,
                     decoration: BoxDecoration(border: null),

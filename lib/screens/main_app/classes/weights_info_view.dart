@@ -14,6 +14,10 @@ class WeightsInfoView extends StatefulWidget {
 }
 
 class _WeightsInfoState extends State<WeightsInfoView> {
+  void tappedFAQ(_) {
+    showDialog(context: context, builder: (_) => _WeightFAQModal());
+  }
+
   @override
   Widget build(BuildContext context) {
     final studentClass = StudentClass.currentClasses[widget.classId];
@@ -94,73 +98,248 @@ class _WeightsInfoState extends State<WeightsInfoView> {
     return SKNavView(
       title: studentClass.name,
       titleColor: studentClass.getColor(),
-      rightBtn: Text('Edit', style: TextStyle(color: SKColors.skoller_blue)),
-      callbackRight: () => Navigator.push(
-        context,
-        CupertinoPageRoute(
-          builder: (context) => WeightsChangeRequestView(widget.classId),
-          settings: RouteSettings(name: 'WeightsChangeRequestView'),
-          fullscreenDialog: true,
-        ),
-      ),
       backgroundColor: Colors.white,
       children: <Widget>[
         Expanded(
-          child: ListView(
-            children: <Widget>[
-              Padding(
-                padding: EdgeInsets.only(top: 16, bottom: 4),
-                child: Text(
-                  'Weight Breakdown',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: 16),
+          child: SingleChildScrollView(
+              child: SKHeaderCard(
+            leftHeaderItem: Text('Weights', style: TextStyle(fontSize: 17)),
+            rightHeaderItem: GestureDetector(
+              onTapUp: (_) => Navigator.push(
+                context,
+                CupertinoPageRoute(
+                  builder: (context) =>
+                      WeightsChangeRequestView(widget.classId),
+                  settings: RouteSettings(name: 'WeightsChangeRequestView'),
+                  fullscreenDialog: true,
                 ),
               ),
-              Text(
-                '${assignmentCount} weighted assignments',
-                textAlign: TextAlign.center,
-                style: TextStyle(fontWeight: FontWeight.normal, fontSize: 13),
+              child: Text(
+                'Edit',
+                style: TextStyle(color: SKColors.skoller_blue),
               ),
-              Padding(
-                padding: EdgeInsets.symmetric(vertical: 12, horizontal: 36),
-                child: Text(
-                  'Assignments are equally weighted within each category',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontWeight: FontWeight.normal,
-                    fontSize: 13,
+            ),
+            children: <Widget>[
+              Container(
+                margin: EdgeInsets.symmetric(vertical: 8),
+                padding: EdgeInsets.fromLTRB(8, 0, 8, 12),
+                decoration: BoxDecoration(
+                    border: Border(
+                        bottom: BorderSide(color: SKColors.border_gray))),
+                child: Text.rich(
+                  TextSpan(
+                    text:
+                        'Currently, there ${assignmentCount == 1 ? 'is' : 'are'} ',
+                    children: [
+                      TextSpan(
+                        text:
+                            '$assignmentCount assignment${assignmentCount == 1 ? '' : 's'}',
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                      TextSpan(
+                        text: ' that will\ncount towards your final grade.',
+                      ),
+                    ],
+                    style: TextStyle(
+                      fontWeight: FontWeight.normal,
+                      fontSize: 13,
+                    ),
                   ),
+                  textAlign: TextAlign.center,
                 ),
               ),
               ...weightRows,
-              Padding(
-                padding: EdgeInsets.only(top: 24, bottom: 8),
-                child: Text(
-                  'Need to add an assignment?',
-                  textAlign: TextAlign.center,
+              Container(
+                decoration: BoxDecoration(
+                  border: Border(top: BorderSide(color: SKColors.border_gray)),
                 ),
-              ),
-              GestureDetector(
-                onTapUp: (details) {
-                  Navigator.push(
-                    context,
-                    CupertinoPageRoute(
-                      builder: (context) =>
-                          AssignmentWeightView(studentClass.id),
-                      settings: RouteSettings(name: 'AssignmentWeightView'),
+                margin: EdgeInsets.symmetric(vertical: 8),
+                padding: EdgeInsets.fromLTRB(8, 16, 8, 0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    SizedBox(width: 32),
+                    GestureDetector(
+                      onTapUp: (details) {
+                        Navigator.push(
+                          context,
+                          CupertinoPageRoute(
+                            builder: (context) =>
+                                AssignmentWeightView(studentClass.id),
+                            settings:
+                                RouteSettings(name: 'AssignmentWeightView'),
+                          ),
+                        );
+                      },
+                      child: Container(
+                        padding:
+                            EdgeInsets.symmetric(vertical: 6, horizontal: 24),
+                        margin: EdgeInsets.symmetric(horizontal: 24),
+                        decoration: BoxDecoration(
+                          color: SKColors.skoller_blue,
+                          borderRadius: BorderRadius.circular(5),
+                          // boxShadow: UIAssets.boxShadow,
+                        ),
+                        child: Text(
+                          'Add an assignment',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(color: Colors.white),
+                        ),
+                      ),
                     ),
-                  );
-                },
-                child: Text(
-                  'Add an assignment',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(color: SKColors.skoller_blue),
+                    GestureDetector(
+                      behavior: HitTestBehavior.opaque,
+                      onTapUp: tappedFAQ,
+                      child: SizedBox(
+                        width: 32,
+                        child: Icon(
+                          Icons.help_outline,
+                          color: SKColors.skoller_blue,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ],
-          ),
+          )),
         ),
       ],
+    );
+  }
+}
+
+class _WeightFAQModal extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Dialog(
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(10),
+        side: BorderSide(
+          color: SKColors.border_gray,
+        ),
+      ),
+      child: Scrollbar(
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: EdgeInsets.all(12),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: <Widget>[
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    GestureDetector(
+                      onTapUp: (_) => Navigator.pop(context),
+                      behavior: HitTestBehavior.opaque,
+                      child: SizedBox(
+                        width: 28,
+                        height: 28,
+                        child: Image.asset(ImageNames.navArrowImages.down),
+                      ),
+                    ),
+                    Text(
+                      'Weight FAQs',
+                      style: TextStyle(fontSize: 18),
+                      textAlign: TextAlign.center,
+                    ),
+                    SizedBox(width: 28, height: 28),
+                  ],
+                ),
+                Padding(
+                  padding: EdgeInsets.only(top: 12),
+                  child: Text(
+                    'Question 1: ',
+                    style: TextStyle(fontSize: 14),
+                  ),
+                ),
+                Text(
+                  'Are all assignments within a category equally weighted?',
+                  style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
+                ),
+                Padding(
+                  padding: EdgeInsets.only(top: 12),
+                  child: Text(
+                    'Answer 1:',
+                    style: TextStyle(color: SKColors.light_gray, fontSize: 14),
+                  ),
+                ),
+                Container(
+                  padding: EdgeInsets.only(bottom: 12),
+                  margin: EdgeInsets.only(bottom: 12),
+                  decoration: BoxDecoration(
+                      border: Border(
+                          bottom: BorderSide(color: SKColors.border_gray))),
+                  child: Text(
+                    'Yes. For example, if the weight category \'Exams\' is 40% of your final grade, and there are 4 exams, each is worth 10% of your final grade. (40%/4 = 10%)',
+                    style: TextStyle(
+                        color: SKColors.light_gray,
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500),
+                  ),
+                ),
+                Padding(
+                  padding: EdgeInsets.only(top: 12),
+                  child: Text(
+                    'Question 2: ',
+                    style: TextStyle(fontSize: 14),
+                  ),
+                ),
+                Text(
+                  'What should I do if assignments in the same category are NOT equally weighted?',
+                  style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
+                ),
+                Padding(
+                  padding: EdgeInsets.only(top: 12),
+                  child: Text(
+                    'Answer 2:',
+                    style: TextStyle(color: SKColors.light_gray, fontSize: 14),
+                  ),
+                ),
+                Container(
+                  padding: EdgeInsets.only(bottom: 12),
+                  margin: EdgeInsets.only(bottom: 12),
+                  decoration: BoxDecoration(
+                      border: Border(
+                          bottom: BorderSide(color: SKColors.border_gray))),
+                  child: Text(
+                    'In this case, you should create TWO separate weight categories. Let\'s assume you have 4 exams total. 2 of them are worth 12% each. The other 2 are worth 8% each.\n\nYou should create two weight categories like this:\n\nLarge Exams = 24%\nSmall Exams = 16%\n\nThis will fix your grade calculator!',
+                    style: TextStyle(
+                        color: SKColors.light_gray,
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500),
+                  ),
+                ),
+                Padding(
+                  padding: EdgeInsets.only(top: 12),
+                  child: Text(
+                    'Question 3: ',
+                    style: TextStyle(fontSize: 14),
+                  ),
+                ),
+                Text(
+                  'How does Skoller handle extra credit?',
+                  style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
+                ),
+                Padding(
+                  padding: EdgeInsets.only(top: 12),
+                  child: Text(
+                    'Answer 3:',
+                    style: TextStyle(color: SKColors.light_gray, fontSize: 14),
+                  ),
+                ),
+                Text(
+                  'We do NOT advise you to make a weight category for extra credit. This skews the weights for the rest of the assignments. If you receive extra credit for an assignment, you should add it to your grade when entering that assignment\'s grade in Skoller.\n\nFor example, I made an 84% on an assignment. The teacher gave us 5% extra credit for writing answers in cursive.\n\nYou should record your grade as 89%',
+                  style: TextStyle(
+                      color: SKColors.light_gray,
+                      fontSize: 14,
+                      fontWeight: FontWeight.w500),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
     );
   }
 }

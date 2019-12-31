@@ -1,6 +1,6 @@
 name: skoller
 description: A new Flutter project.
-version: 5.4.0+27
+version: 6.0.0+29
 
 environment:
   sdk: ">=2.3.0 <3.0.0"
@@ -17,7 +17,7 @@ dependencies:
   firebase_analytics: ^4.0.2
   firebase_core: ^0.4.0+8
   firebase_messaging: ^5.1.2
-  flutter_apns: ^1.0.2
+  flutter_apns: ^1.0.5
   flutter_keychain: ^1.0.0
   package_info: ^0.4.0+4
   path_provider: ^1.1.2
@@ -53,20 +53,23 @@ flutter:
 
   # To add assets to your application, add an assets section, like this:
   assets:
-   - image_assets/tab_bar_assets/
-   - image_assets/sign_up_assets/
-   - image_assets/forecast_assets/
-   - image_assets/navigation_arrow_assets/
-   - image_assets/right_button_assets/
-   - image_assets/assignment_info_assets/
-   - image_assets/people_assets/
-   - image_assets/status_assets/
-   - image_assets/activity_assets/
-   - image_assets/chat_assets/
-   - image_assets/class_info_assets/
-   - image_assets/sammi_personality_assets/
-   - image_assets/menu_assets/
-   - image_assets/tutorial_assets/
-   - image_assets/seed_invest_popup.png
-   - packages/time_machine/data/cultures/cultures.bin
-   - packages/time_machine/data/tzdb/tzdb.bin
+    - image_assets/tab_bar_assets/
+    - image_assets/sign_up_assets/
+    - image_assets/todo_assets/
+    - image_assets/classes_assets/
+    - image_assets/navigation_arrow_assets/
+    - image_assets/right_button_assets/
+    - image_assets/assignment_info_assets/
+    - image_assets/people_assets/
+    - image_assets/status_assets/
+    - image_assets/activity_assets/
+    - image_assets/sammi_jobs_personality_assets/
+    - image_assets/class_info_assets/
+    - image_assets/sammi_personality_assets/
+    - image_assets/menu_assets/
+    - image_assets/jobs_assets/
+    - image_assets/tutorial_assets/
+    - image_assets/share_assets/
+    - image_assets/todolist_gif_assets/
+    - packages/time_machine/data/cultures/cultures.bin
+    - packages/time_machine/data/tzdb/tzdb.bin

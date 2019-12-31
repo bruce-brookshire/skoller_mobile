@@ -2,8 +2,9 @@ import 'package:skoller/screens/main_app/activity/update_info_view.dart';
 import 'package:dart_notification_center/dart_notification_center.dart';
 import 'package:dropdown_banner/dropdown_banner.dart';
 import 'package:skoller/constants/constants.dart';
+import 'package:skoller/screens/main_app/classes/weights_info_view.dart';
+import 'package:skoller/screens/main_app/menu/major_search_modal.dart';
 import './modals/assignment_notes_modal.dart';
-import './modals/student_profile_modal.dart';
 import './modals/assignment_edit_modal.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/widgets.dart';
@@ -17,9 +18,9 @@ import 'dart:async';
 import 'dart:math';
 
 class AssignmentInfoView extends StatefulWidget {
-  final int assignment_id;
+  final int assignmentId;
 
-  AssignmentInfoView({Key key, this.assignment_id}) : super(key: key);
+  AssignmentInfoView({Key key, this.assignmentId}) : super(key: key);
 
   @override
   State createState() => _AssignmentInfoState();
@@ -36,7 +37,7 @@ class _AssignmentInfoState extends State<AssignmentInfoView> {
   void initState() {
     super.initState();
 
-    assignment = Assignment.currentAssignments[widget.assignment_id];
+    assignment = Assignment.currentAssignments[widget.assignmentId];
 
     for (final mod in Mod.currentMods.values) {
       if (mod.modType != ModType.newAssignment &&
@@ -84,14 +85,14 @@ class _AssignmentInfoState extends State<AssignmentInfoView> {
     assignment.toggleComplete().then((success) {
       if (!success) {
         setState(() {
-          assignment.completed = !assignment.completed;
+          assignment.isCompleted = !assignment.isCompleted;
         });
       } else
         DartNotificationCenter.post(
             channel: NotificationChannels.assignmentChanged);
     });
     setState(() {
-      assignment.completed = !assignment.completed;
+      assignment.isCompleted = !assignment.isCompleted;
     });
   }
 
@@ -225,9 +226,8 @@ class _AssignmentInfoState extends State<AssignmentInfoView> {
             Navigator.pop(context);
             return;
           }
-        } else {
+        } else
           await modAction['request'];
-        }
       }
 
       DartNotificationCenter.post(
@@ -237,7 +237,7 @@ class _AssignmentInfoState extends State<AssignmentInfoView> {
 
       if (response != null && response) {
         setState(() =>
-            assignment = Assignment.currentAssignments[widget.assignment_id]);
+            assignment = Assignment.currentAssignments[widget.assignmentId]);
       }
       loader.fadeOut();
     }
@@ -256,7 +256,7 @@ class _AssignmentInfoState extends State<AssignmentInfoView> {
         if (result.wasSuccessful()) {
           if (await assignment.refetchSelf())
             setState(() => assignment =
-                Assignment.currentAssignments[widget.assignment_id]);
+                Assignment.currentAssignments[widget.assignmentId]);
 
           loader.fadeOut();
           DartNotificationCenter.post(
@@ -366,6 +366,13 @@ class _AssignmentInfoState extends State<AssignmentInfoView> {
     );
   }
 
+  void tappedImpactExplanation(_) {
+    showDialog(
+      context: context,
+      builder: (context) => _SKImpactGraphDescriptionModal(assignment),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return SKNavView(
@@ -418,16 +425,11 @@ class _AssignmentInfoState extends State<AssignmentInfoView> {
                           ],
                         ),
                       buildProgressDetails(context),
-                      ...chatViews(),
+                      buildJobView(),
                     ],
                   ),
                 ),
               ),
-              if (assignment.parentClass.enrollment >= 4)
-                Align(
-                  child: composePostView(),
-                  alignment: Alignment.bottomCenter,
-                )
             ],
           ),
         ),
@@ -459,13 +461,13 @@ class _AssignmentInfoState extends State<AssignmentInfoView> {
     if (days == null)
       dueDescr = '';
     else if (days < 0)
-      dueDescr = 'in the past';
+      dueDescr = 'In the past';
     else if (days == 0)
-      dueDescr = 'Today';
+      dueDescr = 'Due today';
     else if (days == 1)
-      dueDescr = 'Tomorrow';
+      dueDescr = 'Due tomorrow';
     else
-      dueDescr = 'in $days days';
+      dueDescr = 'Due in $days days';
 
     return Container(
       margin: EdgeInsets.all(12),
@@ -490,12 +492,21 @@ class _AssignmentInfoState extends State<AssignmentInfoView> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
                 Expanded(
-                  child: Text(
-                    assignment.name,
-                    // maxLines: 1,
-                    // overflow: TextOverflow.ellipsis,
-                    style: TextStyle(
-                        fontSize: 17, color: assignment.parentClass.getColor()),
+                  child: Hero(
+                    tag: 'TaskName${assignment.id}',
+                    child: Material(
+                      type: MaterialType.transparency,
+                      child: Text(
+                        assignment.name,
+                        // maxLines: 1,
+                        // overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                          fontSize: 17,
+                          fontWeight: FontWeight.w800,
+                          color: assignment.parentClass.getColor(),
+                        ),
+                      ),
+                    ),
                   ),
                 ),
                 GestureDetector(
@@ -545,7 +556,7 @@ class _AssignmentInfoState extends State<AssignmentInfoView> {
                       : Container(
                           margin: EdgeInsets.only(left: 12, right: 12),
                           child: Text(
-                            DateFormat('E, MMM. d').format(assignment.due),
+                            DateFormat('EEEE, MMMM d').format(assignment.due),
                           ),
                         ),
                 ],
@@ -579,12 +590,25 @@ class _AssignmentInfoState extends State<AssignmentInfoView> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
-                      Text(
-                        'Impact',
-                        style: TextStyle(
-                            fontWeight: FontWeight.normal,
-                            fontSize: 12,
-                            color: SKColors.light_gray),
+                      GestureDetector(
+                        onTapUp: tappedImpactExplanation,
+                        behavior: HitTestBehavior.opaque,
+                        child: Row(
+                          children: <Widget>[
+                            Text(
+                              'Impact',
+                              style: TextStyle(
+                                  fontWeight: FontWeight.normal,
+                                  fontSize: 12,
+                                  color: SKColors.light_gray),
+                            ),
+                            Icon(
+                              Icons.help_outline,
+                              size: 14,
+                              color: SKColors.skoller_blue,
+                            )
+                          ],
+                        ),
                       ),
                       Text(weightDescr),
                     ],
@@ -611,7 +635,7 @@ class _AssignmentInfoState extends State<AssignmentInfoView> {
       _GradeShakeAnimation(
         onTap: tappedGradeSelector,
         text: assignment.grade == null ? '--%' : '${assignment.grade}%',
-        isAlert: assignment.grade == null && assignment.completed,
+        isAlert: assignment.grade == null && assignment.isCompleted,
       )
     ];
 
@@ -663,7 +687,7 @@ class _AssignmentInfoState extends State<AssignmentInfoView> {
                 Padding(
                   padding: EdgeInsets.only(top: 2),
                   child: Text(
-                    assignment.completed ? 'Completed' : 'Not completed',
+                    assignment.isCompleted ? 'Completed' : 'Not completed',
                     style: TextStyle(
                         color: SKColors.light_gray,
                         fontWeight: FontWeight.normal,
@@ -671,7 +695,7 @@ class _AssignmentInfoState extends State<AssignmentInfoView> {
                   ),
                 ),
                 Switch(
-                  value: assignment.completed ?? true,
+                  value: assignment.isCompleted ?? true,
                   activeColor: SKColors.skoller_blue,
                   onChanged: (val) {
                     toggleComplete();
@@ -691,7 +715,7 @@ class _AssignmentInfoState extends State<AssignmentInfoView> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
                 Text(
-                  'Grade earned',
+                  'Add grade',
                   style: TextStyle(fontWeight: FontWeight.normal),
                 ),
                 Column(
@@ -725,444 +749,281 @@ class _AssignmentInfoState extends State<AssignmentInfoView> {
     );
   }
 
-  //------------//
-  //Comment Rows//
-  //------------//
+  Widget buildJobView() {
+    final student = SKUser.current.student;
 
-  List<Widget> chatViews() {
-    final enrollment = assignment.parentClass.enrollment;
+    void Function(TapUpDetails) action;
+    String prompt;
+    int level = 3;
 
-    //Initialize with top cell
-    List<Widget> cells = [
-      Container(
-        margin: EdgeInsets.only(top: 12, left: 12, right: 12),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          boxShadow: [
-            BoxShadow(
-              color: Color(0x1F000000),
-              offset: Offset(0, 2.5),
-              blurRadius: 4.5,
-            )
-          ],
-          borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(10),
-            topRight: Radius.circular(10),
+    if ((student.fieldsOfStudy ?? []).length == 0) {
+      level = 0;
+      prompt = 'What\'s your field of study?';
+      action = (_) async {
+        final loader = SKLoadingScreen.fadeIn(context);
+        final response = await FieldsOfStudy.getFieldsOfStudy();
+        loader.fadeOut();
+
+        if (response.wasSuccessful())
+          await Navigator.push(context,
+              SKNavOverlayRoute(builder: (_) => MajorSelector(response.obj)));
+
+        setState(() {});
+      };
+    } else if (student.gradYear == null) {
+      level = 1;
+      prompt = 'When do you graduate?';
+      action = (_) {
+        final currentYear = DateTime.now().year;
+        final years = List.generate(6, (index) => '${currentYear + index}');
+        showDialog(
+          context: context,
+          builder: (context) => SKPickerModal(
+            title: "Graduation year",
+            subtitle: "When do you expect to graduate?",
+            items: years,
+            onSelect: (index) async {
+              final loader = SKLoadingScreen.fadeIn(context);
+              await SKUser.current.update(gradYear: years[index]);
+              loader.fadeOut();
+              setState(() {});
+            },
           ),
+        );
+      };
+    } else if (student.degreeType == null) {
+      level = 2;
+      prompt = 'What degree are you pursuing?';
+      action = (_) async {
+        final loader = SKLoadingScreen.fadeIn(context);
+        final response = await TypeObject.getDegreeTypes();
+        loader.fadeOut();
+
+        if (response.wasSuccessful()) {
+          final List<TypeObject> degrees = response.obj;
+          await showDialog(
+            context: context,
+            builder: (context) => SKPickerModal(
+              title: "Degree type",
+              subtitle: "What type of degree are you pursuing?",
+              items: degrees.map((d) => d.name).toList(),
+              onSelect: (index) async {
+                final loader = SKLoadingScreen.fadeIn(context);
+                await SKUser.current.update(degreeType: degrees[index]);
+                loader.fadeOut();
+                setState(() {});
+              },
+            ),
+          );
+        }
+      };
+    }
+
+    if (level == 3)
+      return Container(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(10),
+          border: Border.all(color: SKColors.border_gray),
+          boxShadow: UIAssets.boxShadow,
+          color: Colors.white,
         ),
+        margin: EdgeInsets.all(12),
+        padding: EdgeInsets.only(bottom: 12),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
             Container(
+              padding: EdgeInsets.fromLTRB(12, 12, 12, 8),
               decoration: BoxDecoration(
-                color: SKColors.selected_gray,
                 borderRadius: BorderRadius.only(
                   topLeft: Radius.circular(10),
                   topRight: Radius.circular(10),
                 ),
+                color: SKColors.selected_gray,
               ),
-              padding: EdgeInsets.fromLTRB(12, 12, 12, 8),
               child: Row(
                 children: <Widget>[
-                  Container(
-                    margin: EdgeInsets.only(right: 4),
-                    child: Image.asset(ImageNames.assignmentInfoImages.comment),
+                  Padding(
+                    padding: EdgeInsets.only(right: 4),
+                    child: Image.asset(ImageNames.peopleImages.people_gray),
                   ),
                   Text(
-                    'Chat with classmates',
+                    'Share with classmates',
                     style: TextStyle(fontSize: 17),
                   ),
                 ],
               ),
             ),
-            if (enrollment >= 4)
-              Container(
-                padding: EdgeInsets.symmetric(vertical: 4, horizontal: 8),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Container(
-                      alignment: Alignment.centerLeft,
-                      margin: EdgeInsets.only(left: 4),
-                      child: Text(
-                        'Notify me about new comments:',
-                        style: TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.normal,
-                        ),
-                      ),
-                    ),
-                    Switch(
-                        value: assignment.isPostNotifications,
-                        onChanged: tappedToggleNotifications,
-                        activeColor: SKColors.skoller_blue),
-                  ],
-                ),
-              )
-          ],
-        ),
-      )
-    ];
-
-    final int numPosts = assignment.posts.length;
-
-    if (enrollment < 4) {
-      cells.add(
-        Container(
-          margin: EdgeInsets.symmetric(horizontal: 12),
-          padding: EdgeInsets.all(8),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            boxShadow: [
-              BoxShadow(
-                color: Color(0x1F000000),
-                offset: Offset(0, 3.5),
-                blurRadius: 3,
-              ),
-            ],
-            borderRadius: BorderRadius.only(
-              bottomLeft: Radius.circular(10),
-              bottomRight: Radius.circular(10),
-            ),
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-              Text.rich(
+            Padding(
+              padding: EdgeInsets.symmetric(vertical: 12),
+              child: Text.rich(
                 TextSpan(
-                  text: 'Chat unlocks when ',
+                  text: 'You\'re ',
                   children: [
                     TextSpan(
-                      text: '4 classmates',
-                      style: TextStyle(fontWeight: FontWeight.bold),
+                      text: '4 SIGN UPS',
+                      style: TextStyle(fontWeight: FontWeight.w600),
                     ),
-                    TextSpan(text: ' join!')
-                  ],
-                  style: TextStyle(fontWeight: FontWeight.normal, fontSize: 14),
-                ),
-                textAlign: TextAlign.center,
-              ),
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: 8, vertical: 8),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    Padding(
-                      padding: EdgeInsets.only(right: 4, top: 4),
-                      child: Image.asset(
-                          ImageNames.assignmentInfoImages.yellow_lock),
-                    ),
-                    ...List.generate(
-                      enrollment,
-                      (index) => Padding(
-                        padding: EdgeInsets.all(4),
-                        child: Image.asset(
-                            ImageNames.peopleImages.large_person_blue),
-                      ),
-                    ),
-                    ...List.generate(
-                      4 - enrollment,
-                      (index) => Padding(
-                        padding: EdgeInsets.all(4),
-                        child: Image.asset(
-                            ImageNames.peopleImages.large_person_gray_plus),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              Text(
-                'Share your class link 👇',
-                textAlign: TextAlign.center,
-                style: TextStyle(fontWeight: FontWeight.normal, fontSize: 14),
-              ),
-              GestureDetector(
-                onTapUp: (details) =>
-                    Share.share(assignment.parentClass.shareMessage),
-                child: Container(
-                  alignment: Alignment.center,
-                  margin: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                  padding: EdgeInsets.symmetric(vertical: 8),
-                  decoration: BoxDecoration(
-                      color: SKColors.skoller_blue,
-                      borderRadius: BorderRadius.circular(5),
-                      boxShadow: UIAssets.boxShadow),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Padding(
-                        padding: EdgeInsets.only(right: 4),
-                        child:
-                            Image.asset(ImageNames.peopleImages.people_white),
-                      ),
-                      Text(
-                        'Share this class',
-                        style: TextStyle(color: Colors.white),
-                      ),
-                    ],
-                  ),
-                ),
-              )
-            ],
-          ),
-        ),
-      );
-    } else if (numPosts == 0) {
-      cells.add(
-        Container(
-          margin: EdgeInsets.symmetric(horizontal: 12),
-          padding: EdgeInsets.all(8),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            boxShadow: [
-              BoxShadow(
-                color: Color(0x1F000000),
-                offset: Offset(0, 3.5),
-                blurRadius: 3,
-              ),
-            ],
-            borderRadius: BorderRadius.only(
-              bottomLeft: Radius.circular(10),
-              bottomRight: Radius.circular(10),
-            ),
-          ),
-          child: Text(
-            'Talk about ${assignment.name} with your classmates here!',
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              color: SKColors.light_gray,
-              fontWeight: FontWeight.normal,
-              fontSize: 14,
-            ),
-          ),
-        ),
-      );
-    } else {
-      for (var i = 0; i < assignment.posts.length - 1; i++) {
-        final currentChat = assignment.posts[i];
-        cells.add(
-          GestureDetector(
-            behavior: HitTestBehavior.opaque,
-            onTapUp: (details) => showDialog(
-              context: context,
-              builder: (context) => StudentProfileModal(currentChat.student),
-            ),
-            child: Container(
-              margin: EdgeInsets.symmetric(horizontal: 12),
-              padding: EdgeInsets.symmetric(horizontal: 12),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                boxShadow: [
-                  BoxShadow(
-                    color: Color(0x1F000000),
-                    offset: Offset(0, 3.5),
-                    blurRadius: 3,
-                  )
-                ],
-              ),
-              child: Column(
-                children: [
-                  Row(
-                    children: <Widget>[
-                      Container(
-                        width: 28,
-                        height: 28,
-                        alignment: Alignment.center,
-                        margin: EdgeInsets.only(right: 8, bottom: 4, top: 4),
-                        padding: EdgeInsets.only(left: 1),
-                        decoration: BoxDecoration(
-                            color: SKColors.light_gray, shape: BoxShape.circle),
-                        child: Text(
-                          '${currentChat.student.name_first[0]}${currentChat.student.name_last[0]}',
-                          style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 14,
-                              fontWeight: FontWeight.normal),
-                        ),
-                      ),
-                      Expanded(
-                        child: Text(
-                          '${currentChat.student.name_first} ${currentChat.student.name_last}',
-                          style: TextStyle(fontSize: 16),
-                        ),
-                      ),
-                      Text(
-                        DateUtilities.getPastRelativeString(
-                          currentChat.inserted_at,
-                        ),
-                        style: TextStyle(
-                            color: SKColors.light_gray,
-                            fontSize: 13,
-                            fontWeight: FontWeight.normal),
-                      )
-                    ],
-                  ),
-                  IntrinsicHeight(
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        Container(
-                          width: 2,
-                          margin: EdgeInsets.only(left: 13, right: 20),
-                          color: SKColors.border_gray,
-                          child: null,
-                        ),
-                        Expanded(
-                          child: Container(
-                            padding: EdgeInsets.only(bottom: 8, right: 4),
-                            child: Text(
-                              currentChat.post,
-                              style: TextStyle(
-                                fontWeight: FontWeight.normal,
-                                fontSize: 14,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        );
-      }
-
-      final lastChat = assignment.posts.last;
-
-      cells.add(
-        GestureDetector(
-          behavior: HitTestBehavior.opaque,
-          onTapUp: (details) => showDialog(
-            context: context,
-            builder: (context) => StudentProfileModal(lastChat.student),
-          ),
-          child: Container(
-            margin: EdgeInsets.symmetric(horizontal: 12),
-            padding: EdgeInsets.only(left: 12, right: 12, bottom: 16),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              boxShadow: [
-                BoxShadow(
-                  color: Color(0x1F000000),
-                  offset: Offset(0, 3.5),
-                  blurRadius: 3,
-                )
-              ],
-              borderRadius: BorderRadius.only(
-                bottomLeft: Radius.circular(10),
-                bottomRight: Radius.circular(10),
-              ),
-            ),
-            child: Column(
-              children: [
-                Row(
-                  children: <Widget>[
-                    Container(
-                      width: 28,
-                      height: 28,
-                      alignment: Alignment.center,
-                      margin: EdgeInsets.only(right: 8, bottom: 4, top: 4),
-                      padding: EdgeInsets.only(left: 1),
-                      decoration: BoxDecoration(
-                          color: SKColors.light_gray, shape: BoxShape.circle),
-                      child: Text(
-                        '${lastChat.student.name_first[0]}${lastChat.student.name_last[0]}',
-                        style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 14,
-                            fontWeight: FontWeight.normal),
-                      ),
-                    ),
-                    Expanded(
-                      child: Text(
-                        '${lastChat.student.name_first} ${lastChat.student.name_last}',
-                        style: TextStyle(fontSize: 16),
-                      ),
-                    ),
-                    Text(
-                      DateUtilities.getPastRelativeString(
-                        lastChat.inserted_at,
-                      ),
-                      style: TextStyle(
-                          color: SKColors.light_gray,
-                          fontSize: 13,
-                          fontWeight: FontWeight.normal),
+                    TextSpan(
+                      text: ' away from a \n\$10 Amazon.com® Gift Card!',
                     )
                   ],
+                  style: TextStyle(
+                    fontWeight: FontWeight.normal,
+                    fontSize: 14,
+                  ),
                 ),
-                Container(
-                  alignment: Alignment.centerLeft,
-                  margin: EdgeInsets.only(left: 35, right: 4),
+                textAlign: TextAlign.center,
+              ),
+            ),
+            Padding(
+              padding: EdgeInsets.symmetric(vertical: 4),
+              child: GestureDetector(
+                behavior: HitTestBehavior.opaque,
+                onTapUp: (_) =>
+                    Share.share(assignment.parentClass.shareMessage),
+                child: Container(
+                  padding: EdgeInsets.symmetric(vertical: 6, horizontal: 24),
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(5),
+                      boxShadow: UIAssets.boxShadow,
+                      color: assignment.parentClass.getColor()),
                   child: Text(
-                    lastChat.post,
+                    assignment.parentClass.enrollmentLink.split("//")[1],
+                    style: TextStyle(color: Colors.white),
+                  ),
+                ),
+              ),
+            ),
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 24, vertical: 8),
+              child: Text.rich(
+                TextSpan(
+                  text: 'This link is a ',
+                  children: [
+                    TextSpan(
+                      text: 'FAST PASS',
+                      style: TextStyle(fontWeight: FontWeight.w600),
+                    ),
+                    TextSpan(
+                      text:
+                          ' for classmates\nin ${assignment.parentClass.name} to join Skoller',
+                    )
+                  ],
+                  style: TextStyle(
+                    color: SKColors.text_light_gray,
+                    fontWeight: FontWeight.normal,
+                    fontSize: 12,
+                  ),
+                ),
+                textAlign: TextAlign.center,
+              ),
+            ),
+          ],
+        ),
+      );
+    else
+      return Container(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(10),
+          border: Border.all(color: SKColors.border_gray),
+          boxShadow: UIAssets.boxShadow,
+          color: Colors.white,
+        ),
+        margin: EdgeInsets.all(12),
+        padding: EdgeInsets.only(bottom: 12),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: <Widget>[
+            Container(
+              padding: EdgeInsets.fromLTRB(12, 12, 12, 8),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(10),
+                  topRight: Radius.circular(10),
+                ),
+                color: SKColors.selected_gray,
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: <Widget>[
+                  Text(
+                    'Tell us more!',
+                    style: TextStyle(fontSize: 17),
+                  ),
+                  Text(
+                    '5 pts.',
                     style: TextStyle(
+                      color: SKColors.light_gray,
                       fontWeight: FontWeight.normal,
                       fontSize: 14,
                     ),
-                  ),
-                ),
-              ],
+                  )
+                ],
+              ),
             ),
-          ),
+            Padding(
+              padding: EdgeInsets.symmetric(vertical: 12),
+              child: Text(
+                'Get the MOST out of Skoller 🔮',
+                style: TextStyle(fontWeight: FontWeight.w500),
+              ),
+            ),
+            GestureDetector(
+              behavior: HitTestBehavior.opaque,
+              onTapUp: action,
+              child: Container(
+                alignment: Alignment.center,
+                padding: EdgeInsets.symmetric(vertical: 6),
+                margin: EdgeInsets.symmetric(vertical: 4, horizontal: 24),
+                decoration: BoxDecoration(
+                  border: Border.all(color: SKColors.skoller_blue),
+                  borderRadius: BorderRadius.circular(5),
+                ),
+                child: Text(
+                  prompt,
+                  style: TextStyle(color: SKColors.skoller_blue),
+                ),
+              ),
+            ),
+            Padding(
+              padding: EdgeInsets.fromLTRB(64, 12, 64, 4),
+              child: Row(
+                children: <Widget>[
+                  ...List.generate(
+                    level,
+                    (_) => Expanded(
+                      child: Container(
+                        height: 8,
+                        margin: EdgeInsets.symmetric(horizontal: 4),
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(4),
+                            color: SKColors.skoller_blue),
+                      ),
+                    ),
+                  ),
+                  ...List.generate(
+                    3 - level,
+                    (index) => Expanded(
+                      child: Container(
+                        height: 8,
+                        margin: EdgeInsets.symmetric(horizontal: 4),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(4),
+                          // border: index == level - 1 ? Border.all(color: SKColors.skoller_blue) : null,
+                          color: index == 0
+                              ? SKColors.skoller_blue.withOpacity(0.3)
+                              : SKColors.border_gray,
+                        ),
+                      ),
+                    ),
+                  )
+                ],
+              ),
+            ),
+          ],
         ),
       );
-    }
-
-    return cells;
-  }
-
-  //------------//
-  //Compose Post//
-  //------------//
-
-  Widget composePostView() {
-    return Container(
-      margin: EdgeInsets.fromLTRB(8, 0, 8, 8),
-      padding: EdgeInsets.symmetric(horizontal: 4),
-      alignment: Alignment.center,
-      decoration: BoxDecoration(
-          color: Colors.white,
-          boxShadow: [
-            BoxShadow(
-              color: Color(0x3F000000),
-              offset: Offset(0, 1),
-              blurRadius: 3.5,
-            )
-          ],
-          borderRadius: BorderRadius.circular(22)),
-      height: 44,
-      child: Row(
-        children: <Widget>[
-          Container(
-            padding: EdgeInsets.only(left: 12, right: 4),
-            child: Image.asset(ImageNames.peopleImages.person_blue),
-          ),
-          Expanded(
-            child: Container(
-              child: CupertinoTextField(
-                placeholder: 'Write a post...',
-                decoration: BoxDecoration(border: null),
-                controller: postFieldController,
-                focusNode: postFocusNode,
-                style: TextStyle(fontSize: 14),
-              ),
-            ),
-          ),
-          GestureDetector(
-            onTapUp: tappedPost,
-            child: Container(
-              padding: EdgeInsets.symmetric(horizontal: 8),
-              child: Text(
-                'Post',
-                style: TextStyle(color: SKColors.skoller_blue, fontSize: 14),
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
   }
 }
 
@@ -1421,6 +1282,138 @@ class _GradeShakeAnimationState extends State<_GradeShakeAnimation>
                   widget.isAlert ? SKColors.warning_red : SKColors.skoller_blue,
             ),
           ),
+        ),
+      ),
+    );
+  }
+}
+
+class _SKImpactGraphDescriptionModal extends StatelessWidget {
+  final Assignment assignment;
+
+  _SKImpactGraphDescriptionModal(this.assignment);
+
+  @override
+  Widget build(BuildContext context) {
+    final parentClass = assignment.parentClass;
+
+    final completion = assignment.weight;
+    ImpactLevel level;
+
+    if ((completion ?? 0.0) == 0.0)
+      level = ImpactLevel.none;
+    else if (completion < 0.05)
+      level = ImpactLevel.low;
+    else if (completion < 0.15)
+      level = ImpactLevel.medium;
+    else
+      level = ImpactLevel.high;
+
+    final descriptions = [
+      ['Low', '0-5% of final grade', ImpactLevel.low],
+      ['Medium', '5-15% of final grade', ImpactLevel.medium],
+      ['High', '15% and above', ImpactLevel.high]
+    ].map((e) {
+      final textColor = (e[2] as ImpactLevel) == level
+          ? SKColors.dark_gray
+          : SKColors.light_gray;
+
+      return Padding(
+        padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: <Widget>[
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                Text(e[0], style: TextStyle(color: textColor)),
+                Text(
+                  e[1],
+                  style: TextStyle(
+                    fontWeight: FontWeight.normal,
+                    fontSize: 12,
+                    color: textColor,
+                  ),
+                )
+              ],
+            ),
+            SKAssignmentImpactGraph.byLevel(
+              e[2],
+              parentClass.getColor(),
+              ImpactGraphSize.small,
+            ),
+          ],
+        ),
+      );
+    });
+
+    return Dialog(
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(10),
+        side: BorderSide(color: SKColors.border_gray),
+      ),
+      child: Padding(
+        padding: EdgeInsets.all(12),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              'Impact',
+              style: TextStyle(
+                  fontWeight: FontWeight.w800, fontSize: 18),
+            ),
+            Text(
+              'How will this assignment impact\n your final grade?',
+              style: TextStyle(fontWeight: FontWeight.w300, fontSize: 13),
+              textAlign: TextAlign.center,
+            ),
+            ...descriptions,
+            Padding(
+              padding: EdgeInsets.fromLTRB(24, 12, 24, 16),
+              child: Text.rich(
+                TextSpan(
+                  text: 'This assignment is worth ',
+                  children: [
+                    TextSpan(
+                      text: '${(assignment.weight ?? 0) * 100}%\n',
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                    TextSpan(text: ' of your final grade'),
+                  ],
+                  style: TextStyle(fontWeight: FontWeight.normal, fontSize: 13),
+                ),
+                textAlign: TextAlign.center,
+              ),
+            ),
+            Text(
+              'Need more information?',
+              style: TextStyle(
+                  fontWeight: FontWeight.normal,
+                  fontSize: 13,
+                  color: SKColors.light_gray),
+            ),
+            GestureDetector(
+              onTapUp: (_) => Navigator.pushReplacement(
+                context,
+                CupertinoPageRoute(
+                  builder: (_) => WeightsInfoView(parentClass.id),
+                ),
+              ),
+              child: Container(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(5),
+                  border: Border.all(color: SKColors.skoller_blue),
+                ),
+                padding: EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                margin: EdgeInsets.only(top: 4, bottom: 12),
+                child: Text(
+                  'View weights',
+                  style: TextStyle(color: SKColors.skoller_blue, fontSize: 14),
+                ),
+              ),
+            ),
+          ],
         ),
       ),
     );

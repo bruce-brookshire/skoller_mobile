@@ -181,7 +181,6 @@ class _AssignmentEditModalState extends State<AssignmentEditModal> {
 
   @override
   Widget build(BuildContext context) {
-    print("building with selectedDate: $selectedDate");
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 24),
       child: Center(

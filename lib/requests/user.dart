@@ -37,20 +37,30 @@ class SKUser {
     bool isAssignmentPostNotifications,
     School primarySchool,
     Period primaryPeriod,
+    int todoDaysPast,
+    int todoDaysFuture,
     List<int> fieldsOfStudy,
+    String gradYear,
+    TypeObject degreeType,
   }) {
-    Map<String, dynamic> params = {'id': this.student.id};
+    Map<String, dynamic> params = {
+      'id': this.student.id,
+      'name_first': firstName,
+      'name_last': lastName,
+      'bio': bio,
+      'organization': organizations,
+      'notification_days_notice': notificationDays,
+      'is_assign_post_notifications': isAssignmentPostNotifications,
+      'primary_school_id': primarySchool?.id,
+      'primary_period_id': primaryPeriod?.id,
+      'fields_of_study': fieldsOfStudy,
+      'todo_days_future': todoDaysFuture,
+      'todo_days_past': todoDaysPast,
+      'grad_year': gradYear,
+      'degree_type_id': degreeType?.id,
+    };
 
-    if (firstName != null && firstName != this.student.nameFirst)
-      params['name_first'] = firstName;
-
-    if (lastName != null && lastName != this.student.nameLast)
-      params['name_last'] = lastName;
-
-    if (bio != null && bio != this.student.bio) params['bio'] = bio;
-
-    if (organizations != null && organizations != this.student.organizations)
-      params['organization'] = organizations;
+    params.removeWhere((_, v) => v == null);
 
     if (notificationTime != null) {
       final formattedNotificationTime =
@@ -65,26 +75,9 @@ class SKUser {
           formattedFutureNotificationTime;
     }
 
-    if (notificationDays != null &&
-        notificationDays != this.student.notificationDays)
-      params['notification_days_notice'] = notificationDays;
-
-    if (isAssignmentPostNotifications != null &&
-        isAssignmentPostNotifications != this.student.isAssignPostNotifications)
-      params['is_assign_post_notifications'] = isAssignmentPostNotifications;
-
-    if (primarySchool != null &&
-        primarySchool.id != this.student.primarySchool?.id)
-      params['primary_school_id'] = primarySchool.id;
-
-    if (primaryPeriod != null &&
-        primaryPeriod.id != this.student.primaryPeriod?.id)
-      params['primary_period_id'] = primaryPeriod.id;
-
-    if (params['primary_period_id'] == null && params['primary_school_id'] != null)
+    if (params['primary_period_id'] == null &&
+        params['primary_school_id'] != null)
       params['primary_period_id'] = primarySchool.periods?.first?.id;
-
-    if (fieldsOfStudy != null) params['fields_of_study'] = fieldsOfStudy;
 
     if (params.length == 1) {
       return Future.value(true);
@@ -114,19 +107,25 @@ class SKUser {
     return (await request.send()).statusCode;
   }
 
-  Future<RequestResponse> checkEmailDomain() {
-    final emailDomain = email.split('@')[1];
-    return SKRequests.get(
-        '/email_domains/$emailDomain/check', School._fromJsonObj);
-  }
+  Future<RequestResponse> checkEmailDomain() => SKRequests.get(
+        '/email_domains/${email.split('@')[1]}/check',
+        School._fromJsonObj,
+      );
+
+  Future<RequestResponse> getJobProfile() => SKRequests.get(
+        '/users/$id/job-profile',
+        JobProfile._fromJsonObj,
+      );
 }
 
 class Student {
   int id;
   int points;
   int notificationDays;
-  bool isAssignPostNotifications;
+  int todoDaysFuture;
+  int todoDaysPast;
 
+  bool isAssignPostNotifications;
   bool isVerified;
 
   String nameFirst;
@@ -143,6 +142,8 @@ class Student {
 
   School primarySchool;
   Period primaryPeriod;
+  TypeObject degreeType;
+  RaiseEffort raiseEffort;
 
   DateTime notificationTime;
   DateTime futureNotificationTime;
@@ -154,6 +155,11 @@ class Student {
       return phone;
     }
   }
+
+  Future<RequestResponse> getSignupOrganization() => SKRequests.get(
+        '/students/$id/signup-organization',
+        Organization._fromJsonObject,
+      );
 
   Student._fromJson(Map content) {
     schools =
@@ -186,6 +192,13 @@ class Student {
     bio = content['bio'];
     organizations = content['organization'];
     enrollmentLink = content['enrollment_link'];
+    todoDaysFuture = content['todo_days_future'];
+    todoDaysPast = content['todo_days_past'];
+    raiseEffort = content['raise_effort'] == null ? null : RaiseEffort._fromJsonObject(content['raise_effort']);
+
+    degreeType = content['degree_type'] != null
+        ? TypeObject._fromJsonObj(content['degree_type'])
+        : null;
 
     primarySchool = content['primary_school'] != null
         ? School._fromJsonObj(content['primary_school'])
@@ -307,4 +320,65 @@ class PublicUser {
       content['avatar'],
     );
   }
+}
+
+class TypeObject {
+  int id;
+  String name;
+
+  TypeObject(this.id, this.name);
+
+  static TypeObject _fromJsonObj(Map content) =>
+      TypeObject(content['id'], content['name']);
+
+  static Future<RequestResponse> getDegreeTypes() =>
+      SKRequests.get('/skoller-jobs/types/degrees', _fromJsonObj);
+
+  static Future<RequestResponse> getJobTypes() =>
+      SKRequests.get('/skoller-jobs/types/job_search', _fromJsonObj);
+}
+
+class RaiseEffort {
+  final int personalSignups;
+  final int orgSignups;
+  final String orgName;
+  final int orgId;
+
+  RaiseEffort(this.personalSignups, this.orgSignups, this.orgName, this.orgId);
+
+  static RaiseEffort _fromJsonObject(Map content) => RaiseEffort(
+        content['personal_signups'],
+        content['org_signups'],
+        content['org_name'],
+        content['org_id'],
+      );
+}
+
+class Organization {
+  final int id;
+  final int signup_count;
+
+  final String name;
+  final String link;
+
+  final DateTime start_date;
+  final DateTime end_date;
+
+  Organization(
+    this.id,
+    this.signup_count,
+    this.name,
+    this.link,
+    this.start_date,
+    this.end_date,
+  );
+
+  static Organization _fromJsonObject(Map content) => Organization(
+        content['id'],
+        content['signup_count'],
+        content['name'],
+        content['link'],
+        _dateParser(content['start_date']),
+        _dateParser(content['end_date']),
+      );
 }

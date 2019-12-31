@@ -20,8 +20,9 @@ class Auth {
 
       final platformName =
           Platform.isIOS ? 'min_ios_version' : 'min_android_version';
-      final thisPlatform =
-          content.firstWhere((platform) => platform['name'] == platformName, orElse: () => content.first);
+      final thisPlatform = content.firstWhere(
+          (platform) => platform['name'] == platformName,
+          orElse: () => content.first);
 
       if (thisPlatform == null) return false;
 
@@ -156,8 +157,6 @@ class Auth {
 
     Assignment.currentAssignments = {};
     StudentClass.currentClasses = {};
-    Chat.currentChats = {};
-    InboxNotification.currentInbox = [];
     Mod.currentMods = {};
     School.currentSchools = {};
     Period.currentPeriods = {};
@@ -302,9 +301,6 @@ class Auth {
       if (PushNotificationCategories.isClasses(category)) {
         channel = NotificationChannels.selectTab;
         options = CLASSES_TAB;
-      } else if (PushNotificationCategories.isChat(category)) {
-        channel = NotificationChannels.selectTab;
-        options = CHAT_TAB;
       } else if (PushNotificationCategories.isActivity(category)) {
         channel = NotificationChannels.selectTab;
         options = ACTIVITY_TAB;
@@ -319,7 +315,7 @@ class Auth {
 
         if (StudentClass.currentClasses[class_id] != null) {
           channel = NotificationChannels.presentModalViewOverTabBar;
-          options = ClassLinkSharingModal(class_id);
+          options = ProfileLinkSharingView(class_id);
         }
       } else if (PushNotificationCategories.points == category) {
         channel = NotificationChannels.presentViewOverTabBar;
@@ -370,16 +366,11 @@ class Session {
 
   static Session currentSession;
 
-  static Session _fromJson(Map content) {
-    var insertedAt = content['inserted_at'] != null
-        ? DateTime.parse(content['inserted_at'])
-        : null;
-    return Session(
-      content['id'],
-      content['session_platform']['type'],
-      insertedAt,
-    );
-  }
+  static Session _fromJson(Map content) => Session(
+        content['id'],
+        content['session_platform']['type'],
+        _dateParser(content['inserted_at']),
+      );
 
   static void startSession() {
     if (currentSession != null) return;
