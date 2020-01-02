@@ -18,8 +18,6 @@ class JobsTutorialView extends StatelessWidget {
           title: 'Jobs',
           isPop: false,
           leftBtn: SKHeaderProfilePhoto(),
-          callbackLeft: () => DartNotificationCenter.post(
-              channel: NotificationChannels.toggleMenu),
           children: [
             SizedBox(height: 80, child: null),
             Flexible(
@@ -181,7 +179,7 @@ class JobsTutorialView extends StatelessWidget {
                   GestureDetector(
                     onTapUp: (_) => DartNotificationCenter.post(
                       channel: NotificationChannels.selectTab,
-                      options: 3,
+                      options: 2,
                     ),
                     child: Container(
                       decoration: BoxDecoration(

@@ -243,7 +243,8 @@ class _AddClassesState extends State<AddClassesView> {
                             Navigator.pop(context, val);
                           } else {
                             searchController.text = '';
-                            searchFocusNode.requestFocus();
+                            if (val is bool && val)
+                              searchFocusNode.requestFocus();
                           }
                         });
                       DartNotificationCenter.post(
@@ -294,7 +295,7 @@ class _AddClassesState extends State<AddClassesView> {
     }
   }
 
-  void tappedAddClass() {
+  void tappedCreateClass() {
     Navigator.push(
       context,
       SKNavOverlayRoute(
@@ -304,14 +305,22 @@ class _AddClassesState extends State<AddClassesView> {
         ),
       ),
     );
-    // showDialog(
-    //     context: context,
-    //     builder: (context) =>
-    //         );
   }
 
   @override
   Widget build(BuildContext context) {
+    final showSammiInstructions =
+        StudentClass.currentClasses.length == 0 && searchController.text == '';
+
+    int rows;
+
+    if (showSammiInstructions)
+      rows = 1;
+    else if (searchedClasses.length == 0 && searchController.text.trim() == '')
+      rows = 0;
+    else
+      rows = searchedClasses.length + (isSearching ? 0 : 1);
+
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
@@ -329,11 +338,20 @@ class _AddClassesState extends State<AddClassesView> {
                       Expanded(
                         child: ListView.builder(
                           padding: EdgeInsets.fromLTRB(8, 6, 8, 12),
-                          itemCount: searchedClasses.length == 0 &&
-                                  searchController.text.trim() == ''
-                              ? 0
-                              : searchedClasses.length + (isSearching ? 0 : 1),
+                          itemCount: rows,
                           itemBuilder: (context, index) {
+                            // If there are no classes, we need to guide the user
+                            if (showSammiInstructions)
+                              return Padding(
+                                padding: EdgeInsets.only(top: 8),
+                                child: SammiSpeechBubble(
+                                  sammiPersonality: SammiPersonality.smile,
+                                  speechBubbleContents:
+                                      Text('👆Now, add your first class!'),
+                                ),
+                              );
+
+                            // Otherwise, show the user their classes
                             Widget contents;
 
                             if (index < searchedClasses.length) {
@@ -379,7 +397,7 @@ class _AddClassesState extends State<AddClassesView> {
                             return GestureDetector(
                                 onTapUp: (details) {
                                   index == searchedClasses.length
-                                      ? tappedAddClass()
+                                      ? tappedCreateClass()
                                       : didTapClassCard(index);
                                 },
                                 child: Container(
@@ -513,6 +531,8 @@ class _AddClassesState extends State<AddClassesView> {
                     decoration: BoxDecoration(border: null),
                     padding: EdgeInsets.symmetric(horizontal: 8, vertical: 12),
                     placeholder: 'Search a class name',
+                    placeholderStyle:
+                        TextStyle(color: SKColors.text_light_gray),
                     style: TextStyle(fontSize: 15, color: SKColors.dark_gray),
                     textCapitalization: TextCapitalization.words,
                     autofocus: true,

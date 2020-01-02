@@ -55,10 +55,11 @@ class _PrimarySchoolState extends State<PrimarySchoolModal> {
       SKNavFadeUpRoute(builder: (context) => SchoolSearchView()),
     );
 
-    setState(() {
-      eligibleSchools = [SKUser.current.student.primarySchool];
-      selectedPeriod = eligibleSchools.first.getBestCurrentPeriod();
-    });
+    if (SKUser.current.student.primarySchool != null)
+      setState(() {
+        eligibleSchools = [SKUser.current.student.primarySchool];
+        selectedPeriod = eligibleSchools.first.getBestCurrentPeriod();
+      });
   }
 
   void tappedPeriodSelect(TapUpDetails detail) {
@@ -529,9 +530,9 @@ class _PrimarySchoolState extends State<PrimarySchoolModal> {
                         mainAxisSize: MainAxisSize.min,
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(period.name),
+                          Text(period?.name ?? 'Select Period'),
                           Text(
-                            '${start ?? ''} to ${end ?? 'N/A'}',
+                            '${start ?? 'N/A'} to ${end ?? 'N/A'}',
                             style: TextStyle(
                                 color: SKColors.light_gray,
                                 fontSize: 14,

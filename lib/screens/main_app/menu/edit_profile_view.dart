@@ -70,6 +70,73 @@ class _EditProfileState extends State<EditProfileView> {
     }
   }
 
+  void tappedDeleteProfile(_) {
+    showCupertinoDialog(
+      context: context,
+      builder: (context) => CupertinoActionSheet(
+        title: Text(
+          'Delete Account',
+          style: TextStyle(
+              color: SKColors.dark_gray,
+              fontSize: 15,
+              fontWeight: FontWeight.bold),
+        ),
+        message: Text(
+          'DANGER ZONE: This action is irreversible. IF YOU DELETE YOUR ACCOUNT, YOUR DATA IS GONE FOREVER. WE CAN\'T HELP. Are you sure you want to proceed?',
+          style: TextStyle(color: SKColors.dark_gray),
+        ),
+        actions: <Widget>[
+          CupertinoActionSheetAction(
+            isDestructiveAction: true,
+            child: Text(
+              'I\m sure. Delete me.',
+              style: TextStyle(fontSize: 16),
+            ),
+            onPressed: () async {
+              final loader = SKLoadingScreen.fadeIn(context);
+              bool success = await SKUser.current.delete();
+              if (success) {
+                await Auth.logOut();
+                loader.fadeOut();
+                Navigator.pop(context);
+                Navigator.popUntil(
+                    this.context, (route) => route.settings.isInitialRoute);
+
+                DropdownBanner.showBanner(
+                  text:
+                      'Successfully deleted your account. We are sad to see you go!',
+                  textStyle: TextStyle(color: Colors.white),
+                  color: SKColors.success,
+                );
+
+                DartNotificationCenter.post(
+                    channel: NotificationChannels.appStateChanged,
+                    options: AppState.auth);
+              } else {
+                loader.fadeOut();
+                DropdownBanner.showBanner(
+                  text:
+                      'Something went wrong while attempting to delete your account',
+                  color: SKColors.warning_red,
+                  textStyle: TextStyle(color: Colors.white),
+                );
+              }
+            },
+          ),
+          CupertinoActionSheetAction(
+            child: Text(
+              'Take me to safety!',
+              style: TextStyle(fontSize: 16, color: SKColors.success),
+            ),
+            onPressed: () {
+              Navigator.pop(context);
+            },
+          )
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     if (SKUser.current == null)
@@ -261,79 +328,17 @@ class _EditProfileState extends State<EditProfileView> {
         Spacer(),
         SafeArea(
           top: false,
-          child: GestureDetector(
-            onTapUp: (details) {
-              showCupertinoDialog(
-                context: context,
-                builder: (context) => CupertinoActionSheet(
-                  title: Text(
-                    'Delete Account',
-                    style: TextStyle(
-                        color: SKColors.dark_gray,
-                        fontSize: 15,
-                        fontWeight: FontWeight.bold),
-                  ),
-                  message: Text(
-                    'DANGER ZONE: This action is irreversible. IF YOU DELETE YOUR ACCOUNT, YOUR DATA IS GONE FOREVER. WE CAN\'T HELP. Are you sure you want to proceed?',
-                    style: TextStyle(color: SKColors.dark_gray),
-                  ),
-                  actions: <Widget>[
-                    CupertinoActionSheetAction(
-                      isDestructiveAction: true,
-                      child: Text(
-                        'I\m sure. Delete me.',
-                        style: TextStyle(fontSize: 16),
-                      ),
-                      onPressed: () async {
-                        final loader = SKLoadingScreen.fadeIn(context);
-                        bool success = await SKUser.current.delete();
-                        if (success) {
-                          await Auth.logOut();
-                          loader.fadeOut();
-                          Navigator.pop(context);
-                          Navigator.popUntil(this.context,
-                              (route) => route.settings.isInitialRoute);
-
-                          DropdownBanner.showBanner(
-                            text:
-                                'Successfully deleted your account. We are sad to see you go!',
-                            textStyle: TextStyle(color: Colors.white),
-                            color: SKColors.success,
-                          );
-
-                          DartNotificationCenter.post(
-                              channel: NotificationChannels.appStateChanged,
-                              options: AppState.auth);
-                        } else {
-                          loader.fadeOut();
-                          DropdownBanner.showBanner(
-                            text:
-                                'Something went wrong while attempting to delete your account',
-                            color: SKColors.warning_red,
-                            textStyle: TextStyle(color: Colors.white),
-                          );
-                        }
-                      },
-                    ),
-                    CupertinoActionSheetAction(
-                      child: Text(
-                        'Take me to safety!',
-                        style: TextStyle(fontSize: 16, color: SKColors.success),
-                      ),
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
-                    )
-                  ],
+          child: Padding(
+            padding: EdgeInsets.only(bottom: 16),
+            child: GestureDetector(
+              onTapUp: tappedDeleteProfile,
+              child: Text(
+                'Delete account',
+                style: TextStyle(
+                  color: SKColors.warning_red,
+                  fontSize: 12,
+                  fontWeight: FontWeight.normal,
                 ),
-              );
-            },
-            child: Text(
-              'Delete account',
-              style: TextStyle(
-                color: SKColors.warning_red,
-                fontSize: 12,
-                fontWeight: FontWeight.normal,
               ),
             ),
           ),

@@ -392,6 +392,7 @@ class _SignUpState extends State<SignUp> {
                     validState
                         ? GestureDetector(
                             onTapUp: tappedSignUp,
+                            behavior: HitTestBehavior.opaque,
                             child: Container(
                               alignment: Alignment.center,
                               color: SKColors.skoller_blue,

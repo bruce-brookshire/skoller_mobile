@@ -180,7 +180,7 @@ class _JobsViewState extends State<JobsView> {
               mainAxisSize: MainAxisSize.min,
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: <Widget>[
-                Image.asset(ImageNames.sammiImages.big_smile),
+                Image.asset(ImageNames.sammiJobsImages.big_smile),
                 Padding(
                   padding: EdgeInsets.symmetric(horizontal: 16),
                   child: Text.rich(

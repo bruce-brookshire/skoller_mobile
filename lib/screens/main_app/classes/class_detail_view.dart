@@ -33,17 +33,17 @@ class _ClassDetailState extends State<ClassDetailView> {
     DartNotificationCenter.subscribe(
         observer: this,
         channel: NotificationChannels.assignmentChanged,
-        onNotification: fetchClass);
+        onNotification: loadClass);
 
     DartNotificationCenter.subscribe(
         observer: this,
         channel: NotificationChannels.modsChanged,
-        onNotification: fetchClass);
+        onNotification: loadClass);
 
     DartNotificationCenter.subscribe(
         observer: this,
         channel: NotificationChannels.classChanged,
-        onNotification: fetchClass);
+        onNotification: loadClass);
   }
 
   @override

@@ -95,12 +95,12 @@ class Assignment {
       '/assignments/${id}/grades',
       {'grade': grade},
       (content) => _fromJsonObj(content, shouldPersist: false),
-    ).then((response) {
+    ).then((response) async {
       if (response.wasSuccessful()) {
         Assignment.currentAssignments[id].grade = response.obj.grade;
         Assignment.currentAssignments[id].isCompleted =
             response.obj.isCompleted;
-        parentClass.refetchSelf();
+        await parentClass.refetchSelf();
       }
 
       return response;
@@ -112,10 +112,10 @@ class Assignment {
       '/assignments/${id}/grades',
       {'grade': null},
       (content) => _fromJsonObj(content, shouldPersist: false),
-    ).then((response) {
+    ).then((response) async {
       if (response.wasSuccessful()) {
         Assignment.currentAssignments[id].grade = null;
-        parentClass.refetchSelf();
+        await parentClass.refetchSelf();
       }
 
       return response;

@@ -66,9 +66,10 @@ class _ClassesState extends State<ClassesView> {
     };
 
     DartNotificationCenter.subscribe(
-        observer: this,
-        channel: NotificationChannels.classChanged,
-        onNotification: sortClasses);
+      observer: this,
+      channel: NotificationChannels.classChanged,
+      onNotification: sortClasses,
+    );
   }
 
   @override
@@ -945,10 +946,12 @@ class _ClassesState extends State<ClassesView> {
     if (SKUser.current.student.primaryPeriod.endDate.millisecondsSinceEpoch <
             timeless.millisecondsSinceEpoch &&
         promptPeriod != null) {
-         await  Navigator.push(context, SKNavOverlayRoute(builder: (_) => ClassSearchSettingsModal(promptPeriod.id)));
-      // await showDialog(
-      //     context: context,
-      //     builder: );
+      await Navigator.push(
+        context,
+        SKNavOverlayRoute(
+          builder: (_) => ClassSearchSettingsModal(promptPeriod.id),
+        ),
+      );
     }
     DartNotificationCenter.post(
       channel: NotificationChannels.presentViewOverTabBar,

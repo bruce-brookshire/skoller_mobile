@@ -1117,6 +1117,7 @@ class _SKColorPickerState extends State<SKColorPicker> {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTapUp: _tappedColorPicker,
+      behavior: HitTestBehavior.opaque,
       child: Container(
         child: widget.child,
       ),
