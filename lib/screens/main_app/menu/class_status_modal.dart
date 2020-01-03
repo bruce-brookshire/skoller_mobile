@@ -56,7 +56,9 @@ class ClassStatusModal extends StatelessWidget {
           ),
           textAlign: TextAlign.center,
         ),
-        GifWrapper('todolist_gif_assets', 188),
+        Flexible(
+          child: GifWrapper('todolist_gif_assets', 188),
+        ),
         Text.rich(
           TextSpan(
             text: 'The syllabus for this class is ',
@@ -89,6 +91,7 @@ class ClassStatusModal extends StatelessWidget {
           ),
         ),
         GestureDetector(
+          behavior: HitTestBehavior.opaque,
           onTapUp: (details) => Navigator.pop(context, false),
           child: Container(
             alignment: Alignment.center,

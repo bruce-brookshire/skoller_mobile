@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:dart_notification_center/dart_notification_center.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
@@ -321,8 +323,9 @@ class _TodoState extends State<TodoView> {
                           setupSecondClass, todoDaysFuture);
                     else if (index <= _taskItems.length)
                       return _TodoRow(
-                        _taskItems[index - 1],
-                        this.onCompleteAssignment,
+                        item: _taskItems[index - 1],
+                        onCompleted: this.onCompleteAssignment,
+                        showingCompleted: showingCompletedTasks,
                       );
                     else if (_taskItems.length == 0)
                       return Image.asset(
@@ -510,8 +513,9 @@ class _TaskLikeItem {
 class _TodoRow extends StatefulWidget {
   final _TaskLikeItem item;
   final AssignmentCallback onCompleted;
+  final bool showingCompleted;
 
-  _TodoRow(this.item, this.onCompleted);
+  _TodoRow({this.item, this.onCompleted, this.showingCompleted});
 
   @override
   State<StatefulWidget> createState() => _TodoRowState();
@@ -519,6 +523,7 @@ class _TodoRow extends StatefulWidget {
 
 class _TodoRowState extends State<_TodoRow> {
   bool isTapped = false;
+  bool isChecked = false;
 
   @override
   Widget build(BuildContext context) =>
@@ -802,8 +807,8 @@ class _TodoRowState extends State<_TodoRow> {
                 onTapUp: (_) => widget.onCompleted(task),
                 child: Container(
                   child: Container(
-                    margin:
-                        EdgeInsets.only(right: 8, top: 10, bottom: 10, left: 12),
+                    margin: EdgeInsets.only(
+                        right: 8, top: 10, bottom: 10, left: 12),
                     decoration: BoxDecoration(
                       border: Border.all(color: SKColors.warning_red),
                       borderRadius: BorderRadius.circular(10),
@@ -892,91 +897,115 @@ class _TodoRowState extends State<_TodoRow> {
             ),
           );
         },
-        child: Container(
-          margin: EdgeInsets.fromLTRB(7, 3, 7, 4),
-          padding: EdgeInsets.fromLTRB(0, 8, 10, 8),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(5),
-            border: Border.all(color: SKColors.border_gray, width: 1),
-            boxShadow: UIAssets.boxShadow,
-            color: isTapped ? SKColors.selected_gray : Colors.white,
-          ),
-          child: Row(
-            children: <Widget>[
-              GestureDetector(
-                behavior: HitTestBehavior.opaque,
-                onTapUp: (_) => widget.onCompleted(task),
-                child: Container(
+        child: AnimatedOpacity(
+          key: Key('${task.id}'),
+          duration: Duration(milliseconds: 800),
+          curve: Curves.easeIn,
+          opacity: isChecked ? 0.0 : 1.0,
+          child: Container(
+            margin: EdgeInsets.fromLTRB(7, 3, 7, 4),
+            padding: EdgeInsets.fromLTRB(0, 8, 10, 8),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(5),
+              border: Border.all(color: SKColors.border_gray, width: 1),
+              boxShadow: UIAssets.boxShadow,
+              color: isTapped ? SKColors.selected_gray : Colors.white,
+            ),
+            child: Row(
+              children: <Widget>[
+                GestureDetector(
+                  behavior: HitTestBehavior.opaque,
+                  onTapUp: (_) {
+                    if (widget.showingCompleted)
+                      widget.onCompleted(task);
+                    else {
+                      setState(() {
+                        isChecked = true;
+                      });
+                      Timer(
+                        Duration(milliseconds: 800),
+                        () {
+                          widget.onCompleted(task);
+                          setState(() {
+                            isChecked = false;
+                          });
+                        },
+                      );
+                    }
+                  },
                   child: Container(
-                    margin:
-                        EdgeInsets.only(right: 8, top: 10, bottom: 10, left: 12),
-                    decoration: BoxDecoration(
-                      border: Border.all(color: SKColors.text_light_gray),
-                      borderRadius: BorderRadius.circular(10),
-                      color: Colors.white,
+                    child: Container(
+                      margin: EdgeInsets.only(
+                          right: 8, top: 10, bottom: 10, left: 12),
+                      decoration: BoxDecoration(
+                        border: Border.all(color: SKColors.text_light_gray),
+                        borderRadius: BorderRadius.circular(10),
+                        color: isChecked ? SKColors.skoller_blue : Colors.white,
+                      ),
+                      width: 20,
+                      height: 20,
+                      child: isChecked ? Icon(Icons.check, size: 12) : null,
                     ),
-                    width: 20,
-                    height: 20,
                   ),
                 ),
-              ),
-              Expanded(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: <Widget>[
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      children: <Widget>[
-                        Expanded(
-                          child: Hero(
-                            tag: 'TaskName${task.id}',
-                            child: Material(
-                              type: MaterialType.transparency,
-                              child: Text(
-                                task?.name ?? 'N/A',
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                                style: TextStyle(
-                                    color: task.parentClass.getColor(),
-                                    fontWeight: FontWeight.w800,
-                                    fontSize: 17),
+                Expanded(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: <Widget>[
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: <Widget>[
+                          Expanded(
+                            child: Hero(
+                              tag: 'TaskName${task.id}',
+                              child: Material(
+                                type: MaterialType.transparency,
+                                child: Text(
+                                  task?.name ?? 'N/A',
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: TextStyle(
+                                      color: task.parentClass.getColor(),
+                                      fontWeight: FontWeight.w800,
+                                      fontSize: 17),
+                                ),
                               ),
                             ),
                           ),
-                        ),
-                        SKAssignmentImpactGraph(
-                          task.weight,
-                          task.parentClass.getColor(),
-                          size: ImpactGraphSize.small,
-                        )
-                      ],
-                    ),
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        Text(
-                          DateUtilities.getFutureRelativeString(task.due),
-                          style: TextStyle(
-                              fontSize: 12, fontWeight: FontWeight.w700),
-                        ),
-                        Expanded(
-                          child: Text(
-                            task?.parentClass?.name ?? 'N/A',
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            textAlign: TextAlign.right,
+                          SKAssignmentImpactGraph(
+                            task.weight,
+                            task.parentClass.getColor(),
+                            size: ImpactGraphSize.small,
+                          )
+                        ],
+                      ),
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          Text(
+                            DateUtilities.getFutureRelativeString(task.due),
                             style: TextStyle(
-                                color: SKColors.text_light_gray,
-                                fontWeight: FontWeight.w500,
-                                fontSize: 12),
+                                fontSize: 12, fontWeight: FontWeight.w700),
                           ),
-                        ),
-                      ],
-                    ),
-                  ],
+                          Expanded(
+                            child: Text(
+                              task?.parentClass?.name ?? 'N/A',
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              textAlign: TextAlign.right,
+                              style: TextStyle(
+                                  color: SKColors.text_light_gray,
+                                  fontWeight: FontWeight.w500,
+                                  fontSize: 12),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       );

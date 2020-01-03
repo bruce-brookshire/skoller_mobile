@@ -295,7 +295,7 @@ class _ClassMenuState extends State<ClassMenuModal> {
                 },
                 child: Container(
                   alignment: Alignment.center,
-                  padding: EdgeInsets.only(top: 8, bottom: 8),
+                  padding: EdgeInsets.only(top: 16, bottom: 8),
                   child: RotatedBox(
                     quarterTurns: 2,
                     child: Image.asset(
@@ -317,7 +317,7 @@ class _ClassMenuState extends State<ClassMenuModal> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: <Widget>[
-            Text('Share YOUR Link'),
+            Text('Share Class'),
             Icon(
               Icons.insert_link,
               size: 32,
@@ -325,14 +325,14 @@ class _ClassMenuState extends State<ClassMenuModal> {
             ),
             Text.rich(
               TextSpan(
-                text: 'It\'s a ',
+                text: 'This is a ',
                 children: [
                   TextSpan(
-                    text: 'fast pass',
+                    text: 'direct link',
                     style: TextStyle(fontWeight: FontWeight.bold),
                   ),
                   TextSpan(
-                    text: ' for your classmates to join Skoller!',
+                    text: ' for your classmates to this class!',
                   )
                 ],
                 style: TextStyle(
@@ -417,7 +417,7 @@ class _ClassMenuState extends State<ClassMenuModal> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: <Widget>[
-            Text('Class info'),
+            Text('Class Info'),
             Icon(
               Icons.info,
               size: 32,
@@ -546,32 +546,34 @@ class _ClassMenuState extends State<ClassMenuModal> {
                   channel: NotificationChannels.classChanged));
           setState(() {});
         },
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: <Widget>[
-            Text('Class Color'),
-            Icon(
-              Icons.color_lens,
-              size: 32,
-              color: studentClass.getColor(),
-            ),
-            Text.rich(
-              TextSpan(
-                text: 'Select your',
-                children: [
-                  TextSpan(
-                    text: ' class color.',
-                    style: TextStyle(fontWeight: FontWeight.bold),
-                  ),
-                ],
-                style: TextStyle(
-                  fontSize: 11,
-                  fontWeight: FontWeight.normal,
-                ),
+        child: Container(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: <Widget>[
+              Text('Class Color'),
+              Icon(
+                Icons.color_lens,
+                size: 32,
+                color: studentClass.getColor(),
               ),
-              textAlign: TextAlign.center,
-            ),
-          ],
+              Text.rich(
+                TextSpan(
+                  text: 'Select your',
+                  children: [
+                    TextSpan(
+                      text: ' class color.',
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                  ],
+                  style: TextStyle(
+                    fontSize: 11,
+                    fontWeight: FontWeight.normal,
+                  ),
+                ),
+                textAlign: TextAlign.center,
+              ),
+            ],
+          ),
         ),
       );
 

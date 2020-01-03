@@ -301,9 +301,6 @@ class Auth {
       if (PushNotificationCategories.isClasses(category)) {
         channel = NotificationChannels.selectTab;
         options = CLASSES_TAB;
-      } else if (PushNotificationCategories.isActivity(category)) {
-        channel = NotificationChannels.selectTab;
-        options = ACTIVITY_TAB;
       } else if (PushNotificationCategories.isForecast(category)) {
         channel = NotificationChannels.selectTab;
         options = FORECAST_TAB;

@@ -19,8 +19,7 @@ part 'image_names.dart';
 const FORECAST_TAB = 0;
 const CALENDAR_TAB = 1;
 const CLASSES_TAB = 2;
-const ACTIVITY_TAB = 3;
-const JOBS_TAB = 4;
+const JOBS_TAB = 3;
 
 const PARTY_SIZE = 4;
 

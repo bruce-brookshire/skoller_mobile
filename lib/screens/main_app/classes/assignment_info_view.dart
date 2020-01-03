@@ -147,14 +147,13 @@ class _AssignmentInfoState extends State<AssignmentInfoView> {
       if (gradeToSave != null) {
         assignment.saveGrade(gradeToSave).then((response) {
           if (response.wasSuccessful()) {
-            setState(() {
-              assignment.grade = response.obj.grade;
-            });
+            setState(() => assignment.grade = response.obj.grade);
+            DartNotificationCenter.post(
+              channel: NotificationChannels.classChanged,
+            );
           }
         });
-        setState(() {
-          assignment.grade = gradeToSave;
-        });
+        setState(() => assignment.grade = gradeToSave);
       }
     }
   }
@@ -162,9 +161,8 @@ class _AssignmentInfoState extends State<AssignmentInfoView> {
   void tappedRemoveGrade(TapUpDetails details) {
     assignment.removeGrade().then((response) {
       if (response.wasSuccessful()) {
-        setState(() {
-          assignment.grade = null;
-        });
+        setState(() => assignment.grade = null);
+        DartNotificationCenter.post(channel: NotificationChannels.classChanged);
       }
     });
   }
@@ -581,19 +579,19 @@ class _AssignmentInfoState extends State<AssignmentInfoView> {
               alignment: Alignment.centerLeft,
               margin: EdgeInsets.only(left: 12, right: 12, top: 10, bottom: 4),
               child: null),
-          Padding(
-            padding: EdgeInsets.fromLTRB(12, 8, 12, 1),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: <Widget>[
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      GestureDetector(
-                        onTapUp: tappedImpactExplanation,
-                        behavior: HitTestBehavior.opaque,
-                        child: Row(
+          GestureDetector(
+            behavior: HitTestBehavior.opaque,
+            onTapUp: tappedImpactExplanation,
+            child: Padding(
+              padding: EdgeInsets.fromLTRB(12, 8, 12, 1),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: <Widget>[
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        Row(
                           children: <Widget>[
                             Text(
                               'Impact',
@@ -609,16 +607,16 @@ class _AssignmentInfoState extends State<AssignmentInfoView> {
                             )
                           ],
                         ),
-                      ),
-                      Text(weightDescr),
-                    ],
+                        Text(weightDescr),
+                      ],
+                    ),
                   ),
-                ),
-                SKAssignmentImpactGraph(
-                  assignment.weight,
-                  assignment.parentClass.getColor(),
-                ),
-              ],
+                  SKAssignmentImpactGraph(
+                    assignment.weight,
+                    assignment.parentClass.getColor(),
+                  ),
+                ],
+              ),
             ),
           ),
         ],
@@ -639,12 +637,12 @@ class _AssignmentInfoState extends State<AssignmentInfoView> {
       )
     ];
 
-    if (assignment.grade != null) {
+    if (assignment.grade != null)
       gradeElems.add(
         GestureDetector(
           onTapUp: tappedRemoveGrade,
           child: Container(
-            padding: EdgeInsets.only(top: 2),
+            padding: EdgeInsets.only(top: 0),
             child: Text(
               'Remove grade',
               style: TextStyle(
@@ -656,7 +654,7 @@ class _AssignmentInfoState extends State<AssignmentInfoView> {
           ),
         ),
       );
-    }
+
     return Container(
       margin: EdgeInsets.symmetric(horizontal: 12, vertical: 2),
       decoration: BoxDecoration(
@@ -679,38 +677,45 @@ class _AssignmentInfoState extends State<AssignmentInfoView> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
                 Expanded(
-                  child: Text(
-                    'My progress',
-                    style: TextStyle(fontSize: 17),
+                  child: Padding(
+                    padding: EdgeInsets.only(top: 12, bottom: 6),
+                    child: Text(
+                      'My progress',
+                      style: TextStyle(fontSize: 17),
+                    ),
                   ),
                 ),
-                Padding(
-                  padding: EdgeInsets.only(top: 2),
-                  child: Text(
-                    assignment.isCompleted ? 'Completed' : 'Not completed',
-                    style: TextStyle(
-                        color: SKColors.light_gray,
-                        fontWeight: FontWeight.normal,
-                        fontSize: 14),
+                if (assignment.due != null)
+                 ...[
+                  Padding(
+                    padding: EdgeInsets.only(top: 2),
+                    child: Text(
+                      assignment.isCompleted ? 'Completed' : 'Not completed',
+                      style: TextStyle(
+                          color: SKColors.light_gray,
+                          fontWeight: FontWeight.normal,
+                          fontSize: 14),
+                    ),
                   ),
-                ),
-                Switch(
-                  value: assignment.isCompleted ?? true,
-                  activeColor: SKColors.skoller_blue,
-                  onChanged: (val) {
-                    toggleComplete();
-                  },
-                )
+                  Switch(
+                    value: assignment.isCompleted ?? true,
+                    activeColor: SKColors.skoller_blue,
+                    onChanged: (val) {
+                      toggleComplete();
+                    },
+                  ),
+                ],
               ],
             ),
           ),
           Container(
             decoration: BoxDecoration(
-                border: Border(
-                    bottom:
-                        BorderSide(color: SKColors.selected_gray, width: 1))),
-            margin: EdgeInsets.symmetric(horizontal: 12, vertical: 2),
-            padding: EdgeInsets.symmetric(vertical: 8),
+              border: Border(
+                bottom: BorderSide(color: SKColors.selected_gray, width: 1),
+              ),
+            ),
+            margin: EdgeInsets.fromLTRB(12, 2, 8, 2),
+            padding: EdgeInsets.symmetric(vertical: 6),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
@@ -1273,8 +1278,9 @@ class _GradeShakeAnimationState extends State<_GradeShakeAnimation>
       child: GestureDetector(
         onTapUp: (details) => widget.onTap(),
         child: Container(
+          // color: Colors.red,
           alignment: Alignment.center,
-          padding: EdgeInsets.symmetric(horizontal: 4, vertical: 1),
+          padding: EdgeInsets.symmetric(horizontal: 5, vertical: 4),
           child: Text(
             widget.text,
             style: TextStyle(
@@ -1360,8 +1366,7 @@ class _SKImpactGraphDescriptionModal extends StatelessWidget {
           children: [
             Text(
               'Impact',
-              style: TextStyle(
-                  fontWeight: FontWeight.w800, fontSize: 18),
+              style: TextStyle(fontWeight: FontWeight.w800, fontSize: 18),
             ),
             Text(
               'How will this assignment impact\n your final grade?',

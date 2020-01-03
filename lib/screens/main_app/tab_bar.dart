@@ -102,9 +102,6 @@ class _SKTabBarState extends State<SKTabBar> {
       (elem) => [ClassStatuses.needs_setup, ClassStatuses.needs_student_input]
           .contains(elem.status.id),
     );
-
-    _indexNeedsDot[ACTIVITY_TAB] =
-        Mod.currentMods.values.any((mod) => mod.isAccepted == null);
   }
 
   @override

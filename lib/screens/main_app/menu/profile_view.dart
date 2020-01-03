@@ -19,11 +19,12 @@ class _ProfileState extends State<ProfileView> {
       backgroundColor: Colors.white,
       body: SafeArea(
         child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 8),
+          padding: EdgeInsets.fromLTRB(8, 12, 8, 0),
           child: Column(
             children: [
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   GestureDetector(
                     onTapUp: (details) => Navigator.pop(context),
@@ -32,6 +33,32 @@ class _ProfileState extends State<ProfileView> {
                       width: 32,
                       child: Image.asset(ImageNames.navArrowImages.down),
                     ),
+                  ),
+                  Container(
+                    alignment: Alignment.center,
+                    decoration: BoxDecoration(
+                      color: SKColors.light_gray,
+                      shape: BoxShape.circle,
+                      image: SKUser.current.avatarUrl == null
+                          ? null
+                          : DecorationImage(
+                              fit: BoxFit.fill,
+                              image: NetworkImage(SKUser.current.avatarUrl),
+                            ),
+                    ),
+                    margin: EdgeInsets.only(bottom: 12),
+                    height: 80,
+                    width: 80,
+                    child: SKUser.current.avatarUrl == null
+                        ? Text(
+                            SKUser.current.student.nameFirst[0] +
+                                SKUser.current.student.nameLast[0],
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 22,
+                            ),
+                          )
+                        : null,
                   ),
                   GestureDetector(
                     onTapUp: (details) => Navigator.push(
@@ -51,32 +78,6 @@ class _ProfileState extends State<ProfileView> {
                     ),
                   )
                 ],
-              ),
-              Container(
-                alignment: Alignment.center,
-                decoration: BoxDecoration(
-                  color: SKColors.light_gray,
-                  shape: BoxShape.circle,
-                  image: SKUser.current.avatarUrl == null
-                      ? null
-                      : DecorationImage(
-                          fit: BoxFit.fill,
-                          image: NetworkImage(SKUser.current.avatarUrl),
-                        ),
-                ),
-                margin: EdgeInsets.only(bottom: 12),
-                height: 80,
-                width: 80,
-                child: SKUser.current.avatarUrl == null
-                    ? Text(
-                        SKUser.current.student.nameFirst[0] +
-                            SKUser.current.student.nameLast[0],
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 22,
-                        ),
-                      )
-                    : null,
               ),
               Padding(
                 padding: EdgeInsets.only(bottom: 24),
