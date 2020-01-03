@@ -404,7 +404,7 @@
 					"$(PROJECT_DIR)/Flutter",
 				);
 				MARKETING_VERSION = 6.1;
-				PRODUCT_BUNDLE_IDENTIFIER = "co.skoller.skoller-staging";
+				PRODUCT_BUNDLE_IDENTIFIER = co.skoller.skoller;
 				PRODUCT_NAME = Runner;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "Runner/Runner-Bridging-Header.h";
@@ -544,7 +544,7 @@
 					"$(PROJECT_DIR)/Flutter",
 				);
 				MARKETING_VERSION = 6.1;
-				PRODUCT_BUNDLE_IDENTIFIER = "co.skoller.skoller-staging";
+				PRODUCT_BUNDLE_IDENTIFIER = co.skoller.skoller;
 				PRODUCT_NAME = Runner;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "Runner/Runner-Bridging-Header.h";
@@ -578,7 +578,7 @@
 					"$(PROJECT_DIR)/Flutter",
 				);
 				MARKETING_VERSION = 6.1;
-				PRODUCT_BUNDLE_IDENTIFIER = "co.skoller.skoller-staging";
+				PRODUCT_BUNDLE_IDENTIFIER = co.skoller.skoller;
 				PRODUCT_NAME = Runner;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "Runner/Runner-Bridging-Header.h";
