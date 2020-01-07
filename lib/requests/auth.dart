@@ -33,6 +33,9 @@ class Auth {
           .map((str) => int.tryParse(str))
           .toList();
 
+      print(preferred);
+      print(device);
+
       final max =
           device.length > preferred.length ? preferred.length : device.length;
       int index = 0;
@@ -48,8 +51,9 @@ class Auth {
         else
           index++;
       }
-    }
-    return true;
+      return device.length >= preferred.length;
+    } else
+      return true;
   }
 
   static SKUser _fromJsonAuth(Map context) {

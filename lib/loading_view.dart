@@ -190,7 +190,7 @@ class _LoadingState extends State<LoadingView> {
         GestureDetector(
           behavior: HitTestBehavior.opaque,
           onTapUp: (_) async {
-            final appleUrl = 'appstore.com/skoller';
+            final appleUrl = 'https://appstore.com/skoller';
             if (Platform.isIOS && await canLaunch(appleUrl))
               launch(appleUrl);
             else
