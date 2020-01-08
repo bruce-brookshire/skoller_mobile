@@ -79,6 +79,8 @@ class NumberUtilities {
       '${((weight * 1000).round()) / 10}%';
 
   static String formatGradeAsPercent(double grade) => '${grade.round()}%';
+
+  static String formatNumberAsDollar(int grade) => NumberFormat.simpleCurrency(locale: 'en_US', decimalDigits: 0).format(grade);
 }
 
 /// Format incoming numeric text to fit the format of (###) ###-#### ##...

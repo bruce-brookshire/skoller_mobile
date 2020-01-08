@@ -61,7 +61,7 @@ class ClassStatusModal extends StatelessWidget {
         ),
         Text.rich(
           TextSpan(
-            text: 'The syllabus for this class is ',
+            text: 'The syllabus for this class is\n',
             children: [
               TextSpan(
                 text: 'ALREADY ORGANIZED',

@@ -41,10 +41,10 @@ class JobProfile {
   List<Activity> achievement_activities;
   List<Activity> experience_activities;
 
-  Map<String, String> social_links;
-  Map<String, String> update_at_timestamps;
-  Map<String, String> personality;
-  Map<String, int> company_values;
+  Map<String, dynamic> social_links;
+  Map<String, dynamic> update_at_timestamps;
+  Map<String, dynamic> personality;
+  Map<String, dynamic> company_values;
 
   JobProfile(
     this.id,
@@ -85,6 +85,19 @@ class JobProfile {
     this.personality,
     this.company_values,
   );
+
+  Future<RequestResponse> updateProfile({
+    TypeObject jobSearchType,
+    DateTime gradDate,
+  }) {
+    final body = {
+      'job_search_type_id': jobSearchType?.id,
+      'graduation_date': gradDate?.toIso8601String()
+    };
+    body.removeWhere((_, value) => value == null);
+
+    return SKRequests.put('/skoller-jobs/profiles/$id', body, _fromJsonObj);
+  }
 
   static JobProfile currentProfile;
 
@@ -172,13 +185,7 @@ class JobProfile {
           'job_search_type_id': jobType.id
         },
         JobProfile._fromJsonObj,
-      ).then((response) {
-        if (response.wasSuccessful()) {
-          JobProfile.currentProfile = response.obj;
-        }
-
-        return response;
-      });
+      );
 }
 
 class Activity {

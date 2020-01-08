@@ -29,6 +29,8 @@ class _JobsViewState extends State<JobsView> {
 
     if (JobProfile.currentProfile == null)
       profileState = _ProfileState.intro;
+    else if (JobProfile.currentProfile.job_search_type == null)
+      profileState = _ProfileState.start;
     else if (JobProfile.currentProfile.resume_url == null)
       profileState = _ProfileState.resume;
     else
@@ -124,15 +126,27 @@ class _JobsViewState extends State<JobsView> {
 
   void tappedCreate(_) async {
     final loader = SKLoadingScreen.fadeIn(context);
-    final response = await JobProfile.createProfile(
-      jobType: jobType,
-      graduationDate: graduationDate,
-    );
+    RequestResponse response;
+
+    if (JobProfile.currentProfile == null) {
+      response = await JobProfile.createProfile(
+        jobType: jobType,
+        graduationDate: graduationDate,
+      );
+    } else {
+      response = await JobProfile.currentProfile.updateProfile(
+        jobSearchType: jobType,
+        gradDate: graduationDate,
+      );
+    }
+
     loader.fadeOut();
 
     if (response.wasSuccessful()) {
       setState(() {
-        profileState = _ProfileState.resume;
+        profileState = JobProfile.currentProfile.resume_url == null
+            ? _ProfileState.resume
+            : _ProfileState.profile;
       });
     }
   }

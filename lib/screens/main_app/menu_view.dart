@@ -1,8 +1,7 @@
 import 'package:skoller/screens/main_app/menu/profile_link_sharing_view.dart';
 import 'package:dart_notification_center/dart_notification_center.dart';
 import 'package:skoller/screens/main_app/menu/manage_classes_view.dart';
-import 'package:skoller/screens/main_app/menu/skoller_jobs_view.dart';
-import 'package:skoller/screens/main_app/menu/my_points_view.dart';
+import 'package:skoller/screens/main_app/menu/rewards_view.dart';
 import 'package:skoller/screens/main_app/menu/reminders_view.dart';
 import 'package:skoller/screens/main_app/menu/profile_view.dart';
 import 'package:skoller/screens/main_app/tutorial/tutorial.dart';
@@ -34,10 +33,10 @@ class MenuView extends StatelessWidget {
       },
       {
         'name': Text(
-          'My points',
+          'My rewards',
           style: TextStyle(fontWeight: FontWeight.normal, fontSize: 16),
         ),
-        'builder': () => MyPointsView(),
+        'builder': () => RewardsView(),
         'image': Image.asset(ImageNames.menuImages.points)
       },
     ],

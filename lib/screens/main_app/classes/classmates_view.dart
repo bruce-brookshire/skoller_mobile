@@ -104,51 +104,26 @@ class _ClassmatesState extends State<ClassmatesView> {
                   speechBubbleContents: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: <Widget>[
-                      Text.rich(
-                        TextSpan(
-                          children: [
-                            TextSpan(
-                                text: 'You\'re ',
-                                style: TextStyle(
-                                    fontWeight: FontWeight.normal,
-                                    fontSize: 17)),
-                            TextSpan(
-                                text:
-                                    '${4 - studentClass.enrollment} classmate${(4 - studentClass.enrollment) == 1 ? '' : 's'}',
-                                style: TextStyle(
-                                    color: studentClass.getColor(),
-                                    fontSize: 17)),
-                            TextSpan(
-                                text: ' away from ',
-                                style: TextStyle(
-                                    fontWeight: FontWeight.normal,
-                                    fontSize: 17)),
-                            TextSpan(
-                              text: 'a PARTY 🎉',
-                              style: TextStyle(fontSize: 17),
-                            ),
-                          ],
-                        ),
-                      ),
-                      Container(
-                        padding: EdgeInsets.symmetric(vertical: 8),
+                      Padding(
+                        padding: EdgeInsets.only(bottom: 8),
                         child: Text.rich(
                           TextSpan(
                             children: [
                               TextSpan(
-                                  text: 'It\'s a party when ',
-                                  style:
-                                      TextStyle(fontWeight: FontWeight.normal)),
-                              TextSpan(
-                                text: '4 or more classmates',
+                                text: 'Share Skoller and\n',
+                                style: TextStyle(
+                                    fontWeight: FontWeight.normal,
+                                    fontSize: 17),
                               ),
                               TextSpan(
-                                  text: ' are conquering school... ',
-                                  style:
-                                      TextStyle(fontWeight: FontWeight.normal)),
-                              TextSpan(text: 'TOGETHER!'),
+                                text: 'grow your community!',
+                                style: TextStyle(
+                                    color: studentClass.getColor(),
+                                    fontSize: 17),
+                              ),
                             ],
                           ),
+                          textAlign: TextAlign.center,
                         ),
                       ),
                       GestureDetector(
@@ -162,7 +137,7 @@ class _ClassmatesState extends State<ClassmatesView> {
                             borderRadius: BorderRadius.circular(5),
                           ),
                           padding: EdgeInsets.symmetric(vertical: 10),
-                          margin: EdgeInsets.only(left: 16, right: 16, top: 4),
+                          margin: EdgeInsets.only(left: 12, right: 12, top: 4, bottom: 4),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: <Widget>[
