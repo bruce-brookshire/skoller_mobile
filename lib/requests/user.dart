@@ -343,14 +343,16 @@ class RaiseEffort {
   final int orgSignups;
   final String orgName;
   final int orgId;
+  final int chapterSignups;
 
-  RaiseEffort(this.personalSignups, this.orgSignups, this.orgName, this.orgId);
+  RaiseEffort(this.personalSignups, this.orgSignups, this.orgName, this.orgId, this.chapterSignups);
 
   static RaiseEffort _fromJsonObject(Map content) => RaiseEffort(
         content['personal_signups'],
         content['org_signups'],
         content['org_name'],
         content['org_id'],
+        content['chapter_signups'],
       );
 }
 

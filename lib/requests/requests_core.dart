@@ -2,7 +2,7 @@ library requests_core;
 
 import 'package:dart_notification_center/dart_notification_center.dart';
 import 'package:skoller/screens/main_app/menu/profile_link_sharing_view.dart';
-import '../screens/main_app/menu/my_points_view.dart';
+import '../screens/main_app/menu/rewards_view.dart';
 import 'package:time_machine/time_machine.dart' as time_machine;
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -31,7 +31,7 @@ part 'mod.dart';
 part 'jobs.dart';
 part 'auth.dart';
 
-const bool isProd = true;
+const bool isProd = false;
 const bool isLocal = false;
 
 class RequestResponse<T> {

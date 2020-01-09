@@ -32,7 +32,7 @@ class Auth {
           .split('.')
           .map((str) => int.tryParse(str))
           .toList();
-
+          
       final max =
           device.length > preferred.length ? preferred.length : device.length;
       int index = 0;
@@ -48,8 +48,9 @@ class Auth {
         else
           index++;
       }
-    }
-    return true;
+      return device.length >= preferred.length;
+    } else
+      return true;
   }
 
   static SKUser _fromJsonAuth(Map context) {
@@ -316,7 +317,7 @@ class Auth {
         }
       } else if (PushNotificationCategories.points == category) {
         channel = NotificationChannels.presentViewOverTabBar;
-        options = MyPointsView();
+        options = RewardsView();
       }
 
       if (channel != null && options != null)

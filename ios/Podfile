@@ -32,10 +32,15 @@ def parse_KV_file(file, separator='=')
   generated_key_values
 end
 
+def fbPods
+  pod 'FacebookCore'
+  pod 'FBSDKCoreKit'
+end
+
 target 'Runner' do
   use_frameworks!
   use_modular_headers!
-  
+
   # Flutter Pod
 
   copied_flutter_dir = File.join(__dir__, 'Flutter')
@@ -63,6 +68,7 @@ target 'Runner' do
 
   # Keep pod path relative so it can be checked into Podfile.lock.
   pod 'Flutter', :path => 'Flutter'
+  fbPods
 
   # Plugin Pods
 
