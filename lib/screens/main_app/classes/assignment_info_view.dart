@@ -1072,6 +1072,7 @@ class _GradeSelectionState extends State<_GradeSelection> {
                 margin: EdgeInsets.symmetric(horizontal: 12),
                 child: CupertinoTextField(
                   placeholder: '100',
+                  placeholderStyle: TextStyle(color: SKColors.light_gray, fontSize: 15, fontWeight: FontWeight.normal),
                   keyboardType: TextInputType.number,
                   onChanged: (newStr) => results.numerator = newStr,
                   textAlign: TextAlign.center,
@@ -1095,6 +1096,7 @@ class _GradeSelectionState extends State<_GradeSelection> {
                 margin: EdgeInsets.symmetric(horizontal: 12),
                 child: CupertinoTextField(
                   placeholder: '100',
+                  placeholderStyle: TextStyle(color: SKColors.light_gray, fontSize: 15, fontWeight: FontWeight.normal),
                   onChanged: (newStr) => results.denominator = newStr,
                   keyboardType: TextInputType.number,
                   textAlign: TextAlign.center,

@@ -124,6 +124,10 @@ class _AssignmentNotesModal extends State<AssignmentNotesModal> {
                       color: SKColors.dark_gray,
                       fontSize: 15,
                       fontWeight: FontWeight.normal),
+                  placeholderStyle: TextStyle(
+                      color: SKColors.light_gray,
+                      fontSize: 15,
+                      fontWeight: FontWeight.normal),
                 ),
               ),
             ),

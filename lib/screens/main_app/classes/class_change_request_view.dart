@@ -325,6 +325,10 @@ class _ClassChangeRequestState extends State<ClassChangeRequestView> {
                             placeholder: 'Microeconomics',
                             style: TextStyle(
                                 fontSize: 15, color: SKColors.dark_gray),
+                            placeholderStyle: TextStyle(
+                                color: SKColors.light_gray,
+                                fontSize: 15,
+                                fontWeight: FontWeight.normal),
                             decoration: BoxDecoration(border: null),
                             controller: nameController,
                             onChanged: checkValid,
@@ -362,6 +366,7 @@ class _ClassChangeRequestState extends State<ClassChangeRequestView> {
                                   placeholder: 'MATH',
                                   style: TextStyle(
                                       fontSize: 15, color: SKColors.dark_gray),
+                                      placeholderStyle: TextStyle(color: SKColors.light_gray, fontSize: 15, fontWeight: FontWeight.normal),
                                   decoration: BoxDecoration(border: null),
                                   textCapitalization:
                                       TextCapitalization.characters,
@@ -399,6 +404,7 @@ class _ClassChangeRequestState extends State<ClassChangeRequestView> {
                                   placeholder: '1300',
                                   style: TextStyle(
                                       fontSize: 15, color: SKColors.dark_gray),
+                                      placeholderStyle: TextStyle(color: SKColors.light_gray, fontSize: 15, fontWeight: FontWeight.normal),
                                   decoration: BoxDecoration(border: null),
                                   controller: codeController,
                                   onChanged: checkValid,
@@ -435,6 +441,7 @@ class _ClassChangeRequestState extends State<ClassChangeRequestView> {
                                   placeholder: '2',
                                   style: TextStyle(
                                       fontSize: 15, color: SKColors.dark_gray),
+                                      placeholderStyle: TextStyle(color: SKColors.light_gray, fontSize: 15, fontWeight: FontWeight.normal),
                                   decoration: BoxDecoration(border: null),
                                   controller: sectionController,
                                   keyboardType: TextInputType.text,

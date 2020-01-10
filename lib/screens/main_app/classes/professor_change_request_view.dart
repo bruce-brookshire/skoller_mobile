@@ -95,8 +95,10 @@ class _ProfessorChangeRequestViewState
         lastName: lastName == professor.lastName ? null : lastName,
         email: !origEmail && email != '' ? email : null,
         phoneNumber: !origPhone && phoneNumber != '' ? phoneNumber : null,
-        officeLocation: !origLocation && officeLocation != '' ? officeLocation : null,
-        availability: !origAvailability && availability != '' ? availability : null,
+        officeLocation:
+            !origLocation && officeLocation != '' ? officeLocation : null,
+        availability:
+            !origAvailability && availability != '' ? availability : null,
       );
 
       if (direct_response && change_response) {
@@ -220,6 +222,10 @@ class _ProfessorChangeRequestViewState
                                 placeholder: 'Joe',
                                 style: TextStyle(
                                     fontSize: 15, color: SKColors.dark_gray),
+                                placeholderStyle: TextStyle(
+                                    color: SKColors.light_gray,
+                                    fontSize: 15,
+                                    fontWeight: FontWeight.normal),
                                 decoration: BoxDecoration(border: null),
                                 textCapitalization:
                                     TextCapitalization.characters,
@@ -260,6 +266,10 @@ class _ProfessorChangeRequestViewState
                                 style: TextStyle(
                                     fontSize: 15, color: SKColors.dark_gray),
                                 decoration: BoxDecoration(border: null),
+                                placeholderStyle: TextStyle(
+                                    color: SKColors.light_gray,
+                                    fontSize: 15,
+                                    fontWeight: FontWeight.normal),
                                 controller: lastNameController,
                                 onChanged: didEdit,
                                 keyboardType: TextInputType.text,
@@ -297,6 +307,10 @@ class _ProfessorChangeRequestViewState
                           placeholder: 'joe-schmo@example.com',
                           style: TextStyle(
                               fontSize: 15, color: SKColors.dark_gray),
+                          placeholderStyle: TextStyle(
+                              color: SKColors.light_gray,
+                              fontSize: 15,
+                              fontWeight: FontWeight.normal),
                           decoration: BoxDecoration(border: null),
                           controller: emailController,
                           onChanged: didEdit,
@@ -332,6 +346,10 @@ class _ProfessorChangeRequestViewState
                           placeholder: '(555) 555-5555',
                           style: TextStyle(
                               fontSize: 15, color: SKColors.dark_gray),
+                          placeholderStyle: TextStyle(
+                              color: SKColors.light_gray,
+                              fontSize: 15,
+                              fontWeight: FontWeight.normal),
                           decoration: BoxDecoration(border: null),
                           controller: phoneNumberController,
                           inputFormatters: [USNumberTextInputFormatter()],
@@ -368,6 +386,10 @@ class _ProfessorChangeRequestViewState
                           placeholder: 'SCIE 305',
                           style: TextStyle(
                               fontSize: 15, color: SKColors.dark_gray),
+                          placeholderStyle: TextStyle(
+                              color: SKColors.light_gray,
+                              fontSize: 15,
+                              fontWeight: FontWeight.normal),
                           decoration: BoxDecoration(border: null),
                           controller: officeLocationController,
                           onChanged: didEdit,
@@ -403,6 +425,10 @@ class _ProfessorChangeRequestViewState
                           placeholder: 'MTW from 3-5pm...',
                           style: TextStyle(
                               fontSize: 15, color: SKColors.dark_gray),
+                          placeholderStyle: TextStyle(
+                              color: SKColors.light_gray,
+                              fontSize: 15,
+                              fontWeight: FontWeight.normal),
                           decoration: BoxDecoration(border: null),
                           controller: availabilityController,
                           onChanged: didEdit,
