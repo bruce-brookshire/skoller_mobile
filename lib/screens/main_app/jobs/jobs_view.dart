@@ -27,11 +27,37 @@ class _JobsViewState extends State<JobsView> {
       graduationDate =
           DateTime.parse('${SKUser.current.student.gradYear}-05-01');
 
-    if (JobProfile.currentProfile == null)
+    updateProfileState();
+
+    DartNotificationCenter.subscribe(
+        observer: this,
+        channel: NotificationChannels.newTabSelected,
+        onNotification: (index) {
+          if (index == JOBS_TAB)
+            SKUser.current.getJobProfile().then((response) {
+              if (response.wasSuccessful()) {
+                updateProfileState();
+                setState(() {});
+              }
+            });
+        });
+  }
+
+  @override
+  void dispose() {
+    DartNotificationCenter.unsubscribe(observer: this);
+
+    super.dispose();
+  }
+
+  void updateProfileState() {
+    final currentProfile = JobProfile.currentProfile;
+
+    if (currentProfile == null)
       profileState = _ProfileState.intro;
-    else if (JobProfile.currentProfile.job_search_type == null)
+    else if (currentProfile.job_search_type == null)
       profileState = _ProfileState.start;
-    else if (JobProfile.currentProfile.resume_url == null)
+    else if (currentProfile.resume_url == null)
       profileState = _ProfileState.resume;
     else
       profileState = _ProfileState.profile;
@@ -462,7 +488,6 @@ class _JobsViewState extends State<JobsView> {
             style: TextStyle(fontSize: 17),
           ),
           margin: EdgeInsets.fromLTRB(16, 0, 16, 16),
-          // padding: EdgeInsets.fromLTRB(16, 8, 16, 16),
           children: <Widget>[
             Padding(
               padding: EdgeInsets.symmetric(vertical: 12, horizontal: 48),
@@ -755,13 +780,56 @@ class _GraduationDatePickerState extends State<_GraduationDatePicker> {
   }
 }
 
-class _SKJobProfileCompletionCircle extends StatelessWidget {
+class _SKJobProfileCompletionCircle extends StatefulWidget {
   final num completion;
 
   _SKJobProfileCompletionCircle({this.completion});
 
   @override
+  State createState() => _SKJobProfileCompletionCircleState();
+}
+
+class _SKJobProfileCompletionCircleState
+    extends State<_SKJobProfileCompletionCircle>
+    with SingleTickerProviderStateMixin {
+  AnimationController animationController;
+  Animation<double> animation;
+
+  @override
+  void initState() {
+    super.initState();
+
+    animationController =
+        AnimationController(vsync: this, duration: Duration(seconds: 1));
+    animation = Tween<double>(begin: 0, end: widget.completion).animate(
+      CurvedAnimation(parent: animationController, curve: Curves.easeOutCubic),
+    )..addListener(
+        () => setState(() {}),
+      );
+
+    animationController.forward();
+
+    DartNotificationCenter.subscribe(
+        observer: this,
+        channel: NotificationChannels.newTabSelected,
+        onNotification: (index) {
+          if (index == JOBS_TAB && !animationController.isAnimating) {
+            animationController.forward(from: 0);
+          }
+        });
+  }
+
+  @override
+  void dispose() {
+    DartNotificationCenter.unsubscribe(observer: this);
+    animationController.dispose();
+
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final completion = animation.value;
     return CustomPaint(
       painter: _SKCompletionCirclePainter(completion),
       child: Container(
@@ -789,16 +857,33 @@ class _SKCompletionCirclePainter extends CustomPainter {
       ..color = SKColors.jobs_dark_green
       ..style = PaintingStyle.stroke
       ..strokeWidth = 18
+      ..strokeCap = StrokeCap.round
+      ..isAntiAlias = true;
+
+    final inactivePaint = Paint()
+      ..color = SKColors.border_gray
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 18
       ..isAntiAlias = true;
 
     final outerRadius = (size.width);
     final half_pi = pi / 2;
     final sweepAngle = (2 * pi * completion);
+    final rect = Rect.fromLTWH(0, 0, outerRadius, outerRadius);
+    final adjustmentAngle = 0.02;
 
     canvas.drawArc(
-      Rect.fromLTWH(0, 0, outerRadius, outerRadius),
-      -half_pi,
-      sweepAngle,
+      rect,
+      sweepAngle - half_pi - adjustmentAngle,
+      (2 * pi) - sweepAngle + adjustmentAngle,
+      false,
+      inactivePaint,
+    );
+
+    canvas.drawArc(
+      rect,
+      -half_pi + adjustmentAngle,
+      sweepAngle - adjustmentAngle,
       false,
       fillPaint,
     );

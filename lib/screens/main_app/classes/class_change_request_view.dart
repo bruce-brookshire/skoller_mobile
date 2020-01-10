@@ -437,7 +437,7 @@ class _ClassChangeRequestState extends State<ClassChangeRequestView> {
                                       fontSize: 15, color: SKColors.dark_gray),
                                   decoration: BoxDecoration(border: null),
                                   controller: sectionController,
-                                  keyboardType: TextInputType.number,
+                                  keyboardType: TextInputType.text,
                                   onChanged: checkValid,
                                 ),
                               ],

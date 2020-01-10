@@ -53,19 +53,19 @@ class RewardsView extends StatelessWidget {
                 : ImageNames.shareImages.asa_share_image),
           ),
           Padding(
-            padding: EdgeInsets.fromLTRB(12, 24, 12, 8),
+            padding: EdgeInsets.fromLTRB(16, 24, 16, 8),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
-                Text('Your Raise', style: raiseDescStyle),
+                Text('My Raise', style: raiseDescStyle),
                 Text(
-                    '${NumberUtilities.formatNumberAsDollar(raiseEffort.personalSignups)}',
+                    '${NumberUtilities.formatNumberAsDollar(raiseEffort.personalSignups + 1)}',
                     style: raiseValStyle)
               ],
             ),
           ),
           Padding(
-            padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+            padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
@@ -74,7 +74,7 @@ class RewardsView extends StatelessWidget {
                     mainAxisSize: MainAxisSize.min,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
-                      Text('Your Chapter', style: raiseDescStyle),
+                      Text('My Chapter', style: raiseDescStyle),
                       Padding(
                         padding: EdgeInsets.only(left: 8),
                         child: Text(
@@ -95,7 +95,7 @@ class RewardsView extends StatelessWidget {
             ),
           ),
           Padding(
-            padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+            padding: EdgeInsets.symmetric(horizontal: 16, vertical: 6),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[

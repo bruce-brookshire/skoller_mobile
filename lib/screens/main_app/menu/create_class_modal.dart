@@ -408,7 +408,7 @@ class _CreateClassScreenOneState extends State<_CreateClassScreenOne> {
                                   fontSize: 15, color: SKColors.dark_gray),
                               decoration: BoxDecoration(border: null),
                               controller: parent.sectionController,
-                              keyboardType: TextInputType.number,
+                              keyboardType: TextInputType.text,
                               focusNode: nodes[3],
                               onChanged: checkValid,
                             ),
