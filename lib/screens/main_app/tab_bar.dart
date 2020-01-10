@@ -48,7 +48,8 @@ class _SKTabBarState extends State<SKTabBar> {
 
   CupertinoTabController controller;
 
-  var prevIndex = StudentClass.currentClasses.length == 0 ? CLASSES_TAB : FORECAST_TAB;
+  var prevIndex =
+      StudentClass.currentClasses.length == 0 ? CLASSES_TAB : FORECAST_TAB;
 
   @override
   void initState() {
@@ -169,6 +170,9 @@ class _SKTabBarState extends State<SKTabBar> {
       _navigatorKeys[index]
           .currentState
           ?.popUntil((route) => route.settings.isInitialRoute);
+    else
+      DartNotificationCenter.post(
+          channel: NotificationChannels.newTabSelected, options: index);
 
     prevIndex = index;
     if (mounted) setState(() {});
