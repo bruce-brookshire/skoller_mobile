@@ -1,5 +1,6 @@
 import 'dart:collection';
 
+import 'package:dart_notification_center/dart_notification_center.dart';
 import 'package:dropdown_banner/dropdown_banner.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
@@ -127,9 +128,16 @@ class _WeightsChangeRequestState extends State<WeightsChangeRequestView> {
       final weights =
           this.weights.map((w) => w..update('value', (v) => '$v')).toList();
 
-      studentClass.submitWeightChangeRequest(isPoints, weights).then((success) {
+      studentClass
+          .submitWeightChangeRequest(isPoints, weights)
+          .then((success) async {
         if (success) {
+          await studentClass.refetchSelf();
           loader.fadeOut();
+
+          DartNotificationCenter.post(
+              channel: NotificationChannels.classChanged);
+
           DropdownBanner.showBanner(
             text: 'Successfully submitted for review',
             color: SKColors.success,

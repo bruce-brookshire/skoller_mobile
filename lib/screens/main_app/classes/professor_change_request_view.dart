@@ -114,15 +114,7 @@ class _ProfessorChangeRequestViewState
           textStyle: TextStyle(color: Colors.white),
         );
 
-        int count = 0;
-        Navigator.popUntil(context, (_) {
-          if (count == 2)
-            return true;
-          else {
-            count++;
-            return false;
-          }
-        });
+        Navigator.pop(context);
       } else {
         loader.fadeOut();
         DropdownBanner.showBanner(

@@ -1,4 +1,6 @@
+import 'package:dart_notification_center/dart_notification_center.dart';
 import 'package:dropdown_banner/dropdown_banner.dart';
+import 'package:skoller/screens/main_app/classes/modals/change_request_explanation_modal.dart';
 import './modals/create_single_scale_modal.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -94,7 +96,10 @@ class _GradeScaleViewState extends State<GradeScaleView> {
       final response = await studentClass.submitGradeScaleChangeRequest(newMap);
 
       if (response) {
+        await studentClass.refetchSelf();
+
         setState(() => isEditing = null);
+
         DropdownBanner.showBanner(
           text:
               'Sucessfully submitted change request. Please wait for the Skoller team to review it!',
@@ -117,6 +122,9 @@ class _GradeScaleViewState extends State<GradeScaleView> {
           color: SKColors.alert_orange);
     }
   }
+
+  void tappedChangeRequestExplanation(_) => showDialog(
+      context: context, builder: (_) => ChangeRequestExplanationModal());
 
   @override
   Widget build(BuildContext context) {
@@ -151,6 +159,40 @@ class _GradeScaleViewState extends State<GradeScaleView> {
         )
         .toList();
 
+    final changeRequests = studentClass.gradeScaleChangeRequests
+        .map(
+          (c) => SKHeaderCard(
+            margin: EdgeInsets.fromLTRB(16, 16, 16, 0),
+            padding: EdgeInsets.symmetric(vertical: 16, horizontal: 24),
+            leftHeaderItem: Row(children: [
+              Padding(
+                padding: EdgeInsets.only(right: 4),
+                child: Icon(
+                  Icons.access_time,
+                  size: 22,
+                  color: SKColors.alert_orange,
+                ),
+              ),
+              Text(
+                'Pending change request',
+                style: TextStyle(color: SKColors.alert_orange),
+              ),
+            ]),
+            rightHeaderItem: GestureDetector(
+              onTapUp: tappedChangeRequestExplanation,
+              behavior: HitTestBehavior.opaque,
+              child: Container(
+                child: Icon(
+                  Icons.help_outline,
+                  color: SKColors.skoller_blue,
+                ),
+              ),
+            ),
+            children: buildChangeRequestMembers(c.members.toList()),
+          ),
+        )
+        .toList();
+
     return SKNavView(
       title: studentClass.name,
       titleColor: studentClass.getColor(),
@@ -166,114 +208,205 @@ class _GradeScaleViewState extends State<GradeScaleView> {
       callbackLeft: isEditing != null && isEditing ? toggleEditing : null,
       children: <Widget>[
         Expanded(
-          child: Container(
-            margin: EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(10),
-              border: Border.all(color: SKColors.border_gray),
-              boxShadow: UIAssets.boxShadow,
-            ),
+          child: SingleChildScrollView(
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: <Widget>[
+              children: [
+                ...changeRequests,
                 Container(
-                  padding: EdgeInsets.fromLTRB(12, 12, 12, 8),
+                  margin: EdgeInsets.all(16),
                   decoration: BoxDecoration(
-                      color: SKColors.selected_gray,
-                      borderRadius: BorderRadius.only(
-                          topLeft: Radius.circular(10),
-                          topRight: Radius.circular(10))),
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'Grade scale',
-                              style: TextStyle(fontSize: 17),
-                            ),
-                            Text(
-                              'Used to speculate your grade',
-                              style: TextStyle(
-                                  fontWeight: FontWeight.normal, fontSize: 12),
-                            ),
-                          ],
-                        ),
-                      ),
-                      if (isEditing != null)
-                        !isEditing
-                            ? GestureDetector(
-                                behavior: HitTestBehavior.opaque,
-                                onTapUp: toggleEditing,
-                                child: Text(
-                                  'Edit',
-                                  style: TextStyle(
-                                    color: SKColors.skoller_blue,
-                                    fontSize: 15,
-                                  ),
-                                ),
-                              )
-                            : GestureDetector(
-                                behavior: HitTestBehavior.opaque,
-                                onTapUp: tappedAdd,
-                                child: Image.asset(
-                                    ImageNames.rightNavImages.plus)),
-                    ],
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(10),
+                    border: Border.all(color: SKColors.border_gray),
+                    boxShadow: UIAssets.boxShadow,
                   ),
-                ),
-                Expanded(
-                  child: ListView(
-                    padding: EdgeInsets.only(top: 8, left: 12, right: 12),
-                    children: [
-                      Padding(
-                        padding: EdgeInsets.only(bottom: 4),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: <Widget>[
+                      Container(
+                        padding: EdgeInsets.fromLTRB(12, 12, 12, 8),
+                        decoration: BoxDecoration(
+                            color: SKColors.selected_gray,
+                            borderRadius: BorderRadius.only(
+                                topLeft: Radius.circular(10),
+                                topRight: Radius.circular(10))),
                         child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: <Widget>[
-                            Text(
-                              'To make...',
-                              style: TextStyle(
-                                  fontSize: 12, fontWeight: FontWeight.normal),
+                          children: [
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    'Grade scale',
+                                    style: TextStyle(fontSize: 17),
+                                  ),
+                                  Text(
+                                    'Used to speculate your grade',
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.normal,
+                                        fontSize: 12),
+                                  ),
+                                ],
+                              ),
                             ),
-                            Text(
-                              'must score...',
-                              style: TextStyle(
-                                  fontSize: 12, fontWeight: FontWeight.normal),
-                            ),
+                            if (isEditing != null)
+                              !isEditing
+                                  ? GestureDetector(
+                                      behavior: HitTestBehavior.opaque,
+                                      onTapUp: toggleEditing,
+                                      child: Text(
+                                        'Edit',
+                                        style: TextStyle(
+                                          color: SKColors.skoller_blue,
+                                          fontSize: 15,
+                                        ),
+                                      ),
+                                    )
+                                  : GestureDetector(
+                                      behavior: HitTestBehavior.opaque,
+                                      onTapUp: tappedAdd,
+                                      child: Image.asset(
+                                          ImageNames.rightNavImages.plus)),
                           ],
                         ),
                       ),
-                      ...scaleWidgets,
+                      Padding(
+                        padding: EdgeInsets.fromLTRB(12, 8, 12, 12),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Padding(
+                              padding: EdgeInsets.only(bottom: 4),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: <Widget>[
+                                  Text(
+                                    'To make...',
+                                    style: TextStyle(
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.normal),
+                                  ),
+                                  Text(
+                                    'must score...',
+                                    style: TextStyle(
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.normal),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            ...scaleWidgets,
+                          ],
+                        ),
+                      ),
+                      if (isEditing != null && isEditing)
+                        GestureDetector(
+                          behavior: HitTestBehavior.opaque,
+                          onTapUp: tappedSubmit,
+                          child: Container(
+                            margin: EdgeInsets.fromLTRB(8, 4, 8, 8),
+                            padding: EdgeInsets.symmetric(vertical: 6),
+                            alignment: Alignment.center,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(5),
+                              color: SKColors.success,
+                            ),
+                            child: Text(
+                              'Submit',
+                              style: TextStyle(color: Colors.white),
+                            ),
+                          ),
+                        )
                     ],
                   ),
                 ),
-                if (isEditing != null && isEditing)
-                  GestureDetector(
-                    behavior: HitTestBehavior.opaque,
-                    onTapUp: tappedSubmit,
-                    child: Container(
-                      margin: EdgeInsets.fromLTRB(8, 4, 8, 8),
-                      padding: EdgeInsets.symmetric(vertical: 6),
-                      alignment: Alignment.center,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(5),
-                        color: SKColors.success,
-                      ),
-                      child: Text(
-                        'Submit',
-                        style: TextStyle(color: Colors.white),
-                      ),
-                    ),
-                  )
               ],
             ),
           ),
         ),
       ],
+    );
+  }
+
+  List<Widget> buildChangeRequestMembers(List<ChangeRequestMember> members) {
+    final studentClass = StudentClass.currentClasses[widget.classId];
+    final scaleTesterMap = Map.fromEntries(studentClass.gradeScale.entries);
+    final newOrChangedMembers = members.map((m) {
+      final testGrade = scaleTesterMap.remove(m.name);
+
+      if (testGrade == null)
+        return {'name': m.name, 'type': 'new', 'new_val': m.value};
+      else if (testGrade != m.value)
+        return {
+          'name': m.name,
+          'type': 'change',
+          'old_val': '$testGrade',
+          'new_val': m.value,
+        };
+      else
+        return null;
+    }).toList()
+      ..removeWhere((w) => w == null);
+
+    final removedMembers = scaleTesterMap.entries
+        .map((m) => {'name': m.key, 'type': 'delete', 'new_val': '${m.value}'});
+
+    return [...newOrChangedMembers, ...removedMembers]
+        .map(buildChangeRequestMemberRow)
+        .toList();
+  }
+
+  Widget buildChangeRequestMemberRow(Map member) {
+    Widget icon;
+
+    switch (member['type']) {
+      case 'new':
+        icon = Icon(
+          Icons.add,
+          color: SKColors.success,
+        );
+        break;
+      case 'change':
+        icon = Icon(
+          Icons.arrow_forward,
+          color: SKColors.dark_gray,
+        );
+        break;
+      case 'delete':
+        icon = Icon(
+          Icons.remove,
+          color: SKColors.warning_red,
+        );
+        break;
+    }
+    return Padding(
+      padding: EdgeInsets.symmetric(vertical: 4),
+      child: Row(
+        children: <Widget>[
+          Expanded(
+            child: Text(
+              member['name'],
+              style: TextStyle(fontWeight: FontWeight.w600),
+            ),
+          ),
+          if (member['old_val'] != null)
+            Text(
+              member['old_val'],
+              textAlign: TextAlign.right,
+              style: TextStyle(fontWeight: FontWeight.w500),
+            ),
+          icon,
+          if (member['new_val'] != null)
+            Text(
+              member['new_val'],
+              textAlign: TextAlign.right,
+              style: TextStyle(fontWeight: FontWeight.w500),
+            ),
+        ],
+      ),
     );
   }
 }
