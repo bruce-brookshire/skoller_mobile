@@ -83,180 +83,49 @@ class _AssignmentWeightState extends State<AssignmentWeightView> {
       title: studentClass.name,
       titleColor: studentClass.getColor(),
       children: [
-        if (weightAssignmentDensity.length == 0)
-          Padding(
-            padding: EdgeInsets.fromLTRB(16, 12, 16, 0),
-            child: SammiSpeechBubble(
-            sammiPersonality: SammiPersonality.smile,
-            speechBubbleContents: Text('The last step is to add assignments!'),
-          ),
-          ),
         Expanded(
-          child: Container(
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(10),
-              boxShadow: UIAssets.boxShadow,
-              border: Border.all(color: SKColors.border_gray),
-              color: Colors.white,
-            ),
-            margin: EdgeInsets.all(16),
+          child: SingleChildScrollView(
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                Container(
-                  padding: EdgeInsets.fromLTRB(12, 12, 12, 8),
-                  decoration: BoxDecoration(
-                      color: SKColors.selected_gray,
-                      borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(10),
-                        topRight: Radius.circular(10),
-                      )),
-                  child: Text('What type of assignment?'),
-                ),
-                Expanded(
-                  child: ListView.builder(
-                    padding: EdgeInsets.only(top: 4),
-                    itemCount: weights.length + 1,
-                    itemBuilder: (context, index) {
-                      return index == weights.length
-                          ? GestureDetector(
-                              behavior: HitTestBehavior.opaque,
-                              onTapUp: (details) {
-                                Navigator.push(
-                                  context,
-                                  CupertinoPageRoute(
-                                    builder: (context) => AssignmentAddView(
-                                        widget.class_id, null),
-                                    settings: RouteSettings(
-                                        name: 'AssignmentAddView'),
-                                  ),
-                                );
-                              },
-                              child: Container(
-                                padding: EdgeInsets.symmetric(
-                                    horizontal: 12, vertical: 8),
-                                child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Expanded(
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Container(
-                                            margin: EdgeInsets.only(bottom: 12),
-                                            child: null,
-                                            decoration: BoxDecoration(
-                                              border: Border(
-                                                bottom: BorderSide(
-                                                  color: SKColors.border_gray,
-                                                ),
-                                              ),
-                                            ),
-                                          ),
-                                          Text('Not weighted'),
-                                          Container(
-                                            padding: EdgeInsets.only(
-                                                left: 12, top: 2),
-                                            child: Text(
-                                              'Assignments in this category do not count towards your grade',
-                                              style: TextStyle(
-                                                fontSize: 13,
-                                                fontWeight: FontWeight.normal,
-                                                color: SKColors.text_light_gray,
-                                              ),
-                                            ),
-                                          )
-                                        ],
-                                      ),
-                                    ),
-                                    Image.asset(ImageNames.navArrowImages.right)
-                                  ],
-                                ),
-                              ),
-                            )
-                          : GestureDetector(
-                              behavior: HitTestBehavior.opaque,
-                              onTapUp: (details) {
-                                final weight = weights[index];
-
-                                if (weightAssignmentDensity[weight.id] !=
-                                    null) {
-                                  // This weight has assignments. Send to single add page
-                                  Navigator.push(
-                                    context,
-                                    CupertinoPageRoute(
-                                      builder: (context) => AssignmentAddView(
-                                        widget.class_id,
-                                        weights[index],
-                                      ),
-                                      settings: RouteSettings(
-                                          name: 'AssignmentAddView'),
-                                    ),
-                                  );
-                                } else {
-                                  Navigator.push(
-                                    context,
-                                    CupertinoPageRoute(
-                                      builder: (context) =>
-                                          AssignmentBatchAddView(
-                                        class_id: widget.class_id,
-                                        weight: weight,
-                                      ),
-                                      settings: RouteSettings(
-                                          name: 'AssignmentBatchAddView'),
-                                    ),
-                                  );
-                                }
-                              },
-                              child: Container(
-                                padding: EdgeInsets.symmetric(
-                                    horizontal: 12,
-                                    vertical: weightAssignmentDensity[
-                                                weights[index].id] ==
-                                            null
-                                        ? 6
-                                        : 12),
-                                child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Expanded(
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Text(weights[index].name),
-                                          Container(
-                                            padding: EdgeInsets.only(
-                                                left: 12, top: 2),
-                                            child: weightAssignmentDensity[
-                                                        weights[index].id] ==
-                                                    null
-                                                ? Text(
-                                                    'Add assignments',
-                                                    style: TextStyle(
-                                                      fontSize: 13,
-                                                      fontWeight:
-                                                          FontWeight.normal,
-                                                      color:
-                                                          SKColors.warning_red,
-                                                    ),
-                                                  )
-                                                : null,
-                                          )
-                                        ],
-                                      ),
-                                    ),
-                                    Image.asset(ImageNames.navArrowImages.right)
-                                  ],
-                                ),
-                              ),
-                            );
-                    },
+              children: <Widget>[
+                if (weightAssignmentDensity.length == 0)
+                  Padding(
+                    padding: EdgeInsets.fromLTRB(16, 12, 16, 0),
+                    child: SammiSpeechBubble(
+                      sammiPersonality: SammiPersonality.smile,
+                      speechBubbleContents:
+                          Text('The last step is to add assignments!'),
+                    ),
                   ),
-                )
+                Container(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(10),
+                    boxShadow: UIAssets.boxShadow,
+                    border: Border.all(color: SKColors.border_gray),
+                    color: Colors.white,
+                  ),
+                  margin: EdgeInsets.all(16),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      Container(
+                        padding: EdgeInsets.fromLTRB(12, 12, 12, 8),
+                        decoration: BoxDecoration(
+                            color: SKColors.selected_gray,
+                            borderRadius: BorderRadius.only(
+                              topLeft: Radius.circular(10),
+                              topRight: Radius.circular(10),
+                            )),
+                        child: Text('What type of assignment?'),
+                      ),
+                      ...List.generate(
+                        weights.length + 1,
+                        (index) => index == weights.length
+                            ? createUnweightedCell()
+                            : createWeightedCell(weights[index]),
+                      ),
+                    ],
+                  ),
+                ),
               ],
             ),
           ),
@@ -264,4 +133,118 @@ class _AssignmentWeightState extends State<AssignmentWeightView> {
       ],
     );
   }
+
+  Widget createWeightedCell(Weight weight) => GestureDetector(
+        behavior: HitTestBehavior.opaque,
+        onTapUp: (details) {
+          if (weightAssignmentDensity[weight.id] != null) {
+            // This weight has assignments. Send to single add page
+            Navigator.push(
+              context,
+              CupertinoPageRoute(
+                builder: (context) => AssignmentAddView(
+                  widget.class_id,
+                  weight,
+                ),
+                settings: RouteSettings(name: 'AssignmentAddView'),
+              ),
+            );
+          } else {
+            Navigator.push(
+              context,
+              CupertinoPageRoute(
+                builder: (context) => AssignmentBatchAddView(
+                  class_id: widget.class_id,
+                  weight: weight,
+                ),
+                settings: RouteSettings(name: 'AssignmentBatchAddView'),
+              ),
+            );
+          }
+        },
+        child: Container(
+          padding: EdgeInsets.symmetric(
+              horizontal: 12,
+              vertical: weightAssignmentDensity[weight.id] == null ? 6 : 12),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(weight.name),
+                    Container(
+                      padding: EdgeInsets.only(left: 12, top: 2),
+                      child: weightAssignmentDensity[weight.id] == null
+                          ? Text(
+                              'Add assignments',
+                              style: TextStyle(
+                                fontSize: 13,
+                                fontWeight: FontWeight.normal,
+                                color: SKColors.warning_red,
+                              ),
+                            )
+                          : null,
+                    )
+                  ],
+                ),
+              ),
+              Image.asset(ImageNames.navArrowImages.right)
+            ],
+          ),
+        ),
+      );
+
+  Widget createUnweightedCell() => GestureDetector(
+        behavior: HitTestBehavior.opaque,
+        onTapUp: (details) {
+          Navigator.push(
+            context,
+            CupertinoPageRoute(
+              builder: (context) => AssignmentAddView(widget.class_id, null),
+              settings: RouteSettings(name: 'AssignmentAddView'),
+            ),
+          );
+        },
+        child: Container(
+          padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Container(
+                      margin: EdgeInsets.only(bottom: 12),
+                      child: null,
+                      decoration: BoxDecoration(
+                        border: Border(
+                          bottom: BorderSide(
+                            color: SKColors.border_gray,
+                          ),
+                        ),
+                      ),
+                    ),
+                    Text('Not weighted'),
+                    Container(
+                      padding: EdgeInsets.only(left: 12, top: 2),
+                      child: Text(
+                        'Assignments in this category do not count towards your grade',
+                        style: TextStyle(
+                          fontSize: 13,
+                          fontWeight: FontWeight.normal,
+                          color: SKColors.text_light_gray,
+                        ),
+                      ),
+                    )
+                  ],
+                ),
+              ),
+              Image.asset(ImageNames.navArrowImages.right)
+            ],
+          ),
+        ),
+      );
 }

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:dart_notification_center/dart_notification_center.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
@@ -236,27 +238,21 @@ class _ClassDetailState extends State<ClassDetailView> {
                         ],
                       ),
                       GestureDetector(
-                        behavior: HitTestBehavior.opaque,
-                        onTapUp: (_) => DartNotificationCenter.post(
-                          channel:
-                              NotificationChannels.presentModalViewOverTabBar,
-                          options: ClassMenuModal(studentClass.id),
-                        ),
-                        onVerticalDragEnd: (details) {
-                          if (details.primaryVelocity > 0)
-                            DartNotificationCenter.post(
-                              channel: NotificationChannels
-                                  .presentModalViewOverTabBar,
-                              options: ClassMenuModal(studentClass.id),
-                            );
-                        },
-                        child: Container(
-                          alignment: Alignment.center,
-                          padding: EdgeInsets.only(top: 8, bottom: 7),
-                          child: Image.asset(
-                              ImageNames.navArrowImages.pulldown_blue),
-                        ),
-                      ),
+                          behavior: HitTestBehavior.opaque,
+                          onTapUp: (_) => DartNotificationCenter.post(
+                                channel: NotificationChannels
+                                    .presentModalViewOverTabBar,
+                                options: ClassMenuModal(studentClass.id),
+                              ),
+                          onVerticalDragEnd: (details) {
+                            if (details.primaryVelocity > 0)
+                              DartNotificationCenter.post(
+                                channel: NotificationChannels
+                                    .presentModalViewOverTabBar,
+                                options: ClassMenuModal(studentClass.id),
+                              );
+                          },
+                          child: _DownArrowArrowAnimation()),
                     ],
                   ),
                 ),
@@ -634,6 +630,60 @@ class _AssignmentCellState extends State<_AssignmentCell> {
               ),
             ),
           ],
+        ),
+      ),
+    );
+  }
+}
+
+class _DownArrowArrowAnimation extends StatefulWidget {
+  @override
+  State createState() => _DownArrowArrowAnimationState();
+}
+
+class _DownArrowArrowAnimationState extends State<_DownArrowArrowAnimation>
+    with SingleTickerProviderStateMixin {
+  AnimationController controller;
+  Animation animation;
+
+  @override
+  void initState() {
+    controller =
+        AnimationController(vsync: this, duration: Duration(seconds: 2));
+
+    animation = Tween<double>(begin: 0, end: 3).animate(controller)
+      ..addListener(() => setState(() {}))
+      ..addStatusListener((status) {
+        if (status == AnimationStatus.completed && mounted)
+          Timer(Duration(seconds: 6), () {
+            if (mounted) controller.forward(from: 0);
+          });
+      });
+
+    controller.forward();
+
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    controller.dispose();
+
+    super.dispose();
+  }
+
+  double get translation => 5 * ((1 / ((animation.value + 0.85) / 2)) - 0.515);
+
+  @override
+  Widget build(BuildContext context) {
+    return Opacity(
+      opacity: animation.value / 3,
+      child: Container(
+        alignment: Alignment.center,
+        height: 25,
+        child: Padding(
+          padding: EdgeInsets.only(bottom: translation),
+          child: Image.asset(ImageNames.navArrowImages.pulldown_blue),
         ),
       ),
     );
