@@ -2,9 +2,6 @@ import 'package:skoller/tools.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 
-
-
-
 class WeightCreationModal extends StatefulWidget {
   final bool isPoints;
   final bool isCreate;
@@ -21,8 +18,7 @@ class WeightCreationModal extends StatefulWidget {
   State createState() => _WeightExtractionFormModalState();
 }
 
-class _WeightExtractionFormModalState
-    extends State<WeightCreationModal> {
+class _WeightExtractionFormModalState extends State<WeightCreationModal> {
   final nameFocusNode = FocusNode();
   final valueFocusNode = FocusNode();
 
@@ -78,6 +74,10 @@ class _WeightExtractionFormModalState
               CupertinoTextField(
                 placeholder: 'Exams',
                 controller: nameController,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(5),
+                  border: Border.all(color: SKColors.border_gray),
+                ),
                 padding: EdgeInsets.fromLTRB(6, 8, 6, 4),
                 textCapitalization: TextCapitalization.words,
                 cursorColor: SKColors.skoller_blue,
