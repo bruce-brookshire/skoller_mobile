@@ -1079,6 +1079,10 @@ class _GradeSelectionState extends State<_GradeSelection> {
                   onChanged: (newStr) => results.numerator = newStr,
                   textAlign: TextAlign.center,
                   cursorColor: SKColors.skoller_blue,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(5),
+                    border: Border.all(color: SKColors.border_gray),
+                  ),
                   autofocus: true,
                   style: TextStyle(fontSize: 15),
                 ),
@@ -1102,6 +1106,10 @@ class _GradeSelectionState extends State<_GradeSelection> {
                       color: SKColors.light_gray,
                       fontSize: 15,
                       fontWeight: FontWeight.normal),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(5),
+                    border: Border.all(color: SKColors.border_gray),
+                  ),
                   onChanged: (newStr) => results.denominator = newStr,
                   keyboardType: TextInputType.number,
                   textAlign: TextAlign.center,
