@@ -386,6 +386,10 @@ class _SubviewTwoState extends State<_SubviewTwo> {
                       keyboardType: TextInputType.number,
                       onChanged: updatePointsVal,
                       placeholder: 'e.g. 50',
+                      placeholderStyle: TextStyle(
+                          color: SKColors.light_gray,
+                          fontSize: 15,
+                          fontWeight: FontWeight.normal),
                       textAlign: TextAlign.center,
                       decoration: BoxDecoration(
                         border: Border.all(color: SKColors.border_gray),

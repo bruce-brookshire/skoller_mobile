@@ -1,5 +1,6 @@
 import 'dart:collection';
 
+import 'package:dart_notification_center/dart_notification_center.dart';
 import 'package:dropdown_banner/dropdown_banner.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
@@ -87,7 +88,7 @@ class _ClassChangeRequestState extends State<ClassChangeRequestView> {
     sectionController.dispose();
   }
 
-  void tappedSave() {
+  void tappedSave() async {
     if (!wasEdited) return;
 
     final meetDays = isOnline
@@ -112,8 +113,7 @@ class _ClassChangeRequestState extends State<ClassChangeRequestView> {
 
     final loader = SKLoadingScreen.fadeIn(context);
 
-    studentClass
-        .submitClassChangeRequest(
+    final success = await studentClass.submitClassChangeRequest(
       name: name == studentClass.name ? null : name,
       subject: subject == studentClass.subject ? null : subject,
       code: code == studentClass.code ? null : code,
@@ -122,18 +122,23 @@ class _ClassChangeRequestState extends State<ClassChangeRequestView> {
       meetTime:
           (isOnline || startTime == studentClass.meetTime) ? null : startTime,
       isOnline: isOnline,
-    )
-        .then((response) {
+    );
+
+    if (success) {
+      await studentClass.refetchSelf();
+
       loader.fadeOut();
-      if (response) {
-        Navigator.pop(context);
-      } else {
-        DropdownBanner.showBanner(
-          text: 'Issue saving assignment',
-          color: SKColors.warning_red,
-        );
-      }
-    });
+
+      DartNotificationCenter.post(channel: NotificationChannels.classChanged);
+
+      Navigator.pop(context);
+    } else {
+      loader.fadeOut();
+      DropdownBanner.showBanner(
+        text: 'Issue saving assignment',
+        color: SKColors.warning_red,
+      );
+    }
   }
 
   void tappedStartTime(TapUpDetails details) {
@@ -325,6 +330,10 @@ class _ClassChangeRequestState extends State<ClassChangeRequestView> {
                             placeholder: 'Microeconomics',
                             style: TextStyle(
                                 fontSize: 15, color: SKColors.dark_gray),
+                            placeholderStyle: TextStyle(
+                                color: SKColors.light_gray,
+                                fontSize: 15,
+                                fontWeight: FontWeight.normal),
                             decoration: BoxDecoration(border: null),
                             controller: nameController,
                             onChanged: checkValid,
@@ -362,6 +371,10 @@ class _ClassChangeRequestState extends State<ClassChangeRequestView> {
                                   placeholder: 'MATH',
                                   style: TextStyle(
                                       fontSize: 15, color: SKColors.dark_gray),
+                                  placeholderStyle: TextStyle(
+                                      color: SKColors.light_gray,
+                                      fontSize: 15,
+                                      fontWeight: FontWeight.normal),
                                   decoration: BoxDecoration(border: null),
                                   textCapitalization:
                                       TextCapitalization.characters,
@@ -399,6 +412,10 @@ class _ClassChangeRequestState extends State<ClassChangeRequestView> {
                                   placeholder: '1300',
                                   style: TextStyle(
                                       fontSize: 15, color: SKColors.dark_gray),
+                                  placeholderStyle: TextStyle(
+                                      color: SKColors.light_gray,
+                                      fontSize: 15,
+                                      fontWeight: FontWeight.normal),
                                   decoration: BoxDecoration(border: null),
                                   controller: codeController,
                                   onChanged: checkValid,
@@ -435,6 +452,10 @@ class _ClassChangeRequestState extends State<ClassChangeRequestView> {
                                   placeholder: '2',
                                   style: TextStyle(
                                       fontSize: 15, color: SKColors.dark_gray),
+                                  placeholderStyle: TextStyle(
+                                      color: SKColors.light_gray,
+                                      fontSize: 15,
+                                      fontWeight: FontWeight.normal),
                                   decoration: BoxDecoration(border: null),
                                   controller: sectionController,
                                   keyboardType: TextInputType.text,

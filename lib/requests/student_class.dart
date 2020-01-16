@@ -32,6 +32,8 @@ class StudentClass {
 
   Map<String, dynamic> gradeScale;
 
+  List<ChangeRequest> changeRequests;
+
   static time_machine.DateTimeZoneProvider tzdb;
 
   static final _classColors = [
@@ -73,6 +75,7 @@ class StudentClass {
     this.isNotifications,
     this.documents,
     this.isOnline,
+    this.changeRequests,
   );
 
   String get shareMessage {
@@ -82,6 +85,18 @@ class StudentClass {
   }
 
   School get parentSchool => School.currentSchools[classPeriod.schoolId];
+
+  List<ChangeRequest> get gradeScaleChangeRequests =>
+      _filterChangesForType(100);
+  List<ChangeRequest> get weightChangeRequests => _filterChangesForType(200);
+  List<ChangeRequest> get professorInfoChangeRequests =>
+      _filterChangesForType(300);
+  List<ChangeRequest> get classInfoChangeRequests => _filterChangesForType(400);
+
+  List<ChangeRequest> _filterChangesForType(int id) => changeRequests
+      .where(
+          (c) => c.changeType.id == id && c.members.any((m) => !m.isCompleted))
+      .toList();
 
   Color getColor() {
     final colorizer = (String colorStr) {
@@ -445,41 +460,44 @@ class StudentClass {
         : TimeOfDay(hour: startComponents[0], minute: startComponents[1]);
 
     StudentClass studentClass = StudentClass(
-        content['id'],
-        content['name'],
-        JsonListMaker.convert(
-          (content) => Assignment._fromJsonObj(content, shouldPersist: true),
-          content['assignments'] ?? [],
-        ),
-        content['color'],
-        content['grade'],
-        content['completion'],
-        content['enrollment'],
-        JsonListMaker.convert(
-          Weight._fromJsonObj,
-          content['weights'] ?? [],
-        ),
-        content['meet_days'],
-        startTime,
-        Status._fromJsonObj(content['status']),
-        content['subject'],
-        content['code'],
-        content['section'],
-        Professor._fromJsonObj(content['professor']),
-        Period._fromJsonObj(content['class_period']),
-        JsonListMaker.convert(
-          PublicStudent._fromJsonObj,
-          content['students'] ?? [],
-        ),
-        content['enrollment_link'],
-        content['grade_scale'],
-        content['is_points'],
-        content['is_notifications'],
-        JsonListMaker.convert(
-          ClassDocument._fromJsonObj,
-          content['documents'] ?? [],
-        ),
-        startString == 'online');
+      content['id'],
+      content['name'],
+      JsonListMaker.convert(
+        (content) => Assignment._fromJsonObj(content, shouldPersist: true),
+        content['assignments'] ?? [],
+      ),
+      content['color'],
+      content['grade'],
+      content['completion'],
+      content['enrollment'],
+      JsonListMaker.convert(
+        Weight._fromJsonObj,
+        content['weights'] ?? [],
+      ),
+      content['meet_days'],
+      startTime,
+      Status._fromJsonObj(content['status']),
+      content['subject'],
+      content['code'],
+      content['section'],
+      Professor._fromJsonObj(content['professor']),
+      Period._fromJsonObj(content['class_period']),
+      JsonListMaker.convert(
+        PublicStudent._fromJsonObj,
+        content['students'] ?? [],
+      ),
+      content['enrollment_link'],
+      content['grade_scale'],
+      content['is_points'],
+      content['is_notifications'],
+      JsonListMaker.convert(
+        ClassDocument._fromJsonObj,
+        content['documents'] ?? [],
+      ),
+      startString == 'online',
+      JsonListMaker.convert(
+          ChangeRequest._fromJsonObj, content['change_requests'] ?? []),
+    );
 
     StudentClass.currentClasses[studentClass.id] = studentClass;
 
@@ -505,7 +523,8 @@ class StudentClass {
     return SKRequests.get(
       '/students/${SKUser.current.student.id}/classes/${id}',
       _fromJsonObj,
-      postRequestAction: () => Assignment.currentAssignments.removeWhere((_, a) => a.classId == id),
+      postRequestAction: () =>
+          Assignment.currentAssignments.removeWhere((_, a) => a.classId == id),
     );
   }
 
@@ -735,4 +754,32 @@ class ClassDocument {
         content['name'],
         content['path'],
       );
+}
+
+class ChangeRequest {
+  final int id;
+  final List<ChangeRequestMember> members;
+  final TypeObject changeType;
+  final DateTime insertedAt;
+
+  ChangeRequest(this.id, this.members, this.changeType, this.insertedAt);
+
+  static ChangeRequest _fromJsonObj(Map content) => ChangeRequest(
+        content['id'],
+        JsonListMaker.convert(
+            ChangeRequestMember._fromJsonObj, content['members'] ?? []),
+        TypeObject._fromJsonObj(content['change_type']),
+        _dateParser(content['inserted_at']),
+      );
+}
+
+class ChangeRequestMember {
+  final bool isCompleted;
+  final String name;
+  final String value;
+
+  ChangeRequestMember(this.isCompleted, this.name, this.value);
+
+  static ChangeRequestMember _fromJsonObj(Map content) => ChangeRequestMember(
+      content['is_completed'], content['member_name'], content['member_value']);
 }

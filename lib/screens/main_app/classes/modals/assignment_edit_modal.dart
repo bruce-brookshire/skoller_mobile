@@ -269,6 +269,10 @@ class _AssignmentEditModalState extends State<AssignmentEditModal> {
                           placeholder: 'Assignment name',
                           style: TextStyle(
                               fontSize: 15, color: SKColors.dark_gray),
+                          placeholderStyle: TextStyle(
+                              color: SKColors.light_gray,
+                              fontSize: 15,
+                              fontWeight: FontWeight.normal),
                           decoration: BoxDecoration(border: null),
                           textCapitalization: TextCapitalization.words,
                           controller: nameController,

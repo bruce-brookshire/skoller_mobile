@@ -204,7 +204,7 @@ class _CreateSchoolModalState extends State<CreateSchoolModal> {
       }
     }).catchError((error) {
       loadingScreen.fadeOut();
-      
+
       if (error is String) {
         DropdownBanner.showBanner(
           text: error,
@@ -302,6 +302,10 @@ class _CreateSchoolModalState extends State<CreateSchoolModal> {
                       padding: EdgeInsets.only(top: 1),
                       placeholder: 'Harvard University',
                       style: TextStyle(fontSize: 15, color: SKColors.dark_gray),
+                      placeholderStyle: TextStyle(
+                          color: SKColors.light_gray,
+                          fontSize: 15,
+                          fontWeight: FontWeight.normal),
                       decoration: BoxDecoration(border: null),
                       textCapitalization: TextCapitalization.words,
                       controller: nameController,
@@ -334,6 +338,10 @@ class _CreateSchoolModalState extends State<CreateSchoolModal> {
                       padding: EdgeInsets.only(top: 1),
                       placeholder: 'Boston',
                       style: TextStyle(fontSize: 15, color: SKColors.dark_gray),
+                      placeholderStyle: TextStyle(
+                          color: SKColors.light_gray,
+                          fontSize: 15,
+                          fontWeight: FontWeight.normal),
                       decoration: BoxDecoration(border: null),
                       textCapitalization: TextCapitalization.words,
                       controller: cityController,

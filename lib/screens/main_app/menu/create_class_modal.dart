@@ -276,6 +276,10 @@ class _CreateClassScreenOneState extends State<_CreateClassScreenOne> {
                         placeholder: 'Intro to Calculus',
                         style:
                             TextStyle(fontSize: 15, color: SKColors.dark_gray),
+                        placeholderStyle: TextStyle(
+                            color: SKColors.light_gray,
+                            fontSize: 15,
+                            fontWeight: FontWeight.normal),
                         decoration: BoxDecoration(border: null),
                         controller: parent.classNameController,
                         textCapitalization: TextCapitalization.words,
@@ -322,6 +326,10 @@ class _CreateClassScreenOneState extends State<_CreateClassScreenOne> {
                               placeholder: 'MATH',
                               style: TextStyle(
                                   fontSize: 15, color: SKColors.dark_gray),
+                              placeholderStyle: TextStyle(
+                                  color: SKColors.light_gray,
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.normal),
                               decoration: BoxDecoration(border: null),
                               textCapitalization: TextCapitalization.characters,
                               controller: parent.subjectController,
@@ -365,6 +373,10 @@ class _CreateClassScreenOneState extends State<_CreateClassScreenOne> {
                               placeholder: '1300',
                               style: TextStyle(
                                   fontSize: 15, color: SKColors.dark_gray),
+                              placeholderStyle: TextStyle(
+                                  color: SKColors.light_gray,
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.normal),
                               decoration: BoxDecoration(border: null),
                               controller: parent.codeController,
                               onChanged: checkValid,
@@ -406,6 +418,10 @@ class _CreateClassScreenOneState extends State<_CreateClassScreenOne> {
                               placeholder: '2',
                               style: TextStyle(
                                   fontSize: 15, color: SKColors.dark_gray),
+                              placeholderStyle: TextStyle(
+                                  color: SKColors.light_gray,
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.normal),
                               decoration: BoxDecoration(border: null),
                               controller: parent.sectionController,
                               keyboardType: TextInputType.text,

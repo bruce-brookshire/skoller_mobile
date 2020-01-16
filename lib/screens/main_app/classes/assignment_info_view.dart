@@ -685,8 +685,7 @@ class _AssignmentInfoState extends State<AssignmentInfoView> {
                     ),
                   ),
                 ),
-                if (assignment.due != null)
-                 ...[
+                if (assignment.due != null) ...[
                   Padding(
                     padding: EdgeInsets.only(top: 2),
                     child: Text(
@@ -1072,6 +1071,10 @@ class _GradeSelectionState extends State<_GradeSelection> {
                 margin: EdgeInsets.symmetric(horizontal: 12),
                 child: CupertinoTextField(
                   placeholder: '100',
+                  placeholderStyle: TextStyle(
+                      color: SKColors.light_gray,
+                      fontSize: 15,
+                      fontWeight: FontWeight.normal),
                   keyboardType: TextInputType.number,
                   onChanged: (newStr) => results.numerator = newStr,
                   textAlign: TextAlign.center,
@@ -1095,6 +1098,10 @@ class _GradeSelectionState extends State<_GradeSelection> {
                 margin: EdgeInsets.symmetric(horizontal: 12),
                 child: CupertinoTextField(
                   placeholder: '100',
+                  placeholderStyle: TextStyle(
+                      color: SKColors.light_gray,
+                      fontSize: 15,
+                      fontWeight: FontWeight.normal),
                   onChanged: (newStr) => results.denominator = newStr,
                   keyboardType: TextInputType.number,
                   textAlign: TextAlign.center,
@@ -1235,22 +1242,20 @@ class _GradeShakeAnimationState extends State<_GradeShakeAnimation>
     _controller = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 1000),
-    )..addListener(() => setState(() {}));
+    );
 
     _animation = CurvedAnimation(
       curve: Curves.easeInToLinear,
       parent: _controller,
     )
       ..addStatusListener((status) {
-        if (status == AnimationStatus.completed) {
-          if (mounted)
-            Timer(
-              Duration(seconds: 3),
-              () {
-                if (mounted) _controller.forward(from: 0);
-              },
-            );
-        }
+        if (status == AnimationStatus.completed && mounted)
+          Timer(
+            Duration(seconds: 3),
+            () {
+              if (mounted) _controller.forward(from: 0);
+            },
+          );
       })
       ..addListener(() => setState(() {}));
 
@@ -1266,7 +1271,7 @@ class _GradeShakeAnimationState extends State<_GradeShakeAnimation>
   ///Then you can get a shake type motion like so;
   double get translation {
     double progress = _animation.value;
-    return sin(progress * pi * 3) * 0.2;
+    return sin(progress * pi * 2) * 0.3;
     // return Matrix4.rotationZ(offset);
   }
 
