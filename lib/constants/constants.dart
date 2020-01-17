@@ -98,6 +98,7 @@ class NotificationChannels {
   static const appStateChanged = 'app-state-changed';
   static const selectTab = 'select-tab';
   static const newTabSelected = 'new-tab-selected';
+  static const jobsChanged = 'jobs-changed';
 }
 
 class PreferencesKeys {

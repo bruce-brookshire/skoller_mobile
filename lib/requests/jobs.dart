@@ -89,10 +89,20 @@ class JobProfile {
   Future<RequestResponse> updateProfile({
     TypeObject jobSearchType,
     DateTime gradDate,
+    bool workAuth,
+    bool sponsorshipRequired,
+    TypeObject jobProfileStatus,
+    String stateCode,
+    double gpa,
   }) {
     final body = {
       'job_search_type_id': jobSearchType?.id,
-      'graduation_date': gradDate?.toIso8601String()
+      'graduation_date': gradDate?.toIso8601String(),
+      'work_auth': workAuth,
+      'sponsorship_required': sponsorshipRequired,
+      'job_profile_status_id': jobProfileStatus?.id,
+      'state_code': stateCode,
+      'gpa': gpa,
     };
     body.removeWhere((_, value) => value == null);
 

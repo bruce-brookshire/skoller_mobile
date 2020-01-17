@@ -3,6 +3,8 @@ import 'package:dropdown_banner/dropdown_banner.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:intl/intl.dart';
+import 'package:skoller/screens/main_app/jobs/modals/job_info_prompt_modal.dart';
+import 'package:skoller/screens/main_app/jobs/modals/job_profile_modal.dart';
 import 'package:skoller/screens/main_app/menu/major_search_modal.dart';
 import 'package:skoller/tools.dart';
 import 'dart:math';
@@ -30,17 +32,24 @@ class _JobsViewState extends State<JobsView> {
     updateProfileState();
 
     DartNotificationCenter.subscribe(
-        observer: this,
-        channel: NotificationChannels.newTabSelected,
-        onNotification: (index) {
-          if (index == JOBS_TAB)
-            SKUser.current.getJobProfile().then((response) {
-              if (response.wasSuccessful()) {
-                updateProfileState();
-                setState(() {});
-              }
-            });
-        });
+      observer: this,
+      channel: NotificationChannels.newTabSelected,
+      onNotification: (index) {
+        if (index == JOBS_TAB)
+          SKUser.current.getJobProfile().then((response) {
+            if (response.wasSuccessful()) {
+              updateProfileState();
+              setState(() {});
+            }
+          });
+      },
+    );
+
+    DartNotificationCenter.subscribe(
+      observer: this,
+      channel: NotificationChannels.jobsChanged,
+      onNotification: (_) => setState(() {}),
+    );
   }
 
   @override
@@ -177,6 +186,15 @@ class _JobsViewState extends State<JobsView> {
     }
   }
 
+  void tappedEditProfile(_) async {
+    await Navigator.push(
+      context,
+      SKNavOverlayRoute(builder: (context) => JobProfileModal()),
+    );
+
+    setState(() {});
+  }
+
   @override
   Widget build(BuildContext context) {
     List<Widget> children;
@@ -200,6 +218,7 @@ class _JobsViewState extends State<JobsView> {
       title: 'Jobs',
       isPop: false,
       leftBtn: SKHeaderProfilePhoto(),
+      backgroundColor: Color(0xFF252525),
       callbackLeft: () =>
           DartNotificationCenter.post(channel: NotificationChannels.toggleMenu),
       children: children,
@@ -513,73 +532,111 @@ class _JobsViewState extends State<JobsView> {
         )
       ];
 
-  List<Widget> createProfile() => [
-        Padding(
-          padding: EdgeInsets.all(16),
-          child: SammiSpeechBubble(
-            sammiPersonality: SammiPersonality.jobsLargeSmile,
-            speechBubbleContents: Text.rich(
-              TextSpan(
-                text: 'You are ',
-                children: [
-                  TextSpan(
-                    text: 'ACTIVE',
-                    style: TextStyle(color: SKColors.jobs_dark_green),
-                  ),
-                  TextSpan(text: ' on Skoller Jobs')
-                ],
-              ),
-            ),
+  List<Widget> createProfile() {
+    final nextPrompt = JobInfoPromptModal();
+
+    return [
+      SKHeaderCard(
+        padding: EdgeInsets.all(16),
+        margin: EdgeInsets.all(16),
+        backgroundColor: SKColors.dark_gray,
+        headerColor: SKColors.dark_gray,
+        borderColor: SKColors.dark_gray,
+        leftHeaderItem: Text(
+          'My Profile',
+          style: TextStyle(fontSize: 17, color: Colors.white),
+        ),
+        rightHeaderItem: GestureDetector(
+          onTapUp: tappedEditProfile,
+          child: Text(
+            'Edit',
+            style: TextStyle(color: SKColors.jobs_light_green),
           ),
         ),
-        SKHeaderCard(
-          padding: EdgeInsets.all(16),
-          margin: EdgeInsets.fromLTRB(16, 0, 16, 16),
-          leftHeaderItem: Text(
-            'Profile Strength',
-            style: TextStyle(fontSize: 17),
+        children: <Widget>[
+          Padding(
+            padding: EdgeInsets.only(bottom: 8),
+            child: SammiSpeechBubble(
+                sammiPersonality: SammiPersonality.jobsLargeSmile,
+                speechBubbleContents: Text(jobDescBuilder())),
           ),
-          rightHeaderItem: Text(
-            'Active',
-            style: TextStyle(color: SKColors.jobs_dark_green),
-          ),
-          children: <Widget>[
-            Padding(
-              padding: EdgeInsets.fromLTRB(72, 16, 72, 32),
-              child: AspectRatio(
-                aspectRatio: 1,
-                child: Container(
-                  alignment: Alignment.center,
-                  child: _SKJobProfileCompletionCircle(
-                    completion: JobProfile.currentProfile.profile_score,
-                  ),
+          Padding(
+            padding: EdgeInsets.fromLTRB(72, 16, 72, 32),
+            child: AspectRatio(
+              aspectRatio: 1,
+              child: Container(
+                alignment: Alignment.center,
+                child: _SKJobProfileCompletionCircle(
+                  completion: JobProfile.currentProfile.profile_score,
                 ),
               ),
             ),
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 12),
-              child: Row(
-                children: <Widget>[
-                  Icon(
-                    Icons.computer,
-                    size: 56,
-                    color: SKColors.dark_gray,
+          ),
+          Text(
+            'Strengthen your profile in seconds!',
+            textAlign: TextAlign.center,
+            style: TextStyle(color: Colors.white, fontWeight: FontWeight.w300),
+          ),
+          nextPrompt != null
+              ? Padding(
+                  padding: EdgeInsets.symmetric(vertical: 12),
+                  child: nextPrompt,
+                )
+              : Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 12),
+                  child: Row(
+                    children: <Widget>[
+                      Icon(
+                        Icons.computer,
+                        size: 56,
+                        color: Colors.white,
+                      ),
+                      SizedBox(
+                        width: 24,
+                      ),
+                      Expanded(
+                        child: Text(
+                          'Hop on your computer and log in at skoller.co to get the full experience for jobs!',
+                          style: TextStyle(
+                              fontWeight: FontWeight.w500, color: Colors.white),
+                        ),
+                      )
+                    ],
                   ),
-                  SizedBox(
-                    width: 24,
-                  ),
-                  Expanded(
-                    child: Text(
-                      'Hop on your computer and log in at skoller.co to get the full experience for jobs!',
-                      style: TextStyle(fontWeight: FontWeight.w500),
-                    ),
-                  )
-                ],
-              ),
-            ),
-          ],
-        ),
-      ];
+                ),
+        ],
+      ),
+    ];
+  }
+
+  String jobDescBuilder() {
+    String type;
+    bool startsWithVowel;
+
+    switch (JobProfile.currentProfile.job_search_type.id) {
+      case 100:
+        type = ' internship';
+        startsWithVowel = true;
+        break;
+      case 200:
+        type = ' graduate program';
+        startsWithVowel = false;
+        break;
+      case 300:
+        type = ' part-time';
+        startsWithVowel = false;
+        break;
+      case 400:
+        type = ' full-time';
+        startsWithVowel = false;
+        break;
+      default:
+        type = '';
+        startsWithVowel = false;
+    }
+
+    return 'You are currently seeking a${startsWithVowel ? 'n' : ''}$type job opportunity!';
+  }
 }
 
 class _GraduationDatePicker extends StatefulWidget {

@@ -149,19 +149,19 @@ class _PhoneVerificationState extends State<PhoneVerificationView> {
                       child: CircularProgressIndicator()))
               : GestureDetector(
                   onTapDown: (details) {
-                    setState(() => loading = true);
+                    // setState(() => loading = true);
 
-                    Clipboard.getData('text/plain').then((response) {
-                      final code = response.text;
-                      if (code.length == 5 && int.tryParse(code) != null) {
-                        pinControllers[0].text = code;
-                        pinFieldChanged(0);
-                      } else {
-                        setState(() {
-                          loading = false;
-                        });
-                      }
-                    });
+                    // Clipboard.getData('text/plain').then((response) {
+                    //   final code = response.text;
+                    //   if (code.length == 5 && int.tryParse(code) != null) {
+                    //     pinControllers[0].text = code;
+                    //     pinFieldChanged(0);
+                    //   } else {
+                    //     setState(() {
+                    //       loading = false;
+                    //     });
+                    //   }
+                    // });
                   },
                   child: Padding(
                     padding: EdgeInsets.symmetric(horizontal: 24, vertical: 24),

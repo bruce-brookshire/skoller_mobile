@@ -1,6 +1,7 @@
 library requests_core;
 
 import 'package:dart_notification_center/dart_notification_center.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:skoller/screens/main_app/menu/profile_link_sharing_view.dart';
 import '../screens/main_app/menu/rewards_view.dart';
 import 'package:time_machine/time_machine.dart' as time_machine;
@@ -31,8 +32,8 @@ part 'mod.dart';
 part 'jobs.dart';
 part 'auth.dart';
 
-const bool isProd = true;
-const bool isLocal = false;
+const bool isProd = false;
+const bool isLocal = true;
 
 class RequestResponse<T> {
   int status;
