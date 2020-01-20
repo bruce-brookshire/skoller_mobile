@@ -918,7 +918,7 @@ class _SKCompletionCirclePainter extends CustomPainter {
       ..isAntiAlias = true;
 
     final inactivePaint = Paint()
-      ..color = SKColors.border_gray
+      ..color = SKColors.background_gray
       ..style = PaintingStyle.stroke
       ..strokeWidth = 18
       ..isAntiAlias = true;

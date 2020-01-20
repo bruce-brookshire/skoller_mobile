@@ -1,6 +1,9 @@
 import 'package:dart_notification_center/dart_notification_center.dart';
+import 'package:dropdown_banner/dropdown_banner.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:skoller/screens/main_app/jobs/modals/job_data_collector_modal.dart';
+import 'package:skoller/screens/main_app/jobs/modals/personality_form_modal.dart';
 import 'package:skoller/tools.dart';
 
 enum _JobInfoPromptType {
@@ -28,52 +31,262 @@ class JobInfoPromptModal extends StatelessWidget {
       type = _JobInfoPromptType.regions;
     else if (profile.career_interests == null)
       type = _JobInfoPromptType.careerInterests;
+    else if (profile.startup_interest == null)
+      type = _JobInfoPromptType.startupInterest;
+    else if (profile.gpa == null)
+      type = _JobInfoPromptType.gpa;
     else if (profile.state_code == null)
       type = _JobInfoPromptType.stateCode;
     else if (profile.work_auth == null)
       type = _JobInfoPromptType.workAuth;
     else if (profile.sponsorship_required == null)
       type = _JobInfoPromptType.sponsorshipRequired;
-    else if (profile.personality == null)
-      type = _JobInfoPromptType.personality;
-    else if (profile.gpa == null)
-      type = _JobInfoPromptType.gpa;
-    else if (profile.startup_interest == null)
-      type = _JobInfoPromptType.startupInterest;
+    else if (profile.personality == null) type = _JobInfoPromptType.personality;
 
     return type == null ? null : JobInfoPromptModal._fromType(type);
   }
 
   JobInfoPromptModal._fromType(this.type);
 
-  void tappedGPA(context) async {
-    final gpaController = TextEditingController();
-
-    await showDialog(
+  void showTextModal({
+    @required String title,
+    @required String placeholderText,
+    @required TextInputType inputType,
+    @required String parameterName,
+    @required BuildContext context,
+    dynamic Function(dynamic) resultConverter,
+  }) {
+    showDialog(
       context: context,
-      builder: (context) => _DataCollectorModal.textType(
-        title: 'GPA',
-        placeholderText: 'ex. 3.72',
-        inputType:
-            TextInputType.numberWithOptions(decimal: true, signed: false),
+      builder: (context) => DataCollectorModal.textType(
+        title: title,
+        placeholderText: placeholderText,
+        inputType: inputType,
         onSubmit: (text) async {
-          final loader = SKLoadingScreen.fadeIn(context);
-          final gpa = double.parse(text);
-
-          print(gpa);
-          final response =
-              await JobProfile.currentProfile.updateProfile(gpa: gpa);
-          loader.fadeOut();
-
-          if (response.wasSuccessful())
-            DartNotificationCenter.post(
-                channel: NotificationChannels.jobsChanged);
+          final value = resultConverter != null ? resultConverter(text) : text;
+          await updateProfile(
+            parameterName: parameterName,
+            value: value,
+            context: context,
+          );
         },
       ),
     );
-
-    gpaController.dispose();
   }
+
+  void showPickerModal({
+    @required String title,
+    @required List<String> items,
+    @required String parameterName,
+    @required BuildContext context,
+    dynamic Function(dynamic) resultConverter,
+  }) =>
+      showDialog(
+        context: context,
+        builder: (context) => DataCollectorModal.pickerType(
+          title: title,
+          items: items,
+          onSubmit: (indexes) async {
+            final value =
+                resultConverter != null ? resultConverter(indexes) : indexes;
+            await updateProfile(
+              parameterName: parameterName,
+              value: value,
+              context: context,
+            );
+          },
+        ),
+      );
+
+  void showMultipleSelectModal({
+    @required String title,
+    @required List<String> items,
+    @required String parameterName,
+    @required BuildContext context,
+    String subtitle,
+    dynamic Function(dynamic) resultConverter,
+  }) =>
+      showDialog(
+        context: context,
+        builder: (context) => DataCollectorModal.multipleSelectType(
+          title: title,
+          items: items,
+          subtitle: subtitle,
+          onSubmit: (indexes) async {
+            final value =
+                resultConverter != null ? resultConverter(indexes) : indexes;
+            await updateProfile(
+              parameterName: parameterName,
+              value: value,
+              context: context,
+            );
+          },
+        ),
+      );
+
+  void showToggleModal({
+    @required String title,
+    @required String parameterName,
+    @required BuildContext context,
+    String subtitle,
+  }) =>
+      showDialog(
+        context: context,
+        builder: (context) => DataCollectorModal.toggleType(
+          title: title,
+          subtitle: subtitle,
+          onSubmit: (value) async {
+            await updateProfile(
+              parameterName: parameterName,
+              value: value,
+              context: context,
+            );
+          },
+        ),
+      );
+
+  void showScaleModal({
+    @required String title,
+    @required String parameterName,
+    @required BuildContext context,
+  }) =>
+      showDialog(
+        context: context,
+        builder: (context) => DataCollectorModal.scaleType(
+          title: title,
+          numSegments: 3,
+          onSubmit: (value) async {
+            await updateProfile(
+              parameterName: parameterName,
+              value: value,
+              context: context,
+            );
+          },
+        ),
+      );
+
+  void updateProfile({
+    String parameterName,
+    dynamic value,
+    BuildContext context,
+  }) async {
+    final loader = SKLoadingScreen.fadeIn(context);
+    final response = await JobProfile.currentProfile
+        .updateProfileWithParameters({parameterName: value});
+
+    loader.fadeOut();
+
+    if (response.wasSuccessful())
+      DartNotificationCenter.post(channel: NotificationChannels.jobsChanged);
+  }
+
+  void tappedGPA(context) => showTextModal(
+        title: 'What is your GPA?',
+        placeholderText: 'ex. 3.72',
+        inputType:
+            TextInputType.numberWithOptions(decimal: true, signed: false),
+        parameterName: 'gpa',
+        context: context,
+        resultConverter: (text) => double.tryParse(text),
+      );
+
+  void tappedRegions(context) {
+    final regions = ['Northwest', 'Northeast', 'Southwest', 'Southeast'];
+
+    showMultipleSelectModal(
+      title: 'Work Location',
+      items: regions,
+      parameterName: 'regions',
+      context: context,
+      resultConverter: (indexes) =>
+          (indexes as List<int>).map((i) => regions[i]).join("|"),
+    );
+  }
+
+  void tappedState(context) {
+    final states = statesMap.keys.toList();
+
+    showPickerModal(
+      title: 'Work Location',
+      items: states,
+      parameterName: 'state_code',
+      context: context,
+      resultConverter: (index) => statesMap[states[index]],
+    );
+  }
+
+  void tappedWorkAuth(context) => showToggleModal(
+      context: context,
+      parameterName: 'work_auth',
+      title: 'Work Authorization',
+      subtitle: 'Are you authorized to work in the United States?');
+
+  void tappedSponsorship(context) => showToggleModal(
+      context: context,
+      parameterName: 'sponsorship_required',
+      title: 'Employer Sponsorship',
+      subtitle:
+          'Will you need employer sponsorship to work in the United States?');
+
+  void tappedStartupInterest(context) => showScaleModal(
+      title: 'How interested are you in working at a startup?',
+      context: context,
+      parameterName: 'startup_interest');
+
+  void tappedCareerInterest(context) {
+    final careerInterests = [
+      'Account Manager',
+      'Accounting',
+      'Biotechnology',
+      'Business Analyst',
+      'Consulting',
+      'Data Science',
+      'Design/Creative',
+      'Engineering',
+      'Finance',
+      'Government and Politics',
+      'Human Resources/Recruiting',
+      'Information Technology',
+      'Legal',
+      'Marketing/Advertising',
+      'Nonprofit',
+      'Office Management',
+      'Operations/Logistics',
+      'Product Management',
+      'Quantitative Trading',
+      'Real Estate',
+      'Research',
+      'Sales/Business Development',
+      'Social Media/Communications',
+      'Software Development',
+      'Startups',
+      'Teaching'
+    ];
+
+    showMultipleSelectModal(
+      context: context,
+      title: 'Career Interests',
+      subtitle: 'Select up to 5',
+      parameterName: 'career_interests',
+      items: careerInterests,
+      resultConverter: (indexes) {
+        if (indexes.length > 5) {
+          throw 'You cannnot select more than 5 items';
+        } else {
+          return (indexes as List<int>)
+              .map((i) => careerInterests[i])
+              .join("|");
+        }
+      },
+    );
+  }
+
+  void tappedPersonality(context) => Navigator.push(
+        context,
+        SKNavOverlayRoute(
+          builder: (context) => PersonalityFormModal(),
+        ),
+      );
 
   @override
   Widget build(BuildContext context) {
@@ -82,7 +295,7 @@ class JobInfoPromptModal extends StatelessWidget {
 
   Widget nextPromptBuilder(BuildContext context) {
     String prompt;
-    Function(dynamic) action;
+    Function(BuildContext context) action;
 
     switch (type) {
       case _JobInfoPromptType.avatar:
@@ -93,54 +306,39 @@ class JobInfoPromptModal extends StatelessWidget {
         break;
       case _JobInfoPromptType.regions:
         prompt = 'Where are you looking to work?';
-        action = (_) {
-          showDialog(context: context, builder: (context) => null);
-        };
+        action = tappedRegions;
         break;
       case _JobInfoPromptType.careerInterests:
         prompt = 'What are your career interests?';
-        action = (_) {
-          showDialog(context: context, builder: (context) => null);
-        };
+        action = tappedCareerInterest;
         break;
       case _JobInfoPromptType.stateCode:
         prompt = 'What state are you from?';
-        action = (_) {
-          showDialog(context: context, builder: (context) => null);
-        };
+        action = tappedState;
         break;
       case _JobInfoPromptType.workAuth:
         prompt = 'Are you authorized to work in the U.S?';
-        action = (_) {
-          showDialog(context: context, builder: (context) => null);
-        };
+        action = tappedWorkAuth;
         break;
       case _JobInfoPromptType.sponsorshipRequired:
-        prompt = 'Do you require work sponsorship top work in the U.S?';
-        action = (_) {
-          showDialog(context: context, builder: (context) => null);
-        };
+        prompt = 'Do you require work sponsorship to work in the U.S?';
+        action = tappedSponsorship;
         break;
       case _JobInfoPromptType.personality:
         prompt = 'Add some personality to your profile!';
-        action = (_) {
-          showDialog(context: context, builder: (context) => null);
-        };
+        action = tappedPersonality;
         break;
       case _JobInfoPromptType.gpa:
         prompt = 'What is your GPA?';
         action = tappedGPA;
         break;
       case _JobInfoPromptType.startupInterest:
-        prompt = 'Are you interested to work for a startup?';
-        action = (_) {
-          // Navigator.push(context, Cupertin)
-          print('show profile');
-        };
+        prompt = 'Are you interested in working for a startup?';
+        action = tappedStartupInterest;
         break;
     }
-    prompt = 'What is your GPA?';
-    action = tappedGPA;
+    prompt = 'Where did you live?';
+    action = tappedPersonality;
 
     return GestureDetector(
       onTapUp: (_) => action(context),
@@ -162,148 +360,4 @@ class JobInfoPromptModal extends StatelessWidget {
       ),
     );
   }
-}
-
-enum _CollectionType { text, picker, toggle }
-
-class _DataCollectorModal extends StatefulWidget {
-  final String title;
-  final _CollectionType type;
-  final Future<void> Function(dynamic) onSubmit;
-
-  // Text type
-  final String placeholderText;
-  final TextInputType inputType;
-
-  _DataCollectorModal.textType({
-    @required this.title,
-    this.placeholderText,
-    this.inputType,
-    @required this.onSubmit,
-  }) : type = _CollectionType.text;
-
-  _DataCollectorModal.pickerType({
-    @required this.title,
-    @required this.onSubmit,
-  })  : type = _CollectionType.picker,
-        placeholderText = null,
-        inputType = null;
-
-  _DataCollectorModal.toggleType({
-    @required this.title,
-    @required this.onSubmit,
-  })  : type = _CollectionType.toggle,
-        placeholderText = null,
-        inputType = null;
-
-  @override
-  State createState() => _DataCollectorModalState();
-}
-
-class _DataCollectorModalState extends State<_DataCollectorModal> {
-  ValueNotifier controller;
-
-  @override
-  void initState() {
-    controller = TextEditingController();
-
-    super.initState();
-  }
-
-  @override
-  void dispose() {
-    controller?.dispose();
-
-    super.dispose();
-  }
-
-  void tappedUpdate(_) async {
-    dynamic result;
-
-    if (widget.type == _CollectionType.text)
-      result = (controller as TextEditingController).text;
-
-    await widget.onSubmit(result);
-
-    Navigator.pop(context);
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    Widget child;
-
-    switch (widget.type) {
-      case _CollectionType.text:
-        child = buildTextType();
-        break;
-      case _CollectionType.picker:
-        child = buildTextType();
-        break;
-
-      case _CollectionType.toggle:
-        child = buildTextType();
-        break;
-    }
-
-    return Dialog(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(10),
-      ),
-      backgroundColor: SKColors.dark_gray,
-      child: Padding(
-        padding: EdgeInsets.all(12),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          mainAxisSize: MainAxisSize.min,
-          children: <Widget>[
-            Text(
-              widget.title,
-              textAlign: TextAlign.center,
-              style: TextStyle(color: Colors.white),
-            ),
-            child,
-            GestureDetector(
-              behavior: HitTestBehavior.opaque,
-              onTapUp: tappedUpdate,
-              child: Container(
-                alignment: Alignment.center,
-                padding: EdgeInsets.symmetric(vertical: 6),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(5),
-                  color: SKColors.jobs_light_green,
-                ),
-                child: Text(
-                  'Update',
-                  style: TextStyle(color: Colors.white),
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget buildTextType() {
-    return Padding(
-      padding: EdgeInsets.symmetric(vertical: 16),
-      child: CupertinoTextField(
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(5),
-        ),
-        placeholder: widget.placeholderText,
-        placeholderStyle: Theme.of(context)
-            .textTheme
-            .body1
-            .copyWith(color: SKColors.text_light_gray),
-        controller: controller,
-        keyboardType: widget.inputType,
-        autofocus: true,
-      ),
-    );
-  }
-
-  Widget buildPickerType() {}
-  Widget buildToggleType() {}
 }
