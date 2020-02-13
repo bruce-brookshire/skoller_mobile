@@ -156,8 +156,6 @@ class Assignment {
     bool isPrivate,
     DateTime dueDate,
   ) async {
-    String tzCorrectedString = dueDate.toUtc().toIso8601String();
-
     DateTime correctedDueDate =
         await TimeZoneManager.convertUtcOffsetFromLocalToSchool(
       dueDate,
@@ -165,7 +163,7 @@ class Assignment {
     );
 
     if (correctedDueDate != null) {
-      tzCorrectedString = correctedDueDate.toIso8601String();
+      final tzCorrectedString = correctedDueDate.toIso8601String();
       final now = DateTime.now();
       final today = DateTime(now.year, now.month, now.day);
       final body = {
