@@ -206,169 +206,167 @@ class _WeightsChangeRequestState extends State<WeightsChangeRequestView> {
                     ],
                   ),
                 ),
-                ...[
-                  CupertinoSegmentedControl(
-                    children: LinkedHashMap.fromIterables(
-                      [0, 1],
-                      [
-                        Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 16),
-                          child: Text('Percentage',
-                              style: TextStyle(fontSize: 14)),
-                        ),
-                        Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 16),
-                          child: Text('Points', style: TextStyle(fontSize: 14)),
-                        ),
-                      ],
-                    ),
-                    onValueChanged: (index) {
-                      isPoints = index == 1;
-                      checkValid();
-                      setState(() => selectedSegment = index);
-                    },
-                    selectedColor: SKColors.skoller_blue,
-                    unselectedColor: Colors.white,
-                    borderColor: SKColors.skoller_blue,
-                    pressedColor: SKColors.skoller_blue.withOpacity(0.2),
-                    padding: EdgeInsets.symmetric(vertical: 16),
-                    groupValue: selectedSegment,
-                  ),
-                  Expanded(
-                    child: Container(
-                      margin: EdgeInsets.symmetric(horizontal: 16),
-                      decoration: BoxDecoration(
-                          border: Border.all(color: SKColors.border_gray),
-                          borderRadius: BorderRadius.circular(5)),
-                      child: ListView.builder(
-                          itemCount: weights.length,
-                          itemBuilder: (context, index) {
-                            final weight = weights[index];
-                            return GestureDetector(
-                              onTapUp: (details) => editWeight(index),
-                              child: Container(
-                                padding: EdgeInsets.symmetric(
-                                    horizontal: 16, vertical: 12),
-                                child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: <Widget>[
-                                    GestureDetector(
-                                      onTapUp: (details) {
-                                        setState(() {
-                                          weights.removeAt(index);
-                                        });
-                                        checkValid();
-                                      },
-                                      child: Padding(
-                                        padding: EdgeInsets.only(right: 12),
-                                        child: Image.asset(ImageNames
-                                            .assignmentInfoImages.circle_x),
-                                      ),
-                                    ),
-                                    Expanded(child: Text(weight['name'])),
-                                    Text('${weight['value']}'),
-                                  ],
-                                ),
-                              ),
-                            );
-                          }),
-                    ),
-                  ),
-                  GestureDetector(
-                    onTapUp: addWeight,
-                    child: Container(
-                      alignment: Alignment.center,
-                      margin: EdgeInsets.symmetric(vertical: 12),
-                      width: 160,
-                      height: 36,
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(5),
-                          color: SKColors.skoller_blue),
-                      child: Text(
-                        'Add weight',
-                        style: TextStyle(color: Colors.white),
+                CupertinoSegmentedControl(
+                  children: LinkedHashMap.fromIterables(
+                    [0, 1],
+                    [
+                      Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 16),
+                        child:
+                            Text('Percentage', style: TextStyle(fontSize: 14)),
                       ),
+                      Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 16),
+                        child: Text('Points', style: TextStyle(fontSize: 14)),
+                      ),
+                    ],
+                  ),
+                  onValueChanged: (index) {
+                    isPoints = index == 1;
+                    checkValid();
+                    setState(() => selectedSegment = index);
+                  },
+                  selectedColor: SKColors.skoller_blue,
+                  unselectedColor: Colors.white,
+                  borderColor: SKColors.skoller_blue,
+                  pressedColor: SKColors.skoller_blue.withOpacity(0.2),
+                  padding: EdgeInsets.symmetric(vertical: 16),
+                  groupValue: selectedSegment,
+                ),
+                Expanded(
+                  child: Container(
+                    margin: EdgeInsets.symmetric(horizontal: 16),
+                    decoration: BoxDecoration(
+                        border: Border.all(color: SKColors.border_gray),
+                        borderRadius: BorderRadius.circular(5)),
+                    child: ListView.builder(
+                        itemCount: weights.length,
+                        itemBuilder: (context, index) {
+                          final weight = weights[index];
+                          return GestureDetector(
+                            onTapUp: (details) => editWeight(index),
+                            child: Container(
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: 16, vertical: 12),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: <Widget>[
+                                  GestureDetector(
+                                    onTapUp: (details) {
+                                      setState(() {
+                                        weights.removeAt(index);
+                                      });
+                                      checkValid();
+                                    },
+                                    child: Padding(
+                                      padding: EdgeInsets.only(right: 12),
+                                      child: Image.asset(ImageNames
+                                          .assignmentInfoImages.circle_x),
+                                    ),
+                                  ),
+                                  Expanded(child: Text(weight['name'])),
+                                  Text('${weight['value']}'),
+                                ],
+                              ),
+                            ),
+                          );
+                        }),
+                  ),
+                ),
+                GestureDetector(
+                  onTapUp: addWeight,
+                  child: Container(
+                    alignment: Alignment.center,
+                    margin: EdgeInsets.symmetric(vertical: 12),
+                    width: 160,
+                    height: 36,
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(5),
+                        color: SKColors.skoller_blue),
+                    child: Text(
+                      'Add weight',
+                      style: TextStyle(color: Colors.white),
                     ),
                   ),
-                  Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 16),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      children: <Widget>[
-                        Text(
-                          'Total',
-                          style: TextStyle(fontSize: 20),
-                        ),
-                        isPoints
-                            ? GestureDetector(
-                                child: Text(
-                                  '$currTotal pts.',
-                                  style: TextStyle(
-                                      fontSize: 20, color: SKColors.dark_gray),
-                                ),
-                              )
-                            : Text(
-                                '$currTotal / 100%',
+                ),
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 16),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: <Widget>[
+                      Text(
+                        'Total',
+                        style: TextStyle(fontSize: 20),
+                      ),
+                      isPoints
+                          ? GestureDetector(
+                              child: Text(
+                                '$currTotal pts.',
                                 style: TextStyle(
                                     fontSize: 20, color: SKColors.dark_gray),
                               ),
-                      ],
-                    ),
+                            )
+                          : Text(
+                              '$currTotal / 100%',
+                              style: TextStyle(
+                                  fontSize: 20, color: SKColors.dark_gray),
+                            ),
+                    ],
                   ),
-                  Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 18),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
+                ),
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 18),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      Text(
+                        '${isPoints ? 'points' : 'percentage'}',
+                        style: TextStyle(
+                            fontSize: 15, fontWeight: FontWeight.normal),
+                      ),
+                      if (!isPoints)
                         Text(
-                          '${isPoints ? 'points' : 'percentage'}',
+                          'Weights must sum to 100',
                           style: TextStyle(
-                              fontSize: 15, fontWeight: FontWeight.normal),
+                              fontSize: 13, fontWeight: FontWeight.normal),
                         ),
-                        if (!isPoints)
-                          Text(
-                            'Weights must sum to 100',
-                            style: TextStyle(
-                                fontSize: 13, fontWeight: FontWeight.normal),
-                          ),
-                      ],
-                    ),
+                    ],
                   ),
-                  Padding(
-                    padding: EdgeInsets.symmetric(vertical: 18, horizontal: 16),
-                    child: Row(
-                      children: <Widget>[
-                        Expanded(
-                          child: GestureDetector(
-                            onTapUp: tappedSubmit,
-                            child: Container(
-                              alignment: Alignment.center,
-                              padding: EdgeInsets.symmetric(vertical: 8),
-                              decoration: BoxDecoration(
+                ),
+                Padding(
+                  padding: EdgeInsets.symmetric(vertical: 18, horizontal: 16),
+                  child: Row(
+                    children: <Widget>[
+                      Expanded(
+                        child: GestureDetector(
+                          onTapUp: tappedSubmit,
+                          child: Container(
+                            alignment: Alignment.center,
+                            padding: EdgeInsets.symmetric(vertical: 8),
+                            decoration: BoxDecoration(
+                                color:
+                                    ((isPoints || currTotal == 100) && isEdited)
+                                        ? SKColors.success
+                                        : SKColors.inactive_gray,
+                                borderRadius: BorderRadius.circular(5),
+                                boxShadow: UIAssets.boxShadow),
+                            child: Text(
+                              'Submit weights',
+                              style: TextStyle(
                                   color: ((isPoints || currTotal == 100) &&
                                           isEdited)
-                                      ? SKColors.success
-                                      : SKColors.inactive_gray,
-                                  borderRadius: BorderRadius.circular(5),
-                                  boxShadow: UIAssets.boxShadow),
-                              child: Text(
-                                'Submit weights',
-                                style: TextStyle(
-                                    color: ((isPoints || currTotal == 100) &&
-                                            isEdited)
-                                        ? Colors.white
-                                        : SKColors.dark_gray),
-                              ),
+                                      ? Colors.white
+                                      : SKColors.dark_gray),
                             ),
                           ),
-                        )
-                      ],
-                    ),
+                        ),
+                      )
+                    ],
                   ),
-                ],
+                ),
               ],
             ),
           ),

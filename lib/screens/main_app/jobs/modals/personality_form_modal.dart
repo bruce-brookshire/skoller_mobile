@@ -1,3 +1,4 @@
+import 'package:dropdown_banner/dropdown_banner.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:skoller/screens/main_app/jobs/modals/job_data_collector_modal.dart';
@@ -8,6 +9,16 @@ class PersonalityFormModal extends StatefulWidget {
   State createState() => _PersonalityFormState();
 }
 
+final test = {
+  
+  
+  
+  
+  
+  
+  
+  
+};
 const _enneagram = 'enneagram';
 const _competitive = 'competitive';
 const _myersBriggs = 'myers_briggs';
@@ -18,16 +29,7 @@ const _createiveVsAnalytical = 'creative_vs_analytical';
 const _extrovertedVsIntroverted = 'extroverted_vs_introverted';
 
 class _PersonalityFormState extends State<PersonalityFormModal> {
-  Map<String, double> choices = {
-    _enneagram: 3,
-    _competitive: 3,
-    _myersBriggs: 3,
-    _clientFacing: 3,
-    _teamVsIndividual: 3,
-    _challengeStatusQuo: 3,
-    _createiveVsAnalytical: 3,
-    _extrovertedVsIntroverted: 3
-  };
+  Map<String, double> choices = {};
 
   Map<String, String> descriptions = {
     _enneagram: 'My Enneagram type is...',
@@ -51,6 +53,33 @@ class _PersonalityFormState extends State<PersonalityFormModal> {
   ];
 
   @override
+  void initState() {
+    super.initState();
+
+    final profilePersonality = JobProfile.currentProfile.personality;
+
+    if (profilePersonality != null) {
+      final values = profilePersonality
+          .map((key, value) => MapEntry(key, double.tryParse(value)));
+      choices.addAll(values);
+    }
+  }
+
+  void tappedSave(_) async {
+    final personalityEntries =
+        choices.map((key, value) => MapEntry(key, value.round().toString()));
+    final loader = SKLoadingScreen.fadeIn(context);
+    final response = await JobProfile.currentProfile
+        .updateProfileWithParameters({'personality': personalityEntries});
+    loader.fadeOut();
+    if (response.wasSuccessful())
+      Navigator.pop(context);
+    else
+      DropdownBanner.showBanner(
+          text: 'Unable to save new profile information. Please try again!');
+  }
+
+  @override
   Widget build(BuildContext context) {
     return SafeArea(
       child: Padding(
@@ -70,10 +99,31 @@ class _PersonalityFormState extends State<PersonalityFormModal> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: <Widget>[
-                          Text(
-                            'Personality',
-                            textAlign: TextAlign.center,
-                            style: TextStyle(color: Colors.white, fontSize: 18),
+                          Row(
+                            children: <Widget>[
+                              GestureDetector(
+                                behavior: HitTestBehavior.opaque,
+                                onTapUp: (_) => Navigator.pop(context),
+                                child: SizedBox(
+                                  width: 32,
+                                  height: 32,
+                                  child: Icon(
+                                    Icons.keyboard_arrow_down,
+                                    color: SKColors.jobs_light_green,
+                                    size: 32,
+                                  ),
+                                ),
+                              ),
+                              Expanded(
+                                child: Text(
+                                  'Personality',
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                      color: Colors.white, fontSize: 18),
+                                ),
+                              ),
+                              SizedBox(width: 32),
+                            ],
                           ),
                           ...createSlider(_extrovertedVsIntroverted),
                           ...createSlider(_clientFacing),
@@ -81,8 +131,21 @@ class _PersonalityFormState extends State<PersonalityFormModal> {
                           ...createSlider(_competitive),
                           ...createSlider(_createiveVsAnalytical),
                           ...createSlider(_challengeStatusQuo),
-                          ...createSlider(_extrovertedVsIntroverted),
-                          ...createSlider(_extrovertedVsIntroverted),
+                          if (choices.length > 0)
+                            GestureDetector(
+                              behavior: HitTestBehavior.opaque,
+                              onTapUp: tappedSave,
+                              child: Container(
+                                alignment: Alignment.center,
+                                padding: EdgeInsets.symmetric(vertical: 6),
+                                margin: EdgeInsets.only(bottom: 16),
+                                decoration: BoxDecoration(
+                                    color: SKColors.jobs_light_green,
+                                    borderRadius: BorderRadius.circular(5),
+                                    boxShadow: UIAssets.boxShadow),
+                                child: Text('Save'),
+                              ),
+                            )
                         ],
                       ),
                     ),
@@ -108,37 +171,61 @@ class _PersonalityFormState extends State<PersonalityFormModal> {
               color: Colors.white, fontWeight: FontWeight.w300, fontSize: 14),
         ),
       ),
-      Padding(
-        padding: EdgeInsets.symmetric(horizontal: 18),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: List<Widget>.generate(
-            numSegments,
-            (i) => Text(
-              (i + 1).toString(),
-              style: TextStyle(
-                  color: Colors.white,
-                  fontWeight: FontWeight.w300,
-                  fontSize: 14),
-            ),
-          ),
-        ),
-      ),
-      CupertinoSlider(
-        divisions: numSegments - 1,
-        min: 1,
-        max: 5,
-        value: value,
-        activeColor: SKColors.jobs_light_green,
-        onChanged: (newVal) => setState(() {
-          choices[key] = newVal;
-        }),
-      ),
-      Text(
-        interestLevels[value.round() - 1],
-        style: TextStyle(color: Colors.white, fontSize: 13),
-        textAlign: TextAlign.center,
-      ),
+      ...(value != null
+          ? [
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 18),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: List<Widget>.generate(
+                    numSegments,
+                    (i) => Text(
+                      (i + 1).toString(),
+                      style: TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.w300,
+                          fontSize: 14),
+                    ),
+                  ),
+                ),
+              ),
+              CupertinoSlider(
+                divisions: numSegments - 1,
+                min: 1,
+                max: 5,
+                value: value,
+                activeColor: SKColors.jobs_light_green,
+                onChanged: (newVal) => setState(() {
+                  choices[key] = newVal;
+                }),
+              ),
+              Text(
+                interestLevels[value.round() - 1],
+                style: TextStyle(color: Colors.white, fontSize: 13),
+                textAlign: TextAlign.center,
+              ),
+            ]
+          : [
+              GestureDetector(
+                behavior: HitTestBehavior.opaque,
+                onTapUp: (_) => setState(() => choices[key] = 3),
+                child: Container(
+                  padding: EdgeInsets.symmetric(vertical: 4),
+                  margin: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                  alignment: Alignment.center,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(5),
+                    border: Border.all(
+                      color: SKColors.jobs_light_green,
+                    ),
+                  ),
+                  child: Text(
+                    'Select...',
+                    style: TextStyle(color: SKColors.jobs_light_green),
+                  ),
+                ),
+              ),
+            ]),
       SizedBox(height: 16)
     ];
   }

@@ -284,6 +284,7 @@ class JobInfoPromptModal extends StatelessWidget {
   void tappedPersonality(context) => Navigator.push(
         context,
         SKNavOverlayRoute(
+          isBarrierDismissible: false,
           builder: (context) => PersonalityFormModal(),
         ),
       );
@@ -337,8 +338,6 @@ class JobInfoPromptModal extends StatelessWidget {
         action = tappedStartupInterest;
         break;
     }
-    prompt = 'Where did you live?';
-    action = tappedPersonality;
 
     return GestureDetector(
       onTapUp: (_) => action(context),
