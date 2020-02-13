@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:skoller/screens/main_app/jobs/modals/job_data_collector_modal.dart';
 import 'package:skoller/screens/main_app/jobs/modals/personality_form_modal.dart';
+import 'package:skoller/screens/main_app/menu/profile_photo_view.dart';
 import 'package:skoller/tools.dart';
 
 enum _JobInfoPromptType {
@@ -302,7 +303,13 @@ class JobInfoPromptModal extends StatelessWidget {
       case _JobInfoPromptType.avatar:
         prompt = 'Add a profile picture';
         action = (_) {
-          showDialog(context: context, builder: (context) => null);
+          Navigator.push(
+            context,
+            CupertinoPageRoute(
+              builder: (_) => ProfilePhotoView(),
+              fullscreenDialog: true,
+            ),
+          );
         };
         break;
       case _JobInfoPromptType.regions:
