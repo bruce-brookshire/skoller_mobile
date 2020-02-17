@@ -95,15 +95,32 @@ class SKUser {
 
   Future<int> uploadProfilePhoto(String path) async {
     final uri = Uri.parse(SKRequests._baseUrl + '/users/$id');
-    var request = http.MultipartRequest("POST", uri);
+    var request = http.MultipartRequest("PUT", uri)
+      ..headers['Authorization'] = SKRequests._headers['Authorization']
+      ..files.add(
+        await http.MultipartFile.fromPath(
+          'file',
+          path,
+          filename: '${id}_profilephoto.jpg',
+          contentType: MediaType('image', 'jpeg'),
+        ),
+      );
 
-    request.headers['Authorization'] = SKRequests._headers['Authorization'];
+    return (await request.send()).statusCode;
+  }
 
-    request.files.add(await http.MultipartFile.fromPath(
-      '${id}_profilephoto.jpg',
-      path,
-      contentType: MediaType('image', 'jpeg'),
-    ));
+  Future<int> deleteProfilePhoto() async {
+    final uri = Uri.parse(SKRequests._baseUrl + '/users/$id');
+    var request = http.MultipartRequest("PUT", uri)
+      ..headers['Authorization'] = SKRequests._headers['Authorization']
+      ..files.add(
+        http.MultipartFile.fromString(
+          'file',
+          '',
+          contentType: MediaType('image', 'jpeg'),
+        ),
+      );
+
     return (await request.send()).statusCode;
   }
 
@@ -194,7 +211,9 @@ class Student {
     enrollmentLink = content['enrollment_link'];
     todoDaysFuture = content['todo_days_future'];
     todoDaysPast = content['todo_days_past'];
-    raiseEffort = content['raise_effort'] == null ? null : RaiseEffort._fromJsonObject(content['raise_effort']);
+    raiseEffort = content['raise_effort'] == null
+        ? null
+        : RaiseEffort._fromJsonObject(content['raise_effort']);
 
     degreeType = content['degree_type'] != null
         ? TypeObject._fromJsonObj(content['degree_type'])
@@ -336,7 +355,7 @@ class TypeObject {
 
   static Future<RequestResponse> getJobTypes() =>
       SKRequests.get('/skoller-jobs/types/job_search', _fromJsonObj);
-  
+
   static Future<RequestResponse> getStatusTypes() =>
       SKRequests.get('/skoller-jobs/types/statuses', _fromJsonObj);
 }
@@ -348,7 +367,8 @@ class RaiseEffort {
   final int orgId;
   final int chapterSignups;
 
-  RaiseEffort(this.personalSignups, this.orgSignups, this.orgName, this.orgId, this.chapterSignups);
+  RaiseEffort(this.personalSignups, this.orgSignups, this.orgName, this.orgId,
+      this.chapterSignups);
 
   static RaiseEffort _fromJsonObject(Map content) => RaiseEffort(
         content['personal_signups'],

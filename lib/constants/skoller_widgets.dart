@@ -1847,3 +1847,22 @@ class _GifWrapperState extends State<GifWrapper> with TickerProviderStateMixin {
     );
   }
 }
+
+class CornerRadiusClipper extends CustomClipper<Path> {
+  final double radius;
+
+  CornerRadiusClipper(this.radius);
+
+  @override
+  Path getClip(Size size) {
+    final path = Path();
+    final rect = Rect.fromLTRB(0.0, 0.0, size.width, size.height);
+    path.addRRect(RRect.fromRectAndRadius(rect, Radius.circular(radius)));
+    return path;
+  }
+
+  @override
+  bool shouldReclip(CustomClipper<Path> oldClipper) {
+    return true;
+  }
+}

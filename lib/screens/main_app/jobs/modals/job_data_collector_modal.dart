@@ -236,7 +236,7 @@ class _DataCollectorModalState extends State<DataCollectorModal> {
       height: 144,
       child: CupertinoPicker(
         itemExtent: 32,
-        backgroundColor: null,
+        backgroundColor: SKColors.dark_gray,
         scrollController: controller,
         children: widget.items
             .map(

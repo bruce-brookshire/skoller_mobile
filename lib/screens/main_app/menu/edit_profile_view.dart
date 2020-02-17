@@ -2,6 +2,7 @@ import 'package:dart_notification_center/dart_notification_center.dart';
 import 'package:dropdown_banner/dropdown_banner.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:skoller/screens/main_app/menu/profile_photo_view.dart';
 import 'package:skoller/tools.dart';
 import 'major_search_modal.dart';
 
@@ -20,12 +21,25 @@ class _EditProfileState extends State<EditProfileView> {
       TextEditingController(text: SKUser.current.student.organizations);
 
   @override
+  void initState() {
+    super.initState();
+
+    DartNotificationCenter.subscribe(
+      channel: NotificationChannels.userChanged,
+      observer: this,
+      onNotification: (_) => setState(() {}),
+    );
+  }
+
+  @override
   void dispose() {
     super.dispose();
     firstNameController.dispose();
     lastNameController.dispose();
     bioController.dispose();
     organizationsController.dispose();
+
+    DartNotificationCenter.unsubscribe(observer: this);
   }
 
   void tappedSave() async {
@@ -137,6 +151,10 @@ class _EditProfileState extends State<EditProfileView> {
     );
   }
 
+  void tappedEditAvatar(_) {
+    showDialog(context: context, builder: (_) => ProfilePhotoSourceModal());
+  }
+
   @override
   Widget build(BuildContext context) {
     if (SKUser.current == null)
@@ -155,31 +173,29 @@ class _EditProfileState extends State<EditProfileView> {
         Padding(
           padding: EdgeInsets.symmetric(vertical: 16, horizontal: 16),
           child: Row(children: [
-            Container(
-              alignment: Alignment.center,
-              decoration: BoxDecoration(
-                color: SKColors.light_gray,
-                shape: BoxShape.circle,
-                image: SKUser.current?.avatarUrl == null
-                    ? null
-                    : DecorationImage(
-                        fit: BoxFit.fill,
-                        image: NetworkImage(SKUser.current.avatarUrl),
-                      ),
+            GestureDetector(
+              onTapUp: tappedEditAvatar,
+              child: Container(
+                alignment: Alignment.center,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  image: DecorationImage(
+                    fit: BoxFit.fill,
+                    image: SKUser.current?.avatarUrl == null
+                        ? AssetImage(ImageNames.peopleImages.static_profile)
+                        : NetworkImage(SKUser.current.avatarUrl),
+                    colorFilter: ColorFilter.mode(
+                        Colors.black.withOpacity(0.4), BlendMode.darken),
+                  ),
+                ),
+                margin: EdgeInsets.only(bottom: 12),
+                height: 64,
+                width: 64,
+                child: Text('Edit',
+                        style: TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.normal)),
               ),
-              margin: EdgeInsets.only(bottom: 12),
-              height: 64,
-              width: 64,
-              child: SKUser.current.avatarUrl == null
-                  ? Text(
-                      SKUser.current.student.nameFirst[0] +
-                          SKUser.current.student.nameLast[0],
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 22,
-                      ),
-                    )
-                  : null,
             ),
             Expanded(
               child: Column(
@@ -209,7 +225,11 @@ class _EditProfileState extends State<EditProfileView> {
                         CupertinoTextField(
                           padding: EdgeInsets.all(0),
                           placeholder: 'Alex',
-                          style: TextStyle(fontSize: 15),placeholderStyle: TextStyle(color: SKColors.light_gray, fontSize: 15, fontWeight: FontWeight.normal),
+                          style: TextStyle(fontSize: 15),
+                          placeholderStyle: TextStyle(
+                              color: SKColors.light_gray,
+                              fontSize: 15,
+                              fontWeight: FontWeight.normal),
                           decoration: BoxDecoration(border: null),
                           controller: firstNameController,
                         ),
@@ -239,7 +259,11 @@ class _EditProfileState extends State<EditProfileView> {
                         CupertinoTextField(
                           padding: EdgeInsets.all(0),
                           placeholder: 'Smith',
-                          style: TextStyle(fontSize: 15),placeholderStyle: TextStyle(color: SKColors.light_gray, fontSize: 15, fontWeight: FontWeight.normal),
+                          style: TextStyle(fontSize: 15),
+                          placeholderStyle: TextStyle(
+                              color: SKColors.light_gray,
+                              fontSize: 15,
+                              fontWeight: FontWeight.normal),
                           decoration: BoxDecoration(border: null),
                           controller: lastNameController,
                         ),
@@ -275,7 +299,11 @@ class _EditProfileState extends State<EditProfileView> {
                 padding: EdgeInsets.all(0),
                 minLines: 4,
                 maxLines: 4,
-                placeholder: 'Tell your classmates a bit about yourself!',placeholderStyle: TextStyle(color: SKColors.light_gray, fontSize: 15, fontWeight: FontWeight.normal),
+                placeholder: 'Tell your classmates a bit about yourself!',
+                placeholderStyle: TextStyle(
+                    color: SKColors.light_gray,
+                    fontSize: 15,
+                    fontWeight: FontWeight.normal),
                 style: TextStyle(fontSize: 15),
                 decoration: BoxDecoration(border: null),
                 controller: bioController,
@@ -307,7 +335,11 @@ class _EditProfileState extends State<EditProfileView> {
                 padding: EdgeInsets.all(0),
                 minLines: 4,
                 maxLines: 4,
-                placeholder: 'What organizations are you involved with?',placeholderStyle: TextStyle(color: SKColors.light_gray, fontSize: 15, fontWeight: FontWeight.normal),
+                placeholder: 'What organizations are you involved with?',
+                placeholderStyle: TextStyle(
+                    color: SKColors.light_gray,
+                    fontSize: 15,
+                    fontWeight: FontWeight.normal),
                 style: TextStyle(fontSize: 15),
                 decoration: BoxDecoration(border: null),
                 controller: organizationsController,

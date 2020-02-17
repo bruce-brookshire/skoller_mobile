@@ -1,5 +1,6 @@
 import 'package:dart_notification_center/dart_notification_center.dart';
 import 'package:dropdown_banner/dropdown_banner.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:skoller/screens/main_app/jobs/modals/job_data_collector_modal.dart';
@@ -181,6 +182,12 @@ class JobInfoPromptModal extends StatelessWidget {
       DartNotificationCenter.post(channel: NotificationChannels.jobsChanged);
   }
 
+  void tappedAvatar(context) {
+    showDialog(
+      context: context,
+      builder: (modalContext) => ProfilePhotoSourceModal(isJobs: true));
+  }
+
   void tappedGPA(context) => showTextModal(
         title: 'What is your GPA?',
         placeholderText: 'ex. 3.72',
@@ -302,15 +309,7 @@ class JobInfoPromptModal extends StatelessWidget {
     switch (type) {
       case _JobInfoPromptType.avatar:
         prompt = 'Add a profile picture';
-        action = (_) {
-          Navigator.push(
-            context,
-            CupertinoPageRoute(
-              builder: (_) => ProfilePhotoView(),
-              fullscreenDialog: true,
-            ),
-          );
-        };
+        action = tappedAvatar;
         break;
       case _JobInfoPromptType.regions:
         prompt = 'Where are you looking to work?';

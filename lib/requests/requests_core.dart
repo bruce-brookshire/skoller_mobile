@@ -33,7 +33,7 @@ part 'jobs.dart';
 part 'auth.dart';
 
 const bool isProd = false;
-const bool isLocal = true;
+const bool isLocal = false;
 
 class RequestResponse<T> {
   int status;
@@ -83,7 +83,7 @@ DateTime _dateParser(String date) => date == null ? null : DateTime.parse(date);
 class SKRequests {
   static const String _environment = isProd
       ? 'https://api.skoller.co'
-      : (isLocal ? 'http://172.21.10.140:4000' : 'https://api-staging.skoller.co');
+      : (isLocal ? 'http://10.1.10.110:4000' : 'https://api-staging.skoller.co');
 
   static final String _baseUrl = '$_environment/api/v1';
 

@@ -1,7 +1,7 @@
+import 'package:dart_notification_center/dart_notification_center.dart';
 import 'package:dropdown_banner/dropdown_banner.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:skoller/screens/main_app/jobs/modals/job_data_collector_modal.dart';
 import 'package:skoller/tools.dart';
 
 class PersonalityFormModal extends StatefulWidget {
@@ -9,16 +9,6 @@ class PersonalityFormModal extends StatefulWidget {
   State createState() => _PersonalityFormState();
 }
 
-final test = {
-  
-  
-  
-  
-  
-  
-  
-  
-};
 const _enneagram = 'enneagram';
 const _competitive = 'competitive';
 const _myersBriggs = 'myers_briggs';
@@ -72,9 +62,10 @@ class _PersonalityFormState extends State<PersonalityFormModal> {
     final response = await JobProfile.currentProfile
         .updateProfileWithParameters({'personality': personalityEntries});
     loader.fadeOut();
-    if (response.wasSuccessful())
+    if (response.wasSuccessful()) {
+      DartNotificationCenter.post(channel: NotificationChannels.jobsChanged);
       Navigator.pop(context);
-    else
+    } else
       DropdownBanner.showBanner(
           text: 'Unable to save new profile information. Please try again!');
   }

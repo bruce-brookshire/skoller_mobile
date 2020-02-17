@@ -50,6 +50,11 @@ class _JobsViewState extends State<JobsView> {
       channel: NotificationChannels.jobsChanged,
       onNotification: (_) => setState(() {}),
     );
+    DartNotificationCenter.subscribe(
+      observer: this,
+      channel: NotificationChannels.userChanged,
+      onNotification: (_) => setState(() {}),
+    );
   }
 
   @override
@@ -572,11 +577,13 @@ class _JobsViewState extends State<JobsView> {
               ),
             ),
           ),
-          Text(
-            'Strengthen your profile in seconds!',
-            textAlign: TextAlign.center,
-            style: TextStyle(color: Colors.white, fontWeight: FontWeight.w300),
-          ),
+          if (nextPrompt != null)
+            Text(
+              'Strengthen your profile in seconds!',
+              textAlign: TextAlign.center,
+              style:
+                  TextStyle(color: Colors.white, fontWeight: FontWeight.w300),
+            ),
           nextPrompt != null
               ? Padding(
                   padding: EdgeInsets.symmetric(vertical: 12),
@@ -856,13 +863,11 @@ class _SKJobProfileCompletionCircleState
   void initState() {
     super.initState();
 
-    animationController =
-        AnimationController(vsync: this, duration: Duration(seconds: 1));
-    animation = Tween<double>(begin: 0, end: widget.completion).animate(
-      CurvedAnimation(parent: animationController, curve: Curves.easeOutCubic),
-    )..addListener(
-        () => setState(() {}),
-      );
+    animationController = AnimationController(
+      vsync: this,
+      duration: Duration(seconds: 1),
+    );
+    animation = createAnimation();
 
     animationController.forward();
 
@@ -877,12 +882,33 @@ class _SKJobProfileCompletionCircleState
   }
 
   @override
+  void didUpdateWidget(Widget oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if ((oldWidget as _SKJobProfileCompletionCircle).completion !=
+        widget.completion) {
+      animation.removeListener(animationListener);
+
+      animation = createAnimation();
+      if (!animationController.isAnimating)
+        animationController.forward(from: 0);
+    }
+  }
+
+  @override
   void dispose() {
     DartNotificationCenter.unsubscribe(observer: this);
     animationController.dispose();
 
     super.dispose();
   }
+
+  void animationListener() => setState(() {});
+
+  Animation createAnimation() =>
+      Tween<double>(begin: 0, end: widget.completion).animate(
+        CurvedAnimation(
+            parent: animationController, curve: Curves.easeOutCubic),
+      )..addListener(animationListener);
 
   @override
   Widget build(BuildContext context) {
