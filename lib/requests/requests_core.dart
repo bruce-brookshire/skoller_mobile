@@ -1,6 +1,7 @@
 library requests_core;
 
 import 'package:dart_notification_center/dart_notification_center.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:skoller/screens/main_app/menu/profile_link_sharing_view.dart';
 import '../screens/main_app/menu/rewards_view.dart';
 import 'package:time_machine/time_machine.dart' as time_machine;
@@ -32,7 +33,7 @@ part 'jobs.dart';
 part 'auth.dart';
 
 const bool isProd = false;
-const bool isLocal = true;
+const bool isLocal = false;
 
 class RequestResponse<T> {
   int status;
@@ -82,7 +83,7 @@ DateTime _dateParser(String date) => date == null ? null : DateTime.parse(date);
 class SKRequests {
   static const String _environment = isProd
       ? 'https://api.skoller.co'
-      : (isLocal ? 'http://127.0.0.1:4000' : 'https://api-staging.skoller.co');
+      : (isLocal ? 'http://10.1.10.110:4000' : 'https://api-staging.skoller.co');
 
   static final String _baseUrl = '$_environment/api/v1';
 

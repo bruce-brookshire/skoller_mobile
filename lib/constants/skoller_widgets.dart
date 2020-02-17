@@ -1681,6 +1681,9 @@ class SKHeaderCard extends StatelessWidget {
   final List<Widget> children;
   final EdgeInsets margin;
   final EdgeInsets padding;
+  final Color headerColor;
+  final Color backgroundColor;
+  final Color borderColor;
 
   SKHeaderCard({
     @required this.leftHeaderItem,
@@ -1688,14 +1691,17 @@ class SKHeaderCard extends StatelessWidget {
     @required this.children,
     this.margin,
     this.padding,
+    this.headerColor,
+    this.backgroundColor,
+    this.borderColor
   });
 
   @override
   Widget build(BuildContext context) => Container(
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: this.backgroundColor ?? Colors.white,
           borderRadius: BorderRadius.circular(10),
-          border: Border.all(color: SKColors.border_gray),
+          border: Border.all(color: this.borderColor ?? SKColors.border_gray),
           boxShadow: UIAssets.boxShadow,
         ),
         margin: margin ?? EdgeInsets.all(16),
@@ -1706,7 +1712,7 @@ class SKHeaderCard extends StatelessWidget {
               alignment: Alignment.centerLeft,
               padding: EdgeInsets.fromLTRB(12, 12, 12, 8),
               decoration: BoxDecoration(
-                color: SKColors.selected_gray,
+                color: this.headerColor ?? SKColors.selected_gray,
                 borderRadius: BorderRadius.only(
                   topLeft: Radius.circular(10),
                   topRight: Radius.circular(10),
@@ -1839,5 +1845,24 @@ class _GifWrapperState extends State<GifWrapper> with TickerProviderStateMixin {
         );
       },
     );
+  }
+}
+
+class CornerRadiusClipper extends CustomClipper<Path> {
+  final double radius;
+
+  CornerRadiusClipper(this.radius);
+
+  @override
+  Path getClip(Size size) {
+    final path = Path();
+    final rect = Rect.fromLTRB(0.0, 0.0, size.width, size.height);
+    path.addRRect(RRect.fromRectAndRadius(rect, Radius.circular(radius)));
+    return path;
+  }
+
+  @override
+  bool shouldReclip(CustomClipper<Path> oldClipper) {
+    return true;
   }
 }

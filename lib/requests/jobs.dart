@@ -86,17 +86,33 @@ class JobProfile {
     this.company_values,
   );
 
+  Future<RequestResponse> updateProfileWithParameters(
+          Map<String, dynamic> parameters) =>
+      SKRequests.put('/skoller-jobs/profiles/$id', parameters, _fromJsonObj);
+
   Future<RequestResponse> updateProfile({
     TypeObject jobSearchType,
     DateTime gradDate,
+    bool workAuth,
+    bool sponsorshipRequired,
+    TypeObject jobProfileStatus,
+    String stateCode,
+    double gpa,
+    String regions,
   }) {
     final body = {
       'job_search_type_id': jobSearchType?.id,
-      'graduation_date': gradDate?.toIso8601String()
+      'graduation_date': gradDate?.toIso8601String(),
+      'work_auth': workAuth,
+      'sponsorship_required': sponsorshipRequired,
+      'job_profile_status_id': jobProfileStatus?.id,
+      'state_code': stateCode,
+      'gpa': gpa,
+      'regions': regions,
     };
     body.removeWhere((_, value) => value == null);
 
-    return SKRequests.put('/skoller-jobs/profiles/$id', body, _fromJsonObj);
+    return updateProfileWithParameters(body);
   }
 
   static JobProfile currentProfile;
