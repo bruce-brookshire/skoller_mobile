@@ -15,7 +15,7 @@ class _SchoolSearchState extends State<SchoolSearchView> {
 
   List<School> searchedSchools = [];
 
-  Timer _currentTimer;
+  Timer? _currentTimer;
   bool isSearching = false;
 
   @override
@@ -26,7 +26,7 @@ class _SchoolSearchState extends State<SchoolSearchView> {
 
   void didTypeInSearch(String text) {
     if (_currentTimer != null) {
-      _currentTimer.cancel();
+      _currentTimer!.cancel();
       _currentTimer = null;
     }
 
@@ -123,7 +123,7 @@ class _SchoolSearchState extends State<SchoolSearchView> {
     );
 
     if (result is bool && result) {
-      await SKUser.current.update(primarySchool: school);
+      await SKUser.current!.update(primarySchool: school);
       Navigator.pop(context);
       DartNotificationCenter.post(
           channel: NotificationChannels.userChanged, options: school);

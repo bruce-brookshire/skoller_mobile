@@ -25,7 +25,7 @@ class _JobProfileModalState extends State<JobProfileModal> {
           items: items.map((t) => t.name).toList(),
           onSelect: (index) async {
             final loader = SKLoadingScreen.fadeIn(context);
-            final response = await JobProfile.currentProfile
+            final response = await JobProfile.currentProfile!
                 .updateProfile(jobSearchType: items[index]);
             loader.fadeOut();
 
@@ -49,7 +49,7 @@ class _JobProfileModalState extends State<JobProfileModal> {
         subtitle: 'Are you authorized to work in the U.S?',
         onSelect: (index) async {
           final loader = SKLoadingScreen.fadeIn(context);
-          final response = await JobProfile.currentProfile
+          final response = await JobProfile.currentProfile!
               .updateProfile(workAuth: index == 0 ? true : false);
           loader.fadeOut();
 
@@ -68,7 +68,7 @@ class _JobProfileModalState extends State<JobProfileModal> {
         subtitle: 'Do you need to be sponsored to work in the U.S?',
         onSelect: (index) async {
           final loader = SKLoadingScreen.fadeIn(context);
-          final response = await JobProfile.currentProfile
+          final response = await JobProfile.currentProfile!
               .updateProfile(sponsorshipRequired: index == 0 ? true : false);
           loader.fadeOut();
 
@@ -88,8 +88,8 @@ class _JobProfileModalState extends State<JobProfileModal> {
         subtitle: 'Where are you from?',
         onSelect: (index) async {
           final loader = SKLoadingScreen.fadeIn(context);
-          final response = await JobProfile.currentProfile
-              .updateProfile(stateCode: statesMap[keys[index]]);
+          final response = await JobProfile.currentProfile!
+              .updateProfile(stateCode: statesMap[keys[index]]!);
           loader.fadeOut();
 
           if (response.wasSuccessful()) setState(() {});
@@ -113,7 +113,7 @@ class _JobProfileModalState extends State<JobProfileModal> {
           items: items.map((t) => t.name).toList(),
           onSelect: (index) async {
             final loader = SKLoadingScreen.fadeIn(context);
-            final response = await JobProfile.currentProfile
+            final response = await JobProfile.currentProfile!
                 .updateProfile(jobProfileStatus: items[index]);
             loader.fadeOut();
 
@@ -186,31 +186,31 @@ class _JobProfileModalState extends State<JobProfileModal> {
                           ...buildInfoPrompt(
                             prompt: 'What type of job are you seeking?',
                             choice:
-                                JobProfile.currentProfile.job_search_type.name,
+                                JobProfile.currentProfile!.job_search_type.name,
                             callback: tappedJobType,
                           ),
                           ...buildInfoPrompt(
                             prompt:
                                 'Are you authorized to work in the United States?',
-                            choice: JobProfile.currentProfile.work_auth,
+                            choice: JobProfile.currentProfile!.work_auth,
                             callback: tappedUSWorkAuth,
                           ),
                           ...buildInfoPrompt(
                             prompt:
                                 'Will you need employer sponsorship to work in the United States?',
                             choice:
-                                JobProfile.currentProfile.sponsorship_required,
+                                JobProfile.currentProfile!.sponsorship_required,
                             callback: tappedEmployerSponsorship,
                           ),
                           ...buildInfoPrompt(
                             prompt: 'What is your home state?',
-                            choice: JobProfile.currentProfile.state_code,
+                            choice: JobProfile.currentProfile!.state_code,
                             callback: tappedHomeState,
                           ),
                           ...buildInfoPrompt(
                             prompt: 'Profile status',
                             choice: JobProfile
-                                .currentProfile.job_profile_status.name,
+                                .currentProfile!.job_profile_status.name,
                             callback: tappedProfileStatus,
                           ),
                         ],
@@ -227,9 +227,9 @@ class _JobProfileModalState extends State<JobProfileModal> {
   }
 
   List<Widget> buildInfoPrompt({
-    String prompt,
+    String? prompt,
     dynamic choice,
-    Function(dynamic) callback,
+    Function(dynamic)? callback,
   }) {
     String stringifiedChoice = choice != null
         ? (choice is bool ? (choice == true ? 'Yes' : 'No') : '$choice')
@@ -239,7 +239,7 @@ class _JobProfileModalState extends State<JobProfileModal> {
       Padding(
         padding: EdgeInsets.symmetric(horizontal: 4),
         child: Text(
-          prompt,
+          prompt!,
           style: TextStyle(
               color: Colors.white, fontWeight: FontWeight.w500, fontSize: 14),
         ),

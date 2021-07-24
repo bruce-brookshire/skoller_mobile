@@ -13,12 +13,12 @@ class DatelessAssignmentsModal extends StatelessWidget {
     final List<Widget> children = datelessAssignmentIds
         .fold<Map<StudentClass, List<Assignment>>>({}, (acc, val) {
           final assignment = Assignment.currentAssignments[val];
-          final parentClass = assignment.parentClass;
+          final parentClass = assignment!.parentClass;
 
           if (acc[parentClass] == null)
             acc[parentClass] = [assignment];
           else
-            acc[parentClass].add(assignment);
+            acc[parentClass]!.add(assignment);
 
           return acc;
         })
@@ -77,7 +77,7 @@ class DatelessAssignmentsModal extends StatelessWidget {
                           bottom: BorderSide(color: SKColors.light_gray))),
                   padding: EdgeInsets.fromLTRB(4, 4, 0, 4),
                   child: Text(
-                    e.key.name,
+                    e.key.name!,
                     // textAlign: TextAlign.left,
                     style: TextStyle(
                         color: e.key.getColor(),

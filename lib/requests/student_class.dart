@@ -11,12 +11,12 @@ class StudentClass {
   double grade;
   double completion;
 
-  String name;
+  String? name=null;
   String _color;
-  String meetDays;
-  String subject;
-  String code;
-  String section;
+  String? meetDays;
+  String? subject;
+  String? code;
+  String? section;
   String enrollmentLink;
 
   TimeOfDay meetTime;
@@ -25,8 +25,8 @@ class StudentClass {
   Professor professor;
   Period classPeriod;
 
-  List<Weight> weights;
-  List<Assignment> assignments;
+  List<Weight>? weights;
+  List<Assignment>? assignments;
   List<PublicStudent> students;
   List<ClassDocument> documents;
 
@@ -34,7 +34,7 @@ class StudentClass {
 
   List<ChangeRequest> changeRequests;
 
-  static time_machine.DateTimeZoneProvider tzdb;
+  static time_machine.DateTimeZoneProvider? tzdb;
 
   static final _classColors = [
     'AE77BDFF', // Lavendar
@@ -84,7 +84,7 @@ class StudentClass {
         : 'This new app takes our syllabus and sends reminders about upcoming due dates, organizes assignments into a calendar, and much more. Our class $name is already set up. Sign up using this link to join me!\n\n$enrollmentLink';
   }
 
-  School get parentSchool => School.currentSchools[classPeriod.schoolId];
+  School get parentSchool => School.currentSchools[classPeriod.schoolId]!;
 
   List<ChangeRequest> get gradeScaleChangeRequests =>
       _filterChangesForType(100);
@@ -141,7 +141,7 @@ class StudentClass {
 
   Future<RequestResponse> setColor(Color color) {
     this._color = color.value.toRadixString(16).substring(2) + 'ff';
-    StudentClass.currentClasses[id]._color = this._color;
+    StudentClass.currentClasses[id]!._color = this._color;
 
     return _update({'color': this._color}).then((response) {
       if (response.wasSuccessful()) {
@@ -152,8 +152,8 @@ class StudentClass {
     });
   }
 
-  Weight getWeightForId(weight_id) {
-    for (Weight weight in weights) {
+  Weight? getWeightForId(weight_id) {
+    for (Weight weight in weights!) {
       if (weight.id == weight_id) {
         return weight;
       }
@@ -167,7 +167,7 @@ class StudentClass {
 
   Future<RequestResponse> _update(Map params) {
     return SKRequests.put(
-      '/students/${SKUser.current.student.id}/classes/${id}',
+      '/students/${SKUser.current!.student.id}/classes/${id}',
       params,
       (content) => StudentClass._fromJsonObj(content),
     ).then((response) {
@@ -197,9 +197,9 @@ class StudentClass {
     DateTime dueDate,
     bool isPrivate,
   ) async {
-    String tzCorrectedString = dueDate?.toUtc()?.toIso8601String();
+    String? tzCorrectedString = dueDate.toUtc().toIso8601String();
 
-    DateTime correctedDueDate = dueDate == null
+    DateTime? correctedDueDate = dueDate == null
         ? null
         : await TimeZoneManager.convertUtcOffsetFromLocalToSchool(
             dueDate,
@@ -211,10 +211,10 @@ class StudentClass {
     }
 
     return SKRequests.post(
-        '/students/${SKUser.current.student.id}/classes/${this.id}/assignments',
+        '/students/${SKUser.current!.student.id}/classes/${this.id}/assignments',
         {
           "due": tzCorrectedString,
-          "weight_id": weight?.id,
+          "weight_id": weight.id,
           "name": name,
           "is_completed": false,
           "is_private": isPrivate,
@@ -235,9 +235,9 @@ class StudentClass {
     Weight weight,
     DateTime dueDate,
   ) async {
-    String tzCorrectedString = dueDate?.toUtc()?.toIso8601String();
+    String? tzCorrectedString = dueDate.toUtc().toIso8601String();
 
-    DateTime correctedDueDate = dueDate == null
+    DateTime? correctedDueDate = dueDate == null
         ? null
         : await TimeZoneManager.convertUtcOffsetFromLocalToSchool(
             dueDate,
@@ -270,7 +270,7 @@ class StudentClass {
   Future<RequestResponse> acquireWeightLock() {
     return SKRequests.post(
       "/classes/${id}/lock/weights",
-      null,
+      Map(),
       null,
     );
   }
@@ -324,7 +324,7 @@ class StudentClass {
       null,
     ).then((response) {
       if (response.wasSuccessful()) {
-        StudentClass.currentClasses[id].gradeScale =
+        StudentClass.currentClasses[id]!.gradeScale =
             response.obj['grade_scale'];
       }
       return response;
@@ -333,15 +333,15 @@ class StudentClass {
 
   Future<RequestResponse> speculateClass() {
     return SKRequests.get(
-      '/students/${SKUser.current.student.id}/classes/$id/speculate',
+      '/students/${SKUser.current!.student.id}/classes/$id/speculate',
       null,
     );
   }
 
   Future<bool> dropClass() {
     return SKRequests.delete(
-      '/students/${SKUser.current.student.id}/classes/$id',
-      null,
+      '/students/${SKUser.current!.student.id}/classes/$id',
+      Map(),
     ).then((response) {
       bool success = [200, 204].contains(response);
       if (success) {
@@ -360,18 +360,18 @@ class StudentClass {
   }
 
   Future<bool> submitClassChangeRequest({
-    TimeOfDay meetTime,
-    String meetDays,
-    String name,
-    String subject,
-    String code,
-    String section,
-    bool isOnline,
+    TimeOfDay? meetTime,
+    String? meetDays,
+    String? name,
+    String? subject,
+    String? code,
+    String? section,
+    bool? isOnline,
   }) {
     Map<String, dynamic> body = {
       'id': id,
       'meet_days': meetDays,
-      'meet_start_time': isOnline ? 'online' : _startTimeString(meetTime),
+      'meet_start_time': isOnline! ? 'online' : _startTimeString(meetTime!),
       'name': name,
       'subject': subject,
       'code': code,
@@ -386,12 +386,12 @@ class StudentClass {
   }
 
   Future<bool> submitProfessorChangeRequest({
-    String firstName,
-    String lastName,
-    String email,
-    String phoneNumber,
-    String officeLocation,
-    String availability,
+    String? firstName,
+    String? lastName,
+    String? email,
+    String? phoneNumber,
+    String? officeLocation,
+    String? availability,
   }) {
     Map<String, dynamic> body = {
       'id': id,
@@ -413,7 +413,7 @@ class StudentClass {
     });
   }
 
-  String _startTimeString(TimeOfDay time) => time == null
+  String? _startTimeString(TimeOfDay time) => time == null
       ? null
       : '${time.hour < 10 ? '0' : ''}${time.hour}:${time.minute < 10 ? '0' : ''}${time.minute}:00';
 
@@ -441,7 +441,7 @@ class StudentClass {
   static bool classesLoaded = false;
   static Map<int, StudentClass> currentClasses = {};
 
-  static StudentClass _fromJsonObj(Map content) {
+  static StudentClass? _fromJsonObj(Map content) {
     if (content == null) {
       return null;
     }
@@ -455,7 +455,7 @@ class StudentClass {
             .toList();
     final startTime = (startString == null ||
             startString == 'online' ||
-            startComponents.length < 2)
+            startComponents!.length < 2)
         ? null
         : TimeOfDay(hour: startComponents[0], minute: startComponents[1]);
 
@@ -465,7 +465,7 @@ class StudentClass {
       JsonListMaker.convert(
         (content) => Assignment._fromJsonObj(content, shouldPersist: true),
         content['assignments'] ?? [],
-      ),
+      ) as List<Assignment>,
       content['color'],
       content['grade'],
       content['completion'],
@@ -473,19 +473,19 @@ class StudentClass {
       JsonListMaker.convert(
         Weight._fromJsonObj,
         content['weights'] ?? [],
-      ),
+      ) as List<Weight>,
       content['meet_days'],
-      startTime,
-      Status._fromJsonObj(content['status']),
+      startTime!,
+      Status._fromJsonObj(content['status'])!,
       content['subject'],
       content['code'],
       content['section'],
-      Professor._fromJsonObj(content['professor']),
-      Period._fromJsonObj(content['class_period']),
+      Professor._fromJsonObj(content['professor'])!,
+      Period._fromJsonObj(content['class_period'])!,
       JsonListMaker.convert(
         PublicStudent._fromJsonObj,
         content['students'] ?? [],
-      ),
+      ) as List<PublicStudent>,
       content['enrollment_link'],
       content['grade_scale'],
       content['is_points'],
@@ -493,21 +493,21 @@ class StudentClass {
       JsonListMaker.convert(
         ClassDocument._fromJsonObj,
         content['documents'] ?? [],
-      ),
+      ) as List<ClassDocument>,
       startString == 'online',
       JsonListMaker.convert(
-          ChangeRequest._fromJsonObj, content['change_requests'] ?? []),
+          ChangeRequest._fromJsonObj, content['change_requests'] ?? []) as List<ChangeRequest>,
     );
 
     StudentClass.currentClasses[studentClass.id] = studentClass;
 
     return studentClass
-      ..assignments.forEach((a) => a.configureDateTimeOffset());
+      ..assignments?.forEach((a) => a.configureDateTimeOffset());
   }
 
   static Future<RequestResponse> getStudentClasses() {
     return SKRequests.get(
-      '/students/${SKUser.current.student.id}/classes',
+      '/students/${SKUser.current!.student.id}/classes',
       _fromJsonObj,
       cacheResult: true,
       cachePath: 'student_classes.json',
@@ -521,7 +521,7 @@ class StudentClass {
 
   static Future<RequestResponse> getStudentClassById(int id) {
     return SKRequests.get(
-      '/students/${SKUser.current.student.id}/classes/${id}',
+      '/students/${SKUser.current!.student.id}/classes/${id}',
       _fromJsonObj,
       postRequestAction: () =>
           Assignment.currentAssignments.removeWhere((_, a) => a.classId == id),
@@ -537,15 +537,15 @@ class StudentClass {
 
 class SchoolClass {
   int id;
-  int enrollment;
+  int? enrollment;
 
   String name;
-  String meetDays;
+  String? meetDays;
   String subject;
   String code;
   String section;
 
-  TimeOfDay meetTime;
+  TimeOfDay? meetTime;
 
   Professor professor;
   Period classPeriod;
@@ -567,7 +567,7 @@ class SchoolClass {
     this.classPeriod,
   );
 
-  static SchoolClass _fromJsonObj(Map content) {
+  static SchoolClass? _fromJsonObj(Map content) {
     if (content == null) {
       return null;
     }
@@ -579,7 +579,7 @@ class SchoolClass {
             .split(':')
             .map((component) => int.parse(component))
             .toList();
-    final startTime = (startString == null || startComponents.length < 2)
+    final startTime = (startString == null || startComponents!.length < 2)
         ? null
         : TimeOfDay(hour: startComponents[0], minute: startComponents[1]);
 
@@ -588,12 +588,12 @@ class SchoolClass {
       content['name'],
       content['enrollment'],
       content['meet_days'],
-      startTime,
+      startTime!,
       content['subject'],
       content['code'],
       content['section'],
-      Professor._fromJsonObj(content['professor']),
-      Period._fromJsonObj(content['class_period']),
+      Professor._fromJsonObj(content['professor'])!,
+      Period._fromJsonObj(content['class_period'])!,
     );
 
     return schoolClass;
@@ -601,10 +601,10 @@ class SchoolClass {
 
   Future<RequestResponse> enrollInClass() async {
     final RequestResponse<StudentClass> response = await SKRequests.post(
-      '/students/${SKUser.current.student.id}/classes/$id',
+      '/students/${SKUser.current?.student.id}/classes/$id',
       null,
       StudentClass._fromJsonObj,
-    );
+    ) as  RequestResponse<StudentClass>;
 
     if (response.wasSuccessful() && response.obj._color == null) {
       response.obj.initializeColor();
@@ -612,7 +612,7 @@ class SchoolClass {
     return response;
   }
 
-  static Future<http.Response> _activeClassSearch;
+  static Future<http.Response>? _activeClassSearch=null;
 
   static void invalidateCurrentClassSearch() {
     _activeClassSearch?.timeout(Duration.zero);
@@ -623,7 +623,7 @@ class SchoolClass {
     Period period,
   ) async {
     if (_activeClassSearch != null) {
-      _activeClassSearch.timeout(Duration.zero);
+      _activeClassSearch!.timeout(Duration.zero);
       _activeClassSearch = null;
     }
 
@@ -632,7 +632,7 @@ class SchoolClass {
 
     final request = await _activeClassSearch;
 
-    return SKRequests.futureProcessor(request, _fromJsonObj);
+    return SKRequests.futureProcessor(request!, _fromJsonObj);
   }
 }
 
@@ -645,7 +645,7 @@ class Weight {
 
   static Map<int, Weight> currentWeights = {};
 
-  static Weight _fromJsonObj(Map content) {
+  static Weight? _fromJsonObj(Map content) {
     if (content == null) {
       return null;
     }
@@ -662,12 +662,12 @@ class Weight {
 }
 
 class Status {
-  int id;
+  int? id;
   String name;
 
   Status(this.id, this.name);
 
-  static Status _fromJsonObj(Map content) {
+  static Status? _fromJsonObj(Map content) {
     if (content == null) {
       return null;
     }
@@ -681,14 +681,14 @@ class Status {
 
 class Professor {
   int id;
-  String firstName;
-  String lastName;
-  String email;
-  String phoneNumber;
-  String availability;
-  String officeLocation;
+  String? firstName;
+  String? lastName;
+  String? email;
+  String? phoneNumber;
+  String? availability;
+  String? officeLocation;
 
-  String get fullName {
+  String? get fullName {
     return (firstName ?? '') +
         (firstName == null || lastName == null ? '' : ' ') +
         (lastName ?? '');
@@ -727,7 +727,7 @@ class Professor {
     });
   }
 
-  static Professor _fromJsonObj(Map content) {
+  static Professor? _fromJsonObj(Map content) {
     if (content == null) {
       return null;
     }
@@ -767,9 +767,9 @@ class ChangeRequest {
   static ChangeRequest _fromJsonObj(Map content) => ChangeRequest(
         content['id'],
         JsonListMaker.convert(
-            ChangeRequestMember._fromJsonObj, content['members'] ?? []),
+            ChangeRequestMember._fromJsonObj, content['members'] ?? []) as List<ChangeRequestMember>,
         TypeObject._fromJsonObj(content['change_type']),
-        _dateParser(content['inserted_at']),
+        _dateParser(content['inserted_at'])!,
       );
 }
 

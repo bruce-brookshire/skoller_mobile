@@ -13,7 +13,7 @@ class Mod {
 
   ModType modType;
 
-  bool isAccepted;
+  bool? isAccepted=null;
 
   /**
    * Different data type depending on [ModType].
@@ -38,10 +38,10 @@ class Mod {
     this.data,
   );
 
-  StudentClass get parentClass => StudentClass.currentClasses[_parentClassId];
+  StudentClass get parentClass => StudentClass.currentClasses[_parentClassId]!;
 
   Assignment get parentAssignment {
-    return Assignment.currentAssignments[_parentAssignmentId];
+    return Assignment.currentAssignments[_parentAssignmentId]!;
   }
 
   Future<RequestResponse> declineMod() {
@@ -53,7 +53,7 @@ class Mod {
 
     if (response.wasSuccessful() &&
         modType == ModType.due &&
-        (parentAssignment?.isCompleted ?? false))
+        (parentAssignment.isCompleted ?? false))
       await parentAssignment.toggleComplete();
 
     return response;
@@ -61,7 +61,7 @@ class Mod {
 
   Future<RequestResponse> _submitModResponse(bool withStatus) {
     return SKRequests.post(
-      '/students/${SKUser.current.student.id}/mods/${id}',
+      '/students/${SKUser.current!.student.id}/mods/${id}',
       {'is_accepted': withStatus},
       Assignment._fromJsonObj,
     );
@@ -74,12 +74,12 @@ class Mod {
   static Map<int, Mod> currentMods = {};
   static Map<int, List<Mod>> modsByAssignmentId = {};
 
-  static Mod _fromJsonObj(Map content) {
+  static Mod? _fromJsonObj(Map content) {
     if (content == null) {
       return null;
     }
 
-    ModType modType;
+    ModType? modType;
     dynamic data;
 
     if (content['mod_type'] != null && content['data'] != null) {
@@ -95,7 +95,7 @@ class Mod {
           final parentClass =
               StudentClass.currentClasses[content['class']['id']];
 
-          for (final weight in parentClass.weights) {
+          for (final weight in parentClass!.weights!) {
             if (weight.id == weightId) {
               data = weight;
             }
@@ -127,8 +127,8 @@ class Mod {
       content['class']['id'],
       content['students_accepted_count'],
       content['short_msg'],
-      _dateParser(content['mod_created_at']),
-      modType,
+      _dateParser(content['mod_created_at'])!,
+      modType!,
       content['is_accepted'],
       data,
     );
@@ -137,7 +137,7 @@ class Mod {
 
     if (mod._parentAssignmentId != null && mod.isAccepted == null) {
       if (modsByAssignmentId.containsKey(mod._parentAssignmentId))
-        modsByAssignmentId[mod._parentAssignmentId].add(mod);
+        modsByAssignmentId[mod._parentAssignmentId]!.add(mod);
       else
         modsByAssignmentId[mod._parentAssignmentId] = [mod];
     }
@@ -147,7 +147,7 @@ class Mod {
 
   static Future<RequestResponse> fetchMods() {
     return SKRequests.get(
-        '/students/${SKUser.current.student.id}/mods/', Mod._fromJsonObj,
+        '/students/${SKUser.current!.student.id}/mods/', Mod._fromJsonObj,
         postRequestAction: () {
       modsByAssignmentId = {};
       currentMods = {};
@@ -156,7 +156,7 @@ class Mod {
 
   static Future<RequestResponse> fetchNewAssignmentMods() {
     return SKRequests.get(
-      '/students/${SKUser.current.student.id}/mods?is_new_assignments=true',
+      '/students/${SKUser.current!.student.id}/mods?is_new_assignments=true',
       Mod._fromJsonObj,
     ).then((response) {
       if (response.wasSuccessful()) {

@@ -1,6 +1,4 @@
 import 'package:dart_notification_center/dart_notification_center.dart';
-import 'package:dropdown_banner/dropdown_banner.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:skoller/screens/main_app/jobs/modals/job_data_collector_modal.dart';
@@ -25,11 +23,11 @@ class JobInfoPromptModal extends StatelessWidget {
 
   factory JobInfoPromptModal() {
     final profile = JobProfile.currentProfile;
-    _JobInfoPromptType type;
+    _JobInfoPromptType? type=null;
 
-    if (SKUser.current.avatarUrl == null)
+    if (SKUser.current!.avatarUrl == null)
       type = _JobInfoPromptType.avatar;
-    else if (profile.regions == null)
+    else if (profile!.regions == null)
       type = _JobInfoPromptType.regions;
     else if (profile.career_interests == null)
       type = _JobInfoPromptType.careerInterests;
@@ -45,18 +43,18 @@ class JobInfoPromptModal extends StatelessWidget {
       type = _JobInfoPromptType.sponsorshipRequired;
     else if (profile.personality == null) type = _JobInfoPromptType.personality;
 
-    return type == null ? null : JobInfoPromptModal._fromType(type);
+    return JobInfoPromptModal._fromType(type!);
   }
 
   JobInfoPromptModal._fromType(this.type);
 
   void showTextModal({
-    @required String title,
-    @required String placeholderText,
-    @required TextInputType inputType,
-    @required String parameterName,
-    @required BuildContext context,
-    dynamic Function(dynamic) resultConverter,
+    required String title,
+    required String placeholderText,
+    required TextInputType inputType,
+    required String parameterName,
+    required BuildContext context,
+    dynamic Function(dynamic)? resultConverter,
   }) {
     showDialog(
       context: context,
@@ -77,11 +75,11 @@ class JobInfoPromptModal extends StatelessWidget {
   }
 
   void showPickerModal({
-    @required String title,
-    @required List<String> items,
-    @required String parameterName,
-    @required BuildContext context,
-    dynamic Function(dynamic) resultConverter,
+    required String title,
+    required List<String> items,
+    required String parameterName,
+    required BuildContext context,
+    dynamic Function(dynamic)? resultConverter,
   }) =>
       showDialog(
         context: context,
@@ -101,12 +99,12 @@ class JobInfoPromptModal extends StatelessWidget {
       );
 
   void showMultipleSelectModal({
-    @required String title,
-    @required List<String> items,
-    @required String parameterName,
-    @required BuildContext context,
-    String subtitle,
-    dynamic Function(dynamic) resultConverter,
+    required String title,
+    required List<String> items,
+    required String parameterName,
+    required BuildContext context,
+    String? subtitle,
+    dynamic Function(dynamic)? resultConverter,
   }) =>
       showDialog(
         context: context,
@@ -127,10 +125,10 @@ class JobInfoPromptModal extends StatelessWidget {
       );
 
   void showToggleModal({
-    @required String title,
-    @required String parameterName,
-    @required BuildContext context,
-    String subtitle,
+    required String title,
+    required String parameterName,
+    required BuildContext context,
+    String? subtitle,
   }) =>
       showDialog(
         context: context,
@@ -148,9 +146,9 @@ class JobInfoPromptModal extends StatelessWidget {
       );
 
   void showScaleModal({
-    @required String title,
-    @required String parameterName,
-    @required BuildContext context,
+    required String title,
+    required String parameterName,
+    required BuildContext context,
   }) =>
       showDialog(
         context: context,
@@ -167,14 +165,14 @@ class JobInfoPromptModal extends StatelessWidget {
         ),
       );
 
-  void updateProfile({
-    String parameterName,
+ Future<void> updateProfile({
+    String? parameterName,
     dynamic value,
-    BuildContext context,
+    BuildContext? context,
   }) async {
-    final loader = SKLoadingScreen.fadeIn(context);
-    final response = await JobProfile.currentProfile
-        .updateProfileWithParameters({parameterName: value});
+    final loader = SKLoadingScreen.fadeIn(context!);
+    final response = await JobProfile.currentProfile!
+        .updateProfileWithParameters({parameterName!: value});
 
     loader.fadeOut();
 

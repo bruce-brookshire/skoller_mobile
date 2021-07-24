@@ -8,7 +8,7 @@ import 'package:dart_notification_center/dart_notification_center.dart';
 import 'sign_in.dart';
 
 class SignUp extends StatefulWidget {
-  SignUp({Key key}) : super(key: key);
+  SignUp({Key? key}) : super(key: key);
 
   @override
   _SignUpState createState() => _SignUpState();
@@ -119,7 +119,7 @@ class _SignUpState extends State<SignUp> {
     });
   }
 
-  double dist;
+  double? dist;
 
   @override
   Widget build(BuildContext context) => Scaffold(
@@ -134,7 +134,7 @@ class _SignUpState extends State<SignUp> {
                 onVerticalDragCancel: () => dist = null,
                 onVerticalDragEnd: (details) => dist = null,
                 onVerticalDragUpdate: (details) {
-                  if (dist != null && details.localPosition.dy - dist > 30) {
+                  if (dist != null && details.localPosition.dy - dist! > 30) {
                     [
                       firstNameFocus,
                       lastNameFocus,

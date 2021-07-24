@@ -10,33 +10,33 @@ class PrimarySchoolModal extends StatefulWidget {
 }
 
 class _PrimarySchoolState extends State<PrimarySchoolModal> {
-  List<School> eligibleSchools;
+  late List<School>? eligibleSchools=null;
 
-  int selectedSchoolId;
-  Period selectedPeriod;
+  int? selectedSchoolId;
+  Period? selectedPeriod;
 
   bool showingGreeting = true;
-  bool loading;
+  bool loading=false;
 
   @override
   void initState() {
     super.initState();
 
-    if (SKUser.current.student.primarySchool != null) {
-      eligibleSchools = [SKUser.current.student.primarySchool];
-      selectedPeriod = eligibleSchools.first.getBestCurrentPeriod();
+    if (SKUser.current!.student.primarySchool != null) {
+      eligibleSchools = [SKUser.current!.student.primarySchool!];
+      selectedPeriod = eligibleSchools?.first.getBestCurrentPeriod();
       showingGreeting = false;
     } else {
       loading = true;
 
-      SKUser.current.checkEmailDomain().then((response) async {
+      SKUser.current!.checkEmailDomain().then((response) async {
         if (response.wasSuccessful()) {
           final List<School> obj = response.obj;
 
           if (obj.length == 1) {
             selectedSchoolId = obj.first.id;
             selectedPeriod = obj.first.getBestCurrentPeriod();
-            await SKUser.current.update(primarySchool: obj.first);
+            await SKUser.current!.update(primarySchool: obj.first);
           } else if (obj.length == 0 && !showingGreeting) tappedSearch(null);
 
           eligibleSchools = obj;
@@ -49,30 +49,30 @@ class _PrimarySchoolState extends State<PrimarySchoolModal> {
     }
   }
 
-  void tappedSearch(TapUpDetails details) async {
+  void tappedSearch(TapUpDetails? details) async {
     await Navigator.push(
       context,
       SKNavFadeUpRoute(builder: (context) => SchoolSearchView()),
     );
 
-    if (SKUser.current.student.primarySchool != null)
+    if (SKUser.current!.student.primarySchool != null)
       setState(() {
-        eligibleSchools = [SKUser.current.student.primarySchool];
-        selectedPeriod = eligibleSchools.first.getBestCurrentPeriod();
+        eligibleSchools = [SKUser.current!.student.primarySchool!];
+        selectedPeriod = eligibleSchools!.first.getBestCurrentPeriod();
       });
   }
 
   void tappedPeriodSelect(TapUpDetails detail) {
     final now = DateTime.now();
 
-    final eligiblePeriods = eligibleSchools.first.periods == null
+    final eligiblePeriods = (eligibleSchools?.first.periods == null
         ? null
-        : eligibleSchools.first.periods.toList()
+        : eligibleSchools?.first.periods.toList())!
       ..removeWhere((period) => now.isAfter(period.endDate))
       ..sort(
         (period1, period2) {
           return period2.startDate != null
-              ? (period1.startDate?.compareTo(period2.startDate) ?? -1)
+              ? (period1.startDate.compareTo(period2.startDate) ?? -1)
               : 1;
         },
       );
@@ -90,27 +90,27 @@ class _PrimarySchoolState extends State<PrimarySchoolModal> {
     );
   }
 
-  void tappedSchoolSelect(TapUpDetails details) async {
+  void tappedSchoolSelect(TapUpDetails? details) async {
     if (selectedPeriod != null) {
       final loader = SKLoadingScreen.fadeIn(context);
-      await SKUser.current.update(primaryPeriod: selectedPeriod);
+      await SKUser.current!.update(primaryPeriod: selectedPeriod!);
       loader.fadeOut();
 
       Navigator.pop(context);
     } else if (selectedSchoolId != null) {
-      final school = eligibleSchools.firstWhere(
+      final school = eligibleSchools?.firstWhere(
           (school) => school.id == selectedSchoolId,
-          orElse: () => eligibleSchools.first);
+          orElse: () => eligibleSchools!.first);
 
-      await SKUser.current.update(primarySchool: school);
+      await SKUser.current!.update(primarySchool: school);
 
-      if (SKUser.current.student.primaryPeriod != null &&
-          SKUser.current.student.primarySchool != null)
+      if (SKUser.current!.student.primaryPeriod != null &&
+          SKUser.current!.student.primarySchool != null)
         Navigator.pop(context);
       else
         setState(() {
-          eligibleSchools = [SKUser.current.student.primarySchool];
-          selectedPeriod = eligibleSchools.first.getBestCurrentPeriod();
+          eligibleSchools = [SKUser.current!.student.primarySchool!];
+          selectedPeriod = eligibleSchools!.first.getBestCurrentPeriod();
         });
     }
   }
@@ -333,7 +333,7 @@ class _PrimarySchoolState extends State<PrimarySchoolModal> {
                     )
                   : GestureDetector(
                       onTapUp: (details) {
-                        if (eligibleSchools.length == 0) tappedSearch(null);
+                        if (eligibleSchools?.length == 0) tappedSearch(null);
                         setState(() => showingGreeting = false);
                       },
                       child: Container(
@@ -436,14 +436,14 @@ class _PrimarySchoolState extends State<PrimarySchoolModal> {
   }
 
   List<Widget> buildSingle() {
-    final school = eligibleSchools[0];
+    final school = eligibleSchools![0];
     final period = selectedPeriod;
 
     final formatter = DateFormat('MMMM');
     final start =
-        period?.startDate == null ? null : formatter.format(period.startDate);
+        period?.startDate == null ? null : formatter.format(period!.startDate);
     final end =
-        period?.endDate == null ? null : formatter.format(period.endDate);
+        period?.endDate == null ? null : formatter.format(period!.endDate);
 
     return [
       SammiSpeechBubble(
@@ -605,7 +605,7 @@ class _PrimarySchoolState extends State<PrimarySchoolModal> {
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    ...eligibleSchools
+                    ...eligibleSchools!
                         .map(
                           (school) => GestureDetector(
                             onTapUp: (details) =>

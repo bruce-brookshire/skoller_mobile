@@ -18,16 +18,16 @@ import 'dart:async';
 import 'dart:math';
 
 class AssignmentInfoView extends StatefulWidget {
-  final int assignmentId;
+  final int? assignmentId;
 
-  AssignmentInfoView({Key key, this.assignmentId}) : super(key: key);
+  AssignmentInfoView({Key? key, this.assignmentId}) : super(key: key);
 
   @override
   State createState() => _AssignmentInfoState();
 }
 
 class _AssignmentInfoState extends State<AssignmentInfoView> {
-  Assignment assignment;
+  Assignment? assignment;
   Map<int, List<Mod>> assignmentMods = {};
 
   final postFieldController = TextEditingController();
@@ -41,11 +41,11 @@ class _AssignmentInfoState extends State<AssignmentInfoView> {
 
     for (final mod in Mod.currentMods.values) {
       if (mod.modType != ModType.newAssignment &&
-          mod.parentAssignment?.id == assignment.id) {
+          mod.parentAssignment.id == assignment!.id) {
         if (assignmentMods[mod.modType.index] == null) {
           assignmentMods[mod.modType.index] = [];
         }
-        assignmentMods[mod.modType.index].add(mod);
+        assignmentMods[mod.modType.index]!.add(mod);
       }
     }
 
@@ -54,7 +54,7 @@ class _AssignmentInfoState extends State<AssignmentInfoView> {
     for (final key in assignmentMods.keys) {
       bool shouldRemove = true;
 
-      for (final mod in assignmentMods[key])
+      for (final mod in assignmentMods[key]!)
         if (mod.isAccepted == null) shouldRemove = false;
 
       if (shouldRemove) removalKeys.add(key);
@@ -66,7 +66,7 @@ class _AssignmentInfoState extends State<AssignmentInfoView> {
       channel: NotificationChannels.assignmentChanged,
       observer: this,
       onNotification: (_) => setState(
-        () => assignment = Assignment.currentAssignments[assignment.id],
+        () => assignment = Assignment.currentAssignments[assignment!.id],
       ),
     );
   }
@@ -82,17 +82,17 @@ class _AssignmentInfoState extends State<AssignmentInfoView> {
   }
 
   void toggleComplete() {
-    assignment.toggleComplete().then((success) {
+    assignment!.toggleComplete().then((success) {
       if (!success) {
         setState(() {
-          assignment.isCompleted = !assignment.isCompleted;
+          assignment!.isCompleted = !assignment!.isCompleted!;
         });
       } else
         DartNotificationCenter.post(
             channel: NotificationChannels.assignmentChanged);
     });
     setState(() {
-      assignment.isCompleted = !assignment.isCompleted;
+      assignment!.isCompleted = !assignment!.isCompleted!;
     });
   }
 
@@ -100,13 +100,13 @@ class _AssignmentInfoState extends State<AssignmentInfoView> {
         barrierDismissible: false,
         context: context,
         builder: (context) => AssignmentNotesModal(
-          assignment.id,
+          assignment!.id,
           (notes) {
-            assignment.saveNotes(notes == '' ? null : notes).then((success) {
+            assignment?.saveNotes(notes == '' ? null : notes).then((success) {
               if (success) {
                 setState(() {
-                  assignment.notes =
-                      Assignment.currentAssignments[assignment.id].notes;
+                  assignment!.notes =
+                      Assignment.currentAssignments[assignment!.id]!.notes;
                 });
               } else {
                 DropdownBanner.showBanner(
@@ -124,19 +124,19 @@ class _AssignmentInfoState extends State<AssignmentInfoView> {
     final results = await showDialog(
       context: context,
       barrierDismissible: false,
-      builder: (context) => _GradeSelection(assignment),
+      builder: (context) => _GradeSelection(assignment!),
     );
 
     if (results is _GradePickerResults) {
-      num gradeToSave;
+      late num gradeToSave;
 
       if (results.selectedSegment == 0) {
         String grade = results.numerator.trim();
         String basis = results.denominator.trim();
 
         if (grade.length != 0) {
-          int grade_num = int.tryParse(grade);
-          int basis_num = int.tryParse(basis == '' ? '100' : basis);
+          int grade_num = int.tryParse(grade)!;
+          int basis_num = int.tryParse(basis == '' ? '100' : basis)!;
 
           gradeToSave = (grade_num / basis_num) * 100;
         }
@@ -145,23 +145,23 @@ class _AssignmentInfoState extends State<AssignmentInfoView> {
       }
 
       if (gradeToSave != null) {
-        assignment.saveGrade(gradeToSave).then((response) {
+        assignment!.saveGrade(gradeToSave).then((response) {
           if (response.wasSuccessful()) {
-            setState(() => assignment.grade = response.obj.grade);
+            setState(() => assignment!.grade = response.obj.grade);
             DartNotificationCenter.post(
               channel: NotificationChannels.classChanged,
             );
           }
         });
-        setState(() => assignment.grade = gradeToSave);
+        setState(() => assignment!.grade = gradeToSave.toDouble());
       }
     }
   }
 
   void tappedRemoveGrade(TapUpDetails details) {
-    assignment.removeGrade().then((response) {
+    assignment!.removeGrade().then((response) {
       if (response.wasSuccessful()) {
-        setState(() => assignment.grade = null);
+        setState(() => assignment!.grade = null);
         DartNotificationCenter.post(channel: NotificationChannels.classChanged);
       }
     });
@@ -174,10 +174,10 @@ class _AssignmentInfoState extends State<AssignmentInfoView> {
     if (currentStr.length > 0) {
       postFieldController.clear();
 
-      assignment.savePost(currentStr).then((response) {
+      assignment!.savePost(currentStr).then((response) {
         if (response.wasSuccessful()) {
           setState(() {
-            assignment.posts.insert(0, response.obj);
+            assignment!.posts!.insert(0, response.obj);
           });
         } else {
           DropdownBanner.showBanner(
@@ -191,15 +191,15 @@ class _AssignmentInfoState extends State<AssignmentInfoView> {
   }
 
   void tappedToggleNotifications(bool enabled) {
-    assignment.togglePostNotifications().then((success) {
+    assignment!.togglePostNotifications().then((success) {
       if (!success) {
         setState(() {
-          assignment.isPostNotifications = !assignment.isPostNotifications;
+          assignment!.isPostNotifications = !assignment!.isPostNotifications;
         });
       }
     });
     setState(() {
-      assignment.isPostNotifications = !assignment.isPostNotifications;
+      assignment!.isPostNotifications = !assignment!.isPostNotifications;
     });
   }
 
@@ -207,7 +207,7 @@ class _AssignmentInfoState extends State<AssignmentInfoView> {
     final results = await showDialog(
         barrierDismissible: false,
         context: context,
-        builder: (context) => AssignmentEditModal(assignment.id));
+        builder: (context) => AssignmentEditModal(assignment!.id));
 
     if (results != null && results is List<Map>) {
       final loader = SKLoadingScreen.fadeIn(context);
@@ -231,7 +231,7 @@ class _AssignmentInfoState extends State<AssignmentInfoView> {
       DartNotificationCenter.post(
           channel: NotificationChannels.assignmentChanged);
 
-      bool response = await assignment.refetchSelf();
+      bool response = await assignment!.refetchSelf();
 
       if (response != null && response) {
         setState(() =>
@@ -249,10 +249,10 @@ class _AssignmentInfoState extends State<AssignmentInfoView> {
       startDate: DateTime.now(),
       onSave: (selectedDate, context) async {
         final loader = SKLoadingScreen.fadeIn(context);
-        final result = await assignment.addDueDate(selectedDate);
+        final result = await assignment!.addDueDate(selectedDate);
 
         if (result.wasSuccessful()) {
-          if (await assignment.refetchSelf())
+          if (await assignment!.refetchSelf())
             setState(() => assignment =
                 Assignment.currentAssignments[widget.assignmentId]);
 
@@ -320,7 +320,7 @@ class _AssignmentInfoState extends State<AssignmentInfoView> {
                   })
                   .map(
                     (c) => GestureDetector(
-                      onTapUp: (details) => tappedWithMods(c['mods'], context),
+                      onTapUp: (details) => tappedWithMods(c!['mods'] as List<Mod>, context),
                       child: Container(
                         margin: EdgeInsets.only(top: 4),
                         padding: EdgeInsets.symmetric(
@@ -340,14 +340,14 @@ class _AssignmentInfoState extends State<AssignmentInfoView> {
                               padding: EdgeInsets.all(3),
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(12),
-                                color: assignment.parentClass.getColor(),
+                                color: assignment!.parentClass.getColor(),
                               ),
-                              child: Image.asset(c['image']),
+                              child: Image.asset(c!['image'].toString()),
                             ),
                             Expanded(
                               child: Padding(
                                 padding: EdgeInsets.symmetric(horizontal: 6),
-                                child: Text(c['name']),
+                                child: Text(c['name'].toString()),
                               ),
                             ),
                             Image.asset(ImageNames.navArrowImages.right),
@@ -367,21 +367,21 @@ class _AssignmentInfoState extends State<AssignmentInfoView> {
   void tappedImpactExplanation(_) {
     showDialog(
       context: context,
-      builder: (context) => _SKImpactGraphDescriptionModal(assignment),
+      builder: (context) => _SKImpactGraphDescriptionModal(assignment!),
     );
   }
 
   @override
   Widget build(BuildContext context) {
     return SKNavView(
-      title: assignment.parentClass.name,
-      titleColor: assignment.parentClass.getColor(),
+      title: assignment!.parentClass.name!,
+      titleColor: assignment!.parentClass.getColor(),
       callbackTitle: () {
         Navigator.push(
           context,
           CupertinoPageRoute(
             builder: (context) =>
-                ClassDetailView(classId: assignment.parentClass.id),
+                ClassDetailView(classId: assignment!.parentClass.id),
             settings: RouteSettings(name: 'ClassDetailView'),
           ),
         );
@@ -446,15 +446,15 @@ class _AssignmentInfoState extends State<AssignmentInfoView> {
     final now = DateTime.now();
     final today = DateTime(now.year, now.month, now.day);
 
-    final days = assignment.due?.difference(today)?.inDays;
+    final days = assignment!.due!.difference(today).inDays;
 
-    if (assignment.weight_id == null)
+    if (assignment!.weight_id == null)
       weightDescr = 'Not graded';
-    else if (assignment.weight == null)
+    else if (assignment!.weight == null)
       weightDescr = '';
     else
       weightDescr =
-          '${NumberUtilities.formatWeightAsPercent(assignment.weight)} of your final grade';
+          '${NumberUtilities.formatWeightAsPercent(assignment!.weight)} of your final grade';
 
     if (days == null)
       dueDescr = '';
@@ -491,17 +491,17 @@ class _AssignmentInfoState extends State<AssignmentInfoView> {
               children: <Widget>[
                 Expanded(
                   child: Hero(
-                    tag: 'TaskName${assignment.id}',
+                    tag: 'TaskName${assignment!.id}',
                     child: Material(
                       type: MaterialType.transparency,
                       child: Text(
-                        assignment.name,
+                        assignment!.name,
                         // maxLines: 1,
                         // overflow: TextOverflow.ellipsis,
                         style: TextStyle(
                           fontSize: 17,
                           fontWeight: FontWeight.w800,
-                          color: assignment.parentClass.getColor(),
+                          color: assignment!.parentClass.getColor(),
                         ),
                       ),
                     ),
@@ -540,7 +540,7 @@ class _AssignmentInfoState extends State<AssignmentInfoView> {
                           color: SKColors.light_gray),
                     ),
                   ),
-                  assignment.due == null
+                  assignment!.due == null
                       ? GestureDetector(
                           onTapUp: tappedAddDueDate,
                           child: Container(
@@ -554,7 +554,7 @@ class _AssignmentInfoState extends State<AssignmentInfoView> {
                       : Container(
                           margin: EdgeInsets.only(left: 12, right: 12),
                           child: Text(
-                            DateFormat('EEEE, MMMM d').format(assignment.due),
+                            DateFormat('EEEE, MMMM d').format(assignment!.due!),
                           ),
                         ),
                 ],
@@ -612,8 +612,8 @@ class _AssignmentInfoState extends State<AssignmentInfoView> {
                     ),
                   ),
                   SKAssignmentImpactGraph(
-                    assignment.weight,
-                    assignment.parentClass.getColor(),
+                    assignment!.weight,
+                    assignment!.parentClass.getColor(),
                   ),
                 ],
               ),
@@ -632,12 +632,12 @@ class _AssignmentInfoState extends State<AssignmentInfoView> {
     List<Widget> gradeElems = [
       _GradeShakeAnimation(
         onTap: tappedGradeSelector,
-        text: assignment.grade == null ? '--%' : '${assignment.grade}%',
-        isAlert: assignment.grade == null && assignment.isCompleted,
+        text: assignment!.grade == null ? '--%' : '${assignment!.grade}%',
+        isAlert: assignment!.grade == null && assignment!.isCompleted!,
       )
     ];
 
-    if (assignment.grade != null)
+    if (assignment!.grade != null)
       gradeElems.add(
         GestureDetector(
           onTapUp: tappedRemoveGrade,
@@ -685,11 +685,11 @@ class _AssignmentInfoState extends State<AssignmentInfoView> {
                     ),
                   ),
                 ),
-                if (assignment.due != null) ...[
+                if (assignment!.due != null) ...[
                   Padding(
                     padding: EdgeInsets.only(top: 2),
                     child: Text(
-                      assignment.isCompleted ? 'Completed' : 'Not completed',
+                      assignment!.isCompleted! ? 'Completed' : 'Not completed',
                       style: TextStyle(
                           color: SKColors.light_gray,
                           fontWeight: FontWeight.normal,
@@ -697,7 +697,7 @@ class _AssignmentInfoState extends State<AssignmentInfoView> {
                     ),
                   ),
                   Switch(
-                    value: assignment.isCompleted ?? true,
+                    value: assignment!.isCompleted ?? true,
                     activeColor: SKColors.skoller_blue,
                     onChanged: (val) {
                       toggleComplete();
@@ -754,10 +754,10 @@ class _AssignmentInfoState extends State<AssignmentInfoView> {
   }
 
   Widget buildJobView() {
-    final student = SKUser.current.student;
+    final student = SKUser.current!.student;
 
-    void Function(TapUpDetails) action;
-    String prompt;
+    void Function(TapUpDetails)? action;
+    late String prompt;
     int level = 3;
 
     if ((student.fieldsOfStudy ?? []).length == 0) {
@@ -788,7 +788,7 @@ class _AssignmentInfoState extends State<AssignmentInfoView> {
             items: years,
             onSelect: (index) async {
               final loader = SKLoadingScreen.fadeIn(context);
-              await SKUser.current.update(gradYear: years[index]);
+              await SKUser.current!.update(gradYear: years[index]);
               loader.fadeOut();
               setState(() {});
             },
@@ -813,7 +813,7 @@ class _AssignmentInfoState extends State<AssignmentInfoView> {
               items: degrees.map((d) => d.name).toList(),
               onSelect: (index) async {
                 final loader = SKLoadingScreen.fadeIn(context);
-                await SKUser.current.update(degreeType: degrees[index]);
+                await SKUser.current!.update(degreeType: degrees[index]);
                 loader.fadeOut();
                 setState(() {});
               },
@@ -885,15 +885,15 @@ class _AssignmentInfoState extends State<AssignmentInfoView> {
               child: GestureDetector(
                 behavior: HitTestBehavior.opaque,
                 onTapUp: (_) =>
-                    Share.share(assignment.parentClass.shareMessage),
+                    Share.share(assignment!.parentClass.shareMessage),
                 child: Container(
                   padding: EdgeInsets.symmetric(vertical: 6, horizontal: 24),
                   decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(5),
                       boxShadow: UIAssets.boxShadow,
-                      color: assignment.parentClass.getColor()),
+                      color: assignment!.parentClass.getColor()),
                   child: Text(
-                    assignment.parentClass.enrollmentLink.split("//")[1],
+                    assignment!.parentClass.enrollmentLink.split("//")[1],
                     style: TextStyle(color: Colors.white),
                   ),
                 ),
@@ -911,7 +911,7 @@ class _AssignmentInfoState extends State<AssignmentInfoView> {
                     ),
                     TextSpan(
                       text:
-                          ' for classmates\nin ${assignment.parentClass.name} to join Skoller',
+                          ' for classmates\nin ${assignment!.parentClass.name} to join Skoller',
                     )
                   ],
                   style: TextStyle(
@@ -1208,7 +1208,7 @@ class _GradeSelectionState extends State<_GradeSelection> {
                     Text('Percentage', style: TextStyle(fontSize: 14))
                   ],
                 ),
-                onValueChanged: (newKey) {
+                onValueChanged: (int newKey) {
                   setState(() {
                     results.selectedSegment = newKey;
                   });
@@ -1227,8 +1227,8 @@ class _GradeSelectionState extends State<_GradeSelection> {
 }
 
 class _GradeShakeAnimation extends StatefulWidget {
-  final VoidCallback onTap;
-  final String text;
+  final VoidCallback? onTap;
+  final String? text;
   final bool isAlert;
 
   _GradeShakeAnimation({this.onTap, this.text, this.isAlert = false})
@@ -1240,8 +1240,8 @@ class _GradeShakeAnimation extends StatefulWidget {
 
 class _GradeShakeAnimationState extends State<_GradeShakeAnimation>
     with SingleTickerProviderStateMixin {
-  AnimationController _controller;
-  Animation _animation;
+  late AnimationController _controller;
+  late Animation _animation;
 
   @override
   void initState() {
@@ -1289,13 +1289,13 @@ class _GradeShakeAnimationState extends State<_GradeShakeAnimation>
       angle: translation,
       alignment: Alignment.center,
       child: GestureDetector(
-        onTapUp: (details) => widget.onTap(),
+        onTapUp: (details) => widget.onTap!(),
         child: Container(
           // color: Colors.red,
           alignment: Alignment.center,
           padding: EdgeInsets.symmetric(horizontal: 5, vertical: 4),
           child: Text(
-            widget.text,
+            widget.text!,
             style: TextStyle(
               color:
                   widget.isAlert ? SKColors.warning_red : SKColors.skoller_blue,
@@ -1346,9 +1346,9 @@ class _SKImpactGraphDescriptionModal extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
-                Text(e[0], style: TextStyle(color: textColor)),
+                Text(e[0].toString(), style: TextStyle(color: textColor)),
                 Text(
-                  e[1],
+                  e[1].toString(),
                   style: TextStyle(
                     fontWeight: FontWeight.normal,
                     fontSize: 12,
@@ -1358,7 +1358,7 @@ class _SKImpactGraphDescriptionModal extends StatelessWidget {
               ],
             ),
             SKAssignmentImpactGraph.byLevel(
-              e[2],
+              e[2] as ImpactLevel,
               parentClass.getColor(),
               ImpactGraphSize.small,
             ),

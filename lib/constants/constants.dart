@@ -78,7 +78,7 @@ class UIAssets {
       blurRadius: 3.5,
     )
   ];
-  static String versionNumber;
+  static String? versionNumber='';
 }
 
 class ClassStatuses {

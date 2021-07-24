@@ -20,7 +20,7 @@ class MajorSelectorState extends State<MajorSelector> {
   @override
   void initState() {
     super.initState();
-    (SKUser.current.student.fieldsOfStudy ?? [])
+    (SKUser.current!.student.fieldsOfStudy ?? [])
         .forEach((f) => selectedFields[f.id] = f);
   }
 
@@ -28,7 +28,7 @@ class MajorSelectorState extends State<MajorSelector> {
     final searchText = search.trim().toLowerCase();
 
     if (searchText == '')
-      searchedFields = SKUser.current.student.fieldsOfStudy ?? [];
+      searchedFields = SKUser.current!.student.fieldsOfStudy ?? [];
     else {
       final searcher = (String key) => widget.availableFields
           .toList()
@@ -48,7 +48,7 @@ class MajorSelectorState extends State<MajorSelector> {
 
       for (final field in searched) {
         if (ranker.containsKey(field))
-          ranker[field] += 1;
+          ranker[field] = ranker[field]! + 1;
         else
           ranker[field] = 1;
       }
@@ -63,10 +63,10 @@ class MajorSelectorState extends State<MajorSelector> {
     setState(() {});
   }
 
-  void tappedSave(TapUpDetails details) async {
+  void tappedSave(TapUpDetails? details) async {
     final loader = SKLoadingScreen.fadeIn(context);
 
-    final success = await SKUser.current.update(
+    final success = await SKUser.current!.update(
       fieldsOfStudy: selectedFields.keys.toList(),
     );
 
@@ -89,7 +89,7 @@ class MajorSelectorState extends State<MajorSelector> {
   }
 
   void tappedDismiss(TapUpDetails details) async {
-    final fos = SKUser.current.student.fieldsOfStudy ?? [];
+    final fos = SKUser.current!.student.fieldsOfStudy ?? [];
     if (fos.length == selectedFields.length &&
         !fos.any((f) => selectedFields[f.id] == null)) {
       Navigator.pop(context);

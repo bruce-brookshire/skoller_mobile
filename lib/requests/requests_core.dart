@@ -1,6 +1,7 @@
 library requests_core;
 
 import 'package:dart_notification_center/dart_notification_center.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:skoller/screens/main_app/menu/profile_link_sharing_view.dart';
 import '../screens/main_app/menu/rewards_view.dart';
@@ -9,7 +10,6 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:dropdown_banner/dropdown_banner.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:flutter_apns/apns_connector.dart';
 import 'package:package_info/package_info.dart';
 import 'package:http_parser/http_parser.dart';
 import '../constants/timezone_manager.dart';
@@ -36,14 +36,14 @@ const bool isProd = false;
 const bool isLocal = false;
 
 class RequestResponse<T> {
-  int status;
+  int? status;
   dynamic obj;
-  String _errorMsg;
+  String? _errorMsg;
 
   RequestResponse(
     int status,
     dynamic context, {
-    _DecodableConstructor<T> constructor,
+    _DecodableConstructor<T>? constructor,
   }) {
     if (status == 200 || status == 204) {
       if (constructor != null && context != null) {
@@ -78,7 +78,7 @@ class JsonListMaker {
       content.map<T>((obj) => maker(obj)).toList();
 }
 
-DateTime _dateParser(String date) => date == null ? null : DateTime.parse(date);
+DateTime? _dateParser(String date) => date == null ? null : DateTime.parse(date);
 
 class SKRequests {
   static const String _environment = isProd
@@ -95,10 +95,10 @@ class SKRequests {
 
   static Future<RequestResponse> get<T>(
     String url,
-    _DecodableConstructor<T> construct, {
+    _DecodableConstructor<T>? construct, {
     bool cacheResult = false,
-    String cachePath,
-    VoidCallback postRequestAction,
+    String? cachePath,
+    VoidCallback? postRequestAction,
   }) async {
     //Whether or not we need to remove the request entry in the request map
     bool shouldRemove = false;
@@ -109,12 +109,12 @@ class SKRequests {
       shouldRemove = true;
       //Create request
       _currentRequests[url] = http.get(
-        _baseUrl + url,
+        Uri.parse(_baseUrl + url),
         headers: _headers,
       );
     }
     //Construct and start request
-    http.Response request = await _currentRequests[url];
+    http.Response request = await _currentRequests[url]!;
 
     //Remove request entry if we have ownership
     if (shouldRemove) {
@@ -124,11 +124,11 @@ class SKRequests {
     }
 
     //Handle request and return future
-    final result = await futureProcessor<T>(request, construct);
+    final result = await futureProcessor<T>(request, construct!);
 
     //Cache result if we are supposed to
     if (cacheResult && result.wasSuccessful())
-      SKCacheManager.writeContents(cachePath, request.body);
+      SKCacheManager.writeContents(cachePath!, request.body);
 
     //Return result
     return result;
@@ -137,41 +137,41 @@ class SKRequests {
   static Future<http.Response> rawGetRequest<T>(String url) {
     // Construct and start request
     return http.get(
-      _baseUrl + url,
+      Uri.parse(_baseUrl + url),
       headers: _headers,
     );
   }
 
   static Future<RequestResponse> post<T>(
     String url,
-    Map body,
-    _DecodableConstructor<T> constructor,
+    Map? body,
+    _DecodableConstructor<T>? constructor,
   ) async {
     // Construct and start request
     http.Response request = await http.post(
-      _baseUrl + url,
+      Uri.parse(_baseUrl + url),
       body: json.encode(body),
       headers: _headers,
     );
 
     // Handle request and return future
-    return futureProcessor<T>(request, constructor);
+    return futureProcessor<T>(request, constructor!);
   }
 
   static Future<RequestResponse> put<T>(
     String url,
     Map body,
-    _DecodableConstructor<T> constructor,
+    _DecodableConstructor<T>? constructor,
   ) async {
     // Construct and start request
     http.Response request = await http.put(
-      _baseUrl + url,
+      Uri.parse(_baseUrl + url),
       body: json.encode(body),
       headers: _headers,
     );
 
     // Handle request and return future
-    return futureProcessor<T>(request, constructor);
+    return futureProcessor<T>(request, constructor!);
   }
 
   static Future<int> delete(
@@ -180,7 +180,7 @@ class SKRequests {
   ) async {
     // Construct and start request
     http.Response request = await http.delete(
-      _baseUrl + url,
+      Uri.parse(_baseUrl + url),
       headers: _headers,
     );
 
@@ -209,7 +209,7 @@ class SKRequests {
 }
 
 class SKCacheManager {
-  static Future<void> classesLoader;
+  static Future<void>? classesLoader;
 
   static Future<String> get _homePath async {
     final directory = await getTemporaryDirectory();

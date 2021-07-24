@@ -49,7 +49,7 @@ class _SignInState extends State<SignIn> {
       if (result is bool && result) {
         Session.startSession();
         await StudentClass.getStudentClasses();
-        SKUser.current.getJobProfile();
+        SKUser.current!.getJobProfile();
 
         Navigator.popUntil(context, (route) => route.isFirst);
         DartNotificationCenter.post(
@@ -70,7 +70,7 @@ class _SignInState extends State<SignIn> {
           textStyle: TextStyle(color: Colors.white));
   }
 
-  void tappedSignUp(TapUpDetails details) {
+  void tappedSignUp(TapUpDetails? details) {
     Navigator.pushReplacement(
       context,
       CupertinoPageRoute(

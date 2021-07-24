@@ -10,9 +10,9 @@ import 'assignment_info_view.dart';
 import 'assignment_weight_view.dart';
 
 class ClassDetailView extends StatefulWidget {
-  final int classId;
+  final int? classId;
 
-  ClassDetailView({Key key, this.classId}) : super(key: key);
+  ClassDetailView({Key? key, this.classId}) : super(key: key);
 
   @override
   State<StatefulWidget> createState() => _ClassDetailState();
@@ -85,23 +85,23 @@ class _ClassDetailState extends State<ClassDetailView> {
     for (final Weight weight in studentClass?.weights ?? [])
       if (weightDensity[weight.id] == null) weightsWithoutAssignments += 1;
 
-    final assignments = studentClass.assignments;
+    final assignments = studentClass!.assignments;
 
-    final items = assignments
-        .map((a) => _AssignmentLikeItem(a.id, false, a.due))
+    final items = assignments!
+        .map((a) => _AssignmentLikeItem(a.id, false, a.due!))
         .toList();
 
     final newAssignmentMods = Mod.currentMods.values
         .where((m) =>
             m.modType == ModType.newAssignment &&
             m.parentClass.id == studentClass.id)
-        .map((m) => _AssignmentLikeItem(m.id, true, (m.data as Assignment).due))
+        .map((m) => _AssignmentLikeItem(m.id, true, (m.data as Assignment).due!))
         .toList();
 
     items
       ..addAll(newAssignmentMods)
       ..sort(
-        (t1, t2) => t2.due == null ? 1 : (t1.due?.compareTo(t2.due) ?? -1),
+        (t1, t2) => t2.due == null ? 1 : (t1.due.compareTo(t2.due) ?? -1),
       );
 
     this.items = items;
@@ -114,7 +114,7 @@ class _ClassDetailState extends State<ClassDetailView> {
     final studentClass = StudentClass.currentClasses[widget.classId];
 
     if (studentClass == null) {
-      WidgetsBinding.instance
+      WidgetsBinding.instance!
           .addPostFrameCallback((_) => Navigator.pop(context));
       return Scaffold(backgroundColor: Colors.white);
     }
@@ -196,7 +196,7 @@ class _ClassDetailState extends State<ClassDetailView> {
                                   child: Material(
                                     type: MaterialType.transparency,
                                     child: Text(
-                                      studentClass.name,
+                                      studentClass.name!,
                                       textAlign: TextAlign.left,
                                       maxLines: 1,
                                       // minFontSize: 10,
@@ -245,7 +245,7 @@ class _ClassDetailState extends State<ClassDetailView> {
                                 options: ClassMenuModal(studentClass.id),
                               ),
                           onVerticalDragEnd: (details) {
-                            if (details.primaryVelocity > 0)
+                            if (details.primaryVelocity! > 0)
                               DartNotificationCenter.post(
                                 channel: NotificationChannels
                                     .presentModalViewOverTabBar,
@@ -347,7 +347,7 @@ class _AssignmentCellState extends State<_AssignmentCell> {
       final mods = Mod.modsByAssignmentId[assignment.id];
 
       if ((mods ?? []).length > 0)
-        return createModCard(mods, assignment);
+        return createModCard(mods!, assignment);
       else
         return createAssignmentCard(assignment);
     }
@@ -355,7 +355,7 @@ class _AssignmentCellState extends State<_AssignmentCell> {
 
   Widget createNewAssignmentCard() {
     final mod = Mod.currentMods[widget.item.id];
-    final task = mod.data;
+    final task = mod!.data;
 
     return GestureDetector(
       onTapUp: (details) {
@@ -498,7 +498,7 @@ class _AssignmentCellState extends State<_AssignmentCell> {
   }
 
   Widget createAssignmentCard(Assignment assignment) {
-    final isPromptGrade = assignment.isCompleted && assignment.grade == null;
+    final isPromptGrade = assignment.isCompleted! && assignment.grade == null;
 
     final gradeSquare = isPromptGrade
         ? Container(
@@ -523,7 +523,7 @@ class _AssignmentCellState extends State<_AssignmentCell> {
             alignment: Alignment.center,
             decoration: BoxDecoration(
               color: assignment.grade == null
-                  ? (assignment.isCompleted
+                  ? (assignment.isCompleted!
                       ? Colors.white
                       : SKColors.light_gray)
                   : widget.classColor,
@@ -538,7 +538,7 @@ class _AssignmentCellState extends State<_AssignmentCell> {
             child: Text(
               assignment.grade == null
                   ? '--'
-                  : '${(assignment.grade).round()}%',
+                  : '${(assignment.grade)!.round()}%',
               textScaleFactor: 1,
               style: TextStyle(
                   color: isPromptGrade ? SKColors.warning_red : Colors.white,
@@ -608,7 +608,7 @@ class _AssignmentCellState extends State<_AssignmentCell> {
                             assignment.due == null
                                 ? 'Add due date'
                                 : DateUtilities.getFutureRelativeString(
-                                    assignment.due),
+                                    assignment.due!),
                             textScaleFactor: 1,
                             style: TextStyle(
                                 fontSize: 13,
@@ -643,41 +643,41 @@ class _DownArrowArrowAnimation extends StatefulWidget {
 
 class _DownArrowArrowAnimationState extends State<_DownArrowArrowAnimation>
     with SingleTickerProviderStateMixin {
-  AnimationController controller;
-  Animation animation;
+  AnimationController? controller;
+  Animation? animation;
 
   @override
   void initState() {
     controller =
         AnimationController(vsync: this, duration: Duration(seconds: 2));
 
-    animation = Tween<double>(begin: 0, end: 3).animate(controller)
+    animation = Tween<double>(begin: 0, end: 3).animate(controller!)
       ..addListener(() => setState(() {}))
       ..addStatusListener((status) {
         if (status == AnimationStatus.completed && mounted)
           Timer(Duration(seconds: 6), () {
-            if (mounted) controller.forward(from: 0);
+            if (mounted) controller!.forward(from: 0);
           });
       });
 
-    controller.forward();
+    controller!.forward();
 
     super.initState();
   }
 
   @override
   void dispose() {
-    controller.dispose();
+    controller!.dispose();
 
     super.dispose();
   }
 
-  double get translation => 5 * ((1 / ((animation.value + 0.85) / 2)) - 0.515);
+  double get translation => 5 * ((1 / ((animation!.value + 0.85) / 2)) - 0.515);
 
   @override
   Widget build(BuildContext context) {
     return Opacity(
-      opacity: animation.value / 3,
+      opacity: animation!.value / 3,
       child: Container(
         alignment: Alignment.center,
         height: 25,

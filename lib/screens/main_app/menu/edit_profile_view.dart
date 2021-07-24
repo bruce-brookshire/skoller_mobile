@@ -13,12 +13,12 @@ class EditProfileView extends StatefulWidget {
 
 class _EditProfileState extends State<EditProfileView> {
   final firstNameController =
-      TextEditingController(text: SKUser.current.student.nameFirst);
+      TextEditingController(text: SKUser.current!.student.nameFirst);
   final lastNameController =
-      TextEditingController(text: SKUser.current.student.nameLast);
-  final bioController = TextEditingController(text: SKUser.current.student.bio);
+      TextEditingController(text: SKUser.current!.student.nameLast);
+  final bioController = TextEditingController(text: SKUser.current!.student.bio);
   final organizationsController =
-      TextEditingController(text: SKUser.current.student.organizations);
+      TextEditingController(text: SKUser.current!.student.organizations);
 
   @override
   void initState() {
@@ -49,7 +49,7 @@ class _EditProfileState extends State<EditProfileView> {
     final organizations = organizationsController.text.trim();
 
     if (firstName.length > 0 && lastName.length > 0) {
-      SKUser.current
+      SKUser.current!
           .update(
         firstName: firstName,
         lastName: lastName,
@@ -108,13 +108,13 @@ class _EditProfileState extends State<EditProfileView> {
             ),
             onPressed: () async {
               final loader = SKLoadingScreen.fadeIn(context);
-              bool success = await SKUser.current.delete();
+              bool success = await SKUser.current!.delete();
               if (success) {
                 await Auth.logOut();
                 loader.fadeOut();
                 Navigator.pop(context);
                 Navigator.popUntil(
-                    this.context, (route) => route.settings.isInitialRoute);
+                    this.context, (route) => route.settings.name=='/');
 
                 DropdownBanner.showBanner(
                   text:
@@ -179,11 +179,14 @@ class _EditProfileState extends State<EditProfileView> {
                 alignment: Alignment.center,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  image: DecorationImage(
+                  image:SKUser.current?.avatarUrl == null? DecorationImage(
                     fit: BoxFit.fill,
-                    image: SKUser.current?.avatarUrl == null
-                        ? AssetImage(ImageNames.peopleImages.static_profile)
-                        : NetworkImage(SKUser.current.avatarUrl),
+                    image: AssetImage(ImageNames.peopleImages.static_profile),
+                    colorFilter: ColorFilter.mode(
+                        Colors.black.withOpacity(0.4), BlendMode.darken),
+                  ):DecorationImage(
+                    fit: BoxFit.fill,
+                    image: NetworkImage(SKUser.current?.avatarUrl??''),
                     colorFilter: ColorFilter.mode(
                         Colors.black.withOpacity(0.4), BlendMode.darken),
                   ),

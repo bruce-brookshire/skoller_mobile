@@ -20,7 +20,7 @@ class TodoView extends StatefulWidget {
 }
 
 class _TodoState extends State<TodoView> {
-  List<_TaskLikeItem> _taskItems = null;
+  late List<_TaskLikeItem> _taskItems;
   List<int> _datelessAssignments = [];
 
   int numberCompleted = 0;
@@ -68,13 +68,13 @@ class _TodoState extends State<TodoView> {
   Future loadTasks([dynamic options]) async {
     Future<RequestResponse> modsRequest = Mod.fetchNewAssignmentMods();
 
-    final student = SKUser.current.student;
+    final student = SKUser.current!.student;
 
     final now = DateTime.now();
     final today = DateTime(now.year, now.month, now.day);
 
-    final overdueDate = today.subtract(Duration(days: student.todoDaysPast));
-    final outlookDate = today.add(Duration(days: student.todoDaysFuture));
+    final overdueDate = today.subtract(Duration(days: student.todoDaysPast!));
+    final outlookDate = today.add(Duration(days: student.todoDaysFuture!));
 
     int minDaysOutCompleted = 1000;
     bool newCompletedTasksAvailable = false;
@@ -85,9 +85,9 @@ class _TodoState extends State<TodoView> {
           ..removeWhere((a) =>
               (a.due?.isBefore(overdueDate) ?? true) || a.parentClass == null)
           ..removeWhere((a) {
-            if (a.isCompleted) {
+            if (a.isCompleted!) {
               newCompletedTasksAvailable = true;
-              int daysOut = a.due.difference(today).inDays;
+              int daysOut = a.due!.difference(today).inDays;
 
               if (daysOut >= 0) {
                 ++numberCompleted;
@@ -98,16 +98,16 @@ class _TodoState extends State<TodoView> {
             }
             // Remove if we are not showing completed tasks and the task is completed,
             // OR if we are showing completed tasks and the task's due date is before today
-            return a.isCompleted &&
-                (!showingCompletedTasks || a.due.isBefore(today));
+            return a.isCompleted! &&
+                (!showingCompletedTasks || a.due!.isBefore(today));
           }))
-        .map((a) => _TaskLikeItem(a.id, false, a.due))
+        .map((a) => _TaskLikeItem(a.id, false, a.due!))
         .toList();
 
     // If there are tasks that are completed before its due date, show the
     // 'view completed assignments' button
     if (newCompletedTasksAvailable &&
-        minDaysOutCompleted > student.todoDaysFuture)
+        minDaysOutCompleted > student.todoDaysFuture!)
       newCompletedTasksAvailable = false;
 
     // Fetch mods
@@ -166,7 +166,7 @@ class _TodoState extends State<TodoView> {
 
     classes
       ..sort((class1, class2) {
-        return class1.name.compareTo(class2.name);
+        return class1.name!.compareTo(class2.name!);
       })
       ..removeWhere((studentClass) => (studentClass.weights ?? []).length == 0);
 
@@ -177,7 +177,7 @@ class _TodoState extends State<TodoView> {
       builder: (context) => SKPickerModal(
         title: 'Add Assignment',
         subtitle: 'Select a class',
-        items: classes.map((cl) => cl.name).toList(),
+        items: classes.map((cl) => cl.name!).toList(),
         onSelect: (newIndex) => selectedIndex = newIndex,
         onOptionChildTapped: () => DartNotificationCenter.post(
             channel: NotificationChannels.presentViewOverTabBar,
@@ -296,7 +296,7 @@ class _TodoState extends State<TodoView> {
             ),
           );
 
-    final todoDaysFuture = SKUser.current.student.todoDaysFuture;
+    final todoDaysFuture = SKUser.current!.student.todoDaysFuture;
 
     return SKNavView(
       title: 'To-Do\'s',
@@ -316,13 +316,13 @@ class _TodoState extends State<TodoView> {
               children: [
                 ListView.builder(
                   padding: EdgeInsets.only(top: 4, bottom: 64),
-                  itemCount: (_taskItems?.length ?? 0) == 0
+                  itemCount: (_taskItems.length ?? 0) == 0
                       ? _taskItems == null ? 1 : 2
                       : (_taskItems.length + (completedTasksAvailable ? 2 : 1)),
                   itemBuilder: (context, index) {
                     if (index == 0)
                       return createSammiPrompt(
-                          setupSecondClass, todoDaysFuture);
+                          setupSecondClass, todoDaysFuture!);
                     else if (index <= _taskItems.length)
                       return _TodoRow(
                         item: _taskItems[index - 1],
@@ -416,7 +416,7 @@ class _TodoState extends State<TodoView> {
 
   Widget createSammiPrompt(bool setupSecondClass, int todoDaysFuture) {
     final day = DateFormat('EEEE').format(DateTime.now());
-    final assignments = _taskItems?.length ?? 0;
+    final assignments = _taskItems.length ?? 0;
 
     Widget sammiBody;
 
@@ -453,7 +453,7 @@ class _TodoState extends State<TodoView> {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
           Text(
-            'Happy $day, ${SKUser.current.student.nameFirst}!',
+            'Happy $day, ${SKUser.current!.student.nameFirst}!',
             style: TextStyle(fontSize: 17),
           ),
           Padding(
@@ -513,9 +513,9 @@ class _TaskLikeItem {
 }
 
 class _TodoRow extends StatefulWidget {
-  final _TaskLikeItem item;
-  final AssignmentCallback onCompleted;
-  final bool showingCompleted;
+  final _TaskLikeItem? item;
+  final AssignmentCallback? onCompleted;
+  final bool? showingCompleted;
 
   _TodoRow({this.item, this.onCompleted, this.showingCompleted});
 
@@ -529,20 +529,20 @@ class _TodoRowState extends State<_TodoRow> {
 
   @override
   Widget build(BuildContext context) =>
-      widget.item.isMod ? buildModCell() : buildTaskCell();
+      widget.item!.isMod ? buildModCell() : buildTaskCell();
 
   Widget buildTaskCell() {
-    final Assignment task = widget.item.getParent;
+    final Assignment task = widget.item!.getParent;
 
     final mods = Mod.modsByAssignmentId[task.id];
 
     final now = DateTime.now();
     final today = DateTime(now.year, now.month, now.day);
-    final isOverdue = task.due.isBefore(today);
+    final isOverdue = task.due!.isBefore(today);
 
     if ((mods ?? []).length > 0)
-      return buildTaskUpdatesCell(task, mods);
-    else if (task.isCompleted)
+      return buildTaskUpdatesCell(task, mods!);
+    else if (task.isCompleted!)
       return buildTaskCompletedCell(task);
     else if (isOverdue)
       return buildTaskOverdueCell(task);
@@ -551,7 +551,7 @@ class _TodoRowState extends State<_TodoRow> {
   }
 
   Widget buildModCell() {
-    final Mod mod = widget.item.getParent;
+    final Mod mod = widget.item!.getParent;
     final task = mod.data;
 
     return GestureDetector(
@@ -716,7 +716,7 @@ class _TodoRowState extends State<_TodoRow> {
           children: [
             GestureDetector(
               behavior: HitTestBehavior.opaque,
-              onTapUp: (_) => widget.onCompleted(task),
+              onTapUp: (_) => widget.onCompleted!(task),
               child: Container(
                 margin:
                     EdgeInsets.only(right: 8, top: 18, bottom: 18, left: 12),
@@ -806,7 +806,7 @@ class _TodoRowState extends State<_TodoRow> {
             children: <Widget>[
               GestureDetector(
                 behavior: HitTestBehavior.opaque,
-                onTapUp: (_) => widget.onCompleted(task),
+                onTapUp: (_) => widget.onCompleted!(task),
                 child: Container(
                   child: Container(
                     margin: EdgeInsets.only(
@@ -833,7 +833,7 @@ class _TodoRowState extends State<_TodoRow> {
                         child: Material(
                           type: MaterialType.transparency,
                           child: Text(
-                            task?.name ?? 'N/A',
+                            task.name ?? 'N/A',
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                             style: TextStyle(
@@ -848,7 +848,7 @@ class _TodoRowState extends State<_TodoRow> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
                         Text(
-                          DateUtilities.getPastRelativeString(task.due),
+                          DateUtilities.getPastRelativeString(task.due!),
                           style: TextStyle(
                               fontSize: 12,
                               fontWeight: FontWeight.w700,
@@ -856,7 +856,7 @@ class _TodoRowState extends State<_TodoRow> {
                         ),
                         Expanded(
                           child: Text(
-                            task?.parentClass?.name ?? 'N/A',
+                            task.parentClass.name ?? 'N/A',
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                             textAlign: TextAlign.right,
@@ -918,8 +918,8 @@ class _TodoRowState extends State<_TodoRow> {
                 GestureDetector(
                   behavior: HitTestBehavior.opaque,
                   onTapUp: (_) {
-                    if (widget.showingCompleted)
-                      widget.onCompleted(task);
+                    if (widget.showingCompleted!)
+                      widget.onCompleted!(task);
                     else {
                       setState(() {
                         isChecked = true;
@@ -927,7 +927,7 @@ class _TodoRowState extends State<_TodoRow> {
                       Timer(
                         Duration(milliseconds: 800),
                         () {
-                          widget.onCompleted(task);
+                          widget.onCompleted!(task);
                           setState(() {
                             isChecked = false;
                           });
@@ -985,13 +985,13 @@ class _TodoRowState extends State<_TodoRow> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
                           Text(
-                            DateUtilities.getFutureRelativeString(task.due),
+                            DateUtilities.getFutureRelativeString(task.due!),
                             style: TextStyle(
                                 fontSize: 12, fontWeight: FontWeight.w700),
                           ),
                           Expanded(
                             child: Text(
-                              task?.parentClass?.name ?? 'N/A',
+                              task.parentClass.name ?? 'N/A',
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                               textAlign: TextAlign.right,

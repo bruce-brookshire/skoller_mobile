@@ -7,18 +7,18 @@ import 'package:intl/intl.dart';
 
 class AssignmentAddView extends StatefulWidget {
   final int class_id;
-  final Weight weight;
+  final Weight? weight;
 
-  AssignmentAddView(this.class_id, this.weight, {Key key}) : super(key: key);
+  AssignmentAddView(this.class_id, this.weight, {Key? key}) : super(key: key);
 
   @override
   State createState() => _AssignmentAddState();
 }
 
 class _AssignmentAddState extends State<AssignmentAddView> {
-  DateTime dueDate;
+  DateTime? dueDate;
 
-  String assignmentName;
+  String? assignmentName;
 
   bool isPrivate = false;
 
@@ -47,7 +47,7 @@ class _AssignmentAddState extends State<AssignmentAddView> {
     final studentClass = StudentClass.currentClasses[widget.class_id];
 
     return SKNavView(
-      title: studentClass.name,
+      title: studentClass!.name!,
       titleColor: studentClass.getColor(),
       children: <Widget>[
         createInfoContainer(),
@@ -96,7 +96,7 @@ class _AssignmentAddState extends State<AssignmentAddView> {
                         TextSpan(
                             text: widget.weight == null
                                 ? 'Not graded'
-                                : widget.weight.name,
+                                : widget.weight?.name,
                             style: TextStyle(
                                 fontWeight: FontWeight.bold, fontSize: 15)),
                       ],
@@ -146,7 +146,7 @@ class _AssignmentAddState extends State<AssignmentAddView> {
                     child: Text(
                       dueDate == null
                           ? 'Select date'
-                          : DateFormat('EEE, MMMM d').format(dueDate),
+                          : DateFormat('EEE, MMMM d').format(dueDate!),
                       style:
                           TextStyle(fontSize: 15, color: SKColors.skoller_blue),
                     ),
@@ -175,14 +175,14 @@ class _AssignmentAddState extends State<AssignmentAddView> {
               if (isValid) {
                 final loadingScreen = SKLoadingScreen.fadeIn(context);
 
-                StudentClass.currentClasses[widget.class_id]
+                StudentClass.currentClasses[widget.class_id]!
                     .createAssignment(
-                        assignmentName, widget.weight, dueDate, isPrivate)
+                        assignmentName!, widget.weight!, dueDate!, isPrivate)
                     .then((response) async {
                   loadingScreen.fadeOut();
 
                   if (response.wasSuccessful()) {
-                    await StudentClass.currentClasses[widget.class_id]
+                    await StudentClass.currentClasses[widget.class_id]!
                         .refetchSelf();
 
                     DartNotificationCenter.post(
@@ -237,7 +237,7 @@ class _AssignmentAddState extends State<AssignmentAddView> {
   }
 
   Widget createCurrentAssignments(StudentClass studentClass) {
-    final weightId = widget.weight == null ? null : widget.weight.id;
+    final weightId = widget.weight == null ? null : widget.weight?.id;
     final weightAssignments = (studentClass.assignments ?? []).toList();
     final dateFormatter = DateFormat('EEE, MMM d');
 

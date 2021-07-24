@@ -13,7 +13,7 @@ class ClassStatusModal extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final studentClass = StudentClass.currentClasses[classId];
-    final statusId = studentClass.status.id;
+    final statusId = studentClass!.status.id;
 
     List<Widget> Function(BuildContext context) bodyFactory;
 
@@ -50,7 +50,7 @@ class ClassStatusModal extends StatelessWidget {
             style: TextStyle(fontWeight: FontWeight.normal, fontSize: 18),
             children: [
               TextSpan(
-                  text: StudentClass.currentClasses[classId].name + '!',
+                  text: StudentClass.currentClasses[classId]!.name! + '!',
                   style: TextStyle(fontWeight: FontWeight.bold))
             ],
           ),

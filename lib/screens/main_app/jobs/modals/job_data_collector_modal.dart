@@ -6,44 +6,44 @@ enum _CollectionType { text, picker, toggle, multipleSelect, scale }
 
 class DataCollectorModal extends StatefulWidget {
   final String title;
-  final String subtitle;
+  final String? subtitle;
   final _CollectionType type;
   final Future<void> Function(dynamic) onSubmit;
 
   // Text type
-  final String placeholderText;
-  final TextInputType inputType;
+  final String? placeholderText;
+  final TextInputType? inputType;
 
   // Picker type
-  final List<String> items;
+  final List<String>? items;
 
   // Scale type
-  final int numSegments;
+  final int? numSegments;
 
   DataCollectorModal.textType({
-    @required this.title,
+    required this.title,
     this.subtitle,
     this.placeholderText,
     this.inputType,
-    @required this.onSubmit,
+    required this.onSubmit,
   })  : type = _CollectionType.text,
         items = null,
         numSegments = null;
 
   DataCollectorModal.pickerType({
-    @required this.title,
+    required this.title,
     this.subtitle,
-    @required this.onSubmit,
-    @required this.items,
+    required this.onSubmit,
+    required this.items,
   })  : type = _CollectionType.picker,
         placeholderText = null,
         inputType = null,
         numSegments = null;
 
   DataCollectorModal.toggleType({
-    @required this.title,
+    required this.title,
     this.subtitle,
-    @required this.onSubmit,
+    required this.onSubmit,
   })  : type = _CollectionType.toggle,
         placeholderText = null,
         inputType = null,
@@ -51,20 +51,20 @@ class DataCollectorModal extends StatefulWidget {
         numSegments = null;
 
   DataCollectorModal.multipleSelectType({
-    @required this.title,
+    required this.title,
     this.subtitle,
-    @required this.onSubmit,
-    @required this.items,
+    required this.onSubmit,
+    required this.items,
   })  : type = _CollectionType.multipleSelect,
         placeholderText = null,
         inputType = null,
         numSegments = null;
 
   DataCollectorModal.scaleType({
-    @required this.title,
+    required this.title,
     this.subtitle,
-    @required this.onSubmit,
-    @required this.numSegments,
+    required this.onSubmit,
+    required this.numSegments,
   })  : type = _CollectionType.scale,
         items = null,
         placeholderText = null,
@@ -75,11 +75,11 @@ class DataCollectorModal extends StatefulWidget {
 }
 
 class _DataCollectorModalState extends State<DataCollectorModal> {
-  ChangeNotifier controller;
-  List<int> selectedIndexes;
-  bool toggleOn;
-  double value;
-  String errorMessage;
+  var controller;
+  List<int>? selectedIndexes;
+  bool? toggleOn;
+  double? value;
+  String? errorMessage;
 
   @override
   void initState() {
@@ -111,10 +111,10 @@ class _DataCollectorModalState extends State<DataCollectorModal> {
     else if (widget.type == _CollectionType.picker)
       result = (controller as FixedExtentScrollController).selectedItem;
     else if (widget.type == _CollectionType.multipleSelect)
-      result = selectedIndexes..sort((i1, i2) => i1.compareTo(i2));
+      result = selectedIndexes!..sort((i1, i2) => i1.compareTo(i2));
     else if (widget.type == _CollectionType.toggle)
       result = toggleOn;
-    else if (widget.type == _CollectionType.scale) result = value.round();
+    else if (widget.type == _CollectionType.scale) result = value!.round();
 
     try {
       await widget.onSubmit(result);
@@ -168,7 +168,7 @@ class _DataCollectorModalState extends State<DataCollectorModal> {
             ),
             if (widget.subtitle != null)
               Text(
-                widget.subtitle,
+                widget.subtitle!,
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontWeight: FontWeight.w300,
@@ -178,7 +178,7 @@ class _DataCollectorModalState extends State<DataCollectorModal> {
               ),
             if (errorMessage != null)
               Text(
-                errorMessage,
+                errorMessage!,
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   color: SKColors.warning_red,
@@ -223,7 +223,7 @@ class _DataCollectorModalState extends State<DataCollectorModal> {
       placeholder: widget.placeholderText,
       placeholderStyle: Theme.of(context)
           .textTheme
-          .body1
+          .body1!
           .copyWith(color: SKColors.text_light_gray),
       controller: controller,
       keyboardType: widget.inputType,
@@ -238,7 +238,7 @@ class _DataCollectorModalState extends State<DataCollectorModal> {
         itemExtent: 32,
         backgroundColor: SKColors.dark_gray,
         scrollController: controller,
-        children: widget.items
+        children: widget.items!
             .map(
               (s) => Container(
                 alignment: Alignment.center,
@@ -270,7 +270,7 @@ class _DataCollectorModalState extends State<DataCollectorModal> {
               height: 24,
               alignment: Alignment.center,
               decoration: BoxDecoration(
-                color: toggleOn ? null : SKColors.jobs_light_green,
+                color: toggleOn! ? null : SKColors.jobs_light_green,
                 border: Border.all(color: SKColors.jobs_light_green),
                 borderRadius: BorderRadius.only(
                   bottomLeft: radius,
@@ -281,7 +281,7 @@ class _DataCollectorModalState extends State<DataCollectorModal> {
                 'No',
                 style: TextStyle(
                   color:
-                      toggleOn ? SKColors.jobs_light_green : SKColors.dark_gray,
+                      toggleOn! ? SKColors.jobs_light_green : SKColors.dark_gray,
                   fontSize: 14,
                   fontWeight: FontWeight.w600,
                 ),
@@ -297,7 +297,7 @@ class _DataCollectorModalState extends State<DataCollectorModal> {
               height: 24,
               alignment: Alignment.center,
               decoration: BoxDecoration(
-                color: toggleOn ? SKColors.jobs_light_green : null,
+                color: toggleOn! ? SKColors.jobs_light_green : null,
                 border: Border.all(color: SKColors.jobs_light_green),
                 borderRadius: BorderRadius.only(
                   bottomRight: radius,
@@ -308,7 +308,7 @@ class _DataCollectorModalState extends State<DataCollectorModal> {
                 'Yes',
                 style: TextStyle(
                   color:
-                      toggleOn ? SKColors.dark_gray : SKColors.jobs_light_green,
+                      toggleOn! ? SKColors.dark_gray : SKColors.jobs_light_green,
                   fontSize: 14,
                   fontWeight: FontWeight.w600,
                 ),
@@ -322,16 +322,16 @@ class _DataCollectorModalState extends State<DataCollectorModal> {
 
   Widget buildMultipleSelectionType() {
     final items = widget.items;
-    final children = List<Widget>.generate(items.length, (i) {
-      final isSelected = selectedIndexes.indexOf(i) != -1;
+    final children = List<Widget>.generate(items!.length, (i) {
+      final isSelected = selectedIndexes!.indexOf(i) != -1;
 
       return GestureDetector(
         behavior: HitTestBehavior.opaque,
         onTapUp: (_) {
           if (isSelected)
-            setState(() => selectedIndexes.remove(i));
+            setState(() => selectedIndexes!.remove(i));
           else
-            setState(() => selectedIndexes.add(i));
+            setState(() => selectedIndexes!.add(i));
         },
         child: Container(
           padding: EdgeInsets.symmetric(vertical: 8),
@@ -388,7 +388,7 @@ class _DataCollectorModalState extends State<DataCollectorModal> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: List<Widget>.generate(
-              widget.numSegments,
+              widget.numSegments!,
               (i) => Text(
                 (i + 1).toString(),
                 style: TextStyle(
@@ -400,17 +400,17 @@ class _DataCollectorModalState extends State<DataCollectorModal> {
           ),
         ),
         CupertinoSlider(
-          divisions: widget.numSegments - 1,
+          divisions: widget.numSegments! - 1,
           min: 1,
-          max: widget.numSegments.toDouble(),
-          value: value,
+          max: widget.numSegments!.toDouble(),
+          value: value!,
           activeColor: SKColors.jobs_light_green,
           onChanged: (newVal) => setState(() {
             value = newVal;
           }),
         ),
         Text(
-          interestLevels[value.round() - 1],
+          interestLevels[value!.round() - 1],
           style: TextStyle(color: Colors.white),
           textAlign: TextAlign.center,
         )

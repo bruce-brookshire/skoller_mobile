@@ -39,7 +39,7 @@ class _ManageClassesState extends State<ManageClassesView> {
 
   void loadClasses([dynamic options]) {
     final newClasses = StudentClass.currentClasses.values.toList()
-      ..sort((class1, class2) => class1.name.compareTo(class2.name));
+      ..sort((class1, class2) => class1.name!.compareTo(class2.name!));
 
     setState(() {
       classes = newClasses;
@@ -109,7 +109,7 @@ class _ManageClassesState extends State<ManageClassesView> {
             children: <Widget>[
               Expanded(
                 child: Text(
-                  studentClass.name,
+                  studentClass.name!,
                   style: TextStyle(fontSize: 17),
                 ),
               ),

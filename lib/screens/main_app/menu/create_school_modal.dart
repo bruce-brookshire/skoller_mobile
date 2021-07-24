@@ -16,9 +16,9 @@ class CreateSchoolModal extends StatefulWidget {
 class _CreateSchoolModalState extends State<CreateSchoolModal> {
   int selectedSegment = 0;
 
-  TextEditingController nameController;
+  late TextEditingController nameController;
   final cityController = TextEditingController();
-  String selectedState;
+  String? selectedState;
 
   bool isValid = false;
 
@@ -36,7 +36,7 @@ class _CreateSchoolModalState extends State<CreateSchoolModal> {
     cityController.dispose();
   }
 
-  void checkValid([String str]) {
+  void checkValid([String? str]) {
     final newIsValid = nameController.text.trim() != '' &&
         cityController.text.trim() != '' &&
         selectedState != null;
@@ -79,10 +79,10 @@ class _CreateSchoolModalState extends State<CreateSchoolModal> {
       isUniversity: selectedSegment == 0,
       schoolName: nameController.text.trim(),
       cityName: cityController.text.trim(),
-      stateAbv: statesMap[selectedState],
+      stateAbv: statesMap[selectedState]!,
     ).then((response) {
       if (response.wasSuccessful() && response.obj is School) {
-        return SKUser.current
+        return SKUser.current!
             .update(primarySchool: response.obj)
             .then((response2) {
           if (response2) {
@@ -142,7 +142,7 @@ class _CreateSchoolModalState extends State<CreateSchoolModal> {
               ),
               CupertinoSegmentedControl(
                 padding: null,
-                onValueChanged: (newVal) =>
+                onValueChanged: (int newVal) =>
                     setState(() => selectedSegment = newVal),
                 selectedColor: SKColors.skoller_blue,
                 borderColor: SKColors.skoller_blue,
@@ -260,7 +260,7 @@ class _CreateSchoolModalState extends State<CreateSchoolModal> {
                         child: Text(
                             selectedState == null
                                 ? 'School state'
-                                : selectedState,
+                                : selectedState!,
                             style: TextStyle(
                                 color: selectedState == null
                                     ? SKColors.text_light_gray

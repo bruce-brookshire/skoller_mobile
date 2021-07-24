@@ -17,17 +17,17 @@ class _ProfessorChangeRequestViewState
     extends State<ProfessorChangeRequestView> {
   bool isValidState = false;
 
-  TextEditingController firstNameController;
-  TextEditingController lastNameController;
-  TextEditingController emailController;
-  TextEditingController phoneNumberController;
-  TextEditingController officeLocationController;
-  TextEditingController availabilityController;
+  late TextEditingController firstNameController;
+  late TextEditingController lastNameController;
+  late TextEditingController emailController;
+  late TextEditingController phoneNumberController;
+  late TextEditingController officeLocationController;
+  late TextEditingController availabilityController;
   @override
   void initState() {
     super.initState();
 
-    final professor = StudentClass.currentClasses[widget.classId].professor;
+    final professor = StudentClass.currentClasses[widget.classId]!.professor;
 
     firstNameController = TextEditingController(text: professor.firstName);
     lastNameController = TextEditingController(text: professor.lastName);
@@ -68,7 +68,7 @@ class _ProfessorChangeRequestViewState
 
       // Objects
       final studentClass = StudentClass.currentClasses[widget.classId];
-      final professor = studentClass.professor;
+      final professor = studentClass!.professor;
 
       final origEmail = (professor.email ?? '') == '';
       final origPhone = (professor.phoneNumber ?? '') == '';
@@ -83,14 +83,14 @@ class _ProfessorChangeRequestViewState
 
       // Update direct
       final direct_response = await professor.updateInfo(
-        emailDirect ? email : null,
-        phoneDirect ? phoneNumber : null,
-        availabilityDirect ? availability : null,
-        officeDirect ? officeLocation : null,
+        emailDirect ? email : '',
+        phoneDirect ? phoneNumber : '',
+        availabilityDirect ? availability : '',
+        officeDirect ? officeLocation : '',
       );
 
       // Submit change request
-      final change_response = await studentClass.submitProfessorChangeRequest(
+      final change_response = await studentClass!.submitProfessorChangeRequest(
         firstName: firstName == professor.firstName ? null : firstName,
         lastName: lastName == professor.lastName ? null : lastName,
         email: !origEmail && email != '' ? email : null,
@@ -144,7 +144,7 @@ class _ProfessorChangeRequestViewState
   }
 
   void didEdit(_) {
-    final professor = StudentClass.currentClasses[widget.classId].professor;
+    final professor = StudentClass.currentClasses[widget.classId]!.professor;
 
     final firstName = firstNameController.text.trim();
     final lastName = lastNameController.text.trim();
@@ -171,7 +171,7 @@ class _ProfessorChangeRequestViewState
 
     return SKNavView(
       leftBtn: Image.asset(ImageNames.navArrowImages.down),
-      title: studentClass.name,
+      title: studentClass!.name!,
       titleColor: studentClass.getColor(),
       children: <Widget>[
         Expanded(

@@ -16,9 +16,9 @@ class AddClassesView extends StatefulWidget {
 class _AddClassesState extends State<AddClassesView> {
   List<SchoolClass> searchedClasses = [];
 
-  Timer _currentTimer;
+  Timer? _currentTimer;
 
-  Period activePeriod;
+  Period? activePeriod;
 
   final searchController = TextEditingController();
   final searchFocusNode = FocusNode();
@@ -29,15 +29,15 @@ class _AddClassesState extends State<AddClassesView> {
   void initState() {
     super.initState();
 
-    activePeriod = SKUser.current.student.primaryPeriod ??
-        SKUser.current.student.primarySchool?.getBestCurrentPeriod();
+    activePeriod = SKUser.current!.student.primaryPeriod ??
+        SKUser.current!.student.primarySchool?.getBestCurrentPeriod();
 
     DartNotificationCenter.subscribe(
       observer: this,
       channel: NotificationChannels.classChanged,
       onNotification: (options) => SchoolClass.searchSchoolClasses(
         searchController.text.trim(),
-        activePeriod,
+        activePeriod!,
       ).then(
         (response) {
           _currentTimer = null;
@@ -64,7 +64,7 @@ class _AddClassesState extends State<AddClassesView> {
 
   void didTypeInSearch(String searchText) {
     if (_currentTimer != null) {
-      _currentTimer.cancel();
+      _currentTimer!.cancel();
       _currentTimer = null;
     }
 
@@ -96,7 +96,7 @@ class _AddClassesState extends State<AddClassesView> {
       () {
         SchoolClass.searchSchoolClasses(
           searchText,
-          activePeriod,
+          activePeriod!,
         ).then((response) {
           _currentTimer = null;
 
@@ -198,7 +198,7 @@ class _AddClassesState extends State<AddClassesView> {
                     ),
                   ),
                   Text(
-                    '${schoolClass.professor?.firstName ?? ''} ${schoolClass.professor?.lastName ?? ''}',
+                    '${schoolClass.professor.firstName ?? ''} ${schoolClass.professor.lastName ?? ''}',
                     style: TextStyle(
                       fontSize: 15,
                       fontWeight: FontWeight.normal,
@@ -209,7 +209,7 @@ class _AddClassesState extends State<AddClassesView> {
               GestureDetector(
                 onTapUp: (details) {
                   final requestFunc = isEnrolled
-                      ? StudentClass.currentClasses[schoolClass.id].dropClass
+                      ? StudentClass.currentClasses[schoolClass.id]!.dropClass
                       : schoolClass.enrollInClass;
 
                   final loader = SKLoadingScreen.fadeIn(newContext);
@@ -286,7 +286,7 @@ class _AddClassesState extends State<AddClassesView> {
   void tappedSettings([_]) async {
     final results = await showDialog(
       context: context,
-      builder: (context) => ClassSearchSettingsModal(activePeriod.id),
+      builder: (context) => ClassSearchSettingsModal(activePeriod!.id),
     );
 
     if (results is Map && results['period'] is Period) {
@@ -300,7 +300,7 @@ class _AddClassesState extends State<AddClassesView> {
       context,
       SKNavOverlayRoute(
         builder: (context) => CreateClassModal(
-          activePeriod,
+          activePeriod!,
           searchController.text.trim(),
         ),
       ),
@@ -435,8 +435,8 @@ class _AddClassesState extends State<AddClassesView> {
     final classCount = StudentClass.currentClasses.values.fold(
         0,
         (a, s) =>
-            a +
-            (s.classPeriod == SKUser.current.student.primaryPeriod ? 1 : 0));
+            int.parse(a.toString()) +
+            (s.classPeriod == SKUser.current!.student.primaryPeriod ? 1 : 0));
 
     return Container(
       height: 128,
@@ -478,11 +478,11 @@ class _AddClassesState extends State<AddClassesView> {
                   mainAxisSize: MainAxisSize.min,
                   children: <Widget>[
                     Text(
-                      SKUser.current.student.primarySchool?.name,
+                      SKUser.current!.student.primarySchool?.name??'',
                       overflow: TextOverflow.ellipsis,
                       style: TextStyle(
                           fontSize: 18,
-                          color: SKUser.current.student.primarySchool.color ??
+                          color: SKUser.current!.student.primarySchool?.color ??
                               SKColors.dark_gray),
                     ),
                     Padding(
@@ -582,7 +582,7 @@ class _AddClassesState extends State<AddClassesView> {
               Padding(
                 padding: EdgeInsets.symmetric(vertical: 2),
                 child: Text(
-                  '${schoolClass.professor?.firstName ?? ''} ${schoolClass.professor?.lastName ?? ''}',
+                  '${schoolClass.professor.firstName ?? ''} ${schoolClass.professor.lastName ?? ''}',
                   style: TextStyle(
                     fontWeight: FontWeight.normal,
                   ),

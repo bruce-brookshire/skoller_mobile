@@ -28,16 +28,16 @@ class WeightExtractionView extends StatefulWidget {
 class _WeightExtractionState extends State<WeightExtractionView> {
   final pageController = PageController(initialPage: 0);
 
-  StudentClass studentClass;
+  StudentClass? studentClass;
 
   int currentView = 0;
-  _StateKeeper state;
+  late _StateKeeper state;
 
   @override
   void initState() {
     studentClass = StudentClass.currentClasses[widget.classId];
     state = _StateKeeper();
-    studentClass.acquireWeightLock();
+    studentClass!.acquireWeightLock();
     super.initState();
   }
 
@@ -85,7 +85,7 @@ class _WeightExtractionState extends State<WeightExtractionView> {
     );
 
     if (result is bool && result) {
-      studentClass.releaseDIYLock(isCompleted: false);
+      studentClass!.releaseDIYLock(isCompleted: false);
       Navigator.pop(context);
     }
   }
@@ -93,8 +93,8 @@ class _WeightExtractionState extends State<WeightExtractionView> {
   @override
   Widget build(BuildContext context) {
     return SKNavView(
-      title: studentClass.name,
-      titleColor: studentClass.getColor(),
+      title: studentClass!.name!,
+      titleColor: studentClass!.getColor(),
       callbackLeft: popUnsuccessfully,
       children: <Widget>[
         Padding(
@@ -201,7 +201,7 @@ class _SubviewOneState extends State<_SubviewOne> {
     if (!shouldContinue) return;
 
     final loader = SKLoadingScreen.fadeIn(context);
-    studentClass.createWeights(
+    studentClass!.createWeights(
       false,
       [
         {'name': 'All Assignments', 'value': 100}
@@ -472,7 +472,7 @@ class _SubviewThreeState extends State<_SubviewThree> {
     });
   }
 
-  Future<bool> showWeightMaker(
+  Future<dynamic> showWeightMaker(
     String nameStr,
     String valueStr,
     bool isCreate,
@@ -507,7 +507,7 @@ class _SubviewThreeState extends State<_SubviewThree> {
     final state = widget.subviewParent.state;
     final studentClass = widget.subviewParent.studentClass;
 
-    studentClass.createWeights(state.isPoints, state.weights).then((success) {
+    studentClass!.createWeights(state.isPoints, state.weights).then((success) {
       //After creating
       if (success) {
         return studentClass.releaseDIYLock(isCompleted: true);

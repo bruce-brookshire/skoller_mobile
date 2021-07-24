@@ -33,18 +33,18 @@ class _MainState extends State<MainView> {
   @override
   void initState() {
     // If the student does not have a primary school or term, set it
-    if (SKUser.current.student.primarySchool == null ||
-        SKUser.current.student.primaryPeriod == null)
-      WidgetsBinding.instance.addPostFrameCallback(
+    if (SKUser.current!.student.primarySchool == null ||
+        SKUser.current!.student.primaryPeriod == null)
+      WidgetsBinding.instance!.addPostFrameCallback(
         (_) => showPrimarySchoolModal(),
       );
     // If the student has no majors and they have at least one class set up
-    else if ((SKUser.current.student.fieldsOfStudy ?? []).length == 0 &&
+    else if ((SKUser.current!.student.fieldsOfStudy ?? []).length == 0 &&
         StudentClass.currentClasses.values.any((sc) => [
               ClassStatuses.class_setup,
               ClassStatuses.class_issue
             ].contains(sc.status.id ?? 0)))
-      WidgetsBinding.instance.addPostFrameCallback(
+      WidgetsBinding.instance!.addPostFrameCallback(
         (_) => showMajorSelection(),
       );
 
@@ -74,7 +74,7 @@ class _MainState extends State<MainView> {
 
     Mod.fetchMods();
 
-    WidgetsBinding.instance.addPostFrameCallback((_) => setScreenSize());
+    WidgetsBinding.instance!.addPostFrameCallback((_) => setScreenSize());
 
     super.initState();
   }
@@ -130,7 +130,7 @@ class _MainState extends State<MainView> {
     if (hasShown is bool || (hasShown != null && !(hasShown is String))) return;
 
     final now = DateTime.now();
-    final scheduled = hasShown == null ? null : DateTime.parse(hasShown);
+    final scheduled = hasShown == null ? null : DateTime.parse(hasShown.toString());
 
     if (scheduled?.isAfter(now) ?? false) return;
 
@@ -144,10 +144,10 @@ class _MainState extends State<MainView> {
                     .contains(sc.status.id)
                 ? 1
                 : 0) +
-            curCount);
+            int.parse(curCount.toString()));
 
     final assignmentCompleted = Assignment.currentAssignments.values
-        .any((a) => (a.due?.isBefore(now) ?? false) || a.isCompleted);
+        .any((a) => (a.due?.isBefore(now) ?? false) || a.isCompleted!);
 
     final shouldReview = numSetupClasses >= 2 && assignmentCompleted;
 
@@ -187,7 +187,7 @@ class _MainState extends State<MainView> {
     backgroundLeft = -backgroundWidth - 5;
   }
 
-  Future<bool> createAndroidReviewRequest(bool showRatingDisable) async {
+  Future<dynamic> createAndroidReviewRequest(bool showRatingDisable) async {
     return showDialog(
       context: context,
       builder: (context) => Dialog(

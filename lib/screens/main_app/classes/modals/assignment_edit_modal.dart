@@ -14,25 +14,24 @@ class AssignmentEditModal extends StatefulWidget {
 }
 
 class _AssignmentEditModalState extends State<AssignmentEditModal> {
-  DateTime selectedDate;
-  Weight selectedWeight;
+  DateTime? selectedDate;
+  Weight? selectedWeight;
 
   bool isPrivate = false;
   bool hasChanged = false;
   bool shouldDelete = false;
 
-  Assignment assignment;
-
-  TextEditingController nameController;
+  late Assignment assignment;
+  late TextEditingController nameController;
 
   @override
   void initState() {
     super.initState();
-    assignment = Assignment.currentAssignments[widget.assignment_id];
+    assignment = Assignment.currentAssignments[widget.assignment_id]!;
     selectedDate = assignment.due;
     nameController = TextEditingController(text: assignment.name);
 
-    for (final Weight weight in assignment.parentClass.weights) {
+    for (final Weight weight in assignment.parentClass.weights!) {
       if (assignment.weight_id == weight.id) {
         selectedWeight = weight;
         break;
@@ -45,9 +44,9 @@ class _AssignmentEditModalState extends State<AssignmentEditModal> {
         ? false
         : (assignment.due == null
             ? true
-            : !(selectedDate?.isAtSameMomentAs(assignment.due) ?? true));
+            : !(selectedDate?.isAtSameMomentAs(assignment.due!) ?? true));
 
-    final weightChanged = selectedWeight.id != assignment.weight_id;
+    final weightChanged = selectedWeight!.id != assignment.weight_id;
     final nameChanged = nameController.text.trim() != assignment.name.trim();
 
     final newHasChanged = dateChanged || weightChanged || nameChanged;
@@ -84,7 +83,7 @@ class _AssignmentEditModalState extends State<AssignmentEditModal> {
 
           if (success) {
             setState(() {
-              assignment = Assignment.currentAssignments[assignment.id];
+              assignment = Assignment.currentAssignments[assignment.id]!;
               this.selectedDate = assignment.due;
             });
             DartNotificationCenter.post(
@@ -98,7 +97,7 @@ class _AssignmentEditModalState extends State<AssignmentEditModal> {
   }
 
   void tappedWeight(TapUpDetails details) async {
-    List<Weight> classWeights = assignment.parentClass.weights;
+    List<Weight> classWeights = assignment.parentClass.weights??[];
 
     Weight tempWeight = classWeights.first;
 
@@ -141,7 +140,7 @@ class _AssignmentEditModalState extends State<AssignmentEditModal> {
     }
   }
 
-  void tappedSubmit(TapUpDetails _) {
+  void tappedSubmit(TapUpDetails? _) {
     List<Map> requests = [];
     if (shouldDelete) {
       requests.add({
@@ -150,20 +149,20 @@ class _AssignmentEditModalState extends State<AssignmentEditModal> {
       });
     } else {
       if ((assignment.due == null && selectedDate != null) ||
-          !(selectedDate?.isAtSameMomentAs(assignment.due) ?? true)) {
+          !(selectedDate?.isAtSameMomentAs(assignment.due!) ?? true)) {
         requests.add({
           'request': assignment.updateDueDate(
             isPrivate,
-            selectedDate,
+            selectedDate!,
           ),
           'mod_type': 'due_date',
         });
       }
-      if (selectedWeight.id != assignment.weight_id) {
+      if (selectedWeight!.id != assignment.weight_id) {
         requests.add({
           'request': assignment.updateWeightCategory(
             isPrivate,
-            selectedWeight,
+            selectedWeight!,
           ),
           'mod_type': 'weight',
         });
@@ -304,7 +303,7 @@ class _AssignmentEditModalState extends State<AssignmentEditModal> {
                               selectedDate == null
                                   ? 'No due date'
                                   : DateFormat('E, MMM. d')
-                                      .format(selectedDate),
+                                      .format(selectedDate!),
                               style: TextStyle(color: SKColors.skoller_blue),
                             ),
                           ),

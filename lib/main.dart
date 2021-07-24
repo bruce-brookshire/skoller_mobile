@@ -1,6 +1,8 @@
 import 'package:dart_notification_center/dart_notification_center.dart';
 import 'package:dropdown_banner/dropdown_banner.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:skoller/loading_view.dart';
@@ -10,7 +12,9 @@ import 'screens/auth/auth_home.dart';
 import 'constants/constants.dart';
 import 'constants/timezone_manager.dart';
 
-void main() {
+Future<void> main() async {
+  await Firebase.initializeApp();
+  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
   runApp(SkollerApp());
   //Allow currentTZ to cache through heuristic exploration before we need it
   TimeZoneManager.verifyTzDbActive();
@@ -45,6 +49,10 @@ void main() {
   SKCacheManager.createCacheDir();
 
   Auth.requestNotificationPermissions();
+}
+
+Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+  print("Handling a background message: ${message.messageId}");
 }
 
 class SkollerApp extends StatefulWidget {
@@ -152,7 +160,7 @@ class _SkollerAppState extends State<SkollerApp> {
 
     return MaterialApp(
       builder: (context, widget) => MediaQuery(
-        child: Theme(data: currentTheme, child: widget),
+        child: Theme(data: currentTheme, child: widget!),
         data: MediaQuery.of(context).copyWith(textScaleFactor: 1.0),
       ),
       theme: currentTheme,

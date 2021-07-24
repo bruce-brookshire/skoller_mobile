@@ -16,13 +16,13 @@ class ClassChangeRequestView extends StatefulWidget {
 }
 
 class _ClassChangeRequestState extends State<ClassChangeRequestView> {
-  TextEditingController nameController;
-  TextEditingController subjectController;
-  TextEditingController codeController;
-  TextEditingController sectionController;
+  late TextEditingController nameController;
+  late TextEditingController subjectController;
+  late TextEditingController codeController;
+  late TextEditingController sectionController;
 
-  TimeOfDay startTime;
-  bool isOnline;
+  TimeOfDay? startTime;
+  late bool isOnline;
   bool wasEdited = false;
 
   Map<String, bool> selectedDays = LinkedHashMap.fromIterables(
@@ -34,7 +34,7 @@ class _ClassChangeRequestState extends State<ClassChangeRequestView> {
   void initState() {
     final studentClass = StudentClass.currentClasses[widget.classId];
 
-    nameController = TextEditingController(text: studentClass.name);
+    nameController = TextEditingController(text: studentClass!.name);
     subjectController = TextEditingController(text: studentClass.subject);
     codeController = TextEditingController(text: studentClass.code);
     sectionController = TextEditingController(text: studentClass.section);
@@ -44,7 +44,7 @@ class _ClassChangeRequestState extends State<ClassChangeRequestView> {
 
     if (!isOnline) {
       for (final day in (studentClass.meetDays ?? '').split('')) {
-        String dayStr;
+        String? dayStr;
         switch (day) {
           case 'U':
             dayStr = 'Sun';
@@ -71,7 +71,7 @@ class _ClassChangeRequestState extends State<ClassChangeRequestView> {
             break;
         }
 
-        selectedDays[dayStr] = true;
+        selectedDays[dayStr!] = true;
       }
     }
 
@@ -93,7 +93,7 @@ class _ClassChangeRequestState extends State<ClassChangeRequestView> {
 
     final meetDays = isOnline
         ? 'online'
-        : (selectedDays.keys.toList()..removeWhere((day) => !selectedDays[day]))
+        : (selectedDays.keys.toList()..removeWhere((day) => !selectedDays[day]!))
             .map((day) {
             if (day == 'Sun') {
               return 'U';
@@ -113,7 +113,7 @@ class _ClassChangeRequestState extends State<ClassChangeRequestView> {
 
     final loader = SKLoadingScreen.fadeIn(context);
 
-    final success = await studentClass.submitClassChangeRequest(
+    final success = await studentClass!.submitClassChangeRequest(
       name: name == studentClass.name ? null : name,
       subject: subject == studentClass.subject ? null : subject,
       code: code == studentClass.code ? null : code,
@@ -244,7 +244,7 @@ class _ClassChangeRequestState extends State<ClassChangeRequestView> {
 
     final meetDays = isOnline
         ? 'online'
-        : (selectedDays.keys.toList()..removeWhere((day) => !selectedDays[day]))
+        : (selectedDays.keys.toList()..removeWhere((day) => !selectedDays[day]!))
             .map((day) {
             if (day == 'Sun') {
               return 'U';
@@ -255,7 +255,7 @@ class _ClassChangeRequestState extends State<ClassChangeRequestView> {
             }
           }).join();
 
-    final newValue = name != studentClass.name ||
+    final newValue = name != studentClass!.name ||
         subject != studentClass.subject ||
         code != studentClass.code ||
         section != studentClass.section ||
@@ -272,7 +272,7 @@ class _ClassChangeRequestState extends State<ClassChangeRequestView> {
     final studentClass = StudentClass.currentClasses[widget.classId];
 
     return SKNavView(
-      title: studentClass.name,
+      title: studentClass!.name!,
       titleColor: studentClass.getColor(),
       backgroundColor: SKColors.background_gray,
       leftBtn: Image.asset(ImageNames.navArrowImages.down),
@@ -594,14 +594,14 @@ class _ClassChangeRequestState extends State<ClassChangeRequestView> {
       child: GestureDetector(
         onTapUp: (details) {
           if (isOnline) return;
-          setState(() => selectedDays[day] = !selectedDays[day]);
+          setState(() => selectedDays[day] = !selectedDays[day]!);
           checkValid(null);
         },
         child: Container(
           padding: EdgeInsets.symmetric(vertical: 7),
           alignment: Alignment.center,
           decoration: BoxDecoration(
-            color: selectedDays[day]
+            color: selectedDays[day]!
                 ? (isOnline ? SKColors.light_gray : SKColors.skoller_blue)
                 : null,
             border: day == 'Sat'
@@ -617,7 +617,7 @@ class _ClassChangeRequestState extends State<ClassChangeRequestView> {
             style: TextStyle(
                 fontWeight: FontWeight.normal,
                 fontSize: 14,
-                color: selectedDays[day]
+                color: selectedDays[day]!
                     ? Colors.white
                     : (isOnline ? SKColors.light_gray : SKColors.skoller_blue)),
           ),

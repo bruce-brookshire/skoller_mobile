@@ -97,7 +97,7 @@ class ModModal extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
             Text(
-              parentClass.name,
+              parentClass.name!,
               textAlign: TextAlign.center,
               style: TextStyle(
                 color: parentClass.getColor(),
@@ -158,7 +158,7 @@ class ModModal extends StatelessWidget {
       final oldDate = mod.parentAssignment.due;
       final newDate = mod.data as DateTime;
 
-      final oldOrdinal = getOrdinal(oldDate);
+      final oldOrdinal = getOrdinal(oldDate!);
       final newOrdinal = getOrdinal(newDate);
 
       return Row(
