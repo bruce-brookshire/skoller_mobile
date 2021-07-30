@@ -2,7 +2,7 @@ part of 'requests_core.dart';
 
 class StudentClass {
   int id;
-  int enrollment;
+  int? enrollment;
 
   bool isPoints;
   bool isNotifications;
@@ -19,7 +19,7 @@ class StudentClass {
   String? section;
   String enrollmentLink;
 
-  TimeOfDay meetTime;
+  TimeOfDay? meetTime;
 
   Status status;
   Professor professor;
@@ -27,7 +27,7 @@ class StudentClass {
 
   List<Weight>? weights;
   List<Assignment>? assignments;
-  List<PublicStudent> students;
+  List<PublicStudent>? students;
   List<ClassDocument> documents;
 
   Map<String, dynamic> gradeScale;

@@ -367,7 +367,7 @@ class _CalendarState extends State<CalendarView> {
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: <Widget>[
                     Text(
-                      assignment.name,
+                      assignment.name??'',
                       style: TextStyle(
                         color: assignment.parentClass.getColor(),
                         fontSize: 16,
@@ -513,7 +513,7 @@ class _CalendarBody extends StatelessWidget {
                           alignment: Alignment.centerLeft,
                           height: 14,
                           child: Text(
-                            assignment.name,
+                            assignment.name??'',
                             maxLines: 1,
                             softWrap: false,
                             overflow: TextOverflow.fade,

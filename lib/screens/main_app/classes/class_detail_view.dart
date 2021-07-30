@@ -101,7 +101,7 @@ class _ClassDetailState extends State<ClassDetailView> {
     items
       ..addAll(newAssignmentMods)
       ..sort(
-        (t1, t2) => t2.due == null ? 1 : (t1.due.compareTo(t2.due) ?? -1),
+        (t1, t2) => t2.due == null ? 1 : (t1.due?.compareTo(t2.due!) ?? -1),
       );
 
     this.items = items;
@@ -317,7 +317,7 @@ class _ClassDetailState extends State<ClassDetailView> {
 class _AssignmentLikeItem {
   final int id;
   final bool isMod;
-  final DateTime due;
+  final DateTime? due;
 
   _AssignmentLikeItem(this.id, this.isMod, this.due);
 }
@@ -597,7 +597,7 @@ class _AssignmentCellState extends State<_AssignmentCell> {
                             child: Material(
                               type: MaterialType.transparency,
                               child: Text(
-                                assignment.name,
+                                assignment.name??'',
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
                                 textScaleFactor: 1,

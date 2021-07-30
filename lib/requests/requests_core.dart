@@ -155,7 +155,7 @@ class SKRequests {
     );
 
     // Handle request and return future
-    return futureProcessor<T>(request, constructor!);
+    return futureProcessor<T>(request, constructor);
   }
 
   static Future<RequestResponse> put<T>(
@@ -190,7 +190,7 @@ class SKRequests {
 
   static RequestResponse futureProcessor<T>(
     http.Response request,
-    _DecodableConstructor<T> constructor,
+    _DecodableConstructor<T>? constructor,
   ) {
     int statusCode = request.statusCode;
     var content;
@@ -254,7 +254,7 @@ class SKCacheManager {
     //Load classes
     classesLoader = getContents('student_classes.json')
         .then(
-          (contents) {
+          (String? contents) {
             if (StudentClass.currentClasses.length != 0) {
               throw 'Already loaded from server';
             } else {

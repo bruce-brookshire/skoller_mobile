@@ -394,7 +394,7 @@ class _ClassMenuState extends State<ClassMenuModal> {
             Text.rich(
               TextSpan(
                 text:
-                    '${studentClass!.enrollment - 1} classmate${studentClass!.enrollment == 2 ? '' : 's'}',
+                    '${studentClass!.enrollment! - 1} classmate${studentClass!.enrollment == 2 ? '' : 's'}',
                 children: [
                   TextSpan(
                     text: ' are helping you manage schedule changes.',

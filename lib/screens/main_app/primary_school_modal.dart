@@ -67,12 +67,12 @@ class _PrimarySchoolState extends State<PrimarySchoolModal> {
 
     final eligiblePeriods = (eligibleSchools?.first.periods == null
         ? null
-        : eligibleSchools?.first.periods.toList())!
-      ..removeWhere((period) => now.isAfter(period.endDate))
+        : eligibleSchools?.first.periods!.toList())!
+      ..removeWhere((period) => now.isAfter(period.endDate!))
       ..sort(
         (period1, period2) {
           return period2.startDate != null
-              ? (period1.startDate.compareTo(period2.startDate) ?? -1)
+              ? (period1.startDate?.compareTo(period2.startDate!) ?? -1)
               : 1;
         },
       );
@@ -441,9 +441,9 @@ class _PrimarySchoolState extends State<PrimarySchoolModal> {
 
     final formatter = DateFormat('MMMM');
     final start =
-        period?.startDate == null ? null : formatter.format(period!.startDate);
+        period?.startDate == null ? null : formatter.format(period!.startDate!);
     final end =
-        period?.endDate == null ? null : formatter.format(period!.endDate);
+        period?.endDate == null ? null : formatter.format(period!.endDate!);
 
     return [
       SammiSpeechBubble(

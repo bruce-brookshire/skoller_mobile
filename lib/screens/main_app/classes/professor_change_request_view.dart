@@ -90,7 +90,7 @@ class _ProfessorChangeRequestViewState
       );
 
       // Submit change request
-      final change_response = await studentClass!.submitProfessorChangeRequest(
+      final change_response = await studentClass.submitProfessorChangeRequest(
         firstName: firstName == professor.firstName ? null : firstName,
         lastName: lastName == professor.lastName ? null : lastName,
         email: !origEmail && email != '' ? email : null,

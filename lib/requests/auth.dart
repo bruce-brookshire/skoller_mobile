@@ -288,7 +288,7 @@ class Auth {
 
   static void _dropdownNotifications(
     String? title,
-    String body,
+    String? body,
     VoidCallback tapCallback,
   ) {
     DropdownBanner.showBanner(

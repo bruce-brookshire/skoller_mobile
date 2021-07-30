@@ -41,7 +41,7 @@ class _AssignmentInfoState extends State<AssignmentInfoView> {
 
     for (final mod in Mod.currentMods.values) {
       if (mod.modType != ModType.newAssignment &&
-          mod.parentAssignment.id == assignment!.id) {
+          mod.parentAssignment!.id == assignment!.id) {
         if (assignmentMods[mod.modType.index] == null) {
           assignmentMods[mod.modType.index] = [];
         }
@@ -454,7 +454,7 @@ class _AssignmentInfoState extends State<AssignmentInfoView> {
       weightDescr = '';
     else
       weightDescr =
-          '${NumberUtilities.formatWeightAsPercent(assignment!.weight)} of your final grade';
+          '${NumberUtilities.formatWeightAsPercent(assignment!.weight!)} of your final grade';
 
     if (days == null)
       dueDescr = '';
@@ -495,7 +495,7 @@ class _AssignmentInfoState extends State<AssignmentInfoView> {
                     child: Material(
                       type: MaterialType.transparency,
                       child: Text(
-                        assignment!.name,
+                        assignment!.name??'',
                         // maxLines: 1,
                         // overflow: TextOverflow.ellipsis,
                         style: TextStyle(
@@ -1321,7 +1321,7 @@ class _SKImpactGraphDescriptionModal extends StatelessWidget {
 
     if ((completion ?? 0.0) == 0.0)
       level = ImpactLevel.none;
-    else if (completion < 0.05)
+    else if (completion! < 0.05)
       level = ImpactLevel.low;
     else if (completion < 0.15)
       level = ImpactLevel.medium;

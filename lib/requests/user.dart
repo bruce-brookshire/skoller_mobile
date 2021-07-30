@@ -77,7 +77,7 @@ class SKUser {
 
     if (params['primary_period_id'] == null &&
         params['primary_school_id'] != null)
-      params['primary_period_id'] = primarySchool!.periods.first.id;
+      params['primary_period_id'] = primarySchool!.periods?.first.id;
 
     if (params.length == 1) {
       return Future.value(true);
@@ -192,7 +192,7 @@ class Student {
         ? null
         : School._fromJsonObj(
             content['primary_school'],
-          ))!;
+          ));
 
     if (primarySchool != null) {
       School.currentSchools[primarySchool!.id] = primarySchool!;
@@ -217,15 +217,15 @@ class Student {
 
     degreeType = (content['degree_type'] != null
         ? TypeObject._fromJsonObj(content['degree_type'])
-        : null)!;
+        : null);
 
     primarySchool = (content['primary_school'] != null
         ? School._fromJsonObj(content['primary_school'])
-        : null)!;
+        : null);
 
     primaryPeriod = (content['primary_period'] != null
         ? Period._fromJsonObj(content['primary_period'])
-        : null)!;
+        : null);
 
     final utcNow = DateTime.now().toUtc();
 
@@ -289,12 +289,12 @@ class FieldsOfStudy {
 
 class PublicStudent {
   int id;
-  int points;
+  int? points;
 
   String name_first;
   String name_last;
-  String org;
-  String bio;
+  String? org;
+  String? bio;
 
   PublicUser user;
 

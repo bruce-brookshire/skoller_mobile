@@ -138,12 +138,12 @@ class _ClassesState extends State<ClassesView> {
     }
 
     // Get next prompt period
-    this.promptPeriod = (SKUser.current!.student.primarySchool!.periods
+    this.promptPeriod = (SKUser.current!.student.primarySchool!.periods!
           ..removeWhere((p) => !p.isMainPeriod)
-          ..sort((p1, p2) => p1.startDate.compareTo(p2.startDate)))
+          ..sort((p1, p2) => p1.startDate!.compareTo(p2.startDate!)))
         .firstWhere(
             (p) =>
-                p.startDate.millisecondsSinceEpoch >
+                p.startDate!.millisecondsSinceEpoch >
                 DateTime.now().millisecondsSinceEpoch,
           /*  orElse: () => null*/);
 
@@ -152,7 +152,7 @@ class _ClassesState extends State<ClassesView> {
     final nowInMS = today.millisecondsSinceEpoch;
 
     final daysTillPeriodEnds =
-        SKUser.current!.student.primaryPeriod?.endDate?.difference(today).inDays;
+        SKUser.current!.student.primaryPeriod?.endDate!.difference(today).inDays;
 
     final shouldPromptPeriod = promptPeriod != null &&
         !periodClasses.containsKey(promptPeriod) &&
@@ -167,11 +167,11 @@ class _ClassesState extends State<ClassesView> {
 
     // Create card objects for ListView
     final List<_CardObject> list_elems = (periodClasses.entries.toList()
-          ..sort((e1, e2) => e2.key.endDate.compareTo(e1.key.endDate)))
+          ..sort((e1, e2) => e2.key.endDate!.compareTo(e1.key.endDate!)))
         .fold(
       reductionList,
       (l, e) {
-        final isCurrent = e.key.endDate.millisecondsSinceEpoch >= nowInMS;
+        final isCurrent = e.key.endDate!.millisecondsSinceEpoch >= nowInMS;
         return [
           ...l,
           _CardObject(isCurrent, e.key, _CardType.period),
@@ -189,7 +189,7 @@ class _ClassesState extends State<ClassesView> {
       list_elems.add(_CardObject(true, null, _CardType.sammiFirstClass));
     // If we have one class, and that class is part of a current term, we need to prompt for the second class
     else if (classCount == 1 &&
-        classes.first.classPeriod.endDate.millisecondsSinceEpoch >= nowInMS) {
+        classes.first.classPeriod.endDate!.millisecondsSinceEpoch >= nowInMS) {
       final studentClass = classes.first;
 
       if (studentClass.status.id == ClassStatuses.needs_setup)
@@ -499,7 +499,7 @@ class _ClassesState extends State<ClassesView> {
                               Image.asset(ImageNames.peopleImages.people_gray),
                         ),
                         Text(
-                          '${studentClass.enrollment - 1} classmate${studentClass.enrollment == 2 ? '' : 's'}',
+                          '${studentClass.enrollment! - 1} classmate${studentClass.enrollment == 2 ? '' : 's'}',
                           textScaleFactor: 1,
                           style: TextStyle(
                               fontWeight: FontWeight.normal, fontSize: 14),
@@ -799,7 +799,7 @@ class _ClassesState extends State<ClassesView> {
   void tappedExpiredPeriodDescr(Period period) {
     final now = DateTime.now();
     final timeless = DateTime(now.year, now.month, now.day);
-    final time_left = 15 - timeless.difference(period.endDate).inDays;
+    final time_left = 15 - timeless.difference(period.endDate!).inDays;
 
     showDialog(
       context: context,
@@ -943,7 +943,7 @@ class _ClassesState extends State<ClassesView> {
     final timeless =
         DateTime(now.year, now.month, now.day).add(Duration(days: 30));
 
-    if (SKUser.current!.student.primaryPeriod!.endDate.millisecondsSinceEpoch <
+    if (SKUser.current!.student.primaryPeriod!.endDate!.millisecondsSinceEpoch <
             timeless.millisecondsSinceEpoch &&
         promptPeriod != null) {
       await Navigator.push(

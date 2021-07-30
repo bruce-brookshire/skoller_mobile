@@ -20,7 +20,7 @@ class TodoView extends StatefulWidget {
 }
 
 class _TodoState extends State<TodoView> {
-  late List<_TaskLikeItem> _taskItems;
+  late List<_TaskLikeItem>? _taskItems;
   List<int> _datelessAssignments = [];
 
   int numberCompleted = 0;
@@ -219,19 +219,19 @@ class _TodoState extends State<TodoView> {
   }
 
   void onCompleteAssignment(Assignment task) async {
-    final index = _taskItems
+    final index = _taskItems!
         .indexWhere((item) => !item.isMod && item.parentObjectId == task.id);
 
     bool success;
 
     if (!showingCompletedTasks) {
-      final item = _taskItems.removeAt(index);
+      final item = _taskItems!.removeAt(index);
 
       setState(() {});
 
       success = await task.toggleComplete();
 
-      if (!success) _taskItems.insert(index, item);
+      if (!success) _taskItems!.insert(index, item);
     } else
       success = await task.toggleComplete();
 
@@ -316,20 +316,20 @@ class _TodoState extends State<TodoView> {
               children: [
                 ListView.builder(
                   padding: EdgeInsets.only(top: 4, bottom: 64),
-                  itemCount: (_taskItems.length ?? 0) == 0
+                  itemCount: (_taskItems?.length ?? 0) == 0
                       ? _taskItems == null ? 1 : 2
-                      : (_taskItems.length + (completedTasksAvailable ? 2 : 1)),
+                      : (_taskItems!.length + (completedTasksAvailable ? 2 : 1)),
                   itemBuilder: (context, index) {
                     if (index == 0)
                       return createSammiPrompt(
                           setupSecondClass, todoDaysFuture!);
-                    else if (index <= _taskItems.length)
+                    else if (index <= _taskItems!.length)
                       return _TodoRow(
-                        item: _taskItems[index - 1],
+                        item: _taskItems![index - 1],
                         onCompleted: this.onCompleteAssignment,
                         showingCompleted: showingCompletedTasks,
                       );
-                    else if (_taskItems.length == 0)
+                    else if (_taskItems?.length == 0)
                       return Image.asset(
                           ImageNames.todoImages.students_in_pool);
                     else
@@ -416,7 +416,7 @@ class _TodoState extends State<TodoView> {
 
   Widget createSammiPrompt(bool setupSecondClass, int todoDaysFuture) {
     final day = DateFormat('EEEE').format(DateTime.now());
-    final assignments = _taskItems.length ?? 0;
+    final assignments = _taskItems?.length ?? 0;
 
     Widget sammiBody;
 
@@ -746,7 +746,7 @@ class _TodoRowState extends State<_TodoRow> {
                       child: Material(
                         type: MaterialType.transparency,
                         child: Text(
-                          task?.name ?? 'N/A',
+                          task.name ?? 'N/A',
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                           style: TextStyle(
@@ -963,7 +963,7 @@ class _TodoRowState extends State<_TodoRow> {
                               child: Material(
                                 type: MaterialType.transparency,
                                 child: Text(
-                                  task?.name ?? 'N/A',
+                                  task.name ?? 'N/A',
                                   maxLines: 1,
                                   overflow: TextOverflow.ellipsis,
                                   style: TextStyle(

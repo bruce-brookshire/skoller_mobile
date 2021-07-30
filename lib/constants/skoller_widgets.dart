@@ -2,7 +2,7 @@ part of 'constants.dart';
 
 class SKButton extends StatelessWidget {
   final String buttonText;
-  final EdgeInsets margins;
+  final EdgeInsets? margins;
   final double width;
   final ContextCallback callback;
 
@@ -13,7 +13,7 @@ class SKButton extends StatelessWidget {
       double? width,
       ContextCallback? callback})
       : buttonText = buttonText!,
-        margins = margin!,
+        margins = margin,
         width = width!,
         callback = callback!,
         super(key: key);

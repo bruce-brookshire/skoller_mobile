@@ -47,7 +47,7 @@ class _AssignmentEditModalState extends State<AssignmentEditModal> {
             : !(selectedDate?.isAtSameMomentAs(assignment.due!) ?? true));
 
     final weightChanged = selectedWeight!.id != assignment.weight_id;
-    final nameChanged = nameController.text.trim() != assignment.name.trim();
+    final nameChanged = nameController.text.trim() != assignment.name!.trim();
 
     final newHasChanged = dateChanged || weightChanged || nameChanged;
 
@@ -168,7 +168,7 @@ class _AssignmentEditModalState extends State<AssignmentEditModal> {
         });
       }
       final name = nameController.text.trim();
-      if (assignment.name.trim() != name)
+      if (assignment.name!.trim() != name)
         requests.add({
           'request': assignment.updateName(name),
           'mod_type': 'name',

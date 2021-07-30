@@ -6,7 +6,7 @@ import 'package:intl/intl.dart';
 
 class _UnsavedAssignment {
   String name;
-  DateTime dueDate;
+  DateTime? dueDate;
 
   _UnsavedAssignment({required this.name, required this.dueDate});
 }
@@ -68,7 +68,7 @@ class _AssignmentBatchAddState extends State<AssignmentBatchAddView> {
 
     if (result != null) {
       int index = queuedAssignments.indexWhere(
-          (element) => result.dueDate == null ? true : element.dueDate.isAfter(result.dueDate) ?? false);
+          (element) => result.dueDate == null ? true : element.dueDate?.isAfter(result.dueDate!) ?? false);
 
       setState(() {
         queuedAssignments.insert(
@@ -89,7 +89,7 @@ class _AssignmentBatchAddState extends State<AssignmentBatchAddView> {
 
     for (final assignment in queuedAssignments) {
       final future = studentClass!.createBatchAssignment(
-          assignment.name, widget.weight!, assignment.dueDate);
+          assignment.name, widget.weight!, assignment.dueDate!);
 
       futureQueue.add(future);
     }

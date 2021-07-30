@@ -10,14 +10,14 @@ class Assignment {
   int classId;
   int weight_id;
 
-  double weight;
+  double? weight;
   double? grade=null;
 
   bool? isCompleted;
   bool _dueDateShifted = false;
   bool isPostNotifications;
 
-  String name;
+  String? name;
   String notes;
 
   DateTime? due=null;

@@ -282,7 +282,7 @@ class _AssignmentAddState extends State<AssignmentAddView> {
                     child: Row(children: [
                       Expanded(
                         child: Text(
-                          name,
+                          name??'',
                           style: TextStyle(fontSize: 14),
                         ),
                       ),

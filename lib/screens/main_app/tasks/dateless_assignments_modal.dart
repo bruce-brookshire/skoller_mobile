@@ -25,7 +25,7 @@ class DatelessAssignmentsModal extends StatelessWidget {
         .entries
         .map((e) {
           final assignments = (e.value
-                ..sort((a1, a2) => a2.name.compareTo(a1.name)))
+                ..sort((a1, a2) => a2.name!.compareTo(a1.name!)))
               .map(
                 (a) => GestureDetector(
                   onTapUp: (_) => Navigator.pushReplacement(
@@ -42,7 +42,7 @@ class DatelessAssignmentsModal extends StatelessWidget {
                       children: [
                         Expanded(
                           child: Text(
-                            a.name,
+                            a.name??'',
                             style: TextStyle(fontSize: 14),
                           ),
                         ),

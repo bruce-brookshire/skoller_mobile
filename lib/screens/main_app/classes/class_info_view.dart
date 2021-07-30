@@ -245,7 +245,7 @@ class _ClassInfoViewState extends State<ClassInfoView> {
                             : ' @ ') +
                         (studentClass.meetTime == null
                             ? ''
-                            : studentClass.meetTime.format(context)),
+                            : studentClass.meetTime!.format(context)),
                     style: TextStyle(fontSize: 14),
                   )
                 ],

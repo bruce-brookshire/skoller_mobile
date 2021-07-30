@@ -5,12 +5,12 @@ class School {
 
   bool isSyllabusOverload;
 
-  List<Period> periods;
+  List<Period>? periods;
 
   String timezone;
   String name;
-  String adrRegion;
-  String adrLocality;
+  String? adrRegion;
+  String? adrLocality;
 
   Color? color;
 
@@ -102,7 +102,7 @@ class School {
           } else if (p2.startDate == null) {
             return -1;
           } else {
-            return p1.startDate.compareTo(p2.startDate);
+            return p1.startDate!.compareTo(p2.startDate!);
           }
         },
       )
@@ -172,8 +172,8 @@ class Period {
   bool isMainPeriod;
 
   String name;
-  DateTime startDate;
-  DateTime endDate;
+  DateTime? startDate;
+  DateTime? endDate;
 
   Period(
     this.id,

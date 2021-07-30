@@ -40,7 +40,7 @@ class Mod {
 
   StudentClass get parentClass => StudentClass.currentClasses[_parentClassId]!;
 
-  Assignment get parentAssignment {
+  Assignment? get parentAssignment {
     return Assignment.currentAssignments[_parentAssignmentId]!;
   }
 
@@ -53,8 +53,8 @@ class Mod {
 
     if (response.wasSuccessful() &&
         modType == ModType.due &&
-        (parentAssignment.isCompleted ?? false))
-      await parentAssignment.toggleComplete();
+        (parentAssignment?.isCompleted ?? false))
+      await parentAssignment?.toggleComplete();
 
     return response;
   }
