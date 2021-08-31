@@ -1,5 +1,7 @@
 // @dart = 2.9
 
+import 'dart:io';
+
 import 'package:dart_notification_center/dart_notification_center.dart';
 import 'package:dropdown_banner/dropdown_banner.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
@@ -16,8 +18,12 @@ import 'constants/timezone_manager.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp();
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+
+  if (Platform.isAndroid) {
+    await Firebase.initializeApp();
+  }
+
   runApp(SkollerApp());
   //Allow currentTZ to cache through heuristic exploration before we need it
   TimeZoneManager.verifyTzDbActive();
@@ -83,7 +89,6 @@ class _SkollerAppState extends State<SkollerApp> {
     // SystemChrome.setSystemUIOverlayStyle(
     //   SystemUiOverlayStyle(statusBarBrightness: Brightness.light),
     // );
-
     DartNotificationCenter.subscribe(
       channel: NotificationChannels.appStateChanged,
       observer: this,

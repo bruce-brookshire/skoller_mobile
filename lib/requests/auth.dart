@@ -6,7 +6,8 @@ class Auth {
   static String? userPhone;
 
   static Future<bool> enforceMinVersion() async {
-    final response = await http.get(Uri.parse('${SKRequests._baseUrl}/min-version'));
+    final response =
+        await http.get(Uri.parse('${SKRequests._baseUrl}/min-version'));
     var content;
     try {
       content = response.body != null ? json.decode(response.body) : null;
@@ -32,7 +33,7 @@ class Auth {
           .split('.')
           .map((str) => int.tryParse(str))
           .toList();
-          
+
       final max =
           device.length > preferred.length ? preferred.length : device.length;
       int index = 0;
@@ -219,22 +220,9 @@ class Auth {
 
   static void requestNotificationPermissions() {
     if (Platform.isIOS) {
-      _apnsConnector = createPushConnector() ;
-      _apnsConnector!.configure(
-        onMessage: (Map<String, dynamic> message) async {
-          if (message != null && message['aps'] != null) {
-            final aps = message['aps'];
-            final alert = aps['alert'];
-
-            final title = alert is String ? null : alert['title'];
-            final body = alert is String ? alert : alert['body'];
-
-            final category = aps['category'];
-
-            _dropdownNotifications(title, body,
-                () => _handleNotificationAction(category, message));
-          }
-        },
+      _apnsConnector = createPushConnector();
+      _apnsConnector.configure(
+        onMessage: (data) => onPush('onMessage', data),
         onResume: _iosBackgroundHandler,
         onLaunch: _iosBackgroundHandler,
       );
@@ -242,16 +230,15 @@ class Auth {
     } else {
       _firebaseMessaging = FirebaseMessaging.instance;
 
-
       FirebaseMessaging.onMessage.listen((event) {
-        Map<String,dynamic> message = event.data;
+        Map<String, dynamic> message = event.data;
         if (message != null && message['notification'] != null) {
           final title = message['notification']['title'];
           final body = message['notification']['body'];
           final category = message['data']['category'];
 
           _dropdownNotifications(title, body,
-                  () => _handleNotificationAction(category, message['data']));
+              () => _handleNotificationAction(category, message['data']));
         }
       });
 
@@ -259,7 +246,7 @@ class Auth {
         _androidBackgroundHandler(message.data);
       });
 
-     /* _firebaseMessaging.configure(
+      /* _firebaseMessaging.configure(
         onMessage: (Map<String, dynamic> message) async {
           if (message != null && message['notification'] != null) {
             final title = message['notification']['title'];
@@ -286,6 +273,23 @@ class Auth {
     _handleNotificationAction(message['aps']['category'], message);
   }
 
+  static Future<dynamic> onPush(String name, RemoteMessage payload) {
+    if (payload.data != null && payload.data['aps'] != null) {
+      final aps = payload.data['aps'];
+      final alert = aps['alert'];
+
+      final title = alert is String ? null : alert['title'];
+      final body = alert is String ? alert : alert['body'];
+
+      final category = aps['category'];
+
+      _dropdownNotifications(
+          title, body, () => _handleNotificationAction(category, payload.data));
+    }
+
+    return Future.value(true);
+  }
+
   static void _dropdownNotifications(
     String? title,
     String? body,
@@ -308,7 +312,7 @@ class Auth {
     if (category == null || attempt == 3) return;
 
     if (StudentClass.classesLoaded) {
-      String? channel=null;
+      String? channel = null;
       dynamic options;
 
       () async {
