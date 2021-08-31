@@ -10,6 +10,7 @@ import 'package:skoller/tools.dart';
 import 'package:url_launcher/url_launcher.dart';
 import './modals/syllabus_instructions_modal.dart';
 import 'class_detail_view.dart';
+import 'package:collection/collection.dart';
 
 enum _CardType {
   sammiSyllabusInstruction,
@@ -38,7 +39,7 @@ typedef Widget _CardConstruct(
 
 class _ClassesState extends State<ClassesView> {
   int? selectedIndex;
-  Period? promptPeriod;
+  Period? promptPeriod = null;
 
   List<_CardObject> cardObjects = [];
   Map<int, _CardConstruct>? cardConstructors;
@@ -51,7 +52,7 @@ class _ClassesState extends State<ClassesView> {
 
     if (StudentClass.currentClasses == {} &&
         SKCacheManager.classesLoader != null) {
-      SKCacheManager.classesLoader!.then((_) => sortClasses());
+      SKCacheManager.classesLoader?.then((_) => sortClasses());
     } else {
       sortClasses();
     }
@@ -141,18 +142,17 @@ class _ClassesState extends State<ClassesView> {
     this.promptPeriod = (SKUser.current!.student.primarySchool!.periods!
           ..removeWhere((p) => !p.isMainPeriod)
           ..sort((p1, p2) => p1.startDate!.compareTo(p2.startDate!)))
-        .firstWhere(
+        .firstWhereOrNull(
             (p) =>
                 p.startDate!.millisecondsSinceEpoch >
-                DateTime.now().millisecondsSinceEpoch,
-          /*  orElse: () => null*/);
+                DateTime.now().millisecondsSinceEpoch,);
 
     final now = DateTime.now();
     final today = DateTime(now.year, now.month, now.day);
     final nowInMS = today.millisecondsSinceEpoch;
 
     final daysTillPeriodEnds =
-        SKUser.current!.student.primaryPeriod?.endDate!.difference(today).inDays;
+        SKUser.current?.student.primaryPeriod?.endDate!.difference(today).inDays;
 
     final shouldPromptPeriod = promptPeriod != null &&
         !periodClasses.containsKey(promptPeriod) &&
@@ -351,7 +351,7 @@ class _ClassesState extends State<ClassesView> {
           sammiPersonality: SammiPersonality.cool,
           speechBubbleContents: Text.rich(
             TextSpan(
-                text: 'Hey ${SKUser.current!.student.nameFirst},\n',
+                text: 'Hey ${SKUser.current?.student.nameFirst},\n',
                 children: [
                   TextSpan(
                       text: 'You got your first class set up! Now,\n',
@@ -859,7 +859,7 @@ class _ClassesState extends State<ClassesView> {
                   behavior: HitTestBehavior.opaque,
                   onTapUp: (_) async {
                     final url =
-                        'mailto:support@skoller.co?subject=Extend Term&body=School: ${SKUser.current!.student.primarySchool?.name}%0ATerm: ${period.name}';
+                        'mailto:support@skoller.co?subject=Extend Term&body=School: ${SKUser.current?.student.primarySchool?.name}%0ATerm: ${period.name}';
 
                     if (await canLaunch(url))
                       launch(url);
@@ -875,7 +875,7 @@ class _ClassesState extends State<ClassesView> {
                             cancelText: 'Dismiss',
                             getResults: () => Clipboard.setData(ClipboardData(
                                 text:
-                                    'School: ${SKUser.current!.student.primarySchool?.name}\n\nTerm: ${period.name}')),
+                                    'School: ${SKUser.current?.student.primarySchool?.name}\n\nTerm: ${period.name}')),
                           ),
                         ),
                       );

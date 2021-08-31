@@ -205,7 +205,7 @@ class Auth {
   static void saveNotificationToken(String token) {
     assert(SKUser.current != null && token != null);
     SKRequests.post(
-      '/users/${SKUser.current!.id}/register',
+      '/users/${SKUser.current?.id}/register',
       {
         'udid': token,
         "type": Platform.isIOS ? 'ios' : 'android',
@@ -395,7 +395,7 @@ class Session {
 
     SKRequests.post(
       '/sessions',
-      {"user_id": SKUser.current!.id, "platform": platform},
+      {"user_id": SKUser.current?.id, "platform": platform},
       Session._fromJson,
     ).then((response) {
       if (response.wasSuccessful()) currentSession = response.obj;

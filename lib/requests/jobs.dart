@@ -28,13 +28,13 @@ class JobProfile {
   String transcript_url;
   String resume_url;
 
-  TypeObject degree_type;
-  TypeObject job_search_type;
-  TypeObject ethnicity_type;
-  TypeObject job_profile_status;
+  TypeObject? degree_type;
+  TypeObject? job_search_type;
+  TypeObject? ethnicity_type;
+  TypeObject? job_profile_status;
 
-  DateTime wakeup_date;
-  DateTime graduation_date;
+  DateTime? wakeup_date;
+  DateTime? graduation_date;
 
   //List<Activity> volunteer_activities;
   //List<Activity> club_activities;
@@ -119,7 +119,7 @@ class JobProfile {
 
   static JobProfile _fromJsonObj(Map content) {
     // Types
-    final degreeType = content['degree_type'] == null
+    final  degreeType = content['degree_type'] == null
         ? null
         : TypeObject._fromJsonObj(content['degree_type']);
 
@@ -159,12 +159,12 @@ class JobProfile {
       content['gender'],
       content['transcript_url'],
       content['resume_url'],
-      degreeType!,
-      jobSearchType!,
-      ethnicityType!,
-      jobProfileStatus!,
-      _dateParser(content['wakeup_date'])!,
-      _dateParser(content['graduation_date'])!,
+      degreeType,
+      jobSearchType,
+      ethnicityType,
+      jobProfileStatus,
+      _dateParser(content['wakeup_date']),
+      _dateParser(content['graduation_date']),
      /* JsonListMaker.convert(
         Activity._fromJsonObj,
         content['volunteer_activities'] ?? [],
@@ -197,7 +197,7 @@ class JobProfile {
       SKRequests.post(
         '/skoller-jobs/profiles',
         {
-          'graduation_date': graduationDate!.toIso8601String(),
+          'graduation_date': graduationDate?.toIso8601String(),
           'job_search_type_id': jobType?.id
         },
         JobProfile._fromJsonObj,

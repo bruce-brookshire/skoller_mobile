@@ -65,9 +65,9 @@ class _TodoPreferencesState extends State<TodoPreferencesModal> {
   }
 
   void tappedSave(_) async {
-    final student = SKUser.current!.student;
+    final student = SKUser.current?.student;
 
-    if (daysFuture == student.todoDaysFuture &&
+    if (daysFuture == student!.todoDaysFuture &&
         daysPast == student.todoDaysPast)
       Navigator.pop(context);
     else {
@@ -91,8 +91,8 @@ class _TodoPreferencesState extends State<TodoPreferencesModal> {
 
   @override
   Widget build(BuildContext context) {
-    final student = SKUser.current!.student;
-    final shouldSave = daysPast != student.todoDaysPast ||
+    final student = SKUser.current?.student;
+    final shouldSave = daysPast != student!.todoDaysPast ||
         daysFuture != student.todoDaysFuture;
 
     return Dialog(

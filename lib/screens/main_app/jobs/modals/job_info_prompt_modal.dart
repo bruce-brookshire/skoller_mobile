@@ -25,7 +25,7 @@ class JobInfoPromptModal extends StatelessWidget {
     final profile = JobProfile.currentProfile;
     _JobInfoPromptType? type=null;
 
-    if (SKUser.current!.avatarUrl == null)
+    if (SKUser.current?.avatarUrl == null)
       type = _JobInfoPromptType.avatar;
     else if (profile!.regions == null)
       type = _JobInfoPromptType.regions;

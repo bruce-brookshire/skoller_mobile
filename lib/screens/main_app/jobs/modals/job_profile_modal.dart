@@ -186,7 +186,7 @@ class _JobProfileModalState extends State<JobProfileModal> {
                           ...buildInfoPrompt(
                             prompt: 'What type of job are you seeking?',
                             choice:
-                                JobProfile.currentProfile!.job_search_type.name,
+                                JobProfile.currentProfile!.job_search_type?.name,
                             callback: tappedJobType,
                           ),
                           ...buildInfoPrompt(
@@ -210,7 +210,7 @@ class _JobProfileModalState extends State<JobProfileModal> {
                           ...buildInfoPrompt(
                             prompt: 'Profile status',
                             choice: JobProfile
-                                .currentProfile!.job_profile_status.name,
+                                .currentProfile!.job_profile_status?.name,
                             callback: tappedProfileStatus,
                           ),
                         ],

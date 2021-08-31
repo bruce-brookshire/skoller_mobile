@@ -20,7 +20,7 @@ class MajorSelectorState extends State<MajorSelector> {
   @override
   void initState() {
     super.initState();
-    (SKUser.current!.student.fieldsOfStudy ?? [])
+    (SKUser.current?.student.fieldsOfStudy ?? [])
         .forEach((f) => selectedFields[f.id] = f);
   }
 
@@ -28,7 +28,7 @@ class MajorSelectorState extends State<MajorSelector> {
     final searchText = search.trim().toLowerCase();
 
     if (searchText == '')
-      searchedFields = SKUser.current!.student.fieldsOfStudy ?? [];
+      searchedFields = SKUser.current?.student.fieldsOfStudy ?? [];
     else {
       final searcher = (String key) => widget.availableFields
           .toList()
@@ -89,7 +89,7 @@ class MajorSelectorState extends State<MajorSelector> {
   }
 
   void tappedDismiss(TapUpDetails details) async {
-    final fos = SKUser.current!.student.fieldsOfStudy ?? [];
+    final fos = SKUser.current?.student.fieldsOfStudy ?? [];
     if (fos.length == selectedFields.length &&
         !fos.any((f) => selectedFields[f.id] == null)) {
       Navigator.pop(context);

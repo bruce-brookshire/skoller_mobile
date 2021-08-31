@@ -21,13 +21,13 @@ class _ClassSearchSettingsModalState extends State<ClassSearchSettingsModal> {
 
   @override
   void initState() {
-    school = SKUser.current!.student.primarySchool;
+    school = SKUser.current?.student.primarySchool;
 
     if (widget.initialPeriodId != null) {
       period = Period.currentPeriods[widget.initialPeriodId];
 
-      if (period!.id != SKUser.current!.student.primaryPeriod?.id)
-        SKUser.current!.update(primaryPeriod: period!);
+      if (period!.id != SKUser.current?.student.primaryPeriod?.id)
+        SKUser.current?.update(primaryPeriod: period!);
     }
 
     final now = DateTime.now();
@@ -82,7 +82,7 @@ class _ClassSearchSettingsModalState extends State<ClassSearchSettingsModal> {
           setState(() {
             period = possiblePeriods[index];
           });
-          SKUser.current!.update(primaryPeriod: period!);
+          SKUser.current?.update(primaryPeriod: period!);
         },
       ),
     );

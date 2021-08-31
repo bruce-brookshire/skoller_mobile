@@ -13,12 +13,12 @@ class EditProfileView extends StatefulWidget {
 
 class _EditProfileState extends State<EditProfileView> {
   final firstNameController =
-      TextEditingController(text: SKUser.current!.student.nameFirst);
+      TextEditingController(text: SKUser.current?.student.nameFirst);
   final lastNameController =
-      TextEditingController(text: SKUser.current!.student.nameLast);
-  final bioController = TextEditingController(text: SKUser.current!.student.bio);
+      TextEditingController(text: SKUser.current?.student.nameLast);
+  final bioController = TextEditingController(text: SKUser.current?.student.bio);
   final organizationsController =
-      TextEditingController(text: SKUser.current!.student.organizations);
+      TextEditingController(text: SKUser.current?.student.organizations);
 
   @override
   void initState() {

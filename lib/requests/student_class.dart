@@ -167,7 +167,7 @@ class StudentClass {
 
   Future<RequestResponse> _update(Map params) {
     return SKRequests.put(
-      '/students/${SKUser.current!.student.id}/classes/${id}',
+      '/students/${SKUser.current?.student.id}/classes/${id}',
       params,
       (content) => StudentClass._fromJsonObj(content),
     ).then((response) {
@@ -211,7 +211,7 @@ class StudentClass {
     }
 
     return SKRequests.post(
-        '/students/${SKUser.current!.student.id}/classes/${this.id}/assignments',
+        '/students/${SKUser.current?.student.id}/classes/${this.id}/assignments',
         {
           "due": tzCorrectedString,
           "weight_id": weight.id,
@@ -333,14 +333,14 @@ class StudentClass {
 
   Future<RequestResponse> speculateClass() {
     return SKRequests.get(
-      '/students/${SKUser.current!.student.id}/classes/$id/speculate',
+      '/students/${SKUser.current?.student.id}/classes/$id/speculate',
       null,
     );
   }
 
   Future<bool> dropClass() {
     return SKRequests.delete(
-      '/students/${SKUser.current!.student.id}/classes/$id',
+      '/students/${SKUser.current?.student.id}/classes/$id',
       Map(),
     ).then((response) {
       bool success = [200, 204].contains(response);
@@ -507,7 +507,7 @@ class StudentClass {
 
   static Future<RequestResponse> getStudentClasses() {
     return SKRequests.get(
-      '/students/${SKUser.current!.student.id}/classes',
+      '/students/${SKUser.current?.student.id}/classes',
       _fromJsonObj,
       cacheResult: true,
       cachePath: 'student_classes.json',
@@ -521,7 +521,7 @@ class StudentClass {
 
   static Future<RequestResponse> getStudentClassById(int id) {
     return SKRequests.get(
-      '/students/${SKUser.current!.student.id}/classes/${id}',
+      '/students/${SKUser.current?.student.id}/classes/${id}',
       _fromJsonObj,
       postRequestAction: () =>
           Assignment.currentAssignments.removeWhere((_, a) => a.classId == id),

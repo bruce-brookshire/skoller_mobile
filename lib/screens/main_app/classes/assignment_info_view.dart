@@ -754,13 +754,13 @@ class _AssignmentInfoState extends State<AssignmentInfoView> {
   }
 
   Widget buildJobView() {
-    final student = SKUser.current!.student;
+    final student = SKUser.current?.student;
 
     void Function(TapUpDetails)? action;
     late String prompt;
     int level = 3;
 
-    if ((student.fieldsOfStudy ?? []).length == 0) {
+    if ((student!.fieldsOfStudy ?? []).length == 0) {
       level = 0;
       prompt = 'What\'s your field of study?';
       action = (_) async {
@@ -788,7 +788,7 @@ class _AssignmentInfoState extends State<AssignmentInfoView> {
             items: years,
             onSelect: (index) async {
               final loader = SKLoadingScreen.fadeIn(context);
-              await SKUser.current!.update(gradYear: years[index]);
+              await SKUser.current?.update(gradYear: years[index]);
               loader.fadeOut();
               setState(() {});
             },
@@ -813,7 +813,7 @@ class _AssignmentInfoState extends State<AssignmentInfoView> {
               items: degrees.map((d) => d.name).toList(),
               onSelect: (index) async {
                 final loader = SKLoadingScreen.fadeIn(context);
-                await SKUser.current!.update(degreeType: degrees[index]);
+                await SKUser.current?.update(degreeType: degrees[index]);
                 loader.fadeOut();
                 setState(() {});
               },

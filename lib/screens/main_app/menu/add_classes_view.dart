@@ -29,8 +29,8 @@ class _AddClassesState extends State<AddClassesView> {
   void initState() {
     super.initState();
 
-    activePeriod = SKUser.current!.student.primaryPeriod ??
-        SKUser.current!.student.primarySchool?.getBestCurrentPeriod();
+    activePeriod = SKUser.current?.student.primaryPeriod ??
+        SKUser.current?.student.primarySchool?.getBestCurrentPeriod();
 
     DartNotificationCenter.subscribe(
       observer: this,
@@ -436,10 +436,10 @@ class _AddClassesState extends State<AddClassesView> {
         0,
         (a, s) =>
             int.parse(a.toString()) +
-            (s.classPeriod == SKUser.current!.student.primaryPeriod ? 1 : 0));
+            (s.classPeriod == SKUser.current?.student.primaryPeriod ? 1 : 0));
 
     return Container(
-      height: 128,
+      height: 136,
       padding: EdgeInsets.only(top: 12),
       decoration: BoxDecoration(
         boxShadow: [
@@ -478,11 +478,11 @@ class _AddClassesState extends State<AddClassesView> {
                   mainAxisSize: MainAxisSize.min,
                   children: <Widget>[
                     Text(
-                      SKUser.current!.student.primarySchool?.name??'',
+                      SKUser.current?.student.primarySchool?.name??'',
                       overflow: TextOverflow.ellipsis,
                       style: TextStyle(
                           fontSize: 18,
-                          color: SKUser.current!.student.primarySchool?.color ??
+                          color: SKUser.current?.student.primarySchool?.color ??
                               SKColors.dark_gray),
                     ),
                     Padding(

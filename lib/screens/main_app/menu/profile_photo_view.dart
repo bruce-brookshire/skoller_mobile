@@ -124,13 +124,13 @@ class ProfilePhotoSourceModal extends StatelessWidget {
                 ),
               ),
             ),
-            if (SKUser.current!.avatarUrl != null) ...[
+            if (SKUser.current?.avatarUrl != null) ...[
               SizedBox(height: 16),
               GestureDetector(
                 behavior: HitTestBehavior.opaque,
                 onTapUp: (_) async {
                   final loader = SKLoadingScreen.fadeIn(context);
-                  print(await SKUser.current!.deleteProfilePhoto());
+                  print(await SKUser.current?.deleteProfilePhoto());
                   await Auth.tokenLogin();
                   DartNotificationCenter.post(
                       channel: NotificationChannels.userChanged);
@@ -248,7 +248,7 @@ class _ProfilePhotoViewState extends State<ProfilePhotoView> {
       ..writeAsBytesSync(
           img.encodeJpg(img.copyRotate(image!, 90), quality: 100));
 
-    await SKUser.current!.uploadProfilePhoto(jpegImage.path).then((response) {
+    await SKUser.current?.uploadProfilePhoto(jpegImage.path).then((response) {
       if (![200, 204].contains(response)) throw 'Unable to upload photo';
 
       return Auth.tokenLogin();

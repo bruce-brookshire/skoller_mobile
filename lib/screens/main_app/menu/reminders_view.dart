@@ -20,7 +20,7 @@ class _RemindersState extends State<RemindersView> {
 
   void tappedTimeOnDue(TapUpDetails details) async {
     final result = await presentTimePicker(
-        SKUser.current!.student.notificationTime ?? defaultTime, false);
+        SKUser.current?.student.notificationTime ?? defaultTime, false);
 
     if (result != null) {
       SKUser.current!
@@ -31,7 +31,7 @@ class _RemindersState extends State<RemindersView> {
 
   void tappedTimeBeforeDue(TapUpDetails details) async {
     final result = await presentTimePicker(
-        SKUser.current!.student.futureNotificationTime ?? defaultTime, true);
+        SKUser.current?.student.futureNotificationTime ?? defaultTime, true);
 
     if (result != null) {
       SKUser.current!
@@ -122,7 +122,7 @@ class _RemindersState extends State<RemindersView> {
   }
 
   void tappedSelectDaysOut(TapUpDetails details) async {
-    int selectedIndex = SKUser.current!.student.notificationDays ?? 0;
+    int selectedIndex = SKUser.current?.student.notificationDays ?? 0;
 
     final result = await showDialog(
       context: context,
@@ -316,7 +316,7 @@ class _RemindersState extends State<RemindersView> {
                                   behavior: HitTestBehavior.opaque,
                                   onTapUp: tappedSelectDaysOut,
                                   child: Text(
-                                    '${SKUser.current!.student.notificationDays ?? 1} day${(SKUser.current!.student.notificationDays ?? 1) == 1 ? '' : 's'} out',
+                                    '${SKUser.current?.student.notificationDays ?? 1} day${(SKUser.current?.student.notificationDays ?? 1) == 1 ? '' : 's'} out',
                                     style:
                                         TextStyle(color: SKColors.skoller_blue),
                                   ),

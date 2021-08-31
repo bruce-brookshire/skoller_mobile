@@ -68,12 +68,12 @@ class _TodoState extends State<TodoView> {
   Future loadTasks([dynamic options]) async {
     Future<RequestResponse> modsRequest = Mod.fetchNewAssignmentMods();
 
-    final student = SKUser.current!.student;
+    final student = SKUser.current?.student;
 
     final now = DateTime.now();
     final today = DateTime(now.year, now.month, now.day);
 
-    final overdueDate = today.subtract(Duration(days: student.todoDaysPast!));
+    final overdueDate = today.subtract(Duration(days: student!.todoDaysPast!));
     final outlookDate = today.add(Duration(days: student.todoDaysFuture!));
 
     int minDaysOutCompleted = 1000;
@@ -296,7 +296,7 @@ class _TodoState extends State<TodoView> {
             ),
           );
 
-    final todoDaysFuture = SKUser.current!.student.todoDaysFuture;
+    final todoDaysFuture = SKUser.current?.student.todoDaysFuture;
 
     return SKNavView(
       title: 'To-Do\'s',
@@ -453,7 +453,7 @@ class _TodoState extends State<TodoView> {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
           Text(
-            'Happy $day, ${SKUser.current!.student.nameFirst}!',
+            'Happy $day, ${SKUser.current?.student.nameFirst}!',
             style: TextStyle(fontSize: 17),
           ),
           Padding(

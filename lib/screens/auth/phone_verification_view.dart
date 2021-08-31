@@ -92,6 +92,7 @@ class _PhoneVerificationState extends State<PhoneVerificationView> {
       Navigator.pop(context, response.wasSuccessful());
     }).catchError(
       (onError) => setState(() {
+        Navigator.pop(context, '');
         loading = false;
         errorMsg = errorMsg is String ? errorMsg : 'Invalid code';
       }),

@@ -123,7 +123,7 @@ class _SchoolSearchState extends State<SchoolSearchView> {
     );
 
     if (result is bool && result) {
-      await SKUser.current!.update(primarySchool: school);
+      await SKUser.current?.update(primarySchool: school);
       Navigator.pop(context);
       DartNotificationCenter.post(
           channel: NotificationChannels.userChanged, options: school);

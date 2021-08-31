@@ -61,7 +61,7 @@ class Mod {
 
   Future<RequestResponse> _submitModResponse(bool withStatus) {
     return SKRequests.post(
-      '/students/${SKUser.current!.student.id}/mods/${id}',
+      '/students/${SKUser.current?.student.id}/mods/${id}',
       {'is_accepted': withStatus},
       Assignment._fromJsonObj,
     );
@@ -147,7 +147,7 @@ class Mod {
 
   static Future<RequestResponse> fetchMods() {
     return SKRequests.get(
-        '/students/${SKUser.current!.student.id}/mods/', Mod._fromJsonObj,
+        '/students/${SKUser.current?.student.id}/mods/', Mod._fromJsonObj,
         postRequestAction: () {
       modsByAssignmentId = {};
       currentMods = {};
@@ -156,7 +156,7 @@ class Mod {
 
   static Future<RequestResponse> fetchNewAssignmentMods() {
     return SKRequests.get(
-      '/students/${SKUser.current!.student.id}/mods?is_new_assignments=true',
+      '/students/${SKUser.current?.student.id}/mods?is_new_assignments=true',
       Mod._fromJsonObj,
     ).then((response) {
       if (response.wasSuccessful()) {

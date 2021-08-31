@@ -1,3 +1,5 @@
+// @dart = 2.9
+
 import 'package:dart_notification_center/dart_notification_center.dart';
 import 'package:dropdown_banner/dropdown_banner.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
@@ -161,7 +163,7 @@ class _SkollerAppState extends State<SkollerApp> {
 
     return MaterialApp(
       builder: (context, widget) => MediaQuery(
-        child: Theme(data: currentTheme, child: widget!),
+        child: Theme(data: currentTheme, child: widget),
         data: MediaQuery.of(context).copyWith(textScaleFactor: 1.0),
       ),
       theme: currentTheme,

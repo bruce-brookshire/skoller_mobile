@@ -33,13 +33,13 @@ class _MainState extends State<MainView> {
   @override
   void initState() {
     // If the student does not have a primary school or term, set it
-    if (SKUser.current!.student.primarySchool == null ||
-        SKUser.current!.student.primaryPeriod == null)
+    if (SKUser.current?.student.primarySchool == null ||
+        SKUser.current?.student.primaryPeriod == null)
       WidgetsBinding.instance!.addPostFrameCallback(
         (_) => showPrimarySchoolModal(),
       );
     // If the student has no majors and they have at least one class set up
-    else if ((SKUser.current!.student.fieldsOfStudy ?? []).length == 0 &&
+    else if ((SKUser.current?.student.fieldsOfStudy ?? []).length == 0 &&
         StudentClass.currentClasses.values.any((sc) => [
               ClassStatuses.class_setup,
               ClassStatuses.class_issue

@@ -68,7 +68,7 @@ class _ClassmatesState extends State<ClassmatesView> {
               if (index < classmates) {
                 final student = students[index];
                 final bool isOwnStudent =
-                    student.id == SKUser.current!.student.id;
+                    student.id == SKUser.current?.student.id;
 
                 return GestureDetector(
                   behavior: HitTestBehavior.opaque,

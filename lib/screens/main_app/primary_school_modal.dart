@@ -22,21 +22,21 @@ class _PrimarySchoolState extends State<PrimarySchoolModal> {
   void initState() {
     super.initState();
 
-    if (SKUser.current!.student.primarySchool != null) {
+    if (SKUser.current?.student.primarySchool != null) {
       eligibleSchools = [SKUser.current!.student.primarySchool!];
       selectedPeriod = eligibleSchools?.first.getBestCurrentPeriod();
       showingGreeting = false;
     } else {
       loading = true;
 
-      SKUser.current!.checkEmailDomain().then((response) async {
+      SKUser.current?.checkEmailDomain().then((response) async {
         if (response.wasSuccessful()) {
           final List<School> obj = response.obj;
 
           if (obj.length == 1) {
             selectedSchoolId = obj.first.id;
             selectedPeriod = obj.first.getBestCurrentPeriod();
-            await SKUser.current!.update(primarySchool: obj.first);
+            await SKUser.current?.update(primarySchool: obj.first);
           } else if (obj.length == 0 && !showingGreeting) tappedSearch(null);
 
           eligibleSchools = obj;
@@ -55,7 +55,7 @@ class _PrimarySchoolState extends State<PrimarySchoolModal> {
       SKNavFadeUpRoute(builder: (context) => SchoolSearchView()),
     );
 
-    if (SKUser.current!.student.primarySchool != null)
+    if (SKUser.current?.student.primarySchool != null)
       setState(() {
         eligibleSchools = [SKUser.current!.student.primarySchool!];
         selectedPeriod = eligibleSchools!.first.getBestCurrentPeriod();
@@ -93,7 +93,7 @@ class _PrimarySchoolState extends State<PrimarySchoolModal> {
   void tappedSchoolSelect(TapUpDetails? details) async {
     if (selectedPeriod != null) {
       final loader = SKLoadingScreen.fadeIn(context);
-      await SKUser.current!.update(primaryPeriod: selectedPeriod!);
+      await SKUser.current?.update(primaryPeriod: selectedPeriod!);
       loader.fadeOut();
 
       Navigator.pop(context);
@@ -102,10 +102,10 @@ class _PrimarySchoolState extends State<PrimarySchoolModal> {
           (school) => school.id == selectedSchoolId,
           orElse: () => eligibleSchools!.first);
 
-      await SKUser.current!.update(primarySchool: school);
+      await SKUser.current?.update(primarySchool: school);
 
-      if (SKUser.current!.student.primaryPeriod != null &&
-          SKUser.current!.student.primarySchool != null)
+      if (SKUser.current?.student.primaryPeriod != null &&
+          SKUser.current?.student.primarySchool != null)
         Navigator.pop(context);
       else
         setState(() {
@@ -328,7 +328,7 @@ class _PrimarySchoolState extends State<PrimarySchoolModal> {
                       child: SizedBox(
                         width: 32,
                         height: 32,
-                        child: CircularProgressIndicator(),
+                        child: Center(child: CircularProgressIndicator()),
                       ),
                     )
                   : GestureDetector(

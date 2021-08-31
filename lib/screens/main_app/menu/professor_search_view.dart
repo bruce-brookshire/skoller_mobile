@@ -24,7 +24,7 @@ class _ProfessorSearchState extends State<ProfessorSearchView> {
 
   @override
   void initState() {
-    school = SKUser.current!.student.primarySchool;
+    school = SKUser.current?.student.primarySchool;
 
     super.initState();
   }

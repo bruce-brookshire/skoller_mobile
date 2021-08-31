@@ -87,6 +87,8 @@ class SKRequests {
 
   static final String _baseUrl = '$_environment/api/v1';
 
+
+
   static Map<String, String> _headers = {
     'Content-Type': 'application/json',
   };
@@ -160,7 +162,7 @@ class SKRequests {
 
   static Future<RequestResponse> put<T>(
     String url,
-    Map body,
+    Map? body,
     _DecodableConstructor<T>? constructor,
   ) async {
     // Construct and start request
@@ -171,7 +173,7 @@ class SKRequests {
     );
 
     // Handle request and return future
-    return futureProcessor<T>(request, constructor!);
+    return futureProcessor<T>(request, constructor);
   }
 
   static Future<int> delete(

@@ -31,7 +31,7 @@ class _ProfileLinkSharingState extends State<ProfileLinkSharingView> {
 
   void tappedShare(_) {
     final shareMessage = sharingType == _SharingType.anyone
-        ? 'Check out this new app that\'s helping me keep up with school... it\'s like the Waze of the classroom!\n\n${SKUser.current!.student.enrollmentLink ?? 'https://itunes.apple.com/us/app/skoller/id1314782490?mt=8'}'
+        ? 'Check out this new app that\'s helping me keep up with school... it\'s like the Waze of the classroom!\n\n${SKUser.current?.student.enrollmentLink ?? 'https://itunes.apple.com/us/app/skoller/id1314782490?mt=8'}'
         : studentClass!.shareMessage;
 
     Share.share(shareMessage);
@@ -42,7 +42,7 @@ class _ProfileLinkSharingState extends State<ProfileLinkSharingView> {
     final classes = StudentClass.currentClasses.values.toList();
     final linkStripper = (String link) => link.split('//')[1];
 
-    final raiseEffort = SKUser.current!.student.raiseEffort;
+    final raiseEffort = SKUser.current?.student.raiseEffort;
 
     return SafeArea(
       child: Column(
@@ -280,7 +280,7 @@ class _ProfileLinkSharingState extends State<ProfileLinkSharingView> {
                                       linkStripper(
                                         sharingType == _SharingType.anyone
                                             ? SKUser
-                                                .current!.student.enrollmentLink??''
+                                                .current?.student.enrollmentLink??''
                                             : studentClass!.enrollmentLink,
                                       ),
                                       style: TextStyle(color: Colors.white),
@@ -316,7 +316,7 @@ class _ProfileLinkSharingState extends State<ProfileLinkSharingView> {
   }
 
   Image buildShareImage() {
-    final orgName = SKUser.current!.student.raiseEffort?.orgName;
+    final orgName = SKUser.current?.student.raiseEffort?.orgName;
 
     if (orgName == 'AOII')
       return Image.asset(ImageNames.shareImages.aoii_share_image);

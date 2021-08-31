@@ -155,7 +155,7 @@ class _CreateClassModalState extends State<CreateClassModal> {
               behavior: HitTestBehavior.opaque,
               onTapUp: (_) {},
               child: SizedBox(
-                height: 372,
+                height: 380,
                 child: PageView(
                   controller: pageController,
                   physics: NeverScrollableScrollPhysics(),

@@ -18,15 +18,15 @@ enum _ProfileState { intro, start, resume, profile }
 class _JobsViewState extends State<JobsView> {
   _ProfileState? profileState;
   TypeObject? jobType;
-  DateTime? graduationDate;
+  DateTime? graduationDate=null;
 
   @override
   void initState() {
     super.initState();
 
-    if (SKUser.current!.student.gradYear != null)
+    if (SKUser.current?.student.gradYear != null)
       graduationDate =
-          DateTime.parse('${SKUser.current!.student.gradYear}-05-01');
+          DateTime.parse('${SKUser.current?.student.gradYear}-05-01');
 
     updateProfileState();
 
@@ -35,7 +35,7 @@ class _JobsViewState extends State<JobsView> {
       channel: NotificationChannels.newTabSelected,
       onNotification: (index) {
         if (index == JOBS_TAB)
-          SKUser.current!.getJobProfile().then((response) {
+          SKUser.current?.getJobProfile().then((response) {
             if (response.wasSuccessful()) {
               updateProfileState();
               setState(() {});
@@ -80,7 +80,7 @@ class _JobsViewState extends State<JobsView> {
     final result = await showDialog(
       context: context,
       builder: (_) => _GraduationDatePicker(
-        startDate: graduationDate!,
+        startDate: graduationDate,
       ),
     );
 
@@ -122,7 +122,7 @@ class _JobsViewState extends State<JobsView> {
           items: items.map((t) => t.name).toList(),
           onSelect: (index) async {
             final loader = SKLoadingScreen.fadeIn(context);
-            await SKUser.current!.update(degreeType: items[index]);
+            await SKUser.current?.update(degreeType: items[index]);
             loader.fadeOut();
 
             setState(() {});
@@ -169,13 +169,13 @@ class _JobsViewState extends State<JobsView> {
 
     if (JobProfile.currentProfile == null) {
       response = await JobProfile.createProfile(
-        jobType: jobType!,
-        graduationDate: graduationDate!,
+        jobType: jobType,
+        graduationDate: graduationDate,
       );
     } else {
       response = await JobProfile.currentProfile!.updateProfile(
-        jobSearchType: jobType!,
-        gradDate: graduationDate!,
+        jobSearchType: jobType,
+        gradDate: graduationDate,
       );
     }
 
@@ -289,7 +289,7 @@ class _JobsViewState extends State<JobsView> {
       ];
 
   List<Widget> createStart() {
-    final fields = SKUser.current!.student.fieldsOfStudy ?? <FieldsOfStudy>[];
+    final fields = SKUser.current?.student.fieldsOfStudy ?? <FieldsOfStudy>[];
     String fieldsBody;
 
     if (fields.length > 0)
@@ -299,7 +299,7 @@ class _JobsViewState extends State<JobsView> {
 
     final isValid = graduationDate != null &&
         fields.length > 0 &&
-        SKUser.current!.student.degreeType != null &&
+        SKUser.current?.student.degreeType != null &&
         jobType != null;
 
     return [
@@ -423,10 +423,10 @@ class _JobsViewState extends State<JobsView> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        SKUser.current!.student.degreeType?.name ?? 'Select...',
+                        SKUser.current?.student.degreeType?.name ?? 'Select...',
                         style: TextStyle(
                             color:
-                                SKUser.current!.student.degreeType?.name == null
+                                SKUser.current?.student.degreeType?.name == null
                                     ? SKColors.jobs_light_green
                                     : SKColors.jobs_dark_green),
                       ),
@@ -619,7 +619,7 @@ class _JobsViewState extends State<JobsView> {
     String type;
     bool startsWithVowel;
 
-    switch (JobProfile.currentProfile!.job_search_type.id) {
+    switch (JobProfile.currentProfile?.job_search_type?.id) {
       case 100:
         type = ' internship';
         startsWithVowel = true;

@@ -170,7 +170,7 @@ class MenuView extends StatelessWidget {
                         decoration: BoxDecoration(
                           color: SKColors.light_gray,
                           shape: BoxShape.circle,
-                          image: SKUser.current!.avatarUrl == null
+                          image: SKUser.current?.avatarUrl == null
                               ? null
                               : DecorationImage(
                                   fit: BoxFit.fill,
@@ -180,7 +180,7 @@ class MenuView extends StatelessWidget {
                         margin: EdgeInsets.only(left: 12),
                         height: 44,
                         width: 44,
-                        child: SKUser.current!.avatarUrl == null
+                        child: SKUser.current?.avatarUrl == null
                             ? Text(
                                 SKUser.current!.student.nameFirst![0] +
                                     SKUser.current!.student.nameLast![0],
@@ -197,7 +197,7 @@ class MenuView extends StatelessWidget {
                           padding:
                               EdgeInsets.symmetric(vertical: 24, horizontal: 8),
                           child: Text(
-                            '${SKUser.current!.student.nameFirst} ${SKUser.current!.student.nameLast}',
+                            '${SKUser.current?.student.nameFirst} ${SKUser.current?.student.nameLast}',
                             style: TextStyle(fontSize: 18),
                           ),
                         ),
