@@ -42,6 +42,8 @@ dependencies:
   webview_flutter: ^2.0.10
   camera: ^0.8.1+5
   image: ^3.0.2
+  stripe_payment: ^1.1.4
+
   flutter:
     sdk: flutter
 
