@@ -4,6 +4,7 @@ import 'package:skoller/screens/main_app/menu/manage_classes_view.dart';
 import 'package:skoller/screens/main_app/menu/rewards_view.dart';
 import 'package:skoller/screens/main_app/menu/reminders_view.dart';
 import 'package:skoller/screens/main_app/menu/profile_view.dart';
+import 'package:skoller/screens/main_app/premium/premium_packages_view.dart';
 import 'package:skoller/screens/main_app/tutorial/tutorial.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter/cupertino.dart';
@@ -46,7 +47,7 @@ class MenuView extends StatelessWidget {
           'Reminders',
           style: TextStyle(fontWeight: FontWeight.normal, fontSize: 16),
         ),
-        'builder': () => RemindersView(),
+        'builder': () => PremiumPackagesView(),
         'image': Image.asset(ImageNames.menuImages.reminders)
       },
       {

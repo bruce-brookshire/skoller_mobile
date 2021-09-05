@@ -4,6 +4,7 @@ class SKButton extends StatelessWidget {
   final String buttonText;
   final EdgeInsets? margins;
   final double width;
+  final bool isDark;
   final ContextCallback callback;
 
   SKButton(
@@ -11,11 +12,13 @@ class SKButton extends StatelessWidget {
       String? buttonText,
       EdgeInsets? margin,
       double? width,
-      ContextCallback? callback})
+      ContextCallback? callback,
+      bool isDark = false})
       : buttonText = buttonText!,
         margins = margin,
         width = width!,
         callback = callback!,
+        isDark = isDark,
         super(key: key);
 
   Widget build(BuildContext context) => Container(
@@ -24,7 +27,7 @@ class SKButton extends StatelessWidget {
         width: width,
         child: SizedBox.expand(
           child: RaisedButton(
-            color: Colors.white,
+            color:isDark?SKColors.dark_gray: Colors.white,
             shape:
                 RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
             child: Text(
@@ -32,7 +35,7 @@ class SKButton extends StatelessWidget {
               style: TextStyle(
                   fontSize: 15,
                   fontWeight: FontWeight.bold,
-                  color: SKColors.skoller_blue),
+                  color:isDark?Colors.white: SKColors.skoller_blue),
             ),
             onPressed: () {
               callback(context);

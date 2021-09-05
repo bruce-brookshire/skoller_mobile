@@ -269,7 +269,7 @@ class Student {
   }
 }
 
-class FieldsOfStudy {
+class  FieldsOfStudy {
   final int id;
   final String field;
 
