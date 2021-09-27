@@ -40,10 +40,13 @@ dependencies:
   url_launcher: ^6.0.9
   app_review: ^2.1.1+1
   webview_flutter: ^2.0.10
-  camera: ^0.8.1+5
+  camera: ^0.9.1
   image: ^3.0.2
-  flutter_stripe: ^1.2.0
   flutter_multi_formatter: ^2.3.5
+  fluttertoast: ^7.1.1
+  rxdart: ^0.27.2
+  stripe_payment: 1.0.11
+  screen_loader: ^2.0.1
 
   flutter:
     sdk: flutter

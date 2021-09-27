@@ -72,6 +72,7 @@ class Auth {
   static Future<LogInResponse> attemptLogin() async {
     final inst = await SharedPreferences.getInstance();
     final token = inst.getString(PreferencesKeys.kSharedToken);
+    print("login token >>>>> $token");
     userPhone = inst.getString(PreferencesKeys.kStudentPhone);
 
     if (token != null) {

@@ -11,6 +11,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:skoller/tools.dart';
 
+import 'premium/already_premium_view.dart';
+
 class MenuView extends StatelessWidget {
   final List<Widget> menuOptions = [
     [
@@ -20,6 +22,14 @@ class MenuView extends StatelessWidget {
           style: TextStyle(fontWeight: FontWeight.normal, fontSize: 16),
         ),
         'builder': () => ProfileView(),
+        'image': Image.asset(ImageNames.peopleImages.person_blue)
+      },
+      {
+        'name': Text(
+          'Account Settings',
+          style: TextStyle(fontWeight: FontWeight.normal, fontSize: 16),
+        ),
+        //'builder': () => ProfileView(),
         'image': Image.asset(ImageNames.peopleImages.person_blue)
       }
     ],
@@ -47,7 +57,7 @@ class MenuView extends StatelessWidget {
           'Reminders',
           style: TextStyle(fontWeight: FontWeight.normal, fontSize: 16),
         ),
-        'builder': () => PremiumPackagesView(),
+        'builder': () => AlreadyPremiumView(),
         'image': Image.asset(ImageNames.menuImages.reminders)
       },
       {
@@ -80,6 +90,13 @@ class MenuView extends StatelessWidget {
               (newContext) => Navigator.of(newContext).pop(),
               'Dismiss',
             ),
+      },
+      {
+        'name': Text(
+          'Payment',
+          style: TextStyle(fontWeight: FontWeight.normal, fontSize: 16),
+        ),
+        'builder': () => PremiumPackagesView()
       },
     ]
   ]

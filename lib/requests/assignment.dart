@@ -265,7 +265,7 @@ class Assignment {
     Assignment assignment = Assignment(
       content['id'],
       content['name'],
-      _dateParser(content['due'])!,
+      _dateParser(content['due']),    // removed !
       content['class_id'],
       content['weight'],
       content['weight_id'],

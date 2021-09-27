@@ -1,6 +1,7 @@
 library constants;
 
 import 'dart:collection';
+import 'dart:io';
 
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/cupertino.dart';
@@ -65,6 +66,8 @@ class SKColors {
     return hslLight.toColor();
   }
 }
+
+
 
 class Analytics {
   static FirebaseAnalytics analytics = FirebaseAnalytics();
@@ -152,6 +155,7 @@ class PushNotificationCategories {
   static bool _validateMember(List<String> categories, category) =>
       categories.contains(category);
 }
+
 
 
 final statesMap = LinkedHashMap.fromIterables([

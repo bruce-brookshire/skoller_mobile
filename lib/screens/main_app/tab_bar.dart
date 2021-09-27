@@ -5,6 +5,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/material.dart';
 import 'package:skoller/screens/main_app/jobs/jobs_view.dart';
+import 'package:skoller/screens/main_app/premium/stripe_bloc.dart';
 import 'tasks/todo_view.dart';
 import 'package:skoller/tools.dart';
 import 'classes/classes_view.dart';
@@ -78,6 +79,7 @@ class _SKTabBarState extends State<SKTabBar> {
     );
 
     SchedulerBinding.instance!.addPostFrameCallback(afterFirstLayout);
+    stripeBloc.AlPlans();
   }
 
   @override

@@ -20,7 +20,7 @@ class TodoView extends StatefulWidget {
 }
 
 class _TodoState extends State<TodoView> {
-  late List<_TaskLikeItem>? _taskItems;
+  late List<_TaskLikeItem>? _taskItems = [];
   List<int> _datelessAssignments = [];
 
   int numberCompleted = 0;

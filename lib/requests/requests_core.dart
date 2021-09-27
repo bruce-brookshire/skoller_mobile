@@ -31,7 +31,7 @@ part 'user.dart';
 part 'mod.dart';
 part 'jobs.dart';
 part 'auth.dart';
-part 'stripe_payments.dart';
+
 
 const bool isProd = false;
 const bool isLocal = false;
