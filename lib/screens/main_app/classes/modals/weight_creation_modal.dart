@@ -22,8 +22,8 @@ class _WeightExtractionFormModalState extends State<WeightCreationModal> {
   final nameFocusNode = FocusNode();
   final valueFocusNode = FocusNode();
 
- late TextEditingController nameController;
- late TextEditingController valueController;
+  TextEditingController nameController;
+  TextEditingController valueController;
 
   @override
   void initState() {

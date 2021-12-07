@@ -17,7 +17,7 @@ class TutorialTab extends StatefulWidget {
 }
 
 class _TutorialTabState extends State<TutorialTab> {
-  List<StatelessWidget>? views;
+  List<StatelessWidget> views;
 
   final List<String> _indexIconPartialPaths = [
     'todos_',
@@ -64,7 +64,7 @@ class _TutorialTabState extends State<TutorialTab> {
       controller: tabController,
       tabBuilder: (context, index) {
         return CupertinoTabView(builder: (context) {
-          return CupertinoPageScaffold(child: views![index]);
+          return CupertinoPageScaffold(child: views[index]);
         });
       },
       tabBar: CupertinoTabBar(

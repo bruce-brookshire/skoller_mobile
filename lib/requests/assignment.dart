@@ -10,37 +10,37 @@ class Assignment {
   int classId;
   int weight_id;
 
-  double? weight;
-  double? grade=null;
+  double weight;
+  double grade;
 
-  bool? isCompleted;
+  bool isCompleted;
   bool _dueDateShifted = false;
   bool isPostNotifications;
 
-  String? name;
+  String name;
   String notes;
 
-  DateTime? due=null;
+  DateTime due;
 
-  List<dynamic>? posts;
+  List<AssignmentChat> posts;
 
   Future configureDateTimeOffset() async {
     if (!_dueDateShifted && due != null && parentClass.parentSchool != null) {
       _dueDateShifted = true;
 
       due = await TimeZoneManager.createLocalRelativeAssignmentDueDate(
-        due!,
+        due,
         parentClass.parentSchool.timezone,
       );
     }
   }
 
   StudentClass get parentClass {
-    return StudentClass.currentClasses[classId]!;
+    return StudentClass.currentClasses[classId];
   }
 
   Weight get weightObject {
-    return Weight.currentWeights[weight_id]!;
+    return Weight.currentWeights[weight_id];
   }
 
   Assignment(
@@ -69,7 +69,7 @@ class Assignment {
       final success = response.wasSuccessful();
 
       if (success) {
-        Assignment.currentAssignments[id]!.isCompleted =
+        Assignment.currentAssignments[id].isCompleted =
             response.obj.isCompleted;
       }
       return success;
@@ -97,8 +97,8 @@ class Assignment {
       (content) => _fromJsonObj(content, shouldPersist: false),
     ).then((response) async {
       if (response.wasSuccessful()) {
-        Assignment.currentAssignments[id]!.grade = response.obj.grade;
-        Assignment.currentAssignments[id]!.isCompleted =
+        Assignment.currentAssignments[id].grade = response.obj.grade;
+        Assignment.currentAssignments[id].isCompleted =
             response.obj.isCompleted;
         await parentClass.refetchSelf();
       }
@@ -114,7 +114,7 @@ class Assignment {
       (content) => _fromJsonObj(content, shouldPersist: false),
     ).then((response) async {
       if (response.wasSuccessful()) {
-        Assignment.currentAssignments[id]!.grade = null;
+        Assignment.currentAssignments[id].grade = null;
         await parentClass.refetchSelf();
       }
 
@@ -122,7 +122,7 @@ class Assignment {
     });
   }
 
-  Future<bool> saveNotes(String? notes) {
+  Future<bool> saveNotes(String notes) {
     return SKRequests.put(
       '/assignments/${id}',
       {'notes': notes},
@@ -130,7 +130,7 @@ class Assignment {
     ).then((response) {
       final success = response.wasSuccessful();
 
-      if (success) Assignment.currentAssignments[id]!.notes = response.obj.notes;
+      if (success) Assignment.currentAssignments[id].notes = response.obj.notes;
 
       return success;
     });
@@ -145,7 +145,7 @@ class Assignment {
       final success = response.wasSuccessful();
 
       if (success)
-        Assignment.currentAssignments[id]!.isPostNotifications =
+        Assignment.currentAssignments[id].isPostNotifications =
             response.obj.isPostNotifications;
 
       return success;
@@ -156,6 +156,8 @@ class Assignment {
     bool isPrivate,
     DateTime dueDate,
   ) async {
+    String tzCorrectedString = dueDate.toUtc().toIso8601String();
+
     DateTime correctedDueDate =
         await TimeZoneManager.convertUtcOffsetFromLocalToSchool(
       dueDate,
@@ -163,15 +165,15 @@ class Assignment {
     );
 
     if (correctedDueDate != null) {
-      final tzCorrectedString = correctedDueDate.toIso8601String();
+      tzCorrectedString = correctedDueDate.toIso8601String();
       final now = DateTime.now();
       final today = DateTime(now.year, now.month, now.day);
       final body = {
         'is_private': isPrivate,
         'due': tzCorrectedString,
         if (dueDate.isAfter(today) &&
-            this.due!.isBefore(today) &&
-            this.isCompleted!)
+            this.due.isBefore(today) &&
+            this.isCompleted)
           'is_completed': false,
       };
 
@@ -236,7 +238,7 @@ class Assignment {
 
     if ([200, 204].contains(statusCode)) {
       Assignment.currentAssignments.remove(id);
-      StudentClass.currentClasses[classId]!.assignments!
+      StudentClass.currentClasses[classId].assignments
           .removeWhere((a) => a.id == id);
       return true;
     } else {
@@ -257,7 +259,7 @@ class Assignment {
 
   static Map<int, Assignment> currentAssignments = {};
 
-  static Assignment? _fromJsonObj(Map content, {bool shouldPersist = true}) {
+  static Assignment _fromJsonObj(Map content, {bool shouldPersist = true}) {
     if (content == null) {
       return null;
     }
@@ -265,7 +267,7 @@ class Assignment {
     Assignment assignment = Assignment(
       content['id'],
       content['name'],
-      _dateParser(content['due']),    // removed !
+      _dateParser(content['due']),
       content['class_id'],
       content['weight'],
       content['weight_id'],
@@ -312,12 +314,12 @@ class AssignmentChat {
     this.inserted_at,
   );
 
-  static AssignmentChat? _fromJsonObj(Map content) {
+  static AssignmentChat _fromJsonObj(Map content) {
     return AssignmentChat(
       content['id'],
       PublicStudent._fromJsonObj(content['student']),
       content['post'],
-      _dateParser(content['inserted_at'])!,
+      _dateParser(content['inserted_at']),
     );
   }
 }

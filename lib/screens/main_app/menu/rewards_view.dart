@@ -6,7 +6,7 @@ import 'package:skoller/tools.dart';
 class RewardsView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final raiseEffort = SKUser.current?.student.raiseEffort;
+    final raiseEffort = SKUser.current.student.raiseEffort;
     return SKNavView(
       title: 'My Rewards',
       leftBtn: Image.asset(ImageNames.navArrowImages.down),
@@ -14,7 +14,7 @@ class RewardsView extends StatelessWidget {
         Flexible(
             child: raiseEffort?.orgId == null
                 ? createPoints()
-                : createRaiseEffort(raiseEffort!)),
+                : createRaiseEffort(raiseEffort)),
       ],
     );
   }
@@ -78,7 +78,7 @@ class RewardsView extends StatelessWidget {
                       Padding(
                         padding: EdgeInsets.only(left: 8),
                         child: Text(
-                          SKUser.current?.student.primarySchool?.name??'',
+                          SKUser.current.student.primarySchool.name,
                           style: TextStyle(
                               fontWeight: FontWeight.normal,
                               fontSize: 13,
@@ -169,7 +169,7 @@ class RewardsView extends StatelessWidget {
             child: Text.rich(
               TextSpan(
                 text:
-                    '${SKUser.current?.student.raiseEffort?.personalSignups ?? 0} students\n',
+                    '${SKUser.current.student.raiseEffort?.personalSignups ?? 0} students\n',
                 children: [
                   TextSpan(
                       text: 'have signed up using your links',
@@ -184,7 +184,7 @@ class RewardsView extends StatelessWidget {
           GestureDetector(
             onTapUp: (details) {
               Share.share(
-                  'Check out this new app that\'s helping me keep up with school... it\'s like the Waze of the classroom!\n\n${SKUser.current?.student.enrollmentLink ?? 'https://itunes.apple.com/us/app/skoller/id1314782490?mt=8'}');
+                  'Check out this new app that\'s helping me keep up with school... it\'s like the Waze of the classroom!\n\n${SKUser.current.student.enrollmentLink ?? 'https://itunes.apple.com/us/app/skoller/id1314782490?mt=8'}');
             },
             child: Container(
               alignment: Alignment.center,

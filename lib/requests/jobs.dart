@@ -28,18 +28,18 @@ class JobProfile {
   String transcript_url;
   String resume_url;
 
-  TypeObject? degree_type;
-  TypeObject? job_search_type;
-  TypeObject? ethnicity_type;
-  TypeObject? job_profile_status;
+  TypeObject degree_type;
+  TypeObject job_search_type;
+  TypeObject ethnicity_type;
+  TypeObject job_profile_status;
 
-  DateTime? wakeup_date;
-  DateTime? graduation_date;
+  DateTime wakeup_date;
+  DateTime graduation_date;
 
-  //List<Activity> volunteer_activities;
-  //List<Activity> club_activities;
-  //List<Activity> achievement_activities;
-  //List<Activity> experience_activities;
+  List<Activity> volunteer_activities;
+  List<Activity> club_activities;
+  List<Activity> achievement_activities;
+  List<Activity> experience_activities;
 
   Map<String, dynamic> social_links;
   Map<String, dynamic> update_at_timestamps;
@@ -76,50 +76,34 @@ class JobProfile {
     this.job_profile_status,
     this.wakeup_date,
     this.graduation_date,
-    //this.volunteer_activities,
-    //this.club_activities,
-    //this.achievement_activities,
-    //this.experience_activities,
+    this.volunteer_activities,
+    this.club_activities,
+    this.achievement_activities,
+    this.experience_activities,
     this.social_links,
     this.update_at_timestamps,
     this.personality,
     this.company_values,
   );
 
-  Future<RequestResponse> updateProfileWithParameters(
-          Map<String, dynamic> parameters) =>
-      SKRequests.put('/skoller-jobs/profiles/$id', parameters, _fromJsonObj);
-
   Future<RequestResponse> updateProfile({
-    TypeObject? jobSearchType,
-    DateTime? gradDate,
-    bool? workAuth,
-    bool? sponsorshipRequired,
-    TypeObject? jobProfileStatus,
-    String? stateCode,
-    double? gpa,
-    String? regions,
+    TypeObject jobSearchType,
+    DateTime gradDate,
   }) {
     final body = {
       'job_search_type_id': jobSearchType?.id,
-      'graduation_date': gradDate?.toIso8601String(),
-      'work_auth': workAuth,
-      'sponsorship_required': sponsorshipRequired,
-      'job_profile_status_id': jobProfileStatus?.id,
-      'state_code': stateCode,
-      'gpa': gpa,
-      'regions': regions,
+      'graduation_date': gradDate?.toIso8601String()
     };
     body.removeWhere((_, value) => value == null);
 
-    return updateProfileWithParameters(body);
+    return SKRequests.put('/skoller-jobs/profiles/$id', body, _fromJsonObj);
   }
 
-  static JobProfile? currentProfile;
+  static JobProfile currentProfile;
 
   static JobProfile _fromJsonObj(Map content) {
     // Types
-    final  degreeType = content['degree_type'] == null
+    final degreeType = content['degree_type'] == null
         ? null
         : TypeObject._fromJsonObj(content['degree_type']);
 
@@ -165,7 +149,7 @@ class JobProfile {
       jobProfileStatus,
       _dateParser(content['wakeup_date']),
       _dateParser(content['graduation_date']),
-     /* JsonListMaker.convert(
+      JsonListMaker.convert(
         Activity._fromJsonObj,
         content['volunteer_activities'] ?? [],
       ),
@@ -180,7 +164,7 @@ class JobProfile {
       JsonListMaker.convert(
         Activity._fromJsonObj,
         content['experience_activities'] ?? [],
-      ),*/
+      ),
       content['social_links'],
       content['update_at_timestamps'],
       content['personality'],
@@ -193,12 +177,12 @@ class JobProfile {
   }
 
   static Future<RequestResponse> createProfile(
-          {DateTime? graduationDate, TypeObject? jobType}) =>
+          {DateTime graduationDate, TypeObject jobType}) =>
       SKRequests.post(
         '/skoller-jobs/profiles',
         {
-          'graduation_date': graduationDate?.toIso8601String(),
-          'job_search_type_id': jobType?.id
+          'graduation_date': graduationDate.toIso8601String(),
+          'job_search_type_id': jobType.id
         },
         JobProfile._fromJsonObj,
       );

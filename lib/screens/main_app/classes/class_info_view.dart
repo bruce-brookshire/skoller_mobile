@@ -47,7 +47,7 @@ class _ClassInfoViewState extends State<ClassInfoView> {
     );
     if (result is bool && result) {
       final bool successfullyDropped =
-          await StudentClass.currentClasses[widget.classId]!.dropClass();
+          await StudentClass.currentClasses[widget.classId].dropClass();
       if (successfullyDropped) {
         DartNotificationCenter.post(channel: NotificationChannels.classChanged);
 
@@ -79,13 +79,13 @@ class _ClassInfoViewState extends State<ClassInfoView> {
   Widget build(BuildContext context) {
     final studentClass = StudentClass.currentClasses[widget.classId];
 
-    final classChangeRequests = studentClass!.classInfoChangeRequests
+    final classChangeRequests = studentClass.classInfoChangeRequests
         .map((c) => buildChangeRequest('Pending class change request', c));
     final professorChangeRequests = studentClass.professorInfoChangeRequests
         .map((c) => buildChangeRequest('Pending professor change request', c));
 
     return SKNavView(
-      title: studentClass.name!,
+      title: studentClass.name,
       titleColor: studentClass.getColor(),
       children: [
         Expanded(
@@ -245,7 +245,7 @@ class _ClassInfoViewState extends State<ClassInfoView> {
                             : ' @ ') +
                         (studentClass.meetTime == null
                             ? ''
-                            : studentClass.meetTime!.format(context)),
+                            : studentClass.meetTime.format(context)),
                     style: TextStyle(fontSize: 14),
                   )
                 ],
@@ -366,7 +366,7 @@ class _ClassInfoViewState extends State<ClassInfoView> {
             ),
           ),
           child: professor.phoneNumber != null
-              ? Text(studentClass.professor.phoneNumber??'')
+              ? Text(studentClass.professor.phoneNumber)
               : GestureDetector(
                   onTapUp: tappedEditProfessor,
                   child: Text(
@@ -399,7 +399,7 @@ class _ClassInfoViewState extends State<ClassInfoView> {
             ),
           ),
           child: professor.officeLocation != null
-              ? Text(studentClass.professor.officeLocation??'')
+              ? Text(studentClass.professor.officeLocation)
               : GestureDetector(
                   onTapUp: tappedEditProfessor,
                   child: Text(
@@ -424,7 +424,7 @@ class _ClassInfoViewState extends State<ClassInfoView> {
           ),
         ),
         professor.availability != null
-            ? Text(studentClass.professor.availability??'')
+            ? Text(studentClass.professor.availability)
             : GestureDetector(
                 onTapUp: tappedEditProfessor,
                 child: Text(
@@ -465,7 +465,7 @@ class _ClassInfoViewState extends State<ClassInfoView> {
                 final timeSegments =
                     value.split(':').map((n) => int.tryParse(n)).toList();
                 value =
-                    TimeOfDay(hour: timeSegments[0]!, minute: timeSegments[1]!)
+                    TimeOfDay(hour: timeSegments[0], minute: timeSegments[1])
                         .format(context);
               }
 

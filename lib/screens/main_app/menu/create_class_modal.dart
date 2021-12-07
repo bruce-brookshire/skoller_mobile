@@ -21,7 +21,7 @@ class CreateClassModal extends StatefulWidget {
 class _CreateClassModalState extends State<CreateClassModal> {
   final pageController = PageController(initialPage: 0);
 
-  late TextEditingController classNameController;
+  TextEditingController classNameController;
   final subjectController = TextEditingController();
   final codeController = TextEditingController();
   final sectionController = TextEditingController();
@@ -33,9 +33,9 @@ class _CreateClassModalState extends State<CreateClassModal> {
 
   bool isOnline = false;
 
-  Professor? professor;
+  Professor professor;
 
-  DateTime? time;
+  DateTime time;
 
   @override
   void initState() {
@@ -59,7 +59,7 @@ class _CreateClassModalState extends State<CreateClassModal> {
   }
 
   void advanceController() {
-    final page = pageController.page!.toInt();
+    final page = pageController.page.toInt();
     if (page < 2) {
       pageController.animateToPage(page + 1,
           duration: Duration(milliseconds: 300), curve: Curves.decelerate);
@@ -82,7 +82,7 @@ class _CreateClassModalState extends State<CreateClassModal> {
     };
 
     final days = selectedDays.keys
-        .fold('', (r, k) => selectedDays[k]! ? r.toString() + interpreter(k) : r);
+        .fold('', (r, k) => selectedDays[k] ? r + interpreter(k) : r);
 
     final loadingScreen = SKLoadingScreen.fadeIn(context);
 
@@ -92,10 +92,10 @@ class _CreateClassModalState extends State<CreateClassModal> {
       subject: subjectController.text.trim(),
       code: codeController.text.trim(),
       section: sectionController.text.trim(),
-      professorId: professor!.id,
+      professorId: professor.id,
       isOnline: isOnline,
-      meetDays: days as String,
-      meetTime: TimeOfDay.fromDateTime(time!),
+      meetDays: days,
+      meetTime: TimeOfDay.fromDateTime(time),
     )
         .then((response) {
       if (response.wasSuccessful() && response.obj is SchoolClass) {
@@ -155,7 +155,7 @@ class _CreateClassModalState extends State<CreateClassModal> {
               behavior: HitTestBehavior.opaque,
               onTapUp: (_) {},
               child: SizedBox(
-                height: 380,
+                height: 372,
                 child: PageView(
                   controller: pageController,
                   physics: NeverScrollableScrollPhysics(),
@@ -201,7 +201,7 @@ class _CreateClassScreenOneState extends State<_CreateClassScreenOne> {
     nodes.forEach((node) => node.dispose());
   }
 
-  void checkValid([String? _str]) {
+  void checkValid([String _str]) {
     final parent = widget.subviewParent;
 
     final className = parent.classNameController.text.trim();
@@ -510,7 +510,7 @@ class _CreateClassScreenTwoState extends State<_CreateClassScreenTwo> {
 
     if (parent.isOnline) return;
 
-    DateTime? tempTime = parent.time;
+    DateTime tempTime = parent.time;
 
     showDialog(
       context: context,
@@ -743,7 +743,7 @@ class _CreateClassScreenTwoState extends State<_CreateClassScreenTwo> {
                               : SKColors.skoller_blue),
                     ),
                     child: Text(
-                      TimeOfDay.fromDateTime(parent.time!).format(context),
+                      TimeOfDay.fromDateTime(parent.time).format(context),
                       style: TextStyle(
                           color: parent.isOnline
                               ? SKColors.light_gray
@@ -788,14 +788,14 @@ class _CreateClassScreenTwoState extends State<_CreateClassScreenTwo> {
       child: GestureDetector(
         onTapUp: (details) {
           if (parent.isOnline) return;
-          setState(() => parent.selectedDays[day] = !parent.selectedDays[day]!);
+          setState(() => parent.selectedDays[day] = !parent.selectedDays[day]);
           checkValid();
         },
         child: Container(
           padding: EdgeInsets.symmetric(vertical: 7),
           alignment: Alignment.center,
           decoration: BoxDecoration(
-            color: parent.selectedDays[day]!
+            color: parent.selectedDays[day]
                 ? (parent.isOnline
                     ? SKColors.light_gray
                     : SKColors.skoller_blue)
@@ -813,7 +813,7 @@ class _CreateClassScreenTwoState extends State<_CreateClassScreenTwo> {
             style: TextStyle(
                 fontWeight: FontWeight.normal,
                 fontSize: 14,
-                color: parent.selectedDays[day]!
+                color: parent.selectedDays[day]
                     ? Colors.white
                     : (parent.isOnline
                         ? SKColors.light_gray
@@ -850,7 +850,7 @@ class _CreateClassScreenThreeState extends State<_CreateClassScreenThree> {
 
     final days = parent.selectedDays.keys.fold(
       '',
-      (r, k) => parent.selectedDays[k]! ? r.toString() + interpreter(k) : r,
+      (r, k) => parent.selectedDays[k] ? r + interpreter(k) : r,
     );
 
     return Material(
@@ -1067,7 +1067,7 @@ class _CreateClassScreenThreeState extends State<_CreateClassScreenThree> {
                         Text(
                           parent.isOnline
                               ? 'Online'
-                              : '$days @ ${TimeOfDay.fromDateTime(parent.time!).format(context)}',
+                              : '$days @ ${TimeOfDay.fromDateTime(parent.time).format(context)}',
                           textAlign: TextAlign.left,
                           style: TextStyle(
                             fontWeight: FontWeight.normal,

@@ -13,13 +13,13 @@ class ClassmatesView extends StatefulWidget {
 }
 
 class _ClassmatesState extends State<ClassmatesView> {
-  late StudentClass studentClass;
+  StudentClass studentClass;
 
   @override
   void initState() {
     super.initState();
 
-    studentClass = StudentClass.currentClasses[widget.class_id]!;
+    studentClass = StudentClass.currentClasses[widget.class_id];
   }
 
   void tappedStudent(PublicStudent student) {
@@ -35,7 +35,7 @@ class _ClassmatesState extends State<ClassmatesView> {
     final classmates = students.length;
 
     return SKNavView(
-      title: studentClass.name!,
+      title: studentClass.name,
       titleColor: studentClass.getColor(),
       backgroundColor: Colors.white,
       children: [
@@ -68,7 +68,7 @@ class _ClassmatesState extends State<ClassmatesView> {
               if (index < classmates) {
                 final student = students[index];
                 final bool isOwnStudent =
-                    student.id == SKUser.current?.student.id;
+                    student.id == SKUser.current.student.id;
 
                 return GestureDetector(
                   behavior: HitTestBehavior.opaque,

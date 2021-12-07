@@ -1,7 +1,6 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:skoller/tools.dart';
-
 import 'sign_in.dart';
 import 'sign_up.dart';
 
@@ -10,6 +9,7 @@ class AuthHome extends StatelessWidget {
     Navigator.push(
       context,
       CupertinoPageRoute(builder: (context) => SignIn()),
+      
     );
   }
 
@@ -36,7 +36,7 @@ class AuthHome extends StatelessWidget {
                   margin: EdgeInsets.symmetric(vertical: 16),
                   child: Text(
                     'Keep up with classes, together',
-                    style: Theme.of(context).textTheme.bodyText1,
+                    style: Theme.of(context).textTheme.body1,
                   ),
                 ),
                 Padding(

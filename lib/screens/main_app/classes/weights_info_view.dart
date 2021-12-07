@@ -51,7 +51,7 @@ class _WeightsInfoState extends State<WeightsInfoView> {
 
     Map<int, int> assignmentsPerWeight = {};
 
-    for (final Assignment assignment in (studentClass!.assignments ?? [])) {
+    for (final Assignment assignment in (studentClass.assignments ?? [])) {
       if (assignment.weight_id != null) {
         assignmentCount++;
         assignmentsPerWeight.update(
@@ -155,7 +155,7 @@ class _WeightsInfoState extends State<WeightsInfoView> {
         .toList();
 
     return SKNavView(
-      title: studentClass.name!,
+      title: studentClass.name,
       titleColor: studentClass.getColor(),
       backgroundColor: Colors.white,
       children: <Widget>[
@@ -288,7 +288,7 @@ class _WeightsInfoState extends State<WeightsInfoView> {
 
     if (pointsChange != null) {
       final isPoints = pointsChange.value == 'true' ? true : false;
-      final oldIsPoints = studentClass!.isPoints;
+      final oldIsPoints = studentClass.isPoints;
 
       final converter = (bool isPoints) => isPoints ? 'Pts.' : '%';
 
@@ -303,9 +303,9 @@ class _WeightsInfoState extends State<WeightsInfoView> {
     }
 
     final weightEntries =
-        studentClass!.weights?.map((w) => MapEntry(w.name, w.weight));
+        studentClass.weights.map((w) => MapEntry(w.name, w.weight));
 
-    final weightTesterMap = Map.fromEntries(weightEntries!);
+    final weightTesterMap = Map.fromEntries(weightEntries);
 
     final newOrChangedMembers = members.map((m) {
       final testWeight = weightTesterMap.remove(m.name);
@@ -327,13 +327,13 @@ class _WeightsInfoState extends State<WeightsInfoView> {
     final removedMembers = weightTesterMap.entries
         .map((m) => {'name': m.key, 'type': 'delete', 'old_val': '${m.value}'});
 
-    rowValues..addAll(newOrChangedMembers as Iterable<Map<String,dynamic>>)..addAll(removedMembers);
+    rowValues..addAll(newOrChangedMembers)..addAll(removedMembers);
 
     return [...rowValues.map(buildChangeRequestMemberRow)];
   }
 
   Widget buildChangeRequestMemberRow(Map member) {
-   late Widget icon;
+    Widget icon;
 
     switch (member['type']) {
       case 'new':

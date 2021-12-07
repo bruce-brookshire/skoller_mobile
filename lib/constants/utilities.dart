@@ -1,5 +1,3 @@
-
-
 part of 'constants.dart';
 
 enum AppState { loading, auth, main }
@@ -124,4 +122,3 @@ class USNumberTextInputFormatter extends TextInputFormatter {
     );
   }
 }
-
