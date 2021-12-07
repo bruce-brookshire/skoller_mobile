@@ -5,6 +5,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/material.dart';
 import 'package:skoller/screens/main_app/jobs/jobs_view.dart';
+import 'package:skoller/screens/main_app/premium/stripe_bloc.dart';
 import 'tasks/todo_view.dart';
 import 'package:skoller/tools.dart';
 import 'classes/classes_view.dart';
@@ -46,7 +47,7 @@ class _SKTabBarState extends State<SKTabBar> {
 
   List<bool> _indexNeedsDot = [false, false, false, false];
 
-  CupertinoTabController controller;
+  CupertinoTabController? controller;
 
   var prevIndex =
       StudentClass.currentClasses.length == 0 ? CLASSES_TAB : FORECAST_TAB;
@@ -72,18 +73,19 @@ class _SKTabBarState extends State<SKTabBar> {
       observer: this,
       channel: NotificationChannels.selectTab,
       onNotification: (index) {
-        controller.index = index;
+        controller!.index = index;
         if (mounted) setState(() {});
       },
     );
 
-    SchedulerBinding.instance.addPostFrameCallback(afterFirstLayout);
+    SchedulerBinding.instance!.addPostFrameCallback(afterFirstLayout);
+    stripeBloc.AlPlans();
   }
 
   @override
   void dispose() {
     DartNotificationCenter.unsubscribe(observer: this);
-    controller.dispose();
+    controller!.dispose();
     super.dispose();
   }
 
@@ -109,7 +111,7 @@ class _SKTabBarState extends State<SKTabBar> {
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: () async {
-        _navigatorKeys[controller.index].currentState.maybePop();
+        _navigatorKeys[controller!.index].currentState!.maybePop();
         return false;
       },
       child: CupertinoTabScaffold(
@@ -135,7 +137,7 @@ class _SKTabBarState extends State<SKTabBar> {
     if (!_indexNeedsDot[index])
       return BottomNavigationBarItem(
         icon: Image.asset(
-            'image_assets/tab_bar_assets/${_indexIconPartialPaths[index]}${controller.index == index ? 'blue' : 'gray'}.png'),
+            'image_assets/tab_bar_assets/${_indexIconPartialPaths[index]}${controller!.index == index ? 'blue' : 'gray'}.png'),
       );
     else
       return BottomNavigationBarItem(
@@ -145,7 +147,7 @@ class _SKTabBarState extends State<SKTabBar> {
               alignment: Alignment.center,
               child: Container(
                 child: Image.asset(
-                    'image_assets/tab_bar_assets/${_indexIconPartialPaths[index]}${controller.index == index ? 'blue' : 'gray'}.png'),
+                    'image_assets/tab_bar_assets/${_indexIconPartialPaths[index]}${controller!.index == index ? 'blue' : 'gray'}.png'),
               ),
             ),
             Align(
@@ -169,7 +171,7 @@ class _SKTabBarState extends State<SKTabBar> {
     if (prevIndex == index)
       _navigatorKeys[index]
           .currentState
-          ?.popUntil((route) => route.settings.isInitialRoute);
+          ?.popUntil((route) => route.settings.name=='/');
     else
       DartNotificationCenter.post(
           channel: NotificationChannels.newTabSelected, options: index);

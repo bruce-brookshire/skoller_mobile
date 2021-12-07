@@ -13,7 +13,7 @@ class ClassStatusModal extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final studentClass = StudentClass.currentClasses[classId];
-    final statusId = studentClass.status.id;
+    final statusId = studentClass!.status.id;
 
     List<Widget> Function(BuildContext context) bodyFactory;
 
@@ -50,7 +50,7 @@ class ClassStatusModal extends StatelessWidget {
             style: TextStyle(fontWeight: FontWeight.normal, fontSize: 18),
             children: [
               TextSpan(
-                  text: StudentClass.currentClasses[classId].name + '!',
+                  text: StudentClass.currentClasses[classId]!.name! + '!',
                   style: TextStyle(fontWeight: FontWeight.bold))
             ],
           ),
@@ -80,7 +80,7 @@ class ClassStatusModal extends StatelessWidget {
             margin: EdgeInsets.only(top: 20, bottom: 8),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(5),
-              color: SKColors.skoller_blue,
+              color: SKColors.skoller_blue1,
               boxShadow: UIAssets.boxShadow,
             ),
             child: Text(
@@ -98,7 +98,7 @@ class ClassStatusModal extends StatelessWidget {
             padding: EdgeInsets.symmetric(vertical: 4),
             child: Text(
               'Enter Skoller',
-              style: TextStyle(fontSize: 14, color: SKColors.skoller_blue),
+              style: TextStyle(fontSize: 14, color: SKColors.skoller_blue1),
               textAlign: TextAlign.center,
             ),
           ),
@@ -265,7 +265,7 @@ class ClassStatusModal extends StatelessWidget {
             child: Text(
               'Send us your Syllabus!',
               textAlign: TextAlign.center,
-              style: TextStyle(color: Colors.white),
+              style: TextStyle(color: SKColors.skoller_blue1),
             ),
           ),
         ),
@@ -276,7 +276,7 @@ class ClassStatusModal extends StatelessWidget {
             padding: EdgeInsets.symmetric(vertical: 4),
             child: Text(
               'Do this later',
-              style: TextStyle(fontSize: 14, color: SKColors.skoller_blue),
+              style: TextStyle(fontSize: 14, color: SKColors.skoller_blue1),
               textAlign: TextAlign.center,
             ),
           ),

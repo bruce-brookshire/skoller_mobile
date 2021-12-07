@@ -1,48 +1,51 @@
 library requests_core;
 
-import 'package:dart_notification_center/dart_notification_center.dart';
-import 'package:skoller/screens/main_app/menu/profile_link_sharing_view.dart';
-import '../screens/main_app/menu/rewards_view.dart';
-import 'package:time_machine/time_machine.dart' as time_machine;
-import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:dropdown_banner/dropdown_banner.dart';
-import 'package:path_provider/path_provider.dart';
-import 'package:flutter_apns/apns_connector.dart';
-import 'package:package_info/package_info.dart';
-import 'package:http_parser/http_parser.dart';
-import '../constants/timezone_manager.dart';
-import 'package:flutter_apns/apns.dart';
-import 'package:http/http.dart' as http;
-import 'package:flutter/material.dart';
-import 'package:skoller/tools.dart';
-import 'package:intl/intl.dart';
+import 'dart:async';
 import 'dart:collection';
 import 'dart:convert';
-import 'dart:async';
-import 'dart:math';
 import 'dart:io';
+import 'dart:math';
 
-part 'student_class.dart';
+import 'package:dart_notification_center/dart_notification_center.dart';
+import 'package:dropdown_banner/dropdown_banner.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_apns/apns.dart';
+import 'package:http/http.dart' as http;
+import 'package:http_parser/http_parser.dart';
+import 'package:intl/intl.dart';
+import 'package:package_info/package_info.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:skoller/constants/global_singleton.dart';
+import 'package:skoller/screens/main_app/menu/profile_link_sharing_view.dart';
+import 'package:skoller/tools.dart';
+import 'package:time_machine/time_machine.dart' as time_machine;
+
+import '../constants/timezone_manager.dart';
+import '../screens/main_app/menu/rewards_view.dart';
+
 part 'assignment.dart';
-part 'school.dart';
-part 'user.dart';
-part 'mod.dart';
-part 'jobs.dart';
 part 'auth.dart';
+part 'jobs.dart';
+part 'mod.dart';
+part 'school.dart';
+part 'student_class.dart';
+part 'user.dart';
 
-const bool isProd = true;
+const bool isProd = false;
 const bool isLocal = false;
 
 class RequestResponse<T> {
-  int status;
+  int? status;
   dynamic obj;
-  String _errorMsg;
+  String? _errorMsg;
 
   RequestResponse(
     int status,
     dynamic context, {
-    _DecodableConstructor<T> constructor,
+    _DecodableConstructor<T>? constructor,
   }) {
     if (status == 200 || status == 204) {
       if (constructor != null && context != null) {
@@ -77,12 +80,15 @@ class JsonListMaker {
       content.map<T>((obj) => maker(obj)).toList();
 }
 
-DateTime _dateParser(String date) => date == null ? null : DateTime.parse(date);
+DateTime? _dateParser(String date) =>
+    date == null ? null : DateTime.parse(date);
 
 class SKRequests {
   static const String _environment = isProd
-      ? 'https://api.skoller.co'
-      : (isLocal ? 'http://127.0.0.1:4000' : 'https://api-staging.skoller.co');
+      ? 'https://skoller.co'
+      : (isLocal
+          ? 'http://10.1.10.110:4000'
+          : 'https://api-staging.skoller.co');
 
   static final String _baseUrl = '$_environment/api/v1';
 
@@ -94,10 +100,10 @@ class SKRequests {
 
   static Future<RequestResponse> get<T>(
     String url,
-    _DecodableConstructor<T> construct, {
+    _DecodableConstructor<T>? construct, {
     bool cacheResult = false,
-    String cachePath,
-    VoidCallback postRequestAction,
+    String? cachePath,
+    VoidCallback? postRequestAction,
   }) async {
     //Whether or not we need to remove the request entry in the request map
     bool shouldRemove = false;
@@ -108,12 +114,12 @@ class SKRequests {
       shouldRemove = true;
       //Create request
       _currentRequests[url] = http.get(
-        _baseUrl + url,
+        Uri.parse(_baseUrl + url),
         headers: _headers,
       );
     }
     //Construct and start request
-    http.Response request = await _currentRequests[url];
+    http.Response request = await _currentRequests[url]!;
 
     //Remove request entry if we have ownership
     if (shouldRemove) {
@@ -123,11 +129,11 @@ class SKRequests {
     }
 
     //Handle request and return future
-    final result = await futureProcessor<T>(request, construct);
+    final result = await futureProcessor<T>(request, construct!);
 
     //Cache result if we are supposed to
     if (cacheResult && result.wasSuccessful())
-      SKCacheManager.writeContents(cachePath, request.body);
+      SKCacheManager.writeContents(cachePath!, request.body);
 
     //Return result
     return result;
@@ -136,35 +142,36 @@ class SKRequests {
   static Future<http.Response> rawGetRequest<T>(String url) {
     // Construct and start request
     return http.get(
-      _baseUrl + url,
+      Uri.parse(_baseUrl + url),
       headers: _headers,
     );
   }
 
   static Future<RequestResponse> post<T>(
-    String url,
-    Map body,
-    _DecodableConstructor<T> constructor,
-  ) async {
+      String url, Map? body, _DecodableConstructor<T>? constructor,
+      {isTokenLogin = false}) async {
+    print(_baseUrl + url);
     // Construct and start request
     http.Response request = await http.post(
-      _baseUrl + url,
+      Uri.parse(_baseUrl + url),
       body: json.encode(body),
       headers: _headers,
     );
+    print("=================Request Body============");
+    print(request.body);
 
-    // Handle request and return future
-    return futureProcessor<T>(request, constructor);
+    return await futureProcessor<T>(request, constructor,
+        isTokenLogin: isTokenLogin);
   }
 
   static Future<RequestResponse> put<T>(
     String url,
-    Map body,
-    _DecodableConstructor<T> constructor,
+    Map? body,
+    _DecodableConstructor<T>? constructor,
   ) async {
     // Construct and start request
     http.Response request = await http.put(
-      _baseUrl + url,
+      Uri.parse(_baseUrl + url),
       body: json.encode(body),
       headers: _headers,
     );
@@ -179,7 +186,7 @@ class SKRequests {
   ) async {
     // Construct and start request
     http.Response request = await http.delete(
-      _baseUrl + url,
+      Uri.parse(_baseUrl + url),
       headers: _headers,
     );
 
@@ -188,15 +195,19 @@ class SKRequests {
   }
 
   static RequestResponse futureProcessor<T>(
-    http.Response request,
-    _DecodableConstructor<T> constructor,
-  ) {
+      http.Response request, _DecodableConstructor<T>? constructor,
+      {isTokenLogin = false}) {
     int statusCode = request.statusCode;
     var content;
     try {
       content = request.body != null ? json.decode(request.body) : null;
+      print("=================CONTENT=================");
+      print(content);
     } catch (e) {
       content = request.body;
+    }
+    if (isTokenLogin) {
+      tokenLoginMap = content;
     }
 
     return RequestResponse<T>(
@@ -208,7 +219,7 @@ class SKRequests {
 }
 
 class SKCacheManager {
-  static Future<void> classesLoader;
+  static Future<void>? classesLoader;
 
   static Future<String> get _homePath async {
     final directory = await getTemporaryDirectory();
@@ -253,7 +264,7 @@ class SKCacheManager {
     //Load classes
     classesLoader = getContents('student_classes.json')
         .then(
-          (contents) {
+          (String? contents) {
             if (StudentClass.currentClasses.length != 0) {
               throw 'Already loaded from server';
             } else {

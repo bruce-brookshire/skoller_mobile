@@ -1,14 +1,15 @@
-import 'package:skoller/screens/main_app/menu/profile_link_sharing_view.dart';
 import 'package:dart_notification_center/dart_notification_center.dart';
-import 'package:skoller/screens/main_app/menu/manage_classes_view.dart';
-import 'package:skoller/screens/main_app/menu/rewards_view.dart';
-import 'package:skoller/screens/main_app/menu/reminders_view.dart';
-import 'package:skoller/screens/main_app/menu/profile_view.dart';
-import 'package:skoller/screens/main_app/tutorial/tutorial.dart';
-import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:skoller/screens/main_app/menu/manage_classes_view.dart';
+import 'package:skoller/screens/main_app/menu/profile_link_sharing_view.dart';
+import 'package:skoller/screens/main_app/menu/profile_view.dart';
+import 'package:skoller/screens/main_app/menu/rewards_view.dart';
+import 'package:skoller/screens/main_app/tutorial/tutorial.dart';
 import 'package:skoller/tools.dart';
+import 'package:url_launcher/url_launcher.dart';
+
+import 'premium/already_premium_view.dart';
 
 class MenuView extends StatelessWidget {
   final List<Widget> menuOptions = [
@@ -19,6 +20,14 @@ class MenuView extends StatelessWidget {
           style: TextStyle(fontWeight: FontWeight.normal, fontSize: 16),
         ),
         'builder': () => ProfileView(),
+        'image': Image.asset(ImageNames.peopleImages.person_blue)
+      },
+      {
+        'name': Text(
+          'Account Settings',
+          style: TextStyle(fontWeight: FontWeight.normal, fontSize: 16),
+        ),
+        'builder': () => AlreadyPremiumView(),
         'image': Image.asset(ImageNames.peopleImages.person_blue)
       }
     ],
@@ -46,7 +55,7 @@ class MenuView extends StatelessWidget {
           'Reminders',
           style: TextStyle(fontWeight: FontWeight.normal, fontSize: 16),
         ),
-        'builder': () => RemindersView(),
+        // 'builder': () => AlreadyPremiumView(),
         'image': Image.asset(ImageNames.menuImages.reminders)
       },
       {
@@ -80,6 +89,13 @@ class MenuView extends StatelessWidget {
               'Dismiss',
             ),
       },
+      // {
+      //   'name': Text(
+      //     'Payment',
+      //     style: TextStyle(fontWeight: FontWeight.normal, fontSize: 16),
+      //   ),
+      //   'builder': () => PremiumPackagesView()
+      // },
     ]
   ]
       .map((group) => Container(
@@ -129,11 +145,11 @@ class MenuView extends StatelessWidget {
                                       child: SizedBox(
                                           width: 20,
                                           height: 20,
-                                          child: row['image']),
+                                          child: row['image'] as Widget),
                                     ),
                                   ]
                                 : [],
-                            Expanded(child: row['name']),
+                            Expanded(child: row['name'] as Widget),
                           ],
                         ),
                       ),
@@ -170,20 +186,21 @@ class MenuView extends StatelessWidget {
                         decoration: BoxDecoration(
                           color: SKColors.light_gray,
                           shape: BoxShape.circle,
-                          image: SKUser.current.avatarUrl == null
+                          image: SKUser.current?.avatarUrl == null
                               ? null
                               : DecorationImage(
                                   fit: BoxFit.fill,
-                                  image: NetworkImage(SKUser.current.avatarUrl),
+                                  image:
+                                      NetworkImage(SKUser.current!.avatarUrl!),
                                 ),
                         ),
                         margin: EdgeInsets.only(left: 12),
                         height: 44,
                         width: 44,
-                        child: SKUser.current.avatarUrl == null
+                        child: SKUser.current?.avatarUrl == null
                             ? Text(
-                                SKUser.current.student.nameFirst[0] +
-                                    SKUser.current.student.nameLast[0],
+                                SKUser.current!.student.nameFirst![0] +
+                                    SKUser.current!.student.nameLast![0],
                                 style: TextStyle(
                                   color: Colors.white,
                                   fontSize: 21,
@@ -197,7 +214,7 @@ class MenuView extends StatelessWidget {
                           padding:
                               EdgeInsets.symmetric(vertical: 24, horizontal: 8),
                           child: Text(
-                            '${SKUser.current.student.nameFirst} ${SKUser.current.student.nameLast}',
+                            '${SKUser.current?.student.nameFirst} ${SKUser.current?.student.nameLast}',
                             style: TextStyle(fontSize: 18),
                           ),
                         ),
