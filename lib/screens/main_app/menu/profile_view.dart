@@ -13,7 +13,7 @@ class _ProfileState extends State<ProfileView> {
   Widget build(BuildContext context) {
     if (SKUser.current == null) return Container(color: Colors.white);
 
-    final fields = SKUser.current?.student.fieldsOfStudy ?? [];
+    final fields = SKUser.current.student.fieldsOfStudy ?? [];
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -39,20 +39,20 @@ class _ProfileState extends State<ProfileView> {
                     decoration: BoxDecoration(
                       color: SKColors.light_gray,
                       shape: BoxShape.circle,
-                      image: SKUser.current?.avatarUrl == null
+                      image: SKUser.current.avatarUrl == null
                           ? null
                           : DecorationImage(
                               fit: BoxFit.fill,
-                              image: NetworkImage(SKUser.current!.avatarUrl!),
+                              image: NetworkImage(SKUser.current.avatarUrl),
                             ),
                     ),
                     margin: EdgeInsets.only(bottom: 12),
                     height: 80,
                     width: 80,
-                    child: SKUser.current?.avatarUrl == null
+                    child: SKUser.current.avatarUrl == null
                         ? Text(
-                            SKUser.current!.student.nameFirst![0] +
-                                SKUser.current!.student.nameLast![0],
+                            SKUser.current.student.nameFirst[0] +
+                                SKUser.current.student.nameLast[0],
                             style: TextStyle(
                               color: Colors.white,
                               fontSize: 22,
@@ -82,7 +82,7 @@ class _ProfileState extends State<ProfileView> {
               Padding(
                 padding: EdgeInsets.only(bottom: 24),
                 child: Text(
-                  '${SKUser.current?.student.nameFirst} ${SKUser.current?.student.nameLast}',
+                  '${SKUser.current.student.nameFirst} ${SKUser.current.student.nameLast}',
                   style: TextStyle(fontSize: 18),
                   textAlign: TextAlign.center,
                 ),
@@ -107,11 +107,11 @@ class _ProfileState extends State<ProfileView> {
                                 borderRadius: BorderRadius.circular(5),
                               ),
                               child: Text(
-                                SKUser.current?.student.bio ??
+                                SKUser.current.student.bio ??
                                     'nothing to see here...',
                                 style: TextStyle(
                                     fontWeight: FontWeight.normal,
-                                    color: SKUser.current?.student.bio == null
+                                    color: SKUser.current.student.bio == null
                                         ? SKColors.light_gray
                                         : SKColors.dark_gray,
                                     fontSize: 14),
@@ -156,12 +156,12 @@ class _ProfileState extends State<ProfileView> {
                                 borderRadius: BorderRadius.circular(5),
                               ),
                               child: Text(
-                                SKUser.current?.student.organizations ??
+                                SKUser.current.student.organizations ??
                                     'nothing to see here...',
                                 style: TextStyle(
                                     fontWeight: FontWeight.normal,
                                     color:
-                                        SKUser.current?.student.organizations ==
+                                        SKUser.current.student.organizations ==
                                                 null
                                             ? SKColors.light_gray
                                             : SKColors.dark_gray,
@@ -287,7 +287,7 @@ class _ProfileState extends State<ProfileView> {
                                       borderRadius: BorderRadius.circular(7),
                                     ),
                                     child: Text(
-                                      SKUser.current?.email ?? 'N/A...',
+                                      SKUser.current.email ?? 'N/A...',
                                       style: TextStyle(
                                           fontWeight: FontWeight.normal,
                                           fontSize: 14),
@@ -335,7 +335,7 @@ class _ProfileState extends State<ProfileView> {
                                       borderRadius: BorderRadius.circular(7),
                                     ),
                                     child: Text(
-                                      SKUser.current?.student.formattedPhone ??
+                                      SKUser.current.student.formattedPhone ??
                                           'N/A...',
                                       style: TextStyle(
                                           fontWeight: FontWeight.normal,

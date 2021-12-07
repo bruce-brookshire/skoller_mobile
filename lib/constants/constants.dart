@@ -1,24 +1,20 @@
 library constants;
 
-import 'dart:async';
-import 'dart:collection';
-import 'dart:math';
-import 'dart:ui' as dartUI;
-
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
-import 'package:intl/intl.dart';
-import 'package:skoller/model/my_subscriptions.dart';
-
 import '../requests/requests_core.dart';
+import 'package:intl/intl.dart';
+import 'dart:ui' as dartUI;
+import 'dart:async';
+import 'dart:math';
 
-part 'image_names.dart';
 part 'skoller_widgets.dart';
-part 'typedefs.dart';
 part 'utilities.dart';
+part 'typedefs.dart';
+part 'image_names.dart';
 
 const FORECAST_TAB = 0;
 const CALENDAR_TAB = 1;
@@ -28,8 +24,7 @@ const JOBS_TAB = 3;
 const PARTY_SIZE = 4;
 
 class SKColors {
-  static const skoller_blue = Color(0xFF4A4A4A);
-  static const skoller_blue1 = Color(0xFF57B9E4);
+  static const skoller_blue = Color(0xFF57B9E4);
   static const menu_blue = Color(0xFFEDFAFF);
 
   // General
@@ -81,7 +76,7 @@ class UIAssets {
       blurRadius: 3.5,
     )
   ];
-  static String? versionNumber = '';
+  static String versionNumber;
 }
 
 class ClassStatuses {
@@ -103,7 +98,6 @@ class NotificationChannels {
   static const appStateChanged = 'app-state-changed';
   static const selectTab = 'select-tab';
   static const newTabSelected = 'new-tab-selected';
-  static const jobsChanged = 'jobs-changed';
 }
 
 class PreferencesKeys {
@@ -155,115 +149,3 @@ class PushNotificationCategories {
   static bool _validateMember(List<String> categories, category) =>
       categories.contains(category);
 }
-
-Map tokenLoginMap = Map();
-
-class Subscriptions {
-  static MySubscriptions? mySubscriptions;
-}
-
-final statesMap = LinkedHashMap.fromIterables([
-  "Alabama",
-  "Alaska",
-  "Arizona",
-  "Arkansas",
-  "California",
-  "Colorado",
-  "Connecticut",
-  "Delaware",
-  "District Of Columbia",
-  "Florida",
-  "Georgia",
-  "Hawaii",
-  "Idaho",
-  "Illinois",
-  "Indiana",
-  "Iowa",
-  "Kansas",
-  "Kentucky",
-  "Louisiana",
-  "Maine",
-  "Maryland",
-  "Massachusetts",
-  "Michigan",
-  "Minnesota",
-  "Mississippi",
-  "Missouri",
-  "Montana",
-  "Nebraska",
-  "Nevada",
-  "New Hampshire",
-  "New Jersey",
-  "New Mexico",
-  "New York",
-  "North Carolina",
-  "North Dakota",
-  "Ohio",
-  "Oklahoma",
-  "Oregon",
-  "Pennsylvania",
-  "Rhode Island",
-  "South Carolina",
-  "South Dakota",
-  "Tennessee",
-  "Texas",
-  "Utah",
-  "Vermont",
-  "Virginia",
-  "Washington",
-  "West Virginia",
-  "Wisconsin",
-  "Wyoming"
-], [
-  "AL",
-  "AK",
-  "AZ",
-  "AR",
-  "CA",
-  "CO",
-  "CT",
-  "DE",
-  "DC",
-  "FL",
-  "GA",
-  "HI",
-  "ID",
-  "IL",
-  "IN",
-  "IA",
-  "KS",
-  "KY",
-  "LA",
-  "ME",
-  "MD",
-  "MA",
-  "MI",
-  "MN",
-  "MS",
-  "MO",
-  "MT",
-  "NE",
-  "NV",
-  "NH",
-  "NJ",
-  "NM",
-  "NY",
-  "NC",
-  "ND",
-  "OH",
-  "OK",
-  "OR",
-  "PA",
-  "RI",
-  "SC",
-  "SD",
-  "TN",
-  "TX",
-  "UT",
-  "VT",
-  "VA",
-  "WA",
-  "WV",
-  "WI",
-  "WY"
-]);

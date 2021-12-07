@@ -1,15 +1,14 @@
-import 'package:dart_notification_center/dart_notification_center.dart';
 import 'package:dropdown_banner/dropdown_banner.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:skoller/screens/auth/phone_verification_view.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:skoller/tools.dart';
+import 'package:skoller/screens/auth/phone_verification_view.dart';
 import 'package:url_launcher/url_launcher.dart';
-
+import 'package:dart_notification_center/dart_notification_center.dart';
 import 'sign_in.dart';
 
 class SignUp extends StatefulWidget {
-  SignUp({Key? key}) : super(key: key);
+  SignUp({Key key}) : super(key: key);
 
   @override
   _SignUpState createState() => _SignUpState();
@@ -106,7 +105,7 @@ class _SignUpState extends State<SignUp> {
         }
       } else {
         setState(() => validState = false);
-
+        
         String message = [422, 401].contains(response.status)
             ? 'A user already exists with that phone number or email. Try logging in!'
             : 'Failed to create account. Try again later, or visit skoller.co';
@@ -120,7 +119,7 @@ class _SignUpState extends State<SignUp> {
     });
   }
 
-  double? dist;
+  double dist;
 
   @override
   Widget build(BuildContext context) => Scaffold(
@@ -135,7 +134,7 @@ class _SignUpState extends State<SignUp> {
                 onVerticalDragCancel: () => dist = null,
                 onVerticalDragEnd: (details) => dist = null,
                 onVerticalDragUpdate: (details) {
-                  if (dist != null && details.localPosition.dy - dist! > 30) {
+                  if (dist != null && details.localPosition.dy - dist > 30) {
                     [
                       firstNameFocus,
                       lastNameFocus,
@@ -216,10 +215,8 @@ class _SignUpState extends State<SignUp> {
                                     textCapitalization:
                                         TextCapitalization.words,
                                     textInputAction: TextInputAction.next,
-                                    onSubmitted: (_) {
-                                      lastNameFocus.requestFocus();
-                                      // firstNameFocus.nextFocus();
-                                    },
+                                    onSubmitted: (_) =>
+                                        firstNameFocus.nextFocus(),
                                     autofocus: true,
                                     onChanged: verifyState,
                                     focusNode: firstNameFocus,
@@ -264,10 +261,8 @@ class _SignUpState extends State<SignUp> {
                                     textCapitalization:
                                         TextCapitalization.words,
                                     textInputAction: TextInputAction.next,
-                                    onSubmitted: (_) {
-                                      emailFocus.requestFocus();
-                                      // return lastNameFocus.nextFocus();
-                                    },
+                                    onSubmitted: (_) =>
+                                        lastNameFocus.nextFocus(),
                                     onChanged: verifyState,
                                     focusNode: lastNameFocus,
                                   ),
@@ -314,10 +309,7 @@ class _SignUpState extends State<SignUp> {
                               decoration: BoxDecoration(border: null),
                               textCapitalization: TextCapitalization.none,
                               textInputAction: TextInputAction.next,
-                              onSubmitted: (_) {
-                                // return emailFocus.nextFocus();
-                                phoneFocus.requestFocus();
-                              },
+                              onSubmitted: (_) => emailFocus.nextFocus(),
                               onChanged: verifyState,
                               focusNode: emailFocus,
                             ),
@@ -387,7 +379,7 @@ class _SignUpState extends State<SignUp> {
                               TextSpan(
                                   text: 'User Agreement',
                                   style:
-                                      TextStyle(color: SKColors.skoller_blue1))
+                                      TextStyle(color: SKColors.skoller_blue))
                             ],
                           ),
                           textAlign: TextAlign.center,
@@ -434,7 +426,7 @@ class _SignUpState extends State<SignUp> {
                                   child: Text(
                                     ' Log In',
                                     style: TextStyle(
-                                        color: SKColors.skoller_blue1,
+                                        color: SKColors.skoller_blue,
                                         fontWeight: FontWeight.bold),
                                   ),
                                 ),

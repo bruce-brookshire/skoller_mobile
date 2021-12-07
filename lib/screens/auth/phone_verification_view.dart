@@ -29,7 +29,7 @@ class _PhoneVerificationState extends State<PhoneVerificationView> {
   ];
 
   int currentIndex = 0;
-  String? errorMsg;
+  String errorMsg;
   bool loading = false;
 
   @override
@@ -92,7 +92,6 @@ class _PhoneVerificationState extends State<PhoneVerificationView> {
       Navigator.pop(context, response.wasSuccessful());
     }).catchError(
       (onError) => setState(() {
-        Navigator.pop(context, '');
         loading = false;
         errorMsg = errorMsg is String ? errorMsg : 'Invalid code';
       }),
@@ -150,19 +149,19 @@ class _PhoneVerificationState extends State<PhoneVerificationView> {
                       child: CircularProgressIndicator()))
               : GestureDetector(
                   onTapDown: (details) {
-                    // setState(() => loading = true);
+                    setState(() => loading = true);
 
-                    // Clipboard.getData('text/plain').then((response) {
-                    //   final code = response.text;
-                    //   if (code.length == 5 && int.tryParse(code) != null) {
-                    //     pinControllers[0].text = code;
-                    //     pinFieldChanged(0);
-                    //   } else {
-                    //     setState(() {
-                    //       loading = false;
-                    //     });
-                    //   }
-                    // });
+                    Clipboard.getData('text/plain').then((response) {
+                      final code = response.text;
+                      if (code.length == 5 && int.tryParse(code) != null) {
+                        pinControllers[0].text = code;
+                        pinFieldChanged(0);
+                      } else {
+                        setState(() {
+                          loading = false;
+                        });
+                      }
+                    });
                   },
                   child: Padding(
                     padding: EdgeInsets.symmetric(horizontal: 24, vertical: 24),
@@ -175,7 +174,7 @@ class _PhoneVerificationState extends State<PhoneVerificationView> {
             Padding(
               padding: EdgeInsets.only(bottom: 8),
               child: Text(
-                errorMsg!,
+                errorMsg,
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   color: SKColors.warning_red,

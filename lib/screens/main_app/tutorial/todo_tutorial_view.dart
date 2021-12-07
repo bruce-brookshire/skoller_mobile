@@ -14,7 +14,7 @@ final _colors = [
 ];
 
 class _TaskCellItem {
-  final String? name;
+  final String name;
   final String className;
   final int color;
   final String due;
@@ -239,7 +239,7 @@ class _TodoRow extends StatelessWidget {
                   child: Material(
                     type: MaterialType.transparency,
                     child: Text(
-                      item.name??'',
+                      item.name,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style: TextStyle(

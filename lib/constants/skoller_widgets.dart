@@ -2,23 +2,20 @@ part of 'constants.dart';
 
 class SKButton extends StatelessWidget {
   final String buttonText;
-  final EdgeInsets? margins;
+  final EdgeInsets margins;
   final double width;
-  final bool isDark;
   final ContextCallback callback;
 
   SKButton(
-      {Key? key,
-      String? buttonText,
-      EdgeInsets? margin,
-      double? width,
-      ContextCallback? callback,
-      bool isDark = false})
-      : buttonText = buttonText!,
+      {Key key,
+      String buttonText,
+      EdgeInsets margin,
+      double width,
+      ContextCallback callback})
+      : buttonText = buttonText,
         margins = margin,
-        width = width!,
-        callback = callback!,
-        isDark = isDark,
+        width = width,
+        callback = callback,
         super(key: key);
 
   Widget build(BuildContext context) => Container(
@@ -27,7 +24,7 @@ class SKButton extends StatelessWidget {
         width: width,
         child: SizedBox.expand(
           child: RaisedButton(
-            color: isDark ? SKColors.dark_gray : Colors.white,
+            color: Colors.white,
             shape:
                 RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
             child: Text(
@@ -35,7 +32,7 @@ class SKButton extends StatelessWidget {
               style: TextStyle(
                   fontSize: 15,
                   fontWeight: FontWeight.bold,
-                  color: isDark ? Colors.white : SKColors.skoller_blue1),
+                  color: SKColors.skoller_blue),
             ),
             onPressed: () {
               callback(context);
@@ -49,16 +46,16 @@ class SKNavBar extends StatelessWidget {
   final bool leftIsPop;
 
   final String title;
-  final Widget? titleOption;
+  final Widget titleOption;
 
-  final Color? titleColor;
+  final Color titleColor;
 
-  final Widget? leftBtn;
-  final Widget? rightBtn;
+  final Widget leftBtn;
+  final Widget rightBtn;
 
-  final VoidCallback? callbackRight;
-  final VoidCallback? callbackLeft;
-  final VoidCallback? callbackTitle;
+  final VoidCallback callbackRight;
+  final VoidCallback callbackLeft;
+  final VoidCallback callbackTitle;
 
   SKNavBar(
     this.title, {
@@ -76,7 +73,7 @@ class SKNavBar extends StatelessWidget {
     final titleWidget = GestureDetector(
       behavior: HitTestBehavior.opaque,
       onTapUp: (details) {
-        if (callbackTitle != null) callbackTitle!();
+        if (callbackTitle != null) callbackTitle();
       },
       child: Text(
         title,
@@ -105,7 +102,7 @@ class SKNavBar extends StatelessWidget {
             behavior: HitTestBehavior.opaque,
             onTapUp: (details) {
               if (callbackLeft != null)
-                callbackLeft!();
+                callbackLeft();
               else if (leftIsPop) Navigator.pop(context);
             },
             child: Container(
@@ -119,11 +116,11 @@ class SKNavBar extends StatelessWidget {
               ? titleWidget
               : Row(
                   mainAxisSize: MainAxisSize.min,
-                  children: <Widget>[titleWidget, titleOption!]),
+                  children: <Widget>[titleWidget, titleOption]),
           GestureDetector(
             behavior: HitTestBehavior.opaque,
             onTapUp: (details) {
-              if (callbackRight != null) callbackRight!();
+              if (callbackRight != null) callbackRight();
             },
             child: Container(
               padding: EdgeInsets.only(right: 4),
@@ -142,23 +139,23 @@ class SKNavView extends StatelessWidget {
   final bool isPop;
 
   final String title;
-  final Widget? titleOption;
+  final Widget titleOption;
 
-  final Widget? rightBtn;
-  final Widget? leftBtn;
+  final Widget rightBtn;
+  final Widget leftBtn;
 
-  final VoidCallback? callbackRight;
-  final VoidCallback? callbackLeft;
-  final VoidCallback? callbackTitle;
+  final VoidCallback callbackRight;
+  final VoidCallback callbackLeft;
+  final VoidCallback callbackTitle;
 
   final List<Widget> children;
 
-  final Color? titleColor;
-  final Color? backgroundColor;
+  final Color titleColor;
+  final Color backgroundColor;
 
   SKNavView({
-    required this.children,
-    required this.title,
+    @required this.children,
+    @required this.title,
     this.titleColor,
     this.rightBtn,
     this.isPop = true,
@@ -274,13 +271,13 @@ class SKCalendarPicker extends StatefulWidget {
   @override
   State createState() => _SKCalendarPickerState();
 
-  static Future<dynamic> presentDateSelector({
-    required String title,
-    required String subtitle,
-    required BuildContext context,
-    required DateTime startDate,
-    DateCallback? onSelect,
-    DateContextCallback? onSave,
+  static Future<DateTime> presentDateSelector({
+    @required String title,
+    @required String subtitle,
+    @required BuildContext context,
+    @required DateTime startDate,
+    DateCallback onSelect,
+    DateContextCallback onSave,
     bool showNoDate = false,
   }) async {
     DateTime selectedDate = startDate;
@@ -349,7 +346,7 @@ class SKCalendarPicker extends StatefulWidget {
                           EdgeInsets.symmetric(vertical: 8, horizontal: 12),
                       child: GestureDetector(
                         onTapUp: (_) {
-                          onSelect!(DateTime.now());
+                          onSelect(null);
                           Navigator.pop(context);
                         },
                         child: Text(
@@ -385,9 +382,9 @@ class SKCalendarPicker extends StatefulWidget {
                           onTapUp: (details) async {
                             // Wait to save if not used in a data-passing context
                             if (isSave)
-                              await onSave!(selectedDate, context);
+                              await onSave(selectedDate, context);
                             else
-                              onSelect!(selectedDate);
+                              onSelect(selectedDate);
 
                             Navigator.pop(context);
                           },
@@ -422,7 +419,7 @@ class _SKCalendarPickerState extends State<SKCalendarPicker> {
   List<DateTime> children = [];
   int curIndex = 1;
 
-  late DateTime selectedDate;
+  DateTime selectedDate;
 
   @override
   void initState() {
@@ -556,11 +553,11 @@ class _SKCalendarPickerState extends State<SKCalendarPicker> {
 class _SKCalendarBody extends StatefulWidget {
   final DateTime firstOfMonth;
   final DateTime startDate;
-  final DateCallback? onDateSelected;
-  final DateFetch? getSelected;
+  final DateCallback onDateSelected;
+  final DateFetch getSelected;
 
-  _SKCalendarBody({DateTime? month, this.onDateSelected, this.getSelected})
-      : firstOfMonth = month!,
+  _SKCalendarBody({DateTime month, this.onDateSelected, this.getSelected})
+      : firstOfMonth = month,
         startDate = month.weekday == 7
             ? month
             : DateTime(month.year, month.month, 1 - month.weekday);
@@ -570,11 +567,11 @@ class _SKCalendarBody extends StatefulWidget {
 }
 
 class _SKCalendarBodyState extends State<_SKCalendarBody> {
-  late DateTime selectedDay;
+  DateTime selectedDay;
 
   Widget build(BuildContext context) {
     final startDate = widget.startDate;
-    selectedDay = widget.getSelected!();
+    selectedDay = widget.getSelected();
 
     return Column(
       mainAxisSize: MainAxisSize.min,
@@ -626,7 +623,7 @@ class _SKCalendarBodyState extends State<_SKCalendarBody> {
               aspectRatio: 1,
               child: GestureDetector(
                 onTapUp: (details) {
-                  widget.onDateSelected!(date);
+                  widget.onDateSelected(date);
                   // selectedDay = date;
                 },
                 child: Container(
@@ -654,7 +651,7 @@ class _SKCalendarBodyState extends State<_SKCalendarBody> {
 class SKNavFadeUpRoute extends ModalRoute<void> {
   final WidgetBuilder builder;
 
-  SKNavFadeUpRoute({required this.builder});
+  SKNavFadeUpRoute({@required this.builder});
 
   @override
   Duration get transitionDuration => Duration(milliseconds: 500);
@@ -669,7 +666,7 @@ class SKNavFadeUpRoute extends ModalRoute<void> {
   Color get barrierColor => Colors.white;
 
   @override
-  String get barrierLabel => '';
+  String get barrierLabel => null;
 
   @override
   bool get maintainState => true;
@@ -692,9 +689,7 @@ class SKNavFadeUpRoute extends ModalRoute<void> {
     return FadeTransition(
       opacity: animation,
       child: CupertinoFullscreenDialogTransition(
-        primaryRouteAnimation: animation,
-        secondaryRouteAnimation: secondaryAnimation,
-        linearTransition: false,
+        animation: animation,
         child: child,
       ),
     );
@@ -705,7 +700,7 @@ class SKNavOverlayRoute extends ModalRoute<Object> {
   final WidgetBuilder builder;
   final bool isBarrierDismissible;
 
-  SKNavOverlayRoute({required this.builder, this.isBarrierDismissible = true});
+  SKNavOverlayRoute({@required this.builder, this.isBarrierDismissible = true});
 
   @override
   Duration get transitionDuration => Duration(milliseconds: 500);
@@ -720,7 +715,7 @@ class SKNavOverlayRoute extends ModalRoute<Object> {
   Color get barrierColor => Colors.black.withOpacity(0.2);
 
   @override
-  String get barrierLabel => '';
+  String get barrierLabel => null;
 
   @override
   bool get maintainState => true;
@@ -743,9 +738,7 @@ class SKNavOverlayRoute extends ModalRoute<Object> {
     return FadeTransition(
       opacity: animation,
       child: CupertinoFullscreenDialogTransition(
-        primaryRouteAnimation: animation,
-        secondaryRouteAnimation: secondaryAnimation,
-        linearTransition: false,
+        animation: animation,
         child: child,
       ),
     );
@@ -756,7 +749,7 @@ class SKCoverSheetNav extends ModalRoute<Object> {
   final WidgetBuilder builder;
   final bool isBarrierDismissible;
 
-  SKCoverSheetNav({required this.builder, this.isBarrierDismissible = true});
+  SKCoverSheetNav({@required this.builder, this.isBarrierDismissible = true});
 
   @override
   Duration get transitionDuration => Duration(milliseconds: 300);
@@ -771,7 +764,7 @@ class SKCoverSheetNav extends ModalRoute<Object> {
   Color get barrierColor => Colors.black.withOpacity(0.2);
 
   @override
-  String get barrierLabel => '';
+  String get barrierLabel => null;
 
   @override
   bool get maintainState => true;
@@ -807,7 +800,7 @@ class SKCoverSheetNav extends ModalRoute<Object> {
 class SKNoAnimationRoute extends ModalRoute<Object> {
   final WidgetBuilder builder;
 
-  SKNoAnimationRoute({required this.builder});
+  SKNoAnimationRoute({@required this.builder});
 
   @override
   Duration get transitionDuration => Duration(milliseconds: 0);
@@ -822,7 +815,7 @@ class SKNoAnimationRoute extends ModalRoute<Object> {
   Color get barrierColor => Colors.black;
 
   @override
-  String get barrierLabel => '';
+  String get barrierLabel => null;
 
   @override
   bool get maintainState => true;
@@ -858,13 +851,13 @@ class SKLoadingScreen extends ModalRoute<void> {
   Color get barrierColor => SKColors.text_light_gray.withOpacity(0.2);
 
   @override
-  String get barrierLabel => '';
+  String get barrierLabel => null;
 
   @override
   bool get maintainState => true;
 
   void fadeOut() {
-    navigator!.pop();
+    navigator.pop();
   }
 
   @override
@@ -894,17 +887,17 @@ class SKLoadingScreen extends ModalRoute<void> {
 
 class SKAlertDialog extends StatelessWidget {
   final String title;
-  final String? subTitle;
+  final String subTitle;
 
-  final String? confirmText;
-  final String? cancelText;
+  final String confirmText;
+  final String cancelText;
 
-  final Widget? child;
+  final Widget child;
 
-  final DynamicCallback? getResults;
+  final DynamicCallback getResults;
 
   SKAlertDialog({
-    required this.title,
+    @required this.title,
     this.subTitle,
     this.child,
     this.confirmText,
@@ -933,7 +926,7 @@ class SKAlertDialog extends StatelessWidget {
             Padding(
               padding: EdgeInsets.symmetric(vertical: 4, horizontal: 12),
               child: Text(
-                subTitle!,
+                subTitle,
                 textAlign: TextAlign.center,
                 style: TextStyle(
                     fontWeight: FontWeight.normal,
@@ -948,7 +941,7 @@ class SKAlertDialog extends StatelessWidget {
               height: 1,
               color: SKColors.border_gray,
             ),
-          if (child != null) child!,
+          if (child != null) child,
           Row(
             children: <Widget>[
               Expanded(
@@ -984,7 +977,7 @@ class SKAlertDialog extends StatelessWidget {
                 child: GestureDetector(
                   onTapUp: (details) => Navigator.pop(
                     context,
-                    getResults == null ? true : getResults!(),
+                    getResults == null ? true : getResults(),
                   ),
                   child: Container(
                     decoration: BoxDecoration(
@@ -1016,8 +1009,8 @@ class SKAlertDialog extends StatelessWidget {
 }
 
 class SKColorPicker extends StatefulWidget {
-  final ColorCallback? callback;
-  final Widget? child;
+  final ColorCallback callback;
+  final Widget child;
   final List<Color> colors = [
     Color(0xFFAE77BD),
     Color(0xFFE882AC),
@@ -1036,17 +1029,17 @@ class SKColorPicker extends StatefulWidget {
 }
 
 class _SKColorPickerState extends State<SKColorPicker> {
-  OverlayEntry? _overlayEntry;
+  OverlayEntry _overlayEntry;
 
   void _tappedColorPicker(TapUpDetails details) async {
     if (this._overlayEntry == null) {
       this._overlayEntry = _createOverlayEntry();
-      Overlay.of(context)!.insert(this._overlayEntry!);
+      Overlay.of(context).insert(this._overlayEntry);
     }
   }
 
   OverlayEntry _createOverlayEntry() {
-    RenderBox renderBox = context.findRenderObject() as RenderBox;
+    RenderBox renderBox = context.findRenderObject();
 
     final size = renderBox.size;
     final offset = renderBox.localToGlobal(Offset.zero);
@@ -1061,7 +1054,7 @@ class _SKColorPickerState extends State<SKColorPicker> {
     return OverlayEntry(
       builder: (context) => GestureDetector(
         onTapUp: (details) {
-          this._overlayEntry!.remove();
+          this._overlayEntry.remove();
           this._overlayEntry = null;
         },
         child: Stack(
@@ -1108,8 +1101,8 @@ class _SKColorPickerState extends State<SKColorPicker> {
 
   Widget _createColorCard(Color color) => GestureDetector(
         onTapUp: (details) {
-          widget.callback!(color);
-          this._overlayEntry!.remove();
+          widget.callback(color);
+          this._overlayEntry.remove();
           this._overlayEntry = null;
         },
         child: Container(
@@ -1168,18 +1161,18 @@ class _CustomArrowPainter extends CustomPainter {
 
 class SKPickerModal extends StatefulWidget {
   final String title;
-  final String? subtitle;
+  final String subtitle;
   final List<String> items;
   final IntCallback onSelect;
-  final Widget? optionChild;
-  final VoidCallback? onOptionChildTapped;
+  final Widget optionChild;
+  final VoidCallback onOptionChildTapped;
   final int startIndex;
 
   SKPickerModal({
-    required this.title,
+    @required this.title,
     this.subtitle,
-    required this.items,
-    required this.onSelect,
+    @required this.items,
+    @required this.onSelect,
     this.optionChild,
     this.onOptionChildTapped,
     this.startIndex = 0,
@@ -1191,7 +1184,7 @@ class SKPickerModal extends StatefulWidget {
 
 class _SKPickerModalState extends State<SKPickerModal> {
   int _selectedIndex = 0;
-  late FixedExtentScrollController scrollController;
+  ScrollController scrollController;
 
   @override
   void initState() {
@@ -1215,7 +1208,7 @@ class _SKPickerModalState extends State<SKPickerModal> {
         Padding(
           padding: EdgeInsets.fromLTRB(24, 4, 24, 0),
           child: Text(
-            widget.subtitle!,
+            widget.subtitle,
             textAlign: TextAlign.center,
             style: TextStyle(
               fontSize: 13,
@@ -1265,7 +1258,7 @@ class _SKPickerModalState extends State<SKPickerModal> {
                 behavior: HitTestBehavior.opaque,
                 onTapUp: (_) {
                   Navigator.pop(context);
-                  widget.onOptionChildTapped!();
+                  widget.onOptionChildTapped();
                 },
                 child: Padding(
                   padding: EdgeInsets.symmetric(vertical: 4),
@@ -1324,15 +1317,12 @@ class SKHeaderProfilePhoto extends StatelessWidget {
           color: Colors.white,
           shape: BoxShape.circle,
           boxShadow: [BoxShadow(blurRadius: 3, color: Color(0x19000000))],
-          image: SKUser.current?.avatarUrl == null
-              ? DecorationImage(
-                  fit: BoxFit.fill,
-                  image: AssetImage(ImageNames.peopleImages.static_profile),
-                )
-              : DecorationImage(
-                  fit: BoxFit.fill,
-                  image: NetworkImage(SKUser.current?.avatarUrl ?? ""),
-                ),
+          image: DecorationImage(
+            fit: BoxFit.fill,
+            image: SKUser.current.avatarUrl == null
+                ? AssetImage(ImageNames.peopleImages.static_profile)
+                : NetworkImage(SKUser.current.avatarUrl),
+          ),
         ),
         height: 30,
         width: 30,
@@ -1354,13 +1344,13 @@ enum SammiPersonality {
 enum SammiSide { left, right }
 
 class SammiSpeechBubble extends StatelessWidget {
-  final SammiPersonality? sammiPersonality;
+  final SammiPersonality sammiPersonality;
   final Widget speechBubbleContents;
   final SammiSide sammiSide;
 
   SammiSpeechBubble({
-    required this.sammiPersonality,
-    required this.speechBubbleContents,
+    @required this.sammiPersonality,
+    @required this.speechBubbleContents,
     this.sammiSide = SammiSide.left,
   });
 
@@ -1413,7 +1403,7 @@ class SammiSpeechBubble extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               children: leftArrow
                   ? [
-                      image!,
+                      image,
                       Flexible(
                         flex: 1,
                         fit: FlexFit.tight,
@@ -1444,13 +1434,13 @@ class SammiSpeechBubble extends StatelessWidget {
                           ),
                         ),
                       ),
-                      image!,
+                      image,
                     ],
             ),
     );
   }
 
-  Image? _sammiImageBuilder() {
+  Image _sammiImageBuilder() {
     switch (sammiPersonality) {
       case SammiPersonality.cool:
         return Image.asset(ImageNames.sammiImages.cool);
@@ -1465,14 +1455,15 @@ class SammiSpeechBubble extends StatelessWidget {
       case SammiPersonality.school:
         return Image.asset(ImageNames.sammiImages.smile);
       case SammiPersonality.jobsCool:
-        return Image.asset(ImageNames.sammiImages.big_smile);
+        return Image.asset(ImageNames.sammiJobsImages.swag);
       case SammiPersonality.jobsOoo:
-        return Image.asset(ImageNames.sammiImages.big_smile);
+        return Image.asset(ImageNames.sammiJobsImages.stare);
       case SammiPersonality.jobsLargeSmile:
-        return Image.asset(ImageNames.sammiImages.big_smile);
+        return Image.asset(ImageNames.sammiJobsImages.large_big_smile);
       case SammiPersonality.jobsSmile:
-        return Image.asset(ImageNames.sammiImages.big_smile);
+        return Image.asset(ImageNames.sammiJobsImages.smile);
     }
+    return null;
   }
 }
 
@@ -1551,11 +1542,11 @@ class _SammiArrowPainter extends CustomPainter {
 enum ImpactGraphSize { small, large }
 
 class SKAssignmentImpactGraph extends StatelessWidget {
-  final double? completion;
+  final double completion;
   final ImpactGraphSize size;
   final Color color;
 
-  final ImpactLevel? level;
+  final ImpactLevel level;
 
   SKAssignmentImpactGraph(this.completion, this.color,
       {this.size = ImpactGraphSize.large})
@@ -1570,16 +1561,16 @@ class SKAssignmentImpactGraph extends StatelessWidget {
     String impactDesc;
 
     if (this.level != null) {
-      level = this.level!;
+      level = this.level;
       impactDesc = ["None", "Low", "Medium", "High"][level.index];
     } else {
       if ((completion ?? 0.0) == 0.0) {
         level = ImpactLevel.none;
         impactDesc = 'None';
-      } else if (completion! < 0.05) {
+      } else if (completion < 0.05) {
         level = ImpactLevel.low;
         impactDesc = 'Low';
-      } else if (completion! < 0.15) {
+      } else if (completion < 0.15) {
         level = ImpactLevel.medium;
         impactDesc = 'Medium';
       } else {
@@ -1686,30 +1677,25 @@ class _SKImpactGraphPainter extends CustomPainter {
 
 class SKHeaderCard extends StatelessWidget {
   final Widget leftHeaderItem;
-  final Widget? rightHeaderItem;
+  final Widget rightHeaderItem;
   final List<Widget> children;
-  final EdgeInsets? margin;
-  final EdgeInsets? padding;
-  final Color? headerColor;
-  final Color? backgroundColor;
-  final Color? borderColor;
+  final EdgeInsets margin;
+  final EdgeInsets padding;
 
-  SKHeaderCard(
-      {required this.leftHeaderItem,
-      this.rightHeaderItem,
-      required this.children,
-      this.margin,
-      this.padding,
-      this.headerColor,
-      this.backgroundColor,
-      this.borderColor});
+  SKHeaderCard({
+    @required this.leftHeaderItem,
+    this.rightHeaderItem,
+    @required this.children,
+    this.margin,
+    this.padding,
+  });
 
   @override
   Widget build(BuildContext context) => Container(
         decoration: BoxDecoration(
-          color: this.backgroundColor ?? Colors.white,
+          color: Colors.white,
           borderRadius: BorderRadius.circular(10),
-          border: Border.all(color: this.borderColor ?? SKColors.border_gray),
+          border: Border.all(color: SKColors.border_gray),
           boxShadow: UIAssets.boxShadow,
         ),
         margin: margin ?? EdgeInsets.all(16),
@@ -1720,7 +1706,7 @@ class SKHeaderCard extends StatelessWidget {
               alignment: Alignment.centerLeft,
               padding: EdgeInsets.fromLTRB(12, 12, 12, 8),
               decoration: BoxDecoration(
-                color: this.headerColor ?? SKColors.selected_gray,
+                color: SKColors.selected_gray,
                 borderRadius: BorderRadius.only(
                   topLeft: Radius.circular(10),
                   topRight: Radius.circular(10),
@@ -1730,7 +1716,7 @@ class SKHeaderCard extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   leftHeaderItem,
-                  if (rightHeaderItem != null) rightHeaderItem!,
+                  if (rightHeaderItem != null) rightHeaderItem,
                 ],
               ),
             ),
@@ -1748,7 +1734,7 @@ class SKHeaderCard extends StatelessWidget {
 }
 
 class ShakeAnimation extends StatefulWidget {
-  final Widget? child;
+  final Widget child;
 
   ShakeAnimation({this.child}) : super(key: UniqueKey());
 
@@ -1758,8 +1744,8 @@ class ShakeAnimation extends StatefulWidget {
 
 class _ShakeAnimationState extends State<ShakeAnimation>
     with SingleTickerProviderStateMixin {
-  late AnimationController _controller;
-  late Animation _animation;
+  AnimationController _controller;
+  Animation _animation;
 
   @override
   void initState() {
@@ -1821,8 +1807,8 @@ class GifWrapper extends StatefulWidget {
 }
 
 class _GifWrapperState extends State<GifWrapper> with TickerProviderStateMixin {
-  late AnimationController _controller;
-  late Animation<int> _animation;
+  AnimationController _controller;
+  Animation<int> _animation;
 
   @override
   void initState() {
@@ -1845,7 +1831,7 @@ class _GifWrapperState extends State<GifWrapper> with TickerProviderStateMixin {
   Widget build(BuildContext context) {
     return AnimatedBuilder(
       animation: _animation,
-      builder: (BuildContext context, Widget? child) {
+      builder: (BuildContext context, Widget child) {
         String frame = _animation.value.toString().padLeft(3, '0');
         return Image.asset(
           'image_assets/${widget.baseGifName}/frame_${frame}_delay-0.04s.png',
@@ -1853,24 +1839,5 @@ class _GifWrapperState extends State<GifWrapper> with TickerProviderStateMixin {
         );
       },
     );
-  }
-}
-
-class CornerRadiusClipper extends CustomClipper<Path> {
-  final double radius;
-
-  CornerRadiusClipper(this.radius);
-
-  @override
-  Path getClip(Size size) {
-    final path = Path();
-    final rect = Rect.fromLTRB(0.0, 0.0, size.width, size.height);
-    path.addRRect(RRect.fromRectAndRadius(rect, Radius.circular(radius)));
-    return path;
-  }
-
-  @override
-  bool shouldReclip(CustomClipper<Path> oldClipper) {
-    return true;
   }
 }

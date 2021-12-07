@@ -10,7 +10,6 @@ import 'package:skoller/tools.dart';
 import 'package:url_launcher/url_launcher.dart';
 import './modals/syllabus_instructions_modal.dart';
 import 'class_detail_view.dart';
-import 'package:collection/collection.dart';
 
 enum _CardType {
   sammiSyllabusInstruction,
@@ -38,11 +37,11 @@ typedef Widget _CardConstruct(
     StudentClass studentClass, int index, bool isCurrent);
 
 class _ClassesState extends State<ClassesView> {
-  int? selectedIndex;
-  Period? promptPeriod = null;
+  int selectedIndex;
+  Period promptPeriod;
 
   List<_CardObject> cardObjects = [];
-  Map<int, _CardConstruct>? cardConstructors;
+  Map<int, _CardConstruct> cardConstructors;
 
   final _refreshIndicatorKey = GlobalKey<RefreshIndicatorState>();
 
@@ -52,7 +51,7 @@ class _ClassesState extends State<ClassesView> {
 
     if (StudentClass.currentClasses == {} &&
         SKCacheManager.classesLoader != null) {
-      SKCacheManager.classesLoader?.then((_) => sortClasses());
+      SKCacheManager.classesLoader.then((_) => sortClasses());
     } else {
       sortClasses();
     }
@@ -95,7 +94,7 @@ class _ClassesState extends State<ClassesView> {
     for (final studentClass in classes) {
       final period = studentClass.classPeriod;
       if (periodClasses.containsKey(period))
-        periodClasses[period]!.add(studentClass);
+        periodClasses[period].add(studentClass);
       else
         periodClasses[period] = [studentClass];
     }
@@ -119,15 +118,15 @@ class _ClassesState extends State<ClassesView> {
 
       // Create a map of a class's id to its ranking so we don't have
       // to call the categorizer more than once per class
-      for (StudentClass studentClass in sub_classes!) {
-        mapped_classes[studentClass.id] = categorizer(studentClass.status.id!);
+      for (StudentClass studentClass in sub_classes) {
+        mapped_classes[studentClass.id] = categorizer(studentClass.status.id);
       }
 
       sub_classes.sort((class1, class2) {
         final cat1 = mapped_classes[class1.id];
         final cat2 = mapped_classes[class2.id];
 
-        if (cat1! < cat2!)
+        if (cat1 < cat2)
           return -1;
         else if (cat1 > cat2)
           return 1;
@@ -139,24 +138,25 @@ class _ClassesState extends State<ClassesView> {
     }
 
     // Get next prompt period
-    this.promptPeriod = (SKUser.current!.student.primarySchool!.periods!
+    this.promptPeriod = (SKUser.current.student.primarySchool.periods
           ..removeWhere((p) => !p.isMainPeriod)
-          ..sort((p1, p2) => p1.startDate!.compareTo(p2.startDate!)))
-        .firstWhereOrNull(
+          ..sort((p1, p2) => p1.startDate.compareTo(p2.startDate)))
+        .firstWhere(
             (p) =>
-                p.startDate!.millisecondsSinceEpoch >
-                DateTime.now().millisecondsSinceEpoch,);
+                p.startDate.millisecondsSinceEpoch >
+                DateTime.now().millisecondsSinceEpoch,
+            orElse: () => null);
 
     final now = DateTime.now();
     final today = DateTime(now.year, now.month, now.day);
     final nowInMS = today.millisecondsSinceEpoch;
 
     final daysTillPeriodEnds =
-        SKUser.current?.student.primaryPeriod?.endDate!.difference(today).inDays;
+        SKUser.current.student.primaryPeriod.endDate.difference(today).inDays;
 
     final shouldPromptPeriod = promptPeriod != null &&
         !periodClasses.containsKey(promptPeriod) &&
-        daysTillPeriodEnds! > 0 &&
+        daysTillPeriodEnds > 0 &&
         daysTillPeriodEnds <= 30;
 
     // If we can prompt the student for next period classes, use that as
@@ -167,11 +167,11 @@ class _ClassesState extends State<ClassesView> {
 
     // Create card objects for ListView
     final List<_CardObject> list_elems = (periodClasses.entries.toList()
-          ..sort((e1, e2) => e2.key.endDate!.compareTo(e1.key.endDate!)))
+          ..sort((e1, e2) => e2.key.endDate.compareTo(e1.key.endDate)))
         .fold(
       reductionList,
       (l, e) {
-        final isCurrent = e.key.endDate!.millisecondsSinceEpoch >= nowInMS;
+        final isCurrent = e.key.endDate.millisecondsSinceEpoch >= nowInMS;
         return [
           ...l,
           _CardObject(isCurrent, e.key, _CardType.period),
@@ -189,7 +189,7 @@ class _ClassesState extends State<ClassesView> {
       list_elems.add(_CardObject(true, null, _CardType.sammiFirstClass));
     // If we have one class, and that class is part of a current term, we need to prompt for the second class
     else if (classCount == 1 &&
-        classes.first.classPeriod.endDate!.millisecondsSinceEpoch >= nowInMS) {
+        classes.first.classPeriod.endDate.millisecondsSinceEpoch >= nowInMS) {
       final studentClass = classes.first;
 
       if (studentClass.status.id == ClassStatuses.needs_setup)
@@ -260,10 +260,10 @@ class _ClassesState extends State<ClassesView> {
 
         if (studentClass.status.id == ClassStatuses.needs_student_input &&
             (studentClass.weights ?? []).length > 0)
-          widget = cardConstructors![ClassStatuses.needs_setup]!(
+          widget = cardConstructors[ClassStatuses.needs_setup](
               studentClass, index, object.isCurrent);
         else
-          widget = cardConstructors![studentClass.status.id]!(
+          widget = cardConstructors[studentClass.status.id](
               studentClass, index, object.isCurrent);
         break;
     }
@@ -351,7 +351,7 @@ class _ClassesState extends State<ClassesView> {
           sammiPersonality: SammiPersonality.cool,
           speechBubbleContents: Text.rich(
             TextSpan(
-                text: 'Hey ${SKUser.current?.student.nameFirst},\n',
+                text: 'Hey ${SKUser.current.student.nameFirst},\n',
                 children: [
                   TextSpan(
                       text: 'You got your first class set up! Now,\n',
@@ -397,11 +397,11 @@ class _ClassesState extends State<ClassesView> {
 
     Map<int, int> weightDensity = {};
 
-    studentClass.weights?.map((w) => weightDensity[w.id] = 0);
-    studentClass.assignments!.map((a) => weightDensity[a.weight_id] =weightDensity[a.weight_id]!+1);
+    studentClass.weights.map((w) => weightDensity[w.id] = 0);
+    studentClass.assignments.map((a) => weightDensity[a.weight_id]++);
 
     final weightsWithoutAssignments = weightDensity.values
-        .fold(0, (acc, elem) => elem == 0 ? (int.parse(acc.toString()) + 1) : acc);
+        .fold(0, (acc, elem) => elem == 0 ? (acc + 1) : acc);
 
     return GestureDetector(
       onTapDown: (_) {
@@ -479,7 +479,7 @@ class _ClassesState extends State<ClassesView> {
                         child: Material(
                           type: MaterialType.transparency,
                           child: Text(
-                            studentClass.name??'',
+                            studentClass.name,
                             textScaleFactor: 1,
                             style: TextStyle(
                                 fontSize: 17,
@@ -499,7 +499,7 @@ class _ClassesState extends State<ClassesView> {
                               Image.asset(ImageNames.peopleImages.people_gray),
                         ),
                         Text(
-                          '${studentClass.enrollment! - 1} classmate${studentClass.enrollment == 2 ? '' : 's'}',
+                          '${studentClass.enrollment - 1} classmate${studentClass.enrollment == 2 ? '' : 's'}',
                           textScaleFactor: 1,
                           style: TextStyle(
                               fontWeight: FontWeight.normal, fontSize: 14),
@@ -510,7 +510,7 @@ class _ClassesState extends State<ClassesView> {
                 ),
               ),
             ),
-            if (weightsWithoutAssignments as int > 0)
+            if (weightsWithoutAssignments > 0)
               Container(
                 alignment: Alignment.center,
                 margin: EdgeInsets.only(left: 4, right: 8),
@@ -599,7 +599,7 @@ class _ClassesState extends State<ClassesView> {
                     Container(
                       padding: EdgeInsets.only(bottom: 1),
                       child: Text(
-                        studentClass.name??'',
+                        studentClass.name,
                         style: TextStyle(
                             fontSize: 17,
                             color: needsAssignments
@@ -684,7 +684,7 @@ class _ClassesState extends State<ClassesView> {
                     Container(
                       padding: EdgeInsets.only(bottom: 1),
                       child: Text(
-                        studentClass.name??'',
+                        studentClass.name,
                         textScaleFactor: 1,
                         style: TextStyle(
                             fontSize: 17,
@@ -770,7 +770,7 @@ class _ClassesState extends State<ClassesView> {
                     Container(
                       padding: EdgeInsets.only(bottom: 1),
                       child: Text(
-                        studentClass.name??'',
+                        studentClass.name,
                         textScaleFactor: 1,
                         style: TextStyle(
                             fontSize: 17,
@@ -799,7 +799,7 @@ class _ClassesState extends State<ClassesView> {
   void tappedExpiredPeriodDescr(Period period) {
     final now = DateTime.now();
     final timeless = DateTime(now.year, now.month, now.day);
-    final time_left = 15 - timeless.difference(period.endDate!).inDays;
+    final time_left = 15 - timeless.difference(period.endDate).inDays;
 
     showDialog(
       context: context,
@@ -859,7 +859,7 @@ class _ClassesState extends State<ClassesView> {
                   behavior: HitTestBehavior.opaque,
                   onTapUp: (_) async {
                     final url =
-                        'mailto:support@skoller.co?subject=Extend Term&body=School: ${SKUser.current?.student.primarySchool?.name}%0ATerm: ${period.name}';
+                        'mailto:support@skoller.co?subject=Extend Term&body=School: ${SKUser.current.student.primarySchool.name}%0ATerm: ${period.name}';
 
                     if (await canLaunch(url))
                       launch(url);
@@ -875,7 +875,7 @@ class _ClassesState extends State<ClassesView> {
                             cancelText: 'Dismiss',
                             getResults: () => Clipboard.setData(ClipboardData(
                                 text:
-                                    'School: ${SKUser.current?.student.primarySchool?.name}\n\nTerm: ${period.name}')),
+                                    'School: ${SKUser.current.student.primarySchool.name}\n\nTerm: ${period.name}')),
                           ),
                         ),
                       );
@@ -943,13 +943,13 @@ class _ClassesState extends State<ClassesView> {
     final timeless =
         DateTime(now.year, now.month, now.day).add(Duration(days: 30));
 
-    if (SKUser.current!.student.primaryPeriod!.endDate!.millisecondsSinceEpoch <
+    if (SKUser.current.student.primaryPeriod.endDate.millisecondsSinceEpoch <
             timeless.millisecondsSinceEpoch &&
         promptPeriod != null) {
       await Navigator.push(
         context,
         SKNavOverlayRoute(
-          builder: (_) => ClassSearchSettingsModal(promptPeriod!.id),
+          builder: (_) => ClassSearchSettingsModal(promptPeriod.id),
         ),
       );
     }

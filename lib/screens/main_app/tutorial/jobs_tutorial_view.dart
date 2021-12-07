@@ -111,7 +111,7 @@ class JobsTutorialView extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(
-                            SKUser.current?.student.degreeType?.name ??
+                            SKUser.current.student.degreeType?.name ??
                                 'Economics',
                             style: TextStyle(color: SKColors.jobs_dark_green),
                           ),

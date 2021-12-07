@@ -2,7 +2,7 @@ import 'package:time_machine/time_machine.dart';
 import 'package:flutter/services.dart';
 
 class TimeZoneManager {
-  static DateTimeZoneProvider? _tzdb;
+  static DateTimeZoneProvider _tzdb;
 
   static bool _fetchingTZDB = false;
 
@@ -17,16 +17,16 @@ class TimeZoneManager {
 
   static Future<DateTime> convertUtcOffsetFromLocalToSchool(
     DateTime date,
-    String? schoolTZString,
+    String schoolTZString,
   ) async {
     await verifyTzDbActive();
 
-    var schoolTZ = await _tzdb?[schoolTZString ?? 'America/Chicago'];
+    var schoolTZ = await _tzdb[schoolTZString ?? 'America/Chicago'];
     var currentTZ = DateTimeZone.local;
 
     var dueInstant = Instant.dateTime(date);
 
-    int schoolOffset = schoolTZ!.getUtcOffset(dueInstant).inSeconds;
+    int schoolOffset = schoolTZ.getUtcOffset(dueInstant).inSeconds;
     int currentOffset = currentTZ.getUtcOffset(dueInstant).inSeconds;
 
     return schoolOffset == currentOffset
@@ -41,11 +41,11 @@ class TimeZoneManager {
    */
   static Future<DateTime> createLocalRelativeAssignmentDueDate(
     DateTime date,
-    String? schoolTZString,
+    String schoolTZString,
   ) async {
     await verifyTzDbActive();
 
-    var schoolTZ = await _tzdb![schoolTZString ?? 'America/Chicago'];
+    var schoolTZ = await _tzdb[schoolTZString ?? 'America/Chicago'];
     var currentTZ = DateTimeZone.local;
 
     var dueInstant = Instant.dateTime(date);

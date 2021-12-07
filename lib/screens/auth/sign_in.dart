@@ -2,12 +2,11 @@ import 'package:dart_notification_center/dart_notification_center.dart';
 import 'package:dropdown_banner/dropdown_banner.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:skoller/screens/auth/phone_verification_view.dart';
+import 'package:flutter/services.dart';
 import 'package:skoller/screens/auth/sign_up.dart';
-import 'package:skoller/tools.dart';
-
 import '../../requests/requests_core.dart';
+import 'package:skoller/tools.dart';
 
 class SignIn extends StatefulWidget {
   @override
@@ -16,15 +15,6 @@ class SignIn extends StatefulWidget {
 
 class _SignInState extends State<SignIn> {
   final phoneNumberController = TextEditingController();
-
-  // @override
-  // void initState() {
-  //   setState(() {
-  //     phoneNumberController.text = "6503997431";
-  //   });
-  //   // TODO: implement initState
-  //   super.initState();
-  // }
 
   @override
   void dispose() {
@@ -59,7 +49,7 @@ class _SignInState extends State<SignIn> {
       if (result is bool && result) {
         Session.startSession();
         await StudentClass.getStudentClasses();
-        SKUser.current?.getJobProfile();
+        SKUser.current.getJobProfile();
 
         Navigator.popUntil(context, (route) => route.isFirst);
         DartNotificationCenter.post(
@@ -80,7 +70,7 @@ class _SignInState extends State<SignIn> {
           textStyle: TextStyle(color: Colors.white));
   }
 
-  void tappedSignUp(TapUpDetails? details) {
+  void tappedSignUp(TapUpDetails details) {
     Navigator.pushReplacement(
       context,
       CupertinoPageRoute(
@@ -154,7 +144,7 @@ class _SignInState extends State<SignIn> {
                             child: Text(
                               ' Sign Up',
                               style: TextStyle(
-                                  color: SKColors.skoller_blue1,
+                                  color: SKColors.skoller_blue,
                                   fontWeight: FontWeight.bold),
                             ),
                           ),

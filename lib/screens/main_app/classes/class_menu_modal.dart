@@ -24,7 +24,7 @@ class ClassMenuModal extends StatefulWidget {
 }
 
 class _ClassMenuState extends State<ClassMenuModal> {
-  StudentClass? studentClass;
+  StudentClass studentClass;
 
   @override
   void initState() {
@@ -37,7 +37,7 @@ class _ClassMenuState extends State<ClassMenuModal> {
     Navigator.push(
       context,
       SKNavOverlayRoute(
-        builder: (_) => ProfileLinkSharingView(studentClass!.id),
+        builder: (_) => ProfileLinkSharingView(studentClass.id),
       ),
     );
   }
@@ -45,7 +45,7 @@ class _ClassMenuState extends State<ClassMenuModal> {
   void tappedSpeculate(BuildContext context) async {
     bool shouldProceed = true;
 
-    if (studentClass!.gradeScale == null) {
+    if (studentClass.gradeScale == null) {
       final result = await showGradeScalePicker(context);
       if (result == null || !result) {
         shouldProceed = false;
@@ -63,7 +63,7 @@ class _ClassMenuState extends State<ClassMenuModal> {
       SKNavOverlayRoute(
         isBarrierDismissible: false,
         builder: (context) => AddGradeScaleModal(
-          classId: studentClass!.id,
+          classId: studentClass.id,
           onCompletionShowGradeScale: false,
         ),
       ),
@@ -71,7 +71,7 @@ class _ClassMenuState extends State<ClassMenuModal> {
   }
 
   void showSpeculate(BuildContext context) async {
-    final speculate = await studentClass!.speculateClass().then(
+    final speculate = await studentClass.speculateClass().then(
       (response) {
         if (response.wasSuccessful())
           return response.obj;
@@ -130,7 +130,7 @@ class _ClassMenuState extends State<ClassMenuModal> {
   }
 
   void tappedGradeScale(BuildContext context) async {
-    StudentClass studentClass = StudentClass.currentClasses[widget.classId]!;
+    StudentClass studentClass = StudentClass.currentClasses[widget.classId];
 
     if (studentClass.gradeScale == null) {
       await Navigator.push(
@@ -162,7 +162,7 @@ class _ClassMenuState extends State<ClassMenuModal> {
   }
 
   void tappedClassDocuments(BuildContext context) {
-    final docs = StudentClass.currentClasses[widget.classId]!.documents;
+    final docs = StudentClass.currentClasses[widget.classId].documents;
 
     showDialog(
       context: context,
@@ -231,14 +231,14 @@ class _ClassMenuState extends State<ClassMenuModal> {
                   child: Padding(
                     padding: EdgeInsets.only(top: 4, bottom: 8),
                     child: AutoSizeText(
-                      studentClass!.name,
+                      studentClass.name,
                       textAlign: TextAlign.left,
                       maxLines: 1,
                       minFontSize: 10,
                       style: TextStyle(
                           fontSize: 22,
                           fontWeight: FontWeight.bold,
-                          color: studentClass!.getColor()),
+                          color: studentClass.getColor()),
                     ),
                   ),
                 ),
@@ -258,7 +258,7 @@ class _ClassMenuState extends State<ClassMenuModal> {
                     buildGradeScale,
                     buildWeights,
                     if ((StudentClass
-                                    .currentClasses[widget.classId]?.documents ??
+                                    .currentClasses[widget.classId].documents ??
                                 [])
                             .length >
                         0)
@@ -291,7 +291,7 @@ class _ClassMenuState extends State<ClassMenuModal> {
                 behavior: HitTestBehavior.opaque,
                 onTapUp: (_) => Navigator.pop(context),
                 onVerticalDragEnd: (details) {
-                  if (details.primaryVelocity! < 0) Navigator.pop(context);
+                  if (details.primaryVelocity < 0) Navigator.pop(context);
                 },
                 child: Container(
                   alignment: Alignment.center,
@@ -321,7 +321,7 @@ class _ClassMenuState extends State<ClassMenuModal> {
             Icon(
               Icons.insert_link,
               size: 32,
-              color: studentClass!.getColor(),
+              color: studentClass.getColor(),
             ),
             Text.rich(
               TextSpan(
@@ -356,7 +356,7 @@ class _ClassMenuState extends State<ClassMenuModal> {
             Icon(
               Icons.assistant_photo,
               size: 32,
-              color: studentClass!.getColor(),
+              color: studentClass.getColor(),
             ),
             Text.rich(
               TextSpan(
@@ -389,12 +389,12 @@ class _ClassMenuState extends State<ClassMenuModal> {
             Icon(
               Icons.people,
               size: 32,
-              color: studentClass!.getColor(),
+              color: studentClass.getColor(),
             ),
             Text.rich(
               TextSpan(
                 text:
-                    '${studentClass!.enrollment! - 1} classmate${studentClass!.enrollment == 2 ? '' : 's'}',
+                    '${studentClass.enrollment - 1} classmate${studentClass.enrollment == 2 ? '' : 's'}',
                 children: [
                   TextSpan(
                     text: ' are helping you manage schedule changes.',
@@ -421,7 +421,7 @@ class _ClassMenuState extends State<ClassMenuModal> {
             Icon(
               Icons.info,
               size: 32,
-              color: studentClass!.getColor(),
+              color: studentClass.getColor(),
             ),
             Text.rich(
               TextSpan(
@@ -454,7 +454,7 @@ class _ClassMenuState extends State<ClassMenuModal> {
             Icon(
               Icons.assessment,
               size: 32,
-              color: studentClass!.getColor(),
+              color: studentClass.getColor(),
             ),
             Text.rich(
               TextSpan(
@@ -486,7 +486,7 @@ class _ClassMenuState extends State<ClassMenuModal> {
             Icon(
               Icons.category,
               size: 32,
-              color: studentClass!.getColor(),
+              color: studentClass.getColor(),
             ),
             Text.rich(
               TextSpan(
@@ -519,12 +519,12 @@ class _ClassMenuState extends State<ClassMenuModal> {
             Icon(
               Icons.find_in_page,
               size: 32,
-              color: studentClass!.getColor(),
+              color: studentClass.getColor(),
             ),
             Text.rich(
               TextSpan(
                 text:
-                    '${studentClass!.documents.length} document${studentClass!.documents.length == 1 ? '' : 's'}',
+                    '${studentClass.documents.length} document${studentClass.documents.length == 1 ? '' : 's'}',
                 children: [
                   TextSpan(
                     text: ' were used to set up this class.',
@@ -541,7 +541,7 @@ class _ClassMenuState extends State<ClassMenuModal> {
 
   Widget buildClassColor(_) => SKColorPicker(
         callback: (newColor) {
-          studentClass!.setColor(newColor).then((response) =>
+          studentClass.setColor(newColor).then((response) =>
               DartNotificationCenter.post(
                   channel: NotificationChannels.classChanged));
           setState(() {});
@@ -554,7 +554,7 @@ class _ClassMenuState extends State<ClassMenuModal> {
               Icon(
                 Icons.color_lens,
                 size: 32,
-                color: studentClass!.getColor(),
+                color: studentClass.getColor(),
               ),
               Text.rich(
                 TextSpan(

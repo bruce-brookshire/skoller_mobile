@@ -15,7 +15,7 @@ class AssignmentWeightView extends StatefulWidget {
 }
 
 class _AssignmentWeightState extends State<AssignmentWeightView> {
-  List<Weight>? weights;
+  List<Weight> weights;
   Map<int, int> weightAssignmentDensity = {};
 
   @override
@@ -44,22 +44,21 @@ class _AssignmentWeightState extends State<AssignmentWeightView> {
 
   void refreshAndSortWeights() {
     weights =
-        (StudentClass.currentClasses[widget.class_id]!.weights ?? []).toList();
+        (StudentClass.currentClasses[widget.class_id].weights ?? []).toList();
 
     final studentClass = StudentClass.currentClasses[widget.class_id];
 
-    for (var assignment in studentClass!.assignments!) {
+    for (var assignment in studentClass.assignments) {
       if (assignment.weight_id != null) {
         if (weightAssignmentDensity[assignment.weight_id] == null) {
           weightAssignmentDensity[assignment.weight_id] = 0;
         } else {
-          weightAssignmentDensity[assignment.weight_id] =
-              weightAssignmentDensity[assignment.weight_id]! + 1;
+          weightAssignmentDensity[assignment.weight_id] += 1;
         }
       }
     }
 
-    weights!.sort((w1, w2) {
+    weights.sort((w1, w2) {
       final w1_d = weightAssignmentDensity[w1.id];
       final w2_d = weightAssignmentDensity[w2.id];
 
@@ -81,7 +80,7 @@ class _AssignmentWeightState extends State<AssignmentWeightView> {
     final studentClass = StudentClass.currentClasses[widget.class_id];
 
     return SKNavView(
-      title: studentClass!.name!,
+      title: studentClass.name,
       titleColor: studentClass.getColor(),
       children: [
         Expanded(
@@ -119,10 +118,10 @@ class _AssignmentWeightState extends State<AssignmentWeightView> {
                         child: Text('What type of assignment?'),
                       ),
                       ...List.generate(
-                        weights!.length + 1,
-                        (index) => index == weights!.length
+                        weights.length + 1,
+                        (index) => index == weights.length
                             ? createUnweightedCell()
-                            : createWeightedCell(weights![index]),
+                            : createWeightedCell(weights[index]),
                       ),
                     ],
                   ),
