@@ -1,0 +1,24 @@
+{
+  "provider": "apple_pay",
+  "data": {
+    "merchantIdentifier": "merchant.com.Skoller.fish",
+    "displayName": "Skoller",
+    "merchantCapabilities": [
+      "3DS",
+      "debit",
+      "credit"
+    ],
+    "supportedNetworks": [
+      "amex",
+      "visa",
+      "discover",
+      "masterCard"
+    ],
+    "countryCode": "US",
+    "currencyCode": "USD",
+    "requiredBillingContactFields": [],
+    "requiredShippingContactFields": [],
+    "shippingMethods": [
+    ]
+  }
+}
