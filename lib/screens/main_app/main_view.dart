@@ -1,18 +1,21 @@
+import 'dart:io';
+
+import 'package:app_review/app_review.dart';
 import 'package:dart_notification_center/dart_notification_center.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:skoller/constants/constants.dart';
 import 'package:skoller/screens/main_app/classes/class_menu_modal.dart';
 import 'package:skoller/screens/main_app/menu/add_classes_view.dart';
 import 'package:skoller/screens/main_app/menu/major_search_modal.dart';
 import 'package:skoller/screens/main_app/tutorial/tutorial.dart';
-import 'package:skoller/constants/constants.dart';
-import 'package:app_review/app_review.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
 import 'package:skoller/tools.dart';
-import 'primary_school_modal.dart';
+
 import 'menu_view.dart';
+import 'premium/stripe_bloc.dart';
+import 'primary_school_modal.dart';
 import 'tab_bar.dart';
-import 'dart:io';
 
 class MainView extends StatefulWidget {
   @override
@@ -33,18 +36,18 @@ class _MainState extends State<MainView> {
   @override
   void initState() {
     // If the student does not have a primary school or term, set it
-    if (SKUser.current.student.primarySchool == null ||
-        SKUser.current.student.primaryPeriod == null)
-      WidgetsBinding.instance.addPostFrameCallback(
+    if (SKUser.current?.student.primarySchool == null ||
+        SKUser.current?.student.primaryPeriod == null)
+      WidgetsBinding.instance!.addPostFrameCallback(
         (_) => showPrimarySchoolModal(),
       );
     // If the student has no majors and they have at least one class set up
-    else if ((SKUser.current.student.fieldsOfStudy ?? []).length == 0 &&
+    else if ((SKUser.current?.student.fieldsOfStudy ?? []).length == 0 &&
         StudentClass.currentClasses.values.any((sc) => [
               ClassStatuses.class_setup,
               ClassStatuses.class_issue
             ].contains(sc.status.id ?? 0)))
-      WidgetsBinding.instance.addPostFrameCallback(
+      WidgetsBinding.instance!.addPostFrameCallback(
         (_) => showMajorSelection(),
       );
 
@@ -74,8 +77,8 @@ class _MainState extends State<MainView> {
 
     Mod.fetchMods();
 
-    WidgetsBinding.instance.addPostFrameCallback((_) => setScreenSize());
-
+    WidgetsBinding.instance!.addPostFrameCallback((_) => setScreenSize());
+    getSubs();
     super.initState();
   }
 
@@ -130,7 +133,8 @@ class _MainState extends State<MainView> {
     if (hasShown is bool || (hasShown != null && !(hasShown is String))) return;
 
     final now = DateTime.now();
-    final scheduled = hasShown == null ? null : DateTime.parse(hasShown);
+    final scheduled =
+        hasShown == null ? null : DateTime.parse(hasShown.toString());
 
     if (scheduled?.isAfter(now) ?? false) return;
 
@@ -144,10 +148,10 @@ class _MainState extends State<MainView> {
                     .contains(sc.status.id)
                 ? 1
                 : 0) +
-            curCount);
+            int.parse(curCount.toString()));
 
     final assignmentCompleted = Assignment.currentAssignments.values
-        .any((a) => (a.due?.isBefore(now) ?? false) || a.isCompleted);
+        .any((a) => (a.due?.isBefore(now) ?? false) || a.isCompleted!);
 
     final shouldReview = numSetupClasses >= 2 && assignmentCompleted;
 
@@ -187,7 +191,7 @@ class _MainState extends State<MainView> {
     backgroundLeft = -backgroundWidth - 5;
   }
 
-  Future<bool> createAndroidReviewRequest(bool showRatingDisable) async {
+  Future<dynamic> createAndroidReviewRequest(bool showRatingDisable) async {
     return showDialog(
       context: context,
       builder: (context) => Dialog(
@@ -289,6 +293,94 @@ class _MainState extends State<MainView> {
                     ),
                   ),
                 ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  getSubs() async {
+    bool isSubscriptionAvailable = await stripeBloc.mySubscriptionsList();
+    if (isSubscriptionAvailable) {
+      if (!(Subscriptions.mySubscriptions?.user?.trial ?? true) &&
+              !(Subscriptions.mySubscriptions?.user?.lifetimeSubscription ??
+                  true) ||
+          !(Subscriptions.mySubscriptions?.user?.lifetimeTrial ?? true)) {
+        if (!(Subscriptions.mySubscriptions?.user?.isActive ?? true)) {
+          createAPremiumFreeUserDialog();
+        }
+      }
+    } else {
+      createAPremiumFreeUserDialog();
+    }
+    /*Future.delayed(Duration(seconds: 2), () {
+      print('token-login' +
+          tokenLoginMap['user']['lifetime_subscription'].toString());
+      if ((tokenLoginMap['user']['lifetime_subscription'] ?? false) == true) {
+        createAPremiumFreeUserDialog();
+      }
+    });*/
+  }
+
+  Future<dynamic> createAPremiumFreeUserDialog() async {
+    return showDialog(
+      context: context,
+      builder: (context) => Dialog(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10),
+          side: BorderSide(color: SKColors.border_gray),
+        ),
+        child: Padding(
+          padding: EdgeInsets.all(12),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: <Widget>[
+              Row(
+                children: [
+                  Image.asset(ImageNames.sammiImages.big_smile),
+                  Flexible(
+                    child: Column(
+                      children: [
+                        Text(
+                          'Your trial is expired!',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w800,
+                          ),
+                        ),
+                        Text(
+                          'Login on desktop at Skoller.com to manage your account settings.',
+                          style: TextStyle(
+                              fontSize: 15, fontWeight: FontWeight.normal),
+                          textAlign: TextAlign.center,
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+              GestureDetector(
+                behavior: HitTestBehavior.opaque,
+                onTapUp: (details) => Navigator.pop(context, true),
+                child: Padding(
+                  padding: EdgeInsets.only(top: 12),
+                  child: Container(
+                    alignment: Alignment.center,
+                    padding: EdgeInsets.symmetric(vertical: 8),
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(5),
+                        color: SKColors.skoller_blue,
+                        boxShadow: UIAssets.boxShadow),
+                    child: Text(
+                      'Close',
+                      style: TextStyle(color: Colors.white),
+                    ),
+                  ),
+                ),
+              ),
             ],
           ),
         ),

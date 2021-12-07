@@ -14,14 +14,14 @@ class AssignmentNotesModal extends StatefulWidget {
 
 class _AssignmentNotesModal extends State<AssignmentNotesModal> {
   final focusNode = FocusNode();
-  TextEditingController controller;
+  late TextEditingController controller;
 
   @override
   void initState() {
     super.initState();
 
     controller = TextEditingController(
-      text: Assignment.currentAssignments[widget.assignmentId].notes,
+      text: Assignment.currentAssignments[widget.assignmentId]!.notes,
     );
   }
 

@@ -11,8 +11,8 @@ class AddGradeScaleModal extends StatefulWidget {
   final bool onCompletionShowGradeScale;
 
   AddGradeScaleModal({
-    @required this.classId,
-    @required this.onCompletionShowGradeScale,
+    required this.classId,
+    required this.onCompletionShowGradeScale,
   });
 
   @override
@@ -92,18 +92,18 @@ class _AddGradeScaleModalState extends State<AddGradeScaleModal> {
   void tappedSubmit(_) async {
     final studentClass = StudentClass.currentClasses[widget.classId];
 
-    Future<RequestResponse> response;
+   late Future<RequestResponse> response;
 
     if (isCustom) {
       final entries = scales.map(
         (e) => MapEntry(e[SCALE_MAP_KEY], e[SCALE_MAP_VAL]),
       );
 
-      response = studentClass.addGradeScale(Map.fromEntries(entries));
+      response = studentClass!.addGradeScale(Map.fromEntries(entries));
     } else if (selectedIndex > -1) {
       final scale = Map.fromIterables(selection_scales[selectedIndex][0],
           selection_scales[selectedIndex][1]);
-      response = studentClass.addGradeScale(scale);
+      response = studentClass!.addGradeScale(scale);
     }
 
     if (response != null) {
@@ -114,7 +114,7 @@ class _AddGradeScaleModalState extends State<AddGradeScaleModal> {
           Navigator.pushReplacement(
             context,
             CupertinoPageRoute(
-              builder: (context) => GradeScaleView(studentClass.id),
+              builder: (context) => GradeScaleView(studentClass!.id),
             ),
           );
         } else {

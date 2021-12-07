@@ -16,15 +16,15 @@ class GradeScaleView extends StatefulWidget {
 }
 
 class _GradeScaleViewState extends State<GradeScaleView> {
-  bool isEditing = false;
-  List<Map> scales;
+  bool? isEditing = false;
+  List<Map>? scales;
 
   @override
   void initState() {
     super.initState();
 
     scales =
-        (StudentClass.currentClasses[widget.classId].gradeScale.entries.toList()
+        (StudentClass.currentClasses[widget.classId]!.gradeScale.entries.toList()
               ..sort(
                 (e1, e2) => e2.value.compareTo(e1.value),
               ))
@@ -33,8 +33,8 @@ class _GradeScaleViewState extends State<GradeScaleView> {
   }
 
   void toggleEditing([_]) {
-    if (isEditing)
-      scales = (StudentClass.currentClasses[widget.classId].gradeScale.entries
+    if (isEditing!)
+      scales = (StudentClass.currentClasses[widget.classId]!.gradeScale.entries
               .toList()
                 ..sort(
                   (e1, e2) => e2.value.compareTo(e1.value),
@@ -43,7 +43,7 @@ class _GradeScaleViewState extends State<GradeScaleView> {
           .toList();
 
     setState(() {
-      isEditing = !isEditing;
+      isEditing = !isEditing!;
     });
   }
 
@@ -54,29 +54,29 @@ class _GradeScaleViewState extends State<GradeScaleView> {
     );
 
     if (result is Map) {
-      final index = scales.indexWhere(
+      final index = scales!.indexWhere(
         (e) => int.parse(e['number']) < int.parse(result['number']),
       );
 
-      final updateIndex = scales.indexWhere(
+      final updateIndex = scales!.indexWhere(
         (e) => e['letter'] == result['letter'],
       );
 
       // If the letter grade is the same, just update the number
       if (updateIndex != -1)
-        setState(() => scales[updateIndex]['number'] = result['number']);
+        setState(() => scales![updateIndex]['number'] = result['number']);
       //Else, update the entry
       else
-        scales.insert(index == -1 ? scales.length : index, result);
+        scales!.insert(index == -1 ? scales!.length : index, result);
     }
   }
 
   void tappedRemoveScale(elem) {
-    final index = scales.indexOf(elem);
+    final index = scales!.indexOf(elem);
 
     if (index != -1)
       setState(() {
-        scales.removeAt(index);
+        scales!.removeAt(index);
       });
     else
       print('something went wrong! ${elem} ${index}');
@@ -84,9 +84,9 @@ class _GradeScaleViewState extends State<GradeScaleView> {
 
   void tappedSubmit(_) async {
     final studentClass = StudentClass.currentClasses[widget.classId];
-    final gradeScale = studentClass.gradeScale;
+    final gradeScale = studentClass!.gradeScale;
 
-    final newMap = scales.fold<Map<String, dynamic>>(
+    final newMap = scales!.fold<Map<String, dynamic>>(
         {}, (map, elem) => map..[elem['letter']] = elem['number']);
 
     if (newMap.length != gradeScale.length ||
@@ -130,7 +130,7 @@ class _GradeScaleViewState extends State<GradeScaleView> {
   Widget build(BuildContext context) {
     final studentClass = StudentClass.currentClasses[widget.classId];
 
-    final scaleWidgets = scales
+    final scaleWidgets = scales!
         .map(
           (e) => Container(
             padding: EdgeInsets.symmetric(vertical: 6, horizontal: 12),
@@ -138,7 +138,7 @@ class _GradeScaleViewState extends State<GradeScaleView> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
                 Row(children: [
-                  if (isEditing != null && isEditing)
+                  if (isEditing != null && isEditing!)
                     GestureDetector(
                       onTapUp: (_) => tappedRemoveScale(e),
                       child: Padding(
@@ -159,7 +159,7 @@ class _GradeScaleViewState extends State<GradeScaleView> {
         )
         .toList();
 
-    final changeRequests = studentClass.gradeScaleChangeRequests
+    final changeRequests = studentClass!.gradeScaleChangeRequests
         .map(
           (c) => SKHeaderCard(
             margin: EdgeInsets.fromLTRB(16, 16, 16, 0),
@@ -188,15 +188,15 @@ class _GradeScaleViewState extends State<GradeScaleView> {
                 ),
               ),
             ),
-            children: buildChangeRequestMembers(c.members.toList()),
+            children: buildChangeRequestMembers(c.members.toList())!,
           ),
         )
         .toList();
 
     return SKNavView(
-      title: studentClass.name,
+      title: studentClass.name!,
       titleColor: studentClass.getColor(),
-      leftBtn: isEditing != null && isEditing
+      leftBtn: isEditing != null && isEditing!
           ? Text(
               'Cancel',
               style: TextStyle(
@@ -205,7 +205,7 @@ class _GradeScaleViewState extends State<GradeScaleView> {
                   fontSize: 12),
             )
           : null,
-      callbackLeft: isEditing != null && isEditing ? toggleEditing : null,
+      callbackLeft: isEditing != null && isEditing! ? toggleEditing : null,
       children: <Widget>[
         Expanded(
           child: SingleChildScrollView(
@@ -252,7 +252,7 @@ class _GradeScaleViewState extends State<GradeScaleView> {
                               ),
                             ),
                             if (isEditing != null)
-                              !isEditing
+                              !isEditing!
                                   ? GestureDetector(
                                       behavior: HitTestBehavior.opaque,
                                       onTapUp: toggleEditing,
@@ -302,7 +302,7 @@ class _GradeScaleViewState extends State<GradeScaleView> {
                           ],
                         ),
                       ),
-                      if (isEditing != null && isEditing)
+                      if (isEditing != null && isEditing!)
                         GestureDetector(
                           behavior: HitTestBehavior.opaque,
                           onTapUp: tappedSubmit,
@@ -331,9 +331,9 @@ class _GradeScaleViewState extends State<GradeScaleView> {
     );
   }
 
-  List<Widget> buildChangeRequestMembers(List<ChangeRequestMember> members) {
+  List<Widget>? buildChangeRequestMembers(List<ChangeRequestMember> members) {
     final studentClass = StudentClass.currentClasses[widget.classId];
-    final scaleTesterMap = Map.fromEntries(studentClass.gradeScale.entries);
+    final scaleTesterMap = Map.fromEntries(studentClass!.gradeScale.entries);
     final newOrChangedMembers = members.map((m) {
       final testGrade = scaleTesterMap.remove(m.name);
 
@@ -356,13 +356,13 @@ class _GradeScaleViewState extends State<GradeScaleView> {
 
     return [...newOrChangedMembers, ...removedMembers]
         .map(buildChangeRequestMemberRow)
-        .toList();
+        .toList() as List<Widget>;
   }
 
-  Widget buildChangeRequestMemberRow(Map member) {
-    Widget icon;
+  dynamic buildChangeRequestMemberRow(Map<String, String>? member) {
+    Widget? icon;
 
-    switch (member['type']) {
+    switch (member?['type']) {
       case 'new':
         icon = Icon(
           Icons.add,
@@ -388,20 +388,20 @@ class _GradeScaleViewState extends State<GradeScaleView> {
         children: <Widget>[
           Expanded(
             child: Text(
-              member['name'],
+              member?['name']??"",
               style: TextStyle(fontWeight: FontWeight.w600),
             ),
           ),
-          if (member['old_val'] != null)
+          if (member?['old_val'] != null)
             Text(
-              member['old_val'],
+              member?['old_val']??"",
               textAlign: TextAlign.right,
               style: TextStyle(fontWeight: FontWeight.w500),
             ),
-          icon,
-          if (member['new_val'] != null)
+          icon!,
+          if (member?['new_val'] != null)
             Text(
-              member['new_val'],
+              member?['new_val']??"",
               textAlign: TextAlign.right,
               style: TextStyle(fontWeight: FontWeight.w500),
             ),
