@@ -20,6 +20,8 @@ enum TokenType {
   TYPE_DEVICE_TOKEN,
 }
 
+
+
 enum WebError {
   INTERNAL_SERVER_ERROR,
   ALREADY_EXIST,
