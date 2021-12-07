@@ -88,7 +88,6 @@ class _PhoneVerificationState extends State<PhoneVerificationView> {
     Auth.logIn(trimStr, code).then((success) {
       return StudentClass.getStudentClasses();
     }).then((response) {
-
       setState(() => loading = false);
       Navigator.pop(context, response.wasSuccessful());
     }).catchError(

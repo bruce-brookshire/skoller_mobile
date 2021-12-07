@@ -1,23 +1,24 @@
 library constants;
 
+import 'dart:async';
 import 'dart:collection';
-import 'dart:io';
+import 'dart:math';
+import 'dart:ui' as dartUI;
 
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
-import '../requests/requests_core.dart';
 import 'package:intl/intl.dart';
-import 'dart:ui' as dartUI;
-import 'dart:async';
-import 'dart:math';
+import 'package:skoller/model/my_subscriptions.dart';
 
-part 'skoller_widgets.dart';
-part 'utilities.dart';
-part 'typedefs.dart';
+import '../requests/requests_core.dart';
+
 part 'image_names.dart';
+part 'skoller_widgets.dart';
+part 'typedefs.dart';
+part 'utilities.dart';
 
 const FORECAST_TAB = 0;
 const CALENDAR_TAB = 1;
@@ -27,7 +28,8 @@ const JOBS_TAB = 3;
 const PARTY_SIZE = 4;
 
 class SKColors {
-  static const skoller_blue = Color(0xFF57B9E4);
+  static const skoller_blue = Color(0xFF4A4A4A);
+  static const skoller_blue1 = Color(0xFF57B9E4);
   static const menu_blue = Color(0xFFEDFAFF);
 
   // General
@@ -67,8 +69,6 @@ class SKColors {
   }
 }
 
-
-
 class Analytics {
   static FirebaseAnalytics analytics = FirebaseAnalytics();
 }
@@ -81,7 +81,7 @@ class UIAssets {
       blurRadius: 3.5,
     )
   ];
-  static String? versionNumber='';
+  static String? versionNumber = '';
 }
 
 class ClassStatuses {
@@ -156,7 +156,11 @@ class PushNotificationCategories {
       categories.contains(category);
 }
 
+Map tokenLoginMap = Map();
 
+class Subscriptions {
+  static MySubscriptions? mySubscriptions;
+}
 
 final statesMap = LinkedHashMap.fromIterables([
   "Alabama",

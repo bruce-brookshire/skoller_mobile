@@ -2,8 +2,8 @@ import 'dart:collection';
 
 import 'package:dart_notification_center/dart_notification_center.dart';
 import 'package:dropdown_banner/dropdown_banner.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:skoller/tools.dart';
 
 class ClassChangeRequestView extends StatefulWidget {
@@ -93,7 +93,8 @@ class _ClassChangeRequestState extends State<ClassChangeRequestView> {
 
     final meetDays = isOnline
         ? 'online'
-        : (selectedDays.keys.toList()..removeWhere((day) => !selectedDays[day]!))
+        : (selectedDays.keys.toList()
+              ..removeWhere((day) => !selectedDays[day]!))
             .map((day) {
             if (day == 'Sun') {
               return 'U';
@@ -244,7 +245,8 @@ class _ClassChangeRequestState extends State<ClassChangeRequestView> {
 
     final meetDays = isOnline
         ? 'online'
-        : (selectedDays.keys.toList()..removeWhere((day) => !selectedDays[day]!))
+        : (selectedDays.keys.toList()
+              ..removeWhere((day) => !selectedDays[day]!))
             .map((day) {
             if (day == 'Sun') {
               return 'U';
@@ -442,9 +444,10 @@ class _ClassChangeRequestState extends State<ClassChangeRequestView> {
                                 Text(
                                   'Section',
                                   style: TextStyle(
-                                      color: SKColors.skoller_blue,
-                                      fontSize: 13,
-                                      fontWeight: FontWeight.normal),
+                                    color: SKColors.skoller_blue,
+                                    fontSize: 13,
+                                    fontWeight: FontWeight.normal,
+                                  ),
                                 ),
                                 CupertinoTextField(
                                   cursorColor: SKColors.skoller_blue,
@@ -458,7 +461,7 @@ class _ClassChangeRequestState extends State<ClassChangeRequestView> {
                                       fontWeight: FontWeight.normal),
                                   decoration: BoxDecoration(border: null),
                                   controller: sectionController,
-                                  keyboardType: TextInputType.text,
+                                  keyboardType: TextInputType.number,
                                   onChanged: checkValid,
                                 ),
                               ],

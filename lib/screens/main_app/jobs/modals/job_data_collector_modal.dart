@@ -223,7 +223,7 @@ class _DataCollectorModalState extends State<DataCollectorModal> {
       placeholder: widget.placeholderText,
       placeholderStyle: Theme.of(context)
           .textTheme
-          .body1!
+          .bodyText1!
           .copyWith(color: SKColors.text_light_gray),
       controller: controller,
       keyboardType: widget.inputType,
@@ -280,8 +280,9 @@ class _DataCollectorModalState extends State<DataCollectorModal> {
               child: Text(
                 'No',
                 style: TextStyle(
-                  color:
-                      toggleOn! ? SKColors.jobs_light_green : SKColors.dark_gray,
+                  color: toggleOn!
+                      ? SKColors.jobs_light_green
+                      : SKColors.dark_gray,
                   fontSize: 14,
                   fontWeight: FontWeight.w600,
                 ),
@@ -307,8 +308,9 @@ class _DataCollectorModalState extends State<DataCollectorModal> {
               child: Text(
                 'Yes',
                 style: TextStyle(
-                  color:
-                      toggleOn! ? SKColors.dark_gray : SKColors.jobs_light_green,
+                  color: toggleOn!
+                      ? SKColors.dark_gray
+                      : SKColors.jobs_light_green,
                   fontSize: 14,
                   fontWeight: FontWeight.w600,
                 ),

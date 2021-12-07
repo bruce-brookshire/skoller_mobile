@@ -11,7 +11,7 @@ class StudentClass {
   double grade;
   double completion;
 
-  String? name=null;
+  String? name = null;
   String _color;
   String? meetDays;
   String? subject;
@@ -408,7 +408,6 @@ class StudentClass {
 
     return SKRequests.post('/classes/$id/changes/300', {'data': body}, null)
         .then((response) {
-      print(response);
       return response.wasSuccessful();
     });
   }
@@ -496,7 +495,8 @@ class StudentClass {
       ) as List<ClassDocument>,
       startString == 'online',
       JsonListMaker.convert(
-          ChangeRequest._fromJsonObj, content['change_requests'] ?? []) as List<ChangeRequest>,
+              ChangeRequest._fromJsonObj, content['change_requests'] ?? [])
+          as List<ChangeRequest>,
     );
 
     StudentClass.currentClasses[studentClass.id] = studentClass;
@@ -604,7 +604,7 @@ class SchoolClass {
       '/students/${SKUser.current?.student.id}/classes/$id',
       null,
       StudentClass._fromJsonObj,
-    ) as  RequestResponse<StudentClass>;
+    ) as RequestResponse<StudentClass>;
 
     if (response.wasSuccessful() && response.obj._color == null) {
       response.obj.initializeColor();
@@ -612,7 +612,7 @@ class SchoolClass {
     return response;
   }
 
-  static Future<http.Response>? _activeClassSearch=null;
+  static Future<http.Response>? _activeClassSearch = null;
 
   static void invalidateCurrentClassSearch() {
     _activeClassSearch?.timeout(Duration.zero);
@@ -767,7 +767,8 @@ class ChangeRequest {
   static ChangeRequest _fromJsonObj(Map content) => ChangeRequest(
         content['id'],
         JsonListMaker.convert(
-            ChangeRequestMember._fromJsonObj, content['members'] ?? []) as List<ChangeRequestMember>,
+                ChangeRequestMember._fromJsonObj, content['members'] ?? [])
+            as List<ChangeRequestMember>,
         TypeObject._fromJsonObj(content['change_type']),
         _dateParser(content['inserted_at'])!,
       );

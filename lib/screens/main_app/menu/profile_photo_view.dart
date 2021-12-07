@@ -74,10 +74,10 @@ class ProfilePhotoSourceModal extends StatelessWidget {
             GestureDetector(
               behavior: HitTestBehavior.opaque,
               onTapUp: (_) async {
-
                 final ImagePicker _picker = ImagePicker();
                 // Pick an image
-                final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
+                final XFile? image =
+                    await _picker.pickImage(source: ImageSource.gallery);
                 final imageFile = File(image!.path);
 
                 final loader = SKLoadingScreen.fadeIn(context);

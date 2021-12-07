@@ -1,5 +1,6 @@
 import 'dart:convert' as convert;
 import 'dart:io';
+
 import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart' as Http;
 import 'package:http_parser/http_parser.dart';
@@ -39,28 +40,71 @@ class WebServiceClient {
     var url = BASE_URL + "stripe/all-plans";
     var response;
     await _hitService(url, HttpMethod.HTTP_GET, RequestBodyType.TYPE_JSON,
-        TokenType.TYPE_BEARER)
+            TokenType.TYPE_BEARER)
         .then((value) {
       response = value;
-    }).catchError((onError){
+    }).catchError((onError) {
       print(onError);
     });
     return response;
   }
+
   /// save card and create subscription
   static Future<dynamic> saveCarAndSub(Map<String, dynamic> params) async {
     var url = BASE_URL + "stripe/save-card-and-subscription";
     var response;
     await _hitService(url, HttpMethod.HTTP_POST, RequestBodyType.TYPE_JSON,
-        TokenType.TYPE_BASIC, fieldMap: params)
+            TokenType.TYPE_BASIC,
+            fieldMap: params)
         .then((value) => {response = value});
     return response;
   }
 
+  static Future<dynamic> updateSub(Map<String, dynamic> params) async {
+    var url = BASE_URL + "stripe/update-subscription";
+    var response;
+    await _hitService(url, HttpMethod.HTTP_POST, RequestBodyType.TYPE_JSON,
+            TokenType.TYPE_BASIC,
+            fieldMap: params)
+        .then((value) => {response = value});
+    return response;
+  }
+
+  /// get Subscriptions List
+  static Future<dynamic> mySub() async {
+    var url = 'https://api-staging.skoller.co/api/v1/' + "users/token-login";
+    var response;
+    await _hitService(url, HttpMethod.HTTP_POST, RequestBodyType.TYPE_JSON,
+            TokenType.TYPE_BEARER)
+        .then((value) {
+      response = value;
+    }).catchError((onError) {
+      print(onError);
+    });
+    return response;
+  }
+
+  /// cancel Subscriptions List
+  static Future<dynamic> cancelSub(Map<String, dynamic> params) async {
+    var url = BASE_URL + "stripe/cancellation-reasons";
+    var response;
+    await _hitService(url, HttpMethod.HTTP_POST, RequestBodyType.TYPE_JSON,
+            TokenType.TYPE_BEARER,
+            fieldMap: params, isCancelSubscription: true)
+        .then((value) {
+      response = value;
+    }).catchError((onError) {
+      print(onError);
+    });
+    return response;
+  }
+
   ///this method will actually hit the service based on method(GET,PUT,POST
-  static Future<dynamic> _hitService(String url, HttpMethod method,
-      RequestBodyType type, TokenType tokenType, {Map<String, dynamic>? fieldMap,
-      Map<String, File>? files}) async {
+  static Future<dynamic> _hitService(
+      String url, HttpMethod method, RequestBodyType type, TokenType tokenType,
+      {Map<String, dynamic>? fieldMap,
+      Map<String, File>? files,
+      bool isCancelSubscription = false}) async {
     if (await Utilities.checkInternet()) {
       var response;
       var headerMap = Map<String, String>();
@@ -72,14 +116,14 @@ class WebServiceClient {
 
         // headerMap['fcm_token'] = deviceToken;
         // headerMap['device_type'] = Platform.isIOS?"ios":"android";
-        headerMap["Authorization"] = "Bearer $token" ?? "";
+        headerMap["Authorization"] = "Bearer $token";
       } else {
         var sp = await SharedPreferences.getInstance();
         var token = await sp.get(PreferencesKeys.kSharedToken);
         /* var deviceToken = await sp.getString(DEVICE_TOKEN);
         headerMap['fcm_token'] = deviceToken;
         headerMap['device_type'] = Platform.isIOS?"ios":"android";*/
-        headerMap["Authorization"] = "Bearer $token" ?? "";
+        headerMap["Authorization"] = "Bearer $token";
       }
       switch (method) {
         case HttpMethod.HTTP_GET:
@@ -108,10 +152,10 @@ class WebServiceClient {
               if (files != null && files.isNotEmpty) {
                 files.forEach((key, file) async {
                   Http.MultipartFile multipartFile =
-                  await Http.MultipartFile.fromPath(key, file.path,
-                      contentType: file.path.endsWith("*.png")
-                          ? MediaType('image', 'x-png')
-                          : MediaType('image', 'jpeg'));
+                      await Http.MultipartFile.fromPath(key, file.path,
+                          contentType: file.path.endsWith("*.png")
+                              ? MediaType('image', 'x-png')
+                              : MediaType('image', 'jpeg'));
                   debugPrint(
                       "file is ${multipartFile.contentType} ${multipartFile.filename} ${multipartFile.length}");
                   request.files.add(multipartFile);
@@ -120,10 +164,18 @@ class WebServiceClient {
               request.headers.addAll(headerMap);
               response = await request.send();
             } else {
-              headerMap["Content-Type"] = "application/json";
-              var json = convert.jsonEncode(fieldMap);
+              if (!isCancelSubscription)
+                headerMap["Content-Type"] = "application/json";
+              var json;
+              if (!isCancelSubscription)
+                json = convert.jsonEncode(fieldMap);
+              else
+                json = fieldMap;
+
               Log.d("Sending Request:: POST $url body $json");
-              response = await Http.post(Uri.parse(url), headers: headerMap, body: json);
+              response = await Http.post(Uri.parse(url),
+                  headers: headerMap, body: json);
+              print(response.body);
             }
           }
           break;
@@ -143,7 +195,7 @@ class WebServiceClient {
             if (files != null && files.isNotEmpty) {
               files.forEach((key, file) async {
                 Http.MultipartFile multipartFile =
-                await Http.MultipartFile.fromPath(
+                    await Http.MultipartFile.fromPath(
                   key,
                   file.path,
                 );
@@ -156,7 +208,8 @@ class WebServiceClient {
             headerMap["Content-Type"] = "application/json";
             var json = convert.jsonEncode(fieldMap);
             Log.d("Sending Request:: PUT $url body $json");
-            response = await Http.put(Uri.parse(url), headers: headerMap, body: json);
+            response =
+                await Http.put(Uri.parse(url), headers: headerMap, body: json);
           }
           break;
       }

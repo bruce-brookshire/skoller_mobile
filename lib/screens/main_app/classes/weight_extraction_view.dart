@@ -1,13 +1,13 @@
-import 'package:dart_notification_center/dart_notification_center.dart';
-import 'package:dropdown_banner/dropdown_banner.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter/cupertino.dart';
-import './modals/weight_creation_modal.dart';
-import 'package:skoller/tools.dart';
-
 import 'dart:collection';
 
+import 'package:dart_notification_center/dart_notification_center.dart';
+import 'package:dropdown_banner/dropdown_banner.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:skoller/screens/main_app/classes/assignment_weight_view.dart';
+import 'package:skoller/tools.dart';
+
+import './modals/weight_creation_modal.dart';
 
 class _StateKeeper {
   bool isPoints = false;
@@ -408,7 +408,7 @@ class _SubviewTwoState extends State<_SubviewTwo> {
               height: 36,
               decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(5),
-                  color: SKColors.skoller_blue,
+                  color: SKColors.skoller_blue1,
                   boxShadow: UIAssets.boxShadow),
               child: Text(
                 'Next',

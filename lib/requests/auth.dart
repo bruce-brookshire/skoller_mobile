@@ -55,7 +55,9 @@ class Auth {
   }
 
   static SKUser _fromJsonAuth(Map context) {
+    print('\x1b[97m $context');
     final user = SKUser._fromJson(context['user']);
+    GlobalSingleTon().loginSubscriptionList = context['subscriptions'];
 
     String token = context['token'];
     SharedPreferences.getInstance()
@@ -145,11 +147,11 @@ class Auth {
   }
 
   static Future<bool> tokenLogin() {
-    return SKRequests.post(
-      '/users/token-login',
-      Map(),
-      _fromJsonNoAuth,
-    ).then((onValue) => onValue.wasSuccessful());
+    return SKRequests.post('/users/token-login', Map(), _fromJsonNoAuth,
+            isTokenLogin: true)
+        .then((RequestResponse onValue) {
+      return onValue.wasSuccessful();
+    });
   }
 
   static Future<bool> logOut() async {

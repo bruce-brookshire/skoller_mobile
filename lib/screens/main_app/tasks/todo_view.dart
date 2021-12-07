@@ -20,7 +20,7 @@ class TodoView extends StatefulWidget {
 }
 
 class _TodoState extends State<TodoView> {
-  late List<_TaskLikeItem>? _taskItems = [];
+  List<_TaskLikeItem>? _taskItems;
   List<int> _datelessAssignments = [];
 
   int numberCompleted = 0;
@@ -314,49 +314,54 @@ class _TodoState extends State<TodoView> {
             onRefresh: fetchTasks,
             child: Stack(
               children: [
-                ListView.builder(
-                  padding: EdgeInsets.only(top: 4, bottom: 64),
-                  itemCount: (_taskItems?.length ?? 0) == 0
-                      ? _taskItems == null ? 1 : 2
-                      : (_taskItems!.length + (completedTasksAvailable ? 2 : 1)),
-                  itemBuilder: (context, index) {
-                    if (index == 0)
-                      return createSammiPrompt(
-                          setupSecondClass, todoDaysFuture!);
-                    else if (index <= _taskItems!.length)
-                      return _TodoRow(
-                        item: _taskItems![index - 1],
-                        onCompleted: this.onCompleteAssignment,
-                        showingCompleted: showingCompletedTasks,
-                      );
-                    else if (_taskItems?.length == 0)
-                      return Image.asset(
-                          ImageNames.todoImages.students_in_pool);
-                    else
-                      return GestureDetector(
-                        key: Key('bottom item'),
-                        behavior: HitTestBehavior.opaque,
-                        onTapUp: (details) {
-                          setState(() =>
-                              showingCompletedTasks = !showingCompletedTasks);
-                          loadTasks();
+                (_taskItems != null && _taskItems?.length != 0)
+                    ? ListView.builder(
+                        padding: EdgeInsets.only(top: 4, bottom: 64),
+                        itemCount: (_taskItems?.length ?? 0) == 0
+                            ? _taskItems == null
+                                ? 1
+                                : 2
+                            : (_taskItems!.length +
+                                (completedTasksAvailable ? 2 : 1)),
+                        itemBuilder: (context, index) {
+                          if (index == 0)
+                            return createSammiPrompt(
+                                setupSecondClass, todoDaysFuture!);
+                          else if (index <= _taskItems!.length)
+                            return _TodoRow(
+                              item: _taskItems![index - 1],
+                              onCompleted: this.onCompleteAssignment,
+                              showingCompleted: showingCompletedTasks,
+                            );
+                          else if (_taskItems?.length == 0)
+                            return Image.asset(
+                                ImageNames.todoImages.students_in_pool);
+                          else
+                            return GestureDetector(
+                              key: Key('bottom item'),
+                              behavior: HitTestBehavior.opaque,
+                              onTapUp: (details) {
+                                setState(() => showingCompletedTasks =
+                                    !showingCompletedTasks);
+                                loadTasks();
+                              },
+                              child: Container(
+                                padding: EdgeInsets.symmetric(
+                                    horizontal: 8, vertical: 8),
+                                child: Text(
+                                  showingCompletedTasks
+                                      ? 'Hide completed tasks'
+                                      : 'Show completed (${numberCompleted})',
+                                  style: TextStyle(
+                                      color: SKColors.skoller_blue,
+                                      fontWeight: FontWeight.normal,
+                                      fontSize: 14),
+                                ),
+                              ),
+                            );
                         },
-                        child: Container(
-                          padding:
-                              EdgeInsets.symmetric(horizontal: 8, vertical: 8),
-                          child: Text(
-                            showingCompletedTasks
-                                ? 'Hide completed tasks'
-                                : 'Show completed (${numberCompleted})',
-                            style: TextStyle(
-                                color: SKColors.skoller_blue,
-                                fontWeight: FontWeight.normal,
-                                fontSize: 14),
-                          ),
-                        ),
-                      );
-                  },
-                ),
+                      )
+                    : SizedBox(),
                 Align(
                   alignment: Alignment.bottomCenter,
                   child: Row(

@@ -180,8 +180,7 @@ class Student {
 
   Student._fromJson(Map content) {
     schools =
-        JsonListMaker.convert(School._fromJsonObj, content['schools'] ?? []) as List<School> ??
-            [];
+        JsonListMaker.convert(School._fromJsonObj, content['schools'] ?? []) as List<School> ;
     School.currentSchools = {};
 
     for (final school in schools!) {

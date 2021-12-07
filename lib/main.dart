@@ -18,9 +18,6 @@ import 'constants/timezone_manager.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-/*  Stripe.publishableKey = "pk_test_51JV9OSSGLvMTa3qVnwhFxc03IiK5JOGO94YQufQumo21gTgUAdpvMtEGYH9dgH1BPFrrirHuNbiVbE49gPNHHxIU00WpzV3KLPpk_test_51JV9OSSGLvMTa3qVnwhFxc03IiK5JOGO94YQufQumo21gTgUAdpvMtEGYH9dgH1BPFrrirHuNbiVbE49gPNHHxIU00WpzV3KLP";
-  await Stripe.instance.applySettings();*/
-
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
 
   if (Platform.isAndroid) {
@@ -59,8 +56,9 @@ Future<void> main() async {
     };
 
   SKCacheManager.createCacheDir();
-
-  Auth.requestNotificationPermissions();
+  try {
+    Auth.requestNotificationPermissions();
+  } catch (e) {}
 }
 
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
@@ -117,13 +115,13 @@ class _SkollerAppState extends State<SkollerApp> {
         backgroundColor: SKColors.dark_gray,
         scaffoldBackgroundColor: SKColors.dark_gray,
         textTheme: TextTheme(
-          body1: TextStyle(
+          bodyText1: TextStyle(
             color: Colors.white,
             fontSize: 15,
             fontWeight: FontWeight.bold,
             letterSpacing: -0.35,
           ),
-          body2: TextStyle(
+          bodyText2: TextStyle(
             color: SKColors.skoller_blue,
             fontSize: 15,
             fontWeight: FontWeight.bold,
@@ -139,13 +137,13 @@ class _SkollerAppState extends State<SkollerApp> {
         backgroundColor: SKColors.background_gray,
         scaffoldBackgroundColor: SKColors.background_gray,
         textTheme: TextTheme(
-          body1: TextStyle(
+          bodyText1: TextStyle(
             color: SKColors.dark_gray,
             fontSize: 15,
             fontWeight: FontWeight.bold,
             letterSpacing: -0.35,
           ),
-          body2: TextStyle(
+          bodyText2: TextStyle(
             color: SKColors.skoller_blue,
             fontSize: 15,
             fontWeight: FontWeight.bold,

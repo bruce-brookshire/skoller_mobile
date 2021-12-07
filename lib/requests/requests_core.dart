@@ -1,37 +1,38 @@
 library requests_core;
 
-import 'package:dart_notification_center/dart_notification_center.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:skoller/screens/main_app/menu/profile_link_sharing_view.dart';
-import '../screens/main_app/menu/rewards_view.dart';
-import 'package:time_machine/time_machine.dart' as time_machine;
-import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:dropdown_banner/dropdown_banner.dart';
-import 'package:path_provider/path_provider.dart';
-import 'package:package_info/package_info.dart';
-import 'package:http_parser/http_parser.dart';
-import '../constants/timezone_manager.dart';
-import 'package:flutter_apns/apns.dart';
-import 'package:http/http.dart' as http;
-import 'package:flutter/material.dart';
-import 'package:skoller/tools.dart';
-import 'package:intl/intl.dart';
+import 'dart:async';
 import 'dart:collection';
 import 'dart:convert';
-import 'dart:async';
-import 'dart:math';
 import 'dart:io';
+import 'dart:math';
 
-part 'student_class.dart';
+import 'package:dart_notification_center/dart_notification_center.dart';
+import 'package:dropdown_banner/dropdown_banner.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_apns/apns.dart';
+import 'package:http/http.dart' as http;
+import 'package:http_parser/http_parser.dart';
+import 'package:intl/intl.dart';
+import 'package:package_info/package_info.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:skoller/constants/global_singleton.dart';
+import 'package:skoller/screens/main_app/menu/profile_link_sharing_view.dart';
+import 'package:skoller/tools.dart';
+import 'package:time_machine/time_machine.dart' as time_machine;
+
+import '../constants/timezone_manager.dart';
+import '../screens/main_app/menu/rewards_view.dart';
+
 part 'assignment.dart';
-part 'school.dart';
-part 'user.dart';
-part 'mod.dart';
-part 'jobs.dart';
 part 'auth.dart';
-
+part 'jobs.dart';
+part 'mod.dart';
+part 'school.dart';
+part 'student_class.dart';
+part 'user.dart';
 
 const bool isProd = false;
 const bool isLocal = false;
@@ -79,16 +80,17 @@ class JsonListMaker {
       content.map<T>((obj) => maker(obj)).toList();
 }
 
-DateTime? _dateParser(String date) => date == null ? null : DateTime.parse(date);
+DateTime? _dateParser(String date) =>
+    date == null ? null : DateTime.parse(date);
 
 class SKRequests {
   static const String _environment = isProd
-      ? 'https://api.skoller.co'
-      : (isLocal ? 'http://10.1.10.110:4000' : 'https://api-staging.skoller.co');
+      ? 'https://skoller.co'
+      : (isLocal
+          ? 'http://10.1.10.110:4000'
+          : 'https://api-staging.skoller.co');
 
   static final String _baseUrl = '$_environment/api/v1';
-
-
 
   static Map<String, String> _headers = {
     'Content-Type': 'application/json',
@@ -146,19 +148,20 @@ class SKRequests {
   }
 
   static Future<RequestResponse> post<T>(
-    String url,
-    Map? body,
-    _DecodableConstructor<T>? constructor,
-  ) async {
+      String url, Map? body, _DecodableConstructor<T>? constructor,
+      {isTokenLogin = false}) async {
+    print(_baseUrl + url);
     // Construct and start request
     http.Response request = await http.post(
       Uri.parse(_baseUrl + url),
       body: json.encode(body),
       headers: _headers,
     );
+    print("=================Request Body============");
+    print(request.body);
 
-    // Handle request and return future
-    return futureProcessor<T>(request, constructor);
+    return await futureProcessor<T>(request, constructor,
+        isTokenLogin: isTokenLogin);
   }
 
   static Future<RequestResponse> put<T>(
@@ -192,15 +195,19 @@ class SKRequests {
   }
 
   static RequestResponse futureProcessor<T>(
-    http.Response request,
-    _DecodableConstructor<T>? constructor,
-  ) {
+      http.Response request, _DecodableConstructor<T>? constructor,
+      {isTokenLogin = false}) {
     int statusCode = request.statusCode;
     var content;
     try {
       content = request.body != null ? json.decode(request.body) : null;
+      print("=================CONTENT=================");
+      print(content);
     } catch (e) {
       content = request.body;
+    }
+    if (isTokenLogin) {
+      tokenLoginMap = content;
     }
 
     return RequestResponse<T>(

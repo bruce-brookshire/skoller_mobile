@@ -25,7 +25,7 @@ class School {
     this.color,
   );
 
-  Future<http.Response>? _activeProfessorSearch=null;
+  Future<http.Response>? _activeProfessorSearch = null;
 
   void invalidateCurrentProfessorSearch() {
     _activeProfessorSearch!.timeout(Duration.zero);
@@ -65,7 +65,7 @@ class School {
     List<Period> period_list = JsonListMaker.convert(
       Period._fromJsonObj,
       content['periods'] ?? [],
-    )as  List<Period>;
+    ) as List<Period>;
 
     for (final period in period_list) {
       Period.currentPeriods[period.id] = period;
@@ -85,11 +85,11 @@ class School {
       content['name'],
       content['adr_region'],
       content['adr_locality'],
-      color != null ? Color(int.parse(color, radix: 16) ?? 0xFF4A4A4A) : null,
+      color != null ? Color(int.parse(color, radix: 16)) : null,
     );
   }
 
-  Period getBestCurrentPeriod() {
+  getBestCurrentPeriod() {
     final today = DateTime.now();
 
     List<Period> periods = (this.periods ?? []).toList()
@@ -108,21 +108,21 @@ class School {
       )
       ..removeWhere((period) => (period.endDate ?? today).isBefore(today));
 
+    if (periods.isNotEmpty) {
+      final findSemester = (int status) {
+        return periods.firstWhere(
+          (period) => period.periodStatusId == status && period.isMainPeriod,
+        );
+      };
 
+      Period activePeriod = findSemester(200);
 
-    final findSemester = (int status) {
-      return periods.firstWhere(
-        (period) => period.periodStatusId == status && period.isMainPeriod,
-      );
-    };
-
-    Period activePeriod = findSemester(200);
-
-    if (activePeriod == null) {
-      activePeriod = findSemester(400);
+      if (activePeriod == null) {
+        activePeriod = findSemester(400);
+      }
+      return activePeriod;
     }
-
-    return activePeriod;
+    return null;
   }
 
   static Future<RequestResponse> createSchool({
@@ -188,6 +188,7 @@ class Period {
   School? getSchool() => School.currentSchools[schoolId];
 
   int get hashCode => id;
+
   bool operator ==(rhs) => rhs is Period && rhs.id == id;
 
   Future<RequestResponse> createClass({

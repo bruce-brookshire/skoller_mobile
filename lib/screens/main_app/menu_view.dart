@@ -1,15 +1,13 @@
-import 'package:skoller/screens/main_app/menu/profile_link_sharing_view.dart';
 import 'package:dart_notification_center/dart_notification_center.dart';
-import 'package:skoller/screens/main_app/menu/manage_classes_view.dart';
-import 'package:skoller/screens/main_app/menu/rewards_view.dart';
-import 'package:skoller/screens/main_app/menu/reminders_view.dart';
-import 'package:skoller/screens/main_app/menu/profile_view.dart';
-import 'package:skoller/screens/main_app/premium/premium_packages_view.dart';
-import 'package:skoller/screens/main_app/tutorial/tutorial.dart';
-import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:skoller/screens/main_app/menu/manage_classes_view.dart';
+import 'package:skoller/screens/main_app/menu/profile_link_sharing_view.dart';
+import 'package:skoller/screens/main_app/menu/profile_view.dart';
+import 'package:skoller/screens/main_app/menu/rewards_view.dart';
+import 'package:skoller/screens/main_app/tutorial/tutorial.dart';
 import 'package:skoller/tools.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import 'premium/already_premium_view.dart';
 
@@ -29,7 +27,7 @@ class MenuView extends StatelessWidget {
           'Account Settings',
           style: TextStyle(fontWeight: FontWeight.normal, fontSize: 16),
         ),
-        //'builder': () => ProfileView(),
+        'builder': () => AlreadyPremiumView(),
         'image': Image.asset(ImageNames.peopleImages.person_blue)
       }
     ],
@@ -57,7 +55,7 @@ class MenuView extends StatelessWidget {
           'Reminders',
           style: TextStyle(fontWeight: FontWeight.normal, fontSize: 16),
         ),
-        'builder': () => AlreadyPremiumView(),
+        // 'builder': () => AlreadyPremiumView(),
         'image': Image.asset(ImageNames.menuImages.reminders)
       },
       {
@@ -91,13 +89,13 @@ class MenuView extends StatelessWidget {
               'Dismiss',
             ),
       },
-      {
-        'name': Text(
-          'Payment',
-          style: TextStyle(fontWeight: FontWeight.normal, fontSize: 16),
-        ),
-        'builder': () => PremiumPackagesView()
-      },
+      // {
+      //   'name': Text(
+      //     'Payment',
+      //     style: TextStyle(fontWeight: FontWeight.normal, fontSize: 16),
+      //   ),
+      //   'builder': () => PremiumPackagesView()
+      // },
     ]
   ]
       .map((group) => Container(
@@ -192,7 +190,8 @@ class MenuView extends StatelessWidget {
                               ? null
                               : DecorationImage(
                                   fit: BoxFit.fill,
-                                  image: NetworkImage(SKUser.current!.avatarUrl!),
+                                  image:
+                                      NetworkImage(SKUser.current!.avatarUrl!),
                                 ),
                         ),
                         margin: EdgeInsets.only(left: 12),

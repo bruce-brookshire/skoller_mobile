@@ -27,7 +27,7 @@ class SKButton extends StatelessWidget {
         width: width,
         child: SizedBox.expand(
           child: RaisedButton(
-            color:isDark?SKColors.dark_gray: Colors.white,
+            color: isDark ? SKColors.dark_gray : Colors.white,
             shape:
                 RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
             child: Text(
@@ -35,7 +35,7 @@ class SKButton extends StatelessWidget {
               style: TextStyle(
                   fontSize: 15,
                   fontWeight: FontWeight.bold,
-                  color:isDark?Colors.white: SKColors.skoller_blue),
+                  color: isDark ? Colors.white : SKColors.skoller_blue1),
             ),
             onPressed: () {
               callback(context);
@@ -1465,13 +1465,13 @@ class SammiSpeechBubble extends StatelessWidget {
       case SammiPersonality.school:
         return Image.asset(ImageNames.sammiImages.smile);
       case SammiPersonality.jobsCool:
-        return Image.asset(ImageNames.sammiJobsImages.swag);
+        return Image.asset(ImageNames.sammiImages.big_smile);
       case SammiPersonality.jobsOoo:
-        return Image.asset(ImageNames.sammiJobsImages.stare);
+        return Image.asset(ImageNames.sammiImages.big_smile);
       case SammiPersonality.jobsLargeSmile:
-        return Image.asset(ImageNames.sammiJobsImages.large_big_smile);
+        return Image.asset(ImageNames.sammiImages.big_smile);
       case SammiPersonality.jobsSmile:
-        return Image.asset(ImageNames.sammiJobsImages.smile);
+        return Image.asset(ImageNames.sammiImages.big_smile);
     }
   }
 }

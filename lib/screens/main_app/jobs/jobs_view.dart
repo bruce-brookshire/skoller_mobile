@@ -1,13 +1,14 @@
+import 'dart:math';
+
 import 'package:dart_notification_center/dart_notification_center.dart';
 import 'package:dropdown_banner/dropdown_banner.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:skoller/screens/main_app/jobs/modals/job_info_prompt_modal.dart';
 import 'package:skoller/screens/main_app/jobs/modals/job_profile_modal.dart';
 import 'package:skoller/screens/main_app/menu/major_search_modal.dart';
 import 'package:skoller/tools.dart';
-import 'dart:math';
 
 class JobsView extends StatefulWidget {
   State createState() => _JobsViewState();
@@ -18,7 +19,7 @@ enum _ProfileState { intro, start, resume, profile }
 class _JobsViewState extends State<JobsView> {
   _ProfileState? profileState;
   TypeObject? jobType;
-  DateTime? graduationDate=null;
+  DateTime? graduationDate = null;
 
   @override
   void initState() {
@@ -201,7 +202,7 @@ class _JobsViewState extends State<JobsView> {
 
   @override
   Widget build(BuildContext context) {
-   late  List<Widget> children;
+    late List<Widget> children;
 
     switch (profileState) {
       case _ProfileState.intro:
@@ -243,7 +244,7 @@ class _JobsViewState extends State<JobsView> {
               mainAxisSize: MainAxisSize.min,
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: <Widget>[
-                Image.asset(ImageNames.sammiJobsImages.big_smile),
+                Image.asset(ImageNames.sammiImages.big_smile),
                 Padding(
                   padding: EdgeInsets.symmetric(horizontal: 16),
                   child: Text.rich(
@@ -750,7 +751,7 @@ class _GraduationDatePickerState extends State<_GraduationDatePicker> {
                             months![index],
                             style: Theme.of(context)
                                 .textTheme
-                                .body1!
+                                .bodyText1!
                                 .copyWith(fontWeight: FontWeight.normal),
                           ),
                         ),
@@ -771,7 +772,7 @@ class _GraduationDatePickerState extends State<_GraduationDatePicker> {
                             years![index],
                             style: Theme.of(context)
                                 .textTheme
-                                .body1!
+                                .bodyText1!
                                 .copyWith(fontWeight: FontWeight.normal),
                           ),
                         ),

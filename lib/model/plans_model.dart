@@ -1,13 +1,13 @@
 class PlansModel {
-  late List<Data> data;
+  late List<PlansModelData> data;
 
   PlansModel({required this.data});
 
   PlansModel.fromJson(Map<String, dynamic> json) {
     if (json['data'] != null) {
-      data = <Data>[];
+      data = <PlansModelData>[];
       json['data'].forEach((v) {
-        data.add(new Data.fromJson(v));
+        data.add(new PlansModelData.fromJson(v));
       });
     }
   }
@@ -21,7 +21,7 @@ class PlansModel {
   }
 }
 
-class Data {
+class PlansModelData {
   String product = "";
   String name = "";
   int intervalCount = 0;
@@ -32,20 +32,22 @@ class Data {
   String amountDecimal = "";
   int amount = 0;
   bool active = false;
+  dynamic price = false;
 
-  Data(
+  PlansModelData(
       {required this.product,
-        required this.name,
-        required this.intervalCount,
-        required this.interval,
-        required this.id,
-        required this.currency,
-        required this.created,
-        required this.amountDecimal,
-        required this.amount,
-        required this.active});
+      required this.name,
+      required this.intervalCount,
+      required this.interval,
+      required this.id,
+      required this.currency,
+      required this.created,
+      required this.amountDecimal,
+      required this.amount,
+      required this.price,
+      required this.active});
 
-  Data.fromJson(Map<String, dynamic> json) {
+  PlansModelData.fromJson(Map<String, dynamic> json) {
     product = json['product'];
     name = json['name'];
     intervalCount = json['interval_count'];
@@ -55,6 +57,7 @@ class Data {
     created = json['created'];
     amountDecimal = json['amount_decimal'];
     amount = json['amount'];
+    price = json['price'];
     active = json['active'];
   }
 
@@ -69,6 +72,7 @@ class Data {
     data['created'] = this.created;
     data['amount_decimal'] = this.amountDecimal;
     data['amount'] = this.amount;
+    data['price'] = this.price;
     data['active'] = this.active;
     return data;
   }

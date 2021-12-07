@@ -1,12 +1,13 @@
 import 'dart:async';
+
 import 'package:dart_notification_center/dart_notification_center.dart';
 import 'package:dropdown_banner/dropdown_banner.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:skoller/screens/main_app/menu/class_status_modal.dart';
-import 'package:skoller/tools.dart';
-import 'package:skoller/screens/main_app/menu/create_class_modal.dart';
 import 'package:skoller/screens/main_app/menu/class_search_settings_modal.dart';
+import 'package:skoller/screens/main_app/menu/class_status_modal.dart';
+import 'package:skoller/screens/main_app/menu/create_class_modal.dart';
+import 'package:skoller/tools.dart';
 
 class AddClassesView extends StatefulWidget {
   @override
@@ -267,7 +268,7 @@ class _AddClassesState extends State<AddClassesView> {
                   decoration: BoxDecoration(
                     color: isEnrolled
                         ? SKColors.warning_red
-                        : SKColors.skoller_blue,
+                        : SKColors.skoller_blue1,
                     borderRadius: BorderRadius.circular(5),
                   ),
                   child: Text(
@@ -380,7 +381,7 @@ class _AddClassesState extends State<AddClassesView> {
                                               text:
                                                   ' Tap here to add it to Skoller.',
                                               style: TextStyle(
-                                                color: SKColors.skoller_blue,
+                                                color: SKColors.skoller_blue1,
                                               ),
                                             )
                                           ],
@@ -478,7 +479,7 @@ class _AddClassesState extends State<AddClassesView> {
                   mainAxisSize: MainAxisSize.min,
                   children: <Widget>[
                     Text(
-                      SKUser.current?.student.primarySchool?.name??'',
+                      SKUser.current?.student.primarySchool?.name ?? '',
                       overflow: TextOverflow.ellipsis,
                       style: TextStyle(
                           fontSize: 18,
