@@ -34,9 +34,6 @@ class _PremiumPackages extends State<PremiumPackagesView>
 
   @override
   void initState() {
-    if (RawApplePayButton.supported) {
-      print(true);
-    }
     // TODO: implement initState
     super.initState();
   }
@@ -117,7 +114,7 @@ class _PremiumPackages extends State<PremiumPackagesView>
     });
   }
 
-  Widget getPlans(AsyncSnapshot snapshot) {
+  Widget getPlans(AsyncSnapshot<PlansModel> snapshot) {
     return Container(
         decoration: BoxDecoration(
           color: Colors.white,
@@ -556,7 +553,7 @@ class _PremiumPackages extends State<PremiumPackagesView>
               ),
               child: StreamBuilder<PlansModel>(
                   stream: stripeBloc.allPlans,
-                  builder: (context, snapshot) {
+                  builder: (context, AsyncSnapshot<PlansModel> snapshot) {
                     if (!snapshot.hasData) {
                       return Center(child: CircularProgressIndicator());
                     } else
@@ -734,16 +731,22 @@ class _PremiumPackages extends State<PremiumPackagesView>
                                   }),
                               Center(
                                 child: ApplePayButton(
+                                  width: 200,
+                                  height: 50,
                                   paymentConfigurationAsset:
                                       'default_payment_profile_apple_pay.json',
                                   paymentItems: [
                                     PaymentItem(
-                                      label: 'Total',
-                                      amount: selectPlanAmounts.toString(),
-                                      status: PaymentItemStatus.final_price,
-                                    )
+                                        label: 'Total',
+                                        amount: selectPlanAmounts.toString(),
+                                        status: PaymentItemStatus.final_price,
+                                        type: PaymentItemType.total)
                                   ],
-                                  style: ApplePayButtonStyle.black,
+                                  onError: (error) {
+                                    print('erroe' + error.toString());
+                                  },
+                                  onPressed: () {},
+                                  style: ApplePayButtonStyle.automatic,
                                   type: ApplePayButtonType.buy,
                                   margin: const EdgeInsets.only(top: 15.0),
                                   onPaymentResult: onApplePayResult,
@@ -762,6 +765,10 @@ class _PremiumPackages extends State<PremiumPackagesView>
         ),
       ),
     );
+  }
+
+  void setError(dynamic error) {
+    setState(() {});
   }
 
   Future<void> onApplePayResult(paymentResult) async {

@@ -56,6 +56,9 @@ class StripeBloc implements BlocBase {
         } else {
           var decoded = json.decode(response);
           PlansModel parsedResponse = PlansModel.fromJson(decoded);
+          parsedResponse.data.sort((a, b) =>
+              int.parse(a.price.toString().replaceAll(".", "")).compareTo(
+                  int.parse(b.price.toString().replaceAll(".", ""))));
           // PlansModel plansModel = (PlansModel.fromJson(parsedResponse));
           PlansModel model = PlansModel(data: [
             PlansModelData(
@@ -64,14 +67,16 @@ class StripeBloc implements BlocBase {
                 amountDecimal: '8000',
                 created: 1630572175,
                 currency: 'inr',
-                price: '80',
+                price: '80.0',
                 id: 'price_1JYF3sSGLvMTa3qVrsx7uADn',
                 interval: 'lifetime',
                 intervalCount: 1,
                 name: '',
                 product: 'prod_KRv2Bs7sRlUaRB')
           ]);
+
           parsedResponse.data.addAll(model.data);
+
           allPlansCont.sink.add(parsedResponse);
         }
       }

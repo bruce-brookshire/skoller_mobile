@@ -12,7 +12,7 @@ class StripePayments {
     StripePayment.setOptions(StripeOptions(
       publishableKey:
           "pk_live_51JHvLoGtOURsTxunmypyAUNfbRF4jOahklknp1RTBHhxpy3qEveFU7lCWdrBt4YggE5ytlblCgYYHPPzsLC0Gf8K00NC7FWyoh",
-      merchantId: "Test",
+      merchantId: "merchant.com.erchant.co.skoller.skoller-staging",
       androidPayMode: 'test',
     ));
     StripePayment.createTokenWithCard(
