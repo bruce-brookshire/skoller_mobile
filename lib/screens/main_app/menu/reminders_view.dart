@@ -8,7 +8,7 @@ class RemindersView extends StatefulWidget {
 }
 
 class _RemindersState extends State<RemindersView> {
-  DateTime defaultTime;
+  late DateTime defaultTime;
 
   @override
   void initState() {
@@ -20,10 +20,10 @@ class _RemindersState extends State<RemindersView> {
 
   void tappedTimeOnDue(TapUpDetails details) async {
     final result = await presentTimePicker(
-        SKUser.current.student.notificationTime ?? defaultTime, false);
+        SKUser.current?.student.notificationTime ?? defaultTime, false);
 
     if (result != null) {
-      SKUser.current
+      SKUser.current!
           .update(notificationTime: result)
           .then((response) => setState(() {}));
     }
@@ -31,10 +31,10 @@ class _RemindersState extends State<RemindersView> {
 
   void tappedTimeBeforeDue(TapUpDetails details) async {
     final result = await presentTimePicker(
-        SKUser.current.student.futureNotificationTime ?? defaultTime, true);
+        SKUser.current?.student.futureNotificationTime ?? defaultTime, true);
 
     if (result != null) {
-      SKUser.current
+      SKUser.current!
           .update(futureNotificationTime: result)
           .then((response) => setState(() {}));
     }
@@ -122,7 +122,7 @@ class _RemindersState extends State<RemindersView> {
   }
 
   void tappedSelectDaysOut(TapUpDetails details) async {
-    int selectedIndex = SKUser.current.student.notificationDays ?? 0;
+    int selectedIndex = SKUser.current?.student.notificationDays ?? 0;
 
     final result = await showDialog(
       context: context,
@@ -209,7 +209,7 @@ class _RemindersState extends State<RemindersView> {
     );
 
     if (result is bool && result) {
-      SKUser.current
+      SKUser.current!
           .update(notificationDays: selectedIndex)
           .then((response) => setState(() {}));
     }
@@ -288,7 +288,7 @@ class _RemindersState extends State<RemindersView> {
                                   behavior: HitTestBehavior.opaque,
                                   onTapUp: tappedTimeOnDue,
                                   child: Text(
-                                    TimeOfDay.fromDateTime(SKUser.current
+                                    TimeOfDay.fromDateTime(SKUser.current!
                                                 .student.notificationTime ??
                                             defaultTime)
                                         .format(context),
@@ -316,7 +316,7 @@ class _RemindersState extends State<RemindersView> {
                                   behavior: HitTestBehavior.opaque,
                                   onTapUp: tappedSelectDaysOut,
                                   child: Text(
-                                    '${SKUser.current.student.notificationDays ?? 1} day${(SKUser.current.student.notificationDays ?? 1) == 1 ? '' : 's'} out',
+                                    '${SKUser.current?.student.notificationDays ?? 1} day${(SKUser.current?.student.notificationDays ?? 1) == 1 ? '' : 's'} out',
                                     style:
                                         TextStyle(color: SKColors.skoller_blue),
                                   ),
@@ -337,7 +337,7 @@ class _RemindersState extends State<RemindersView> {
                                   onTapUp: tappedTimeBeforeDue,
                                   child: Text(
                                     TimeOfDay.fromDateTime(SKUser
-                                                .current
+                                                .current!
                                                 .student
                                                 .futureNotificationTime ??
                                             defaultTime)
@@ -478,7 +478,7 @@ class _ClassIndividualReminderSettingsState
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(
-              studentClass.name,
+              studentClass.name!,
               style: TextStyle(fontWeight: FontWeight.normal, fontSize: 14),
             ),
             Switch(
@@ -488,7 +488,7 @@ class _ClassIndividualReminderSettingsState
                 studentClass.toggleIsNotifications().then((success) {
                   if (!success)
                     setState(
-                      () => StudentClass.currentClasses[studentClass.id]
+                      () => StudentClass.currentClasses[studentClass.id]!
                           .isNotifications = !studentClass.isNotifications,
                     );
                 });

@@ -14,7 +14,7 @@ class LoadingView extends StatefulWidget {
 
 class _LoadingState extends State<LoadingView> {
   bool loading = false;
-  bool validVersion;
+  bool? validVersion;
 
   @override
   void initState() {
@@ -37,7 +37,7 @@ class _LoadingState extends State<LoadingView> {
       setState(() => loading = false);
     else {
       final result = await Auth.attemptLogin();
-      AppState nextState;
+      late AppState nextState;
       switch (result) {
         case LogInResponse.success:
           nextState = AppState.main;
@@ -46,7 +46,7 @@ class _LoadingState extends State<LoadingView> {
         case LogInResponse.needsVerification:
           final success = await showDialog(
             context: context,
-            builder: (context) => PhoneVerificationView(Auth.userPhone),
+            builder: (context) => PhoneVerificationView(Auth.userPhone!),
           );
 
           if (success is bool && success) {
@@ -66,7 +66,7 @@ class _LoadingState extends State<LoadingView> {
       if (nextState != null) {
         if (nextState == AppState.main) {
           final classResult = await StudentClass.getStudentClasses();
-          SKUser.current.getJobProfile();
+          SKUser.current?.getJobProfile();
 
           if (!classResult.wasSuccessful()) {
             return;
@@ -91,7 +91,7 @@ class _LoadingState extends State<LoadingView> {
 
   @override
   Widget build(BuildContext context) {
-    final isValidVersion = validVersion is bool && validVersion;
+    final isValidVersion = validVersion is bool && validVersion!;
 
     return Scaffold(
       backgroundColor: Colors.white,

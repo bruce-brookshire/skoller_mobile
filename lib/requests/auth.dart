@@ -3,10 +3,11 @@ part of 'requests_core.dart';
 enum LogInResponse { success, needsVerification, failed, internetError }
 
 class Auth {
-  static String userPhone;
+  static String? userPhone;
 
   static Future<bool> enforceMinVersion() async {
-    final response = await http.get('${SKRequests._baseUrl}/min-version');
+    final response =
+        await http.get(Uri.parse('${SKRequests._baseUrl}/min-version'));
     var content;
     try {
       content = response.body != null ? json.decode(response.body) : null;
@@ -32,7 +33,7 @@ class Auth {
           .split('.')
           .map((str) => int.tryParse(str))
           .toList();
-          
+
       final max =
           device.length > preferred.length ? preferred.length : device.length;
       int index = 0;
@@ -41,7 +42,7 @@ class Auth {
         final devicePartial = device[index];
         final preferredPartial = preferred[index];
 
-        if (devicePartial > preferredPartial)
+        if (devicePartial! > preferredPartial!)
           return true;
         else if (devicePartial < preferredPartial)
           return false;
@@ -54,7 +55,9 @@ class Auth {
   }
 
   static SKUser _fromJsonAuth(Map context) {
+    print('\x1b[97m $context');
     final user = SKUser._fromJson(context['user']);
+    GlobalSingleTon().loginSubscriptionList = context['subscriptions'];
 
     String token = context['token'];
     SharedPreferences.getInstance()
@@ -71,6 +74,7 @@ class Auth {
   static Future<LogInResponse> attemptLogin() async {
     final inst = await SharedPreferences.getInstance();
     final token = inst.getString(PreferencesKeys.kSharedToken);
+    print("login token >>>>> $token");
     userPhone = inst.getString(PreferencesKeys.kStudentPhone);
 
     if (token != null) {
@@ -92,7 +96,7 @@ class Auth {
       //Token is invalid, do we have the phone number?
       else if (userPhone != null) {
         //We do. Request the user to sign in again
-        final status = await requestLogin(userPhone);
+        final status = await requestLogin(userPhone!);
         //Did the request complete correctly?
         if ([200, 204].contains(status))
           return LogInResponse.needsVerification;
@@ -117,7 +121,7 @@ class Auth {
       {"phone": phone},
       null,
     ).then((onValue) {
-      return onValue.status;
+      return onValue.status!;
     });
   }
 
@@ -143,11 +147,11 @@ class Auth {
   }
 
   static Future<bool> tokenLogin() {
-    return SKRequests.post(
-      '/users/token-login',
-      null,
-      _fromJsonNoAuth,
-    ).then((onValue) => onValue.wasSuccessful());
+    return SKRequests.post('/users/token-login', Map(), _fromJsonNoAuth,
+            isTokenLogin: true)
+        .then((RequestResponse onValue) {
+      return onValue.wasSuccessful();
+    });
   }
 
   static Future<bool> logOut() async {
@@ -168,10 +172,10 @@ class Auth {
   }
 
   static Future<RequestResponse> createUser({
-    @required String nameFirst,
-    @required String nameLast,
-    @required String email,
-    @required String phone,
+    required String nameFirst,
+    required String nameLast,
+    required String email,
+    required String phone,
   }) {
     final offset = DateTime.now().timeZoneOffset.inHours;
     final utc_hour_notification = 9 - offset;
@@ -205,7 +209,7 @@ class Auth {
   static void saveNotificationToken(String token) {
     assert(SKUser.current != null && token != null);
     SKRequests.post(
-      '/users/${SKUser.current.id}/register',
+      '/users/${SKUser.current?.id}/register',
       {
         'udid': token,
         "type": Platform.isIOS ? 'ios' : 'android',
@@ -214,34 +218,38 @@ class Auth {
     );
   }
 
-  static ApnsPushConnector _apnsConnector;
-  static FirebaseMessaging _firebaseMessaging;
+  static var _apnsConnector;
+  static FirebaseMessaging? _firebaseMessaging;
 
   static void requestNotificationPermissions() {
     if (Platform.isIOS) {
       _apnsConnector = createPushConnector();
       _apnsConnector.configure(
-        onMessage: (Map<String, dynamic> message) async {
-          if (message != null && message['aps'] != null) {
-            final aps = message['aps'];
-            final alert = aps['alert'];
-
-            final title = alert is String ? null : alert['title'];
-            final body = alert is String ? alert : alert['body'];
-
-            final category = aps['category'];
-
-            _dropdownNotifications(title, body,
-                () => _handleNotificationAction(category, message));
-          }
-        },
+        onMessage: (data) => onPush('onMessage', data),
         onResume: _iosBackgroundHandler,
         onLaunch: _iosBackgroundHandler,
       );
       _apnsConnector.requestNotificationPermissions();
     } else {
-      _firebaseMessaging = FirebaseMessaging();
-      _firebaseMessaging.configure(
+      _firebaseMessaging = FirebaseMessaging.instance;
+
+      FirebaseMessaging.onMessage.listen((event) {
+        Map<String, dynamic> message = event.data;
+        if (message != null && message['notification'] != null) {
+          final title = message['notification']['title'];
+          final body = message['notification']['body'];
+          final category = message['data']['category'];
+
+          _dropdownNotifications(title, body,
+              () => _handleNotificationAction(category, message['data']));
+        }
+      });
+
+      FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
+        _androidBackgroundHandler(message.data);
+      });
+
+      /* _firebaseMessaging.configure(
         onMessage: (Map<String, dynamic> message) async {
           if (message != null && message['notification'] != null) {
             final title = message['notification']['title'];
@@ -254,7 +262,7 @@ class Auth {
         },
         onResume: _androidBackgroundHandler,
         onLaunch: _androidBackgroundHandler,
-      );
+      );*/
     }
   }
 
@@ -268,9 +276,26 @@ class Auth {
     _handleNotificationAction(message['aps']['category'], message);
   }
 
+  static Future<dynamic> onPush(String name, RemoteMessage payload) {
+    if (payload.data != null && payload.data['aps'] != null) {
+      final aps = payload.data['aps'];
+      final alert = aps['alert'];
+
+      final title = alert is String ? null : alert['title'];
+      final body = alert is String ? alert : alert['body'];
+
+      final category = aps['category'];
+
+      _dropdownNotifications(
+          title, body, () => _handleNotificationAction(category, payload.data));
+    }
+
+    return Future.value(true);
+  }
+
   static void _dropdownNotifications(
-    String title,
-    String body,
+    String? title,
+    String? body,
     VoidCallback tapCallback,
   ) {
     DropdownBanner.showBanner(
@@ -285,12 +310,12 @@ class Auth {
 
   // Handles a notification action
   static void _handleNotificationAction(
-      [String category, Map data, int attempt = 0]) {
+      [String? category, Map? data, int attempt = 0]) {
     //If we have no category or if we have exceeded our attempts, return
     if (category == null || attempt == 3) return;
 
     if (StudentClass.classesLoaded) {
-      String channel;
+      String? channel = null;
       dynamic options;
 
       () async {
@@ -308,7 +333,7 @@ class Auth {
       }
       // Is this a grow community notification and do we have the student class loaded?
       else if (PushNotificationCategories.growCommunity == category) {
-        dynamic class_id = data['class_id'];
+        dynamic class_id = data!['class_id'];
         if (class_id is String) class_id = int.parse(data['class_id']);
 
         if (StudentClass.currentClasses[class_id] != null) {
@@ -334,20 +359,20 @@ class Auth {
 
   static void _setupNotifications() {
     if (Platform.isIOS) {
-      final tokenNotifier = _apnsConnector.token;
+      final tokenNotifier = _apnsConnector!.token;
 
       if (tokenNotifier.value != null && SKUser.current != null) {
-        saveNotificationToken(tokenNotifier.value);
+        saveNotificationToken(tokenNotifier.value!);
       } else {
-        _apnsConnector.token.addListener(() {
-          final token = _apnsConnector.token.value;
+        _apnsConnector!.token.addListener(() {
+          final token = _apnsConnector!.token.value;
           if (token != null && SKUser.current != null) {
             saveNotificationToken(token);
           }
         });
       }
     } else if (Platform.isAndroid) {
-      _firebaseMessaging.getToken().then((token) {
+      _firebaseMessaging!.getToken().then((token) {
         if (token != null && SKUser.current != null)
           saveNotificationToken(token);
       }).catchError(print);
@@ -362,12 +387,12 @@ class Session {
 
   Session(this.id, this.type, this.insertedAt);
 
-  static Session currentSession;
+  static Session? currentSession;
 
   static Session _fromJson(Map content) => Session(
         content['id'],
         content['session_platform']['type'],
-        _dateParser(content['inserted_at']),
+        _dateParser(content['inserted_at'])!,
       );
 
   static void startSession() {
@@ -377,7 +402,7 @@ class Session {
 
     SKRequests.post(
       '/sessions',
-      {"user_id": SKUser.current.id, "platform": platform},
+      {"user_id": SKUser.current?.id, "platform": platform},
       Session._fromJson,
     ).then((response) {
       if (response.wasSuccessful()) currentSession = response.obj;

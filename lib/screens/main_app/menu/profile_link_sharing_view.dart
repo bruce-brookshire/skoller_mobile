@@ -4,7 +4,7 @@ import 'package:skoller/tools.dart';
 import 'package:share/share.dart';
 
 class ProfileLinkSharingView extends StatefulWidget {
-  final int startingClassId;
+  final int? startingClassId;
 
   ProfileLinkSharingView([this.startingClassId]);
 
@@ -17,7 +17,7 @@ enum _SharingType { classmates, anyone }
 class _ProfileLinkSharingState extends State<ProfileLinkSharingView> {
   var sharingType = _SharingType.classmates;
 
-  StudentClass studentClass;
+  StudentClass? studentClass;
 
   @override
   void initState() {
@@ -31,8 +31,8 @@ class _ProfileLinkSharingState extends State<ProfileLinkSharingView> {
 
   void tappedShare(_) {
     final shareMessage = sharingType == _SharingType.anyone
-        ? 'Check out this new app that\'s helping me keep up with school... it\'s like the Waze of the classroom!\n\n${SKUser.current.student.enrollmentLink ?? 'https://itunes.apple.com/us/app/skoller/id1314782490?mt=8'}'
-        : studentClass.shareMessage;
+        ? 'Check out this new app that\'s helping me keep up with school... it\'s like the Waze of the classroom!\n\n${SKUser.current?.student.enrollmentLink ?? 'https://itunes.apple.com/us/app/skoller/id1314782490?mt=8'}'
+        : studentClass!.shareMessage;
 
     Share.share(shareMessage);
   }
@@ -42,7 +42,7 @@ class _ProfileLinkSharingState extends State<ProfileLinkSharingView> {
     final classes = StudentClass.currentClasses.values.toList();
     final linkStripper = (String link) => link.split('//')[1];
 
-    final raiseEffort = SKUser.current.student.raiseEffort;
+    final raiseEffort = SKUser.current?.student.raiseEffort;
 
     return SafeArea(
       child: Column(
@@ -194,12 +194,12 @@ class _ProfileLinkSharingState extends State<ProfileLinkSharingView> {
                                 text: 'You\'ve raised ',
                                 children: [
                                   TextSpan(
-                                      text: '\$${raiseEffort.personalSignups}',
+                                      text: '\$${raiseEffort?.personalSignups}',
                                       style: TextStyle(
                                           fontWeight: FontWeight.bold)),
                                   TextSpan(
                                       text:
-                                          ' for the ${raiseEffort.orgName == 'AOII' ? 'Arthritis Foundation' : 'ASA Foundation'}!')
+                                          ' for the ${raiseEffort?.orgName == 'AOII' ? 'Arthritis Foundation' : 'ASA Foundation'}!')
                                 ],
                                 style: TextStyle(fontWeight: FontWeight.normal),
                               ),
@@ -222,7 +222,7 @@ class _ProfileLinkSharingState extends State<ProfileLinkSharingView> {
                                         'Let your classmates use your class specific link to enroll',
                                     items: classes
                                         .map(
-                                            (studentClass) => studentClass.name)
+                                            (studentClass) => studentClass.name!)
                                         .toList(),
                                     onSelect: (index) {
                                       setState(
@@ -242,7 +242,7 @@ class _ProfileLinkSharingState extends State<ProfileLinkSharingView> {
                                 child: Text(
                                   studentClass == null
                                       ? 'Select class...'
-                                      : studentClass.name,
+                                      : studentClass!.name!,
                                   style:
                                       TextStyle(color: SKColors.skoller_blue),
                                 ),
@@ -262,7 +262,7 @@ class _ProfileLinkSharingState extends State<ProfileLinkSharingView> {
                                 decoration: BoxDecoration(
                                   color: sharingType == _SharingType.anyone
                                       ? SKColors.skoller_blue
-                                      : studentClass.getColor(),
+                                      : studentClass!.getColor(),
                                   borderRadius: BorderRadius.circular(5),
                                   boxShadow: UIAssets.boxShadow,
                                 ),
@@ -280,8 +280,8 @@ class _ProfileLinkSharingState extends State<ProfileLinkSharingView> {
                                       linkStripper(
                                         sharingType == _SharingType.anyone
                                             ? SKUser
-                                                .current.student.enrollmentLink
-                                            : studentClass.enrollmentLink,
+                                                .current?.student.enrollmentLink??''
+                                            : studentClass!.enrollmentLink,
                                       ),
                                       style: TextStyle(color: Colors.white),
                                     ),
@@ -316,7 +316,7 @@ class _ProfileLinkSharingState extends State<ProfileLinkSharingView> {
   }
 
   Image buildShareImage() {
-    final orgName = SKUser.current.student.raiseEffort?.orgName;
+    final orgName = SKUser.current?.student.raiseEffort?.orgName;
 
     if (orgName == 'AOII')
       return Image.asset(ImageNames.shareImages.aoii_share_image);

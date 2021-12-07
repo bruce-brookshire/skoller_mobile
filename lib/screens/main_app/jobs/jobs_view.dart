@@ -1,11 +1,14 @@
+import 'dart:math';
+
 import 'package:dart_notification_center/dart_notification_center.dart';
 import 'package:dropdown_banner/dropdown_banner.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:skoller/screens/main_app/jobs/modals/job_info_prompt_modal.dart';
+import 'package:skoller/screens/main_app/jobs/modals/job_profile_modal.dart';
 import 'package:skoller/screens/main_app/menu/major_search_modal.dart';
 import 'package:skoller/tools.dart';
-import 'dart:math';
 
 class JobsView extends StatefulWidget {
   State createState() => _JobsViewState();
@@ -14,33 +17,44 @@ class JobsView extends StatefulWidget {
 enum _ProfileState { intro, start, resume, profile }
 
 class _JobsViewState extends State<JobsView> {
-  _ProfileState profileState;
-
-  TypeObject jobType;
-  DateTime graduationDate;
+  _ProfileState? profileState;
+  TypeObject? jobType;
+  DateTime? graduationDate = null;
 
   @override
   void initState() {
     super.initState();
 
-    if (SKUser.current.student.gradYear != null)
+    if (SKUser.current?.student.gradYear != null)
       graduationDate =
-          DateTime.parse('${SKUser.current.student.gradYear}-05-01');
+          DateTime.parse('${SKUser.current?.student.gradYear}-05-01');
 
     updateProfileState();
 
     DartNotificationCenter.subscribe(
-        observer: this,
-        channel: NotificationChannels.newTabSelected,
-        onNotification: (index) {
-          if (index == JOBS_TAB)
-            SKUser.current.getJobProfile().then((response) {
-              if (response.wasSuccessful()) {
-                updateProfileState();
-                setState(() {});
-              }
-            });
-        });
+      observer: this,
+      channel: NotificationChannels.newTabSelected,
+      onNotification: (index) {
+        if (index == JOBS_TAB)
+          SKUser.current?.getJobProfile().then((response) {
+            if (response.wasSuccessful()) {
+              updateProfileState();
+              setState(() {});
+            }
+          });
+      },
+    );
+
+    DartNotificationCenter.subscribe(
+      observer: this,
+      channel: NotificationChannels.jobsChanged,
+      onNotification: (_) => setState(() {}),
+    );
+    DartNotificationCenter.subscribe(
+      observer: this,
+      channel: NotificationChannels.userChanged,
+      onNotification: (_) => setState(() {}),
+    );
   }
 
   @override
@@ -109,7 +123,7 @@ class _JobsViewState extends State<JobsView> {
           items: items.map((t) => t.name).toList(),
           onSelect: (index) async {
             final loader = SKLoadingScreen.fadeIn(context);
-            await SKUser.current.update(degreeType: items[index]);
+            await SKUser.current?.update(degreeType: items[index]);
             loader.fadeOut();
 
             setState(() {});
@@ -160,7 +174,7 @@ class _JobsViewState extends State<JobsView> {
         graduationDate: graduationDate,
       );
     } else {
-      response = await JobProfile.currentProfile.updateProfile(
+      response = await JobProfile.currentProfile!.updateProfile(
         jobSearchType: jobType,
         gradDate: graduationDate,
       );
@@ -170,16 +184,25 @@ class _JobsViewState extends State<JobsView> {
 
     if (response.wasSuccessful()) {
       setState(() {
-        profileState = JobProfile.currentProfile.resume_url == null
+        profileState = JobProfile.currentProfile!.resume_url == null
             ? _ProfileState.resume
             : _ProfileState.profile;
       });
     }
   }
 
+  void tappedEditProfile(_) async {
+    await Navigator.push(
+      context,
+      SKNavOverlayRoute(builder: (context) => JobProfileModal()),
+    );
+
+    setState(() {});
+  }
+
   @override
   Widget build(BuildContext context) {
-    List<Widget> children;
+    late List<Widget> children;
 
     switch (profileState) {
       case _ProfileState.intro:
@@ -200,6 +223,7 @@ class _JobsViewState extends State<JobsView> {
       title: 'Jobs',
       isPop: false,
       leftBtn: SKHeaderProfilePhoto(),
+      backgroundColor: Color(0xFF252525),
       callbackLeft: () =>
           DartNotificationCenter.post(channel: NotificationChannels.toggleMenu),
       children: children,
@@ -220,7 +244,7 @@ class _JobsViewState extends State<JobsView> {
               mainAxisSize: MainAxisSize.min,
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: <Widget>[
-                Image.asset(ImageNames.sammiJobsImages.big_smile),
+                Image.asset(ImageNames.sammiImages.big_smile),
                 Padding(
                   padding: EdgeInsets.symmetric(horizontal: 16),
                   child: Text.rich(
@@ -266,7 +290,7 @@ class _JobsViewState extends State<JobsView> {
       ];
 
   List<Widget> createStart() {
-    final fields = SKUser.current.student.fieldsOfStudy ?? <FieldsOfStudy>[];
+    final fields = SKUser.current?.student.fieldsOfStudy ?? <FieldsOfStudy>[];
     String fieldsBody;
 
     if (fields.length > 0)
@@ -276,7 +300,7 @@ class _JobsViewState extends State<JobsView> {
 
     final isValid = graduationDate != null &&
         fields.length > 0 &&
-        SKUser.current.student.degreeType != null &&
+        SKUser.current?.student.degreeType != null &&
         jobType != null;
 
     return [
@@ -327,7 +351,7 @@ class _JobsViewState extends State<JobsView> {
                       Text(
                         graduationDate == null
                             ? 'Select...'
-                            : DateFormat('MMMM yyyy').format(graduationDate),
+                            : DateFormat('MMMM yyyy').format(graduationDate!),
                         style: TextStyle(
                             color: graduationDate == null
                                 ? SKColors.jobs_light_green
@@ -400,10 +424,10 @@ class _JobsViewState extends State<JobsView> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        SKUser.current.student.degreeType?.name ?? 'Select...',
+                        SKUser.current?.student.degreeType?.name ?? 'Select...',
                         style: TextStyle(
                             color:
-                                SKUser.current.student.degreeType?.name == null
+                                SKUser.current?.student.degreeType?.name == null
                                     ? SKColors.jobs_light_green
                                     : SKColors.jobs_dark_green),
                       ),
@@ -513,77 +537,117 @@ class _JobsViewState extends State<JobsView> {
         )
       ];
 
-  List<Widget> createProfile() => [
-        Padding(
-          padding: EdgeInsets.all(16),
-          child: SammiSpeechBubble(
-            sammiPersonality: SammiPersonality.jobsLargeSmile,
-            speechBubbleContents: Text.rich(
-              TextSpan(
-                text: 'You are ',
-                children: [
-                  TextSpan(
-                    text: 'ACTIVE',
-                    style: TextStyle(color: SKColors.jobs_dark_green),
-                  ),
-                  TextSpan(text: ' on Skoller Jobs')
-                ],
-              ),
-            ),
+  List<Widget> createProfile() {
+    final nextPrompt = JobInfoPromptModal();
+
+    return [
+      SKHeaderCard(
+        padding: EdgeInsets.all(16),
+        margin: EdgeInsets.all(16),
+        backgroundColor: SKColors.dark_gray,
+        headerColor: SKColors.dark_gray,
+        borderColor: SKColors.dark_gray,
+        leftHeaderItem: Text(
+          'My Profile',
+          style: TextStyle(fontSize: 17, color: Colors.white),
+        ),
+        rightHeaderItem: GestureDetector(
+          onTapUp: tappedEditProfile,
+          child: Text(
+            'Edit',
+            style: TextStyle(color: SKColors.jobs_light_green),
           ),
         ),
-        SKHeaderCard(
-          padding: EdgeInsets.all(16),
-          margin: EdgeInsets.fromLTRB(16, 0, 16, 16),
-          leftHeaderItem: Text(
-            'Profile Strength',
-            style: TextStyle(fontSize: 17),
+        children: <Widget>[
+          Padding(
+            padding: EdgeInsets.only(bottom: 8),
+            child: SammiSpeechBubble(
+                sammiPersonality: SammiPersonality.jobsLargeSmile,
+                speechBubbleContents: Text(jobDescBuilder())),
           ),
-          rightHeaderItem: Text(
-            'Active',
-            style: TextStyle(color: SKColors.jobs_dark_green),
-          ),
-          children: <Widget>[
-            Padding(
-              padding: EdgeInsets.fromLTRB(72, 16, 72, 32),
-              child: AspectRatio(
-                aspectRatio: 1,
-                child: Container(
-                  alignment: Alignment.center,
-                  child: _SKJobProfileCompletionCircle(
-                    completion: JobProfile.currentProfile.profile_score,
-                  ),
+          Padding(
+            padding: EdgeInsets.fromLTRB(72, 16, 72, 32),
+            child: AspectRatio(
+              aspectRatio: 1,
+              child: Container(
+                alignment: Alignment.center,
+                child: _SKJobProfileCompletionCircle(
+                  completion: JobProfile.currentProfile!.profile_score,
                 ),
               ),
             ),
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 12),
-              child: Row(
-                children: <Widget>[
-                  Icon(
-                    Icons.computer,
-                    size: 56,
-                    color: SKColors.dark_gray,
-                  ),
-                  SizedBox(
-                    width: 24,
-                  ),
-                  Expanded(
-                    child: Text(
-                      'Hop on your computer and log in at skoller.co to get the full experience for jobs!',
-                      style: TextStyle(fontWeight: FontWeight.w500),
-                    ),
-                  )
-                ],
-              ),
+          ),
+          if (nextPrompt != null)
+            Text(
+              'Strengthen your profile in seconds!',
+              textAlign: TextAlign.center,
+              style:
+                  TextStyle(color: Colors.white, fontWeight: FontWeight.w300),
             ),
-          ],
-        ),
-      ];
+          nextPrompt != null
+              ? Padding(
+                  padding: EdgeInsets.symmetric(vertical: 12),
+                  child: nextPrompt,
+                )
+              : Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 12),
+                  child: Row(
+                    children: <Widget>[
+                      Icon(
+                        Icons.computer,
+                        size: 56,
+                        color: Colors.white,
+                      ),
+                      SizedBox(
+                        width: 24,
+                      ),
+                      Expanded(
+                        child: Text(
+                          'Hop on your computer and log in at skoller.co to get the full experience for jobs!',
+                          style: TextStyle(
+                              fontWeight: FontWeight.w500, color: Colors.white),
+                        ),
+                      )
+                    ],
+                  ),
+                ),
+        ],
+      ),
+    ];
+  }
+
+  String jobDescBuilder() {
+    String type;
+    bool startsWithVowel;
+
+    switch (JobProfile.currentProfile?.job_search_type?.id) {
+      case 100:
+        type = ' internship';
+        startsWithVowel = true;
+        break;
+      case 200:
+        type = ' graduate program';
+        startsWithVowel = false;
+        break;
+      case 300:
+        type = ' part-time';
+        startsWithVowel = false;
+        break;
+      case 400:
+        type = ' full-time';
+        startsWithVowel = false;
+        break;
+      default:
+        type = '';
+        startsWithVowel = false;
+    }
+
+    return 'You are currently seeking a${startsWithVowel ? 'n' : ''}$type job opportunity!';
+  }
 }
 
 class _GraduationDatePicker extends StatefulWidget {
-  final DateTime startDate;
+  final DateTime? startDate;
 
   _GraduationDatePicker({this.startDate});
 
@@ -592,14 +656,14 @@ class _GraduationDatePicker extends StatefulWidget {
 }
 
 class _GraduationDatePickerState extends State<_GraduationDatePicker> {
-  int monthIndex;
-  String year;
+  int? monthIndex;
+  String? year;
 
-  List<String> months;
-  List<String> years;
+  List<String>? months;
+  List<String>? years;
 
-  ScrollController monthController;
-  ScrollController yearController;
+  var monthController;
+  var yearController;
 
   @override
   void initState() {
@@ -625,22 +689,22 @@ class _GraduationDatePickerState extends State<_GraduationDatePicker> {
     ];
 
     if (widget.startDate != null) {
-      monthIndex = widget.startDate.month - 1;
-      year = '${widget.startDate.year}';
+      monthIndex = widget.startDate!.month - 1;
+      year = '${widget.startDate!.year}';
     } else {
       monthIndex = 0;
-      year = years.first;
+      year = years!.first;
     }
 
-    monthController = FixedExtentScrollController(initialItem: monthIndex);
+    monthController = FixedExtentScrollController(initialItem: monthIndex!);
     yearController =
-        FixedExtentScrollController(initialItem: years.indexOf(year));
+        FixedExtentScrollController(initialItem: years!.indexOf(year!));
   }
 
   @override
   void dispose() {
-    monthController.dispose();
-    yearController.dispose();
+    monthController!.dispose();
+    yearController!.dispose();
 
     super.dispose();
   }
@@ -684,10 +748,10 @@ class _GraduationDatePickerState extends State<_GraduationDatePicker> {
                         itemBuilder: (_, index) => Container(
                           alignment: Alignment.center,
                           child: Text(
-                            months[index],
+                            months![index],
                             style: Theme.of(context)
                                 .textTheme
-                                .body1
+                                .bodyText1!
                                 .copyWith(fontWeight: FontWeight.normal),
                           ),
                         ),
@@ -700,15 +764,15 @@ class _GraduationDatePickerState extends State<_GraduationDatePicker> {
                         itemExtent: 24,
                         scrollController: yearController,
                         onSelectedItemChanged: (yearIndex) =>
-                            this.year = years[yearIndex],
-                        childCount: years.length,
+                            this.year = years![yearIndex],
+                        childCount: years!.length,
                         itemBuilder: (_, index) => Container(
                           alignment: Alignment.center,
                           child: Text(
-                            years[index],
+                            years![index],
                             style: Theme.of(context)
                                 .textTheme
-                                .body1
+                                .bodyText1!
                                 .copyWith(fontWeight: FontWeight.normal),
                           ),
                         ),
@@ -750,7 +814,7 @@ class _GraduationDatePickerState extends State<_GraduationDatePicker> {
                     child: GestureDetector(
                       behavior: HitTestBehavior.opaque,
                       onTapUp: (_) {
-                        final monthNum = monthIndex + 1;
+                        final monthNum = monthIndex! + 1;
                         String monthStr = '$monthNum';
                         if (monthNum < 10) monthStr = '0$monthNum';
 
@@ -781,7 +845,7 @@ class _GraduationDatePickerState extends State<_GraduationDatePicker> {
 }
 
 class _SKJobProfileCompletionCircle extends StatefulWidget {
-  final num completion;
+  final num? completion;
 
   _SKJobProfileCompletionCircle({this.completion});
 
@@ -792,40 +856,59 @@ class _SKJobProfileCompletionCircle extends StatefulWidget {
 class _SKJobProfileCompletionCircleState
     extends State<_SKJobProfileCompletionCircle>
     with SingleTickerProviderStateMixin {
-  AnimationController animationController;
-  Animation<double> animation;
+  AnimationController? animationController;
+  late Animation<double> animation;
 
   @override
   void initState() {
     super.initState();
 
-    animationController =
-        AnimationController(vsync: this, duration: Duration(seconds: 1));
-    animation = Tween<double>(begin: 0, end: widget.completion).animate(
-      CurvedAnimation(parent: animationController, curve: Curves.easeOutCubic),
-    )..addListener(
-        () => setState(() {}),
-      );
+    animationController = AnimationController(
+      vsync: this,
+      duration: Duration(seconds: 1),
+    );
+    animation = createAnimation();
 
-    animationController.forward();
+    animationController!.forward();
 
     DartNotificationCenter.subscribe(
         observer: this,
         channel: NotificationChannels.newTabSelected,
         onNotification: (index) {
-          if (index == JOBS_TAB && !animationController.isAnimating) {
-            animationController.forward(from: 0);
+          if (index == JOBS_TAB && !animationController!.isAnimating) {
+            animationController!.forward(from: 0);
           }
         });
   }
 
   @override
+  void didUpdateWidget(Widget oldWidget) {
+    //super.didUpdateWidget(oldWidget);
+    if ((oldWidget as _SKJobProfileCompletionCircle).completion !=
+        widget.completion) {
+      animation.removeListener(animationListener);
+
+      animation = createAnimation();
+      if (!animationController!.isAnimating)
+        animationController!.forward(from: 0);
+    }
+  }
+
+  @override
   void dispose() {
     DartNotificationCenter.unsubscribe(observer: this);
-    animationController.dispose();
+    animationController!.dispose();
 
     super.dispose();
   }
+
+  void animationListener() => setState(() {});
+
+  Animation<double> createAnimation() =>
+      Tween<double>(begin: 0, end: widget.completion?.toDouble()).animate(
+        CurvedAnimation(
+            parent: animationController!, curve: Curves.easeOutCubic),
+      )..addListener(animationListener);
 
   @override
   Widget build(BuildContext context) {
@@ -861,7 +944,7 @@ class _SKCompletionCirclePainter extends CustomPainter {
       ..isAntiAlias = true;
 
     final inactivePaint = Paint()
-      ..color = SKColors.border_gray
+      ..color = SKColors.background_gray
       ..style = PaintingStyle.stroke
       ..strokeWidth = 18
       ..isAntiAlias = true;

@@ -14,117 +14,11 @@ class CreateSchoolModal extends StatefulWidget {
 }
 
 class _CreateSchoolModalState extends State<CreateSchoolModal> {
-  final states = LinkedHashMap.fromIterables([
-    "Alabama",
-    "Alaska",
-    "Arizona",
-    "Arkansas",
-    "California",
-    "Colorado",
-    "Connecticut",
-    "Delaware",
-    "District Of Columbia",
-    "Florida",
-    "Georgia",
-    "Hawaii",
-    "Idaho",
-    "Illinois",
-    "Indiana",
-    "Iowa",
-    "Kansas",
-    "Kentucky",
-    "Louisiana",
-    "Maine",
-    "Maryland",
-    "Massachusetts",
-    "Michigan",
-    "Minnesota",
-    "Mississippi",
-    "Missouri",
-    "Montana",
-    "Nebraska",
-    "Nevada",
-    "New Hampshire",
-    "New Jersey",
-    "New Mexico",
-    "New York",
-    "North Carolina",
-    "North Dakota",
-    "Ohio",
-    "Oklahoma",
-    "Oregon",
-    "Pennsylvania",
-    "Rhode Island",
-    "South Carolina",
-    "South Dakota",
-    "Tennessee",
-    "Texas",
-    "Utah",
-    "Vermont",
-    "Virginia",
-    "Washington",
-    "West Virginia",
-    "Wisconsin",
-    "Wyoming"
-  ], [
-    "AL",
-    "AK",
-    "AZ",
-    "AR",
-    "CA",
-    "CO",
-    "CT",
-    "DE",
-    "DC",
-    "FL",
-    "GA",
-    "HI",
-    "ID",
-    "IL",
-    "IN",
-    "IA",
-    "KS",
-    "KY",
-    "LA",
-    "ME",
-    "MD",
-    "MA",
-    "MI",
-    "MN",
-    "MS",
-    "MO",
-    "MT",
-    "NE",
-    "NV",
-    "NH",
-    "NJ",
-    "NM",
-    "NY",
-    "NC",
-    "ND",
-    "OH",
-    "OK",
-    "OR",
-    "PA",
-    "RI",
-    "SC",
-    "SD",
-    "TN",
-    "TX",
-    "UT",
-    "VT",
-    "VA",
-    "WA",
-    "WV",
-    "WI",
-    "WY"
-  ]);
-
   int selectedSegment = 0;
 
-  TextEditingController nameController;
+  late TextEditingController nameController;
   final cityController = TextEditingController();
-  String selectedState;
+  String? selectedState;
 
   bool isValid = false;
 
@@ -142,7 +36,7 @@ class _CreateSchoolModalState extends State<CreateSchoolModal> {
     cityController.dispose();
   }
 
-  void checkValid([String str]) {
+  void checkValid([String? str]) {
     final newIsValid = nameController.text.trim() != '' &&
         cityController.text.trim() != '' &&
         selectedState != null;
@@ -155,7 +49,7 @@ class _CreateSchoolModalState extends State<CreateSchoolModal> {
   }
 
   void tappedSelectState(TapUpDetails details) async {
-    final keys = states.keys.toList();
+    final keys = statesMap.keys.toList();
     String selectedState = keys[0];
 
     final result = await showDialog(
@@ -185,10 +79,10 @@ class _CreateSchoolModalState extends State<CreateSchoolModal> {
       isUniversity: selectedSegment == 0,
       schoolName: nameController.text.trim(),
       cityName: cityController.text.trim(),
-      stateAbv: states[selectedState],
+      stateAbv: statesMap[selectedState]!,
     ).then((response) {
       if (response.wasSuccessful() && response.obj is School) {
-        return SKUser.current
+        return SKUser.current!
             .update(primarySchool: response.obj)
             .then((response2) {
           if (response2) {
@@ -248,7 +142,7 @@ class _CreateSchoolModalState extends State<CreateSchoolModal> {
               ),
               CupertinoSegmentedControl(
                 padding: null,
-                onValueChanged: (newVal) =>
+                onValueChanged: (int newVal) =>
                     setState(() => selectedSegment = newVal),
                 selectedColor: SKColors.skoller_blue,
                 borderColor: SKColors.skoller_blue,
@@ -366,7 +260,7 @@ class _CreateSchoolModalState extends State<CreateSchoolModal> {
                         child: Text(
                             selectedState == null
                                 ? 'School state'
-                                : selectedState,
+                                : selectedState!,
                             style: TextStyle(
                                 color: selectedState == null
                                     ? SKColors.text_light_gray
