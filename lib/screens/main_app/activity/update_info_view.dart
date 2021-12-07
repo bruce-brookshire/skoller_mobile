@@ -7,7 +7,7 @@ import 'package:intl/intl.dart';
 class UpdateInfoView extends StatefulWidget {
   final List<Mod> mods;
 
-  UpdateInfoView(this.mods, {Key key}) : super(key: key);
+  UpdateInfoView(this.mods, {Key? key}) : super(key: key);
 
   @override
   State createState() => _UpdateInfoState();
@@ -18,7 +18,7 @@ class _UpdateInfoState extends State<UpdateInfoView> {
   Widget build(BuildContext context) {
     StudentClass parentClass = widget.mods[0].parentClass;
     return SKNavView(
-      title: parentClass.name,
+      title: parentClass.name!,
       titleColor: parentClass.getColor(),
       children: <Widget>[
         Expanded(
@@ -66,7 +66,7 @@ class _UpdateInfoState extends State<UpdateInfoView> {
         return '\'s due date has been changed to ${DateFormat('EEEE MMMM d').format((mod.data as DateTime))}.';
         break;
       case ModType.newAssignment:
-        return ' has been added by a classmate. It is due on ${DateFormat('EEEE MMMM d').format((mod.data as Assignment).due)}.';
+        return ' has been added by a classmate. It is due on ${DateFormat('EEEE MMMM d').format((mod.data as Assignment).due!)}.';
         break;
       case ModType.delete:
         return ' has been removed from the assignments for this class.';
@@ -79,7 +79,7 @@ class _UpdateInfoState extends State<UpdateInfoView> {
   Widget createModCell(BuildContext context, int index) {
     Mod mod = widget.mods[index];
 
-    bool needsAction = mod.isAccepted == null || !mod.isAccepted;
+    bool needsAction = mod.isAccepted == null || !mod.isAccepted!;
 
     return Container(
       margin: EdgeInsets.fromLTRB(7, 6, 7, 6),
@@ -105,7 +105,7 @@ class _UpdateInfoState extends State<UpdateInfoView> {
                 TextSpan(
                     text: mod.modType == ModType.newAssignment
                         ? (mod.data as Assignment).name
-                        : mod.parentAssignment.name,
+                        : mod.parentAssignment?.name,
                     style: TextStyle(color: SKColors.skoller_blue)),
                 TextSpan(
                     text: generateLongModDescr(mod),

@@ -1,9 +1,10 @@
 import 'dart:async';
-import 'package:flutter/material.dart';
+
+import 'package:dart_notification_center/dart_notification_center.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:skoller/screens/main_app/menu/create_school_modal.dart';
 import 'package:skoller/tools.dart';
-import 'package:dart_notification_center/dart_notification_center.dart';
 
 class SchoolSearchView extends StatefulWidget {
   @override
@@ -15,7 +16,7 @@ class _SchoolSearchState extends State<SchoolSearchView> {
 
   List<School> searchedSchools = [];
 
-  Timer _currentTimer;
+  Timer? _currentTimer;
   bool isSearching = false;
 
   @override
@@ -26,7 +27,7 @@ class _SchoolSearchState extends State<SchoolSearchView> {
 
   void didTypeInSearch(String text) {
     if (_currentTimer != null) {
-      _currentTimer.cancel();
+      _currentTimer!.cancel();
       _currentTimer = null;
     }
 
@@ -107,7 +108,7 @@ class _SchoolSearchState extends State<SchoolSearchView> {
                   padding: EdgeInsets.symmetric(vertical: 8),
                   margin: EdgeInsets.only(top: 12),
                   decoration: BoxDecoration(
-                    color: SKColors.skoller_blue,
+                    color: SKColors.skoller_blue1,
                     borderRadius: BorderRadius.circular(5),
                   ),
                   child: Text(
@@ -123,7 +124,7 @@ class _SchoolSearchState extends State<SchoolSearchView> {
     );
 
     if (result is bool && result) {
-      await SKUser.current.update(primarySchool: school);
+      await SKUser.current?.update(primarySchool: school);
       Navigator.pop(context);
       DartNotificationCenter.post(
           channel: NotificationChannels.userChanged, options: school);
@@ -211,8 +212,10 @@ class _SchoolSearchState extends State<SchoolSearchView> {
                         padding: EdgeInsets.fromLTRB(18, 12, 0, 0),
                         child: SammiSpeechBubble(
                           sammiPersonality: SammiPersonality.todoSmile,
-                          speechBubbleContents:
-                              Text('👆First off... find your school!', style: TextStyle(fontSize: 17),),
+                          speechBubbleContents: Text(
+                            '👆First off... find your school!',
+                            style: TextStyle(fontSize: 17),
+                          ),
                         ),
                       );
                     if (index < searchedSchools.length)
@@ -281,7 +284,7 @@ class _SchoolSearchState extends State<SchoolSearchView> {
                                           text:
                                               ' Tap here to add it to Skoller.',
                                           style: TextStyle(
-                                            color: SKColors.skoller_blue,
+                                            color: SKColors.skoller_blue1,
                                           ),
                                         )
                                       ],

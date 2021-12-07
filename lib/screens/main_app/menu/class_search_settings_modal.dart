@@ -14,30 +14,30 @@ class ClassSearchSettingsModal extends StatefulWidget {
 }
 
 class _ClassSearchSettingsModalState extends State<ClassSearchSettingsModal> {
-  School school;
-  Period period;
+  School? school;
+  Period? period;
 
   List<Period> possiblePeriods = [];
 
   @override
   void initState() {
-    school = SKUser.current.student.primarySchool;
+    school = SKUser.current?.student.primarySchool;
 
     if (widget.initialPeriodId != null) {
       period = Period.currentPeriods[widget.initialPeriodId];
 
-      if (period.id != SKUser.current.student.primaryPeriod.id)
-        SKUser.current.update(primaryPeriod: period);
+      if (period!.id != SKUser.current?.student.primaryPeriod?.id)
+        SKUser.current?.update(primaryPeriod: period!);
     }
 
     final now = DateTime.now();
-    possiblePeriods = (school.periods.toList())
+    possiblePeriods = (school!.periods!.toList())
       ..removeWhere(
         (p) =>
-            now.isAfter(p.endDate.add(Duration(days: 15))) ||
-            now.isBefore(p.startDate.subtract(Duration(days: 270))),
+            now.isAfter(p.endDate!.add(Duration(days: 15))) ||
+            now.isBefore(p.startDate!.subtract(Duration(days: 270))),
       )
-      ..sort((p1, p2) => p1.startDate.compareTo(p2.startDate));
+      ..sort((p1, p2) => p1.startDate!.compareTo(p2.startDate!));
 
     DartNotificationCenter.subscribe(
         channel: NotificationChannels.userChanged,
@@ -59,20 +59,20 @@ class _ClassSearchSettingsModalState extends State<ClassSearchSettingsModal> {
       period = null;
 
       final now = DateTime.now();
-      possiblePeriods = (school.periods.toList())
+      possiblePeriods = (school!.periods!.toList())
         ..removeWhere(
           (p) =>
-              now.isAfter(p.endDate.add(Duration(days: 15))) ||
-              now.isBefore(p.startDate.subtract(Duration(days: 270))),
+              now.isAfter(p.endDate!.add(Duration(days: 15))) ||
+              now.isBefore(p.startDate!.subtract(Duration(days: 270))),
         )
-        ..sort((p1, p2) => p1.startDate.compareTo(p2.startDate));
+        ..sort((p1, p2) => p1.startDate!.compareTo(p2.startDate!));
 
       if (mounted) setState(() {});
       tappedPeriod(null);
     }
   }
 
-  void tappedPeriod(TapUpDetails details) async {
+  void tappedPeriod(TapUpDetails? details) async {
     showDialog(
       context: context,
       builder: (context) => SKPickerModal(
@@ -82,7 +82,7 @@ class _ClassSearchSettingsModalState extends State<ClassSearchSettingsModal> {
           setState(() {
             period = possiblePeriods[index];
           });
-          SKUser.current.update(primaryPeriod: period);
+          SKUser.current?.update(primaryPeriod: period!);
         },
       ),
     );
