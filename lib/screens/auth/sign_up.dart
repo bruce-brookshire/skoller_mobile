@@ -403,7 +403,7 @@ class _SignUpState extends State<SignUp> {
                             behavior: HitTestBehavior.opaque,
                             child: Container(
                               alignment: Alignment.center,
-                              color: SKColors.skoller_blue,
+                              color: SKColors.skoller_blue1,
                               padding: EdgeInsets.symmetric(vertical: 12),
                               child: Text(
                                 'Sign up',

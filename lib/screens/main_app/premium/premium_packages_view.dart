@@ -17,7 +17,11 @@ import 'package:stripe_payment/stripe_payment.dart' as stripeCard;
 import 'stripe_bloc.dart';
 
 class PremiumPackagesView extends StatefulWidget {
+  final bool? canpop;
+
   State createState() => _PremiumPackages();
+
+  PremiumPackagesView(this.canpop);
 }
 
 class _PremiumPackages extends State<PremiumPackagesView>
@@ -29,7 +33,7 @@ class _PremiumPackages extends State<PremiumPackagesView>
   TextEditingController zipCodeController = TextEditingController();
   TextEditingController emailController = TextEditingController();
   int selectedIndex = 0;
-  String? selectPlanAmounts;
+  String? selectPlanAmounts = '3.0';
   final _stripePayment = new StripePayments();
 
   @override
@@ -131,7 +135,7 @@ class _PremiumPackages extends State<PremiumPackagesView>
                     selectedIndex = index;
                   });
                   selectPlanAmounts =
-                      snapshot.data!.data[index].amount.toString();
+                      snapshot.data!.data[index].price.toString();
                   stripeBloc.planIdCont.sink.add(snapshot.data!.data[index].id);
                 },
                 child: Container(
@@ -146,7 +150,7 @@ class _PremiumPackages extends State<PremiumPackagesView>
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(
-                            '\$${snapshot.data!.data[index].price} ${snapshot.data!.data[index].interval == 'lifetime' ? '' : 'per'} ${snapshot.data!.data[index].interval} ',
+                            '\$${double.parse(snapshot.data!.data[index].price.toString()).toStringAsFixed(0)} ${snapshot.data!.data[index].interval == 'lifetime' ? '' : 'per'} ${snapshot.data!.data[index].interval} ',
                             style: TextStyle(
                                 fontSize: 14, color: SKColors.light_gray),
                           ),
@@ -176,17 +180,6 @@ class _PremiumPackages extends State<PremiumPackagesView>
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          'Card Information',
-          textAlign: TextAlign.center,
-          style: TextStyle(
-            fontSize: 14,
-            fontWeight: FontWeight.w800,
-          ),
-        ),
-        SizedBox(
-          height: 8,
-        ),
         Container(
           decoration: BoxDecoration(
             color: Colors.white,
@@ -537,6 +530,10 @@ class _PremiumPackages extends State<PremiumPackagesView>
     );
   }
 
+  Pay _payClient = Pay.withAssets([
+    'default_payment_profile_apple_pay.json',
+  ]);
+
   @override
   Widget screen(BuildContext context) {
     return Scaffold(
@@ -567,7 +564,10 @@ class _PremiumPackages extends State<PremiumPackagesView>
                             children: [
                               GestureDetector(
                                 behavior: HitTestBehavior.opaque,
-                                onTapUp: (_) => Navigator.pop(context),
+                                onTapUp: (_) {
+                                  if (widget.canpop ?? false)
+                                    Navigator.pop(context);
+                                },
                                 child: SizedBox(
                                   width: 32,
                                   height: 24,
@@ -592,31 +592,15 @@ class _PremiumPackages extends State<PremiumPackagesView>
                                               false)
                                           ? Padding(
                                               padding: EdgeInsets.all(12),
-                                              child: Column(
-                                                mainAxisSize: MainAxisSize.min,
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.stretch,
-                                                children: <Widget>[
-                                                  Row(
-                                                    children: [
-                                                      Image.asset(ImageNames
-                                                          .sammiImages
-                                                          .big_smile),
-                                                      Flexible(
-                                                        child: Text(
-                                                          'Your free trial has expired!',
-                                                          style: TextStyle(
-                                                              fontSize: 15,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .normal),
-                                                          textAlign:
-                                                              TextAlign.center,
-                                                        ),
-                                                      ),
-                                                    ],
+                                              child: Flexible(
+                                                child: Text(
+                                                  'Your free trial has expired!',
+                                                  textAlign: TextAlign.center,
+                                                  style: TextStyle(
+                                                    fontSize: 14,
+                                                    fontWeight: FontWeight.w800,
                                                   ),
-                                                ],
+                                                ),
                                               ),
                                             )
                                           : ((Subscriptions
@@ -713,6 +697,72 @@ class _PremiumPackages extends State<PremiumPackagesView>
                               SizedBox(
                                 height: 16,
                               ),
+                              Container(
+                                width: MediaQuery.of(context).size.width,
+                                margin: EdgeInsets.only(top: 10.0),
+                                child: FutureBuilder<bool>(
+                                  future: _payClient
+                                      .userCanPay(PayProvider.apple_pay),
+                                  builder: (context, snapshot) {
+                                    if (snapshot.connectionState ==
+                                        ConnectionState.done) {
+                                      if (snapshot.data == true) {
+                                        return RawApplePayButton(
+                                          style: ApplePayButtonStyle.automatic,
+                                          type: ApplePayButtonType.contribute,
+                                          onPressed: () {
+                                            onGooglePayPressed();
+                                          },
+                                        );
+                                      } else {
+                                        return Container();
+                                        // userCanPay returned false
+                                        // Consider showing an alternative payment method
+                                      }
+                                    }
+                                    return Container();
+                                  },
+                                ),
+                              ),
+                              SizedBox(
+                                height: 16,
+                              ),
+                              Row(
+                                children: [
+                                  Expanded(
+                                    child: Divider(
+                                      height: 0,
+                                      thickness: 1,
+                                      color: Colors.black,
+                                    ),
+                                  ),
+                                  SizedBox(
+                                    width: 8,
+                                  ),
+                                  Text(
+                                    'Or Pay With Card',
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w800,
+                                    ),
+                                  ),
+                                  SizedBox(
+                                    width: 8,
+                                  ),
+                                  Expanded(
+                                    child: Divider(
+                                      height: 0,
+                                      thickness: 1,
+                                      color: Colors.black,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              SizedBox(
+                                height: 16,
+                              ),
+
                               getCardInput(),
                               StreamBuilder<String>(
                                   initialData:
@@ -729,32 +779,29 @@ class _PremiumPackages extends State<PremiumPackagesView>
                                       margin: EdgeInsets.only(top: 24),
                                     );
                                   }),
-                              Center(
-                                child: ApplePayButton(
-                                  width: 200,
-                                  height: 50,
-                                  paymentConfigurationAsset:
-                                      'default_payment_profile_apple_pay.json',
-                                  paymentItems: [
-                                    PaymentItem(
-                                        label: 'Total',
-                                        amount: selectPlanAmounts.toString(),
-                                        status: PaymentItemStatus.final_price,
-                                        type: PaymentItemType.total)
-                                  ],
-                                  onError: (error) {
-                                    print('erroe' + error.toString());
-                                  },
-                                  onPressed: () {},
-                                  style: ApplePayButtonStyle.automatic,
-                                  type: ApplePayButtonType.buy,
-                                  margin: const EdgeInsets.only(top: 15.0),
-                                  onPaymentResult: onApplePayResult,
-                                  loadingIndicator: const Center(
-                                    child: CircularProgressIndicator(),
-                                  ),
-                                ),
-                              ),
+                              // Center(
+                              //   child: ApplePayButton(
+                              //     paymentConfigurationAsset:
+                              //         'default_payment_profile_apple_pay.json',
+                              //     paymentItems: [
+                              //       PaymentItem(
+                              //           label: 'Total',
+                              //           amount: "20.00",
+                              //           status: PaymentItemStatus.final_price,
+                              //           type: PaymentItemType.item)
+                              //     ],
+                              //     onError: (error) {
+                              //       print('erroe' + error.toString());
+                              //     },
+                              //     style: ApplePayButtonStyle.automatic,
+                              //     type: ApplePayButtonType.buy,
+                              //     margin: const EdgeInsets.only(top: 15.0),
+                              //     onPaymentResult: onApplePayResult,
+                              //     loadingIndicator: const Center(
+                              //       child: CircularProgressIndicator(),
+                              //     ),
+                              //   ),
+                              // ),
                             ],
                           ),
                         ),
@@ -765,6 +812,28 @@ class _PremiumPackages extends State<PremiumPackagesView>
         ),
       ),
     );
+  }
+
+  void onGooglePayPressed() async {
+    final result = await _payClient.showPaymentSelector(
+      provider: PayProvider.apple_pay,
+      paymentItems: [
+        PaymentItem(
+            label: 'Total',
+            amount: selectPlanAmounts.toString(),
+            status: PaymentItemStatus.final_price,
+            type: PaymentItemType.item)
+      ],
+    );
+    debugPrint(result.toString());
+    String tokenToBeSentToCloud = result["token"];
+    BehaviorSubject<String> planId = await stripeBloc.planIdCont;
+    String planid = await planId.first;
+    print(planid);
+    startLoading();
+    hitSubscriptionApi(planid, tokenToBeSentToCloud);
+
+    // Send the resulting Google Pay token to your server / PSP
   }
 
   void setError(dynamic error) {

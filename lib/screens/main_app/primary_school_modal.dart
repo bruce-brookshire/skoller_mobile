@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:skoller/screens/main_app/tutorial/calendar_tutorial_view.dart';
 import 'package:skoller/tools.dart';
+
 import './menu/school_search_view.dart';
 
 class PrimarySchoolModal extends StatefulWidget {
@@ -10,13 +11,13 @@ class PrimarySchoolModal extends StatefulWidget {
 }
 
 class _PrimarySchoolState extends State<PrimarySchoolModal> {
-  late List<School>? eligibleSchools=null;
+  late List<School>? eligibleSchools = null;
 
   int? selectedSchoolId;
   Period? selectedPeriod;
 
   bool showingGreeting = true;
-  bool loading=false;
+  bool loading = false;
 
   @override
   void initState() {
@@ -562,7 +563,7 @@ class _PrimarySchoolState extends State<PrimarySchoolModal> {
           margin: EdgeInsets.fromLTRB(24, 24, 24, 16),
           padding: EdgeInsets.symmetric(vertical: 8),
           decoration: BoxDecoration(
-            color: SKColors.skoller_blue,
+            color: SKColors.skoller_blue1,
             borderRadius: BorderRadius.circular(5),
             boxShadow: UIAssets.boxShadow,
           ),

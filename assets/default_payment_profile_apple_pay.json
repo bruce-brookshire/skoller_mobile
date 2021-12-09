@@ -1,7 +1,7 @@
 {
   "provider": "apple_pay",
   "data": {
-    "merchantIdentifier": "merchant.com.Skoller.fish",
+    "merchantIdentifier": "merchant.erchant.co.skoller.skoller-staging",
     "displayName": "Skoller",
     "merchantCapabilities": [
       "3DS",
@@ -16,8 +16,19 @@
     ],
     "countryCode": "US",
     "currencyCode": "USD",
-    "requiredBillingContactFields": [],
-    "requiredShippingContactFields": [],
+    "requiredShippingAddressFields": [
+    ],
+    "requiredBillingContactFields": [
+      {
+        "city": "San Francisco",
+        "country": "US",
+        "line1": "123 fake street",
+        "line2": "app 102",
+        "name": "Obi Wan Kenobi",
+        "postalCode": "90129",
+        "state": "CA"
+      }
+    ],
     "shippingMethods": [
     ]
   }

@@ -1,19 +1,20 @@
 import 'dart:async';
 
 import 'package:dart_notification_center/dart_notification_center.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:intl/intl.dart';
 import 'package:skoller/constants/constants.dart';
 import 'package:skoller/screens/main_app/tasks/dateless_assignments_modal.dart';
 import 'package:skoller/screens/main_app/tasks/todo_preferences_modal.dart';
+import 'package:skoller/tools.dart';
+
 import '../activity/mod_modal.dart';
-import '../menu/add_classes_view.dart';
-import '../tutorial/todo_tutorial_view.dart';
 import '../classes/assignment_info_view.dart';
 import '../classes/assignment_weight_view.dart';
-import 'package:skoller/tools.dart';
+import '../menu/add_classes_view.dart';
+import '../tutorial/todo_tutorial_view.dart';
 
 class TodoView extends StatefulWidget {
   State createState() => _TodoState();
@@ -308,6 +309,55 @@ class _TodoState extends State<TodoView> {
       callbackRight: tappedAdd,
       titleOption: titleOption,
       children: <Widget>[
+        (isSubscriptionAvailable ?? false)
+            ? !(Subscriptions.mySubscriptions?.user?.trial ?? false)
+                ? Container()
+                : Container(
+                    height: 30,
+                    width: MediaQuery.of(context).size.width,
+                    decoration: BoxDecoration(
+                      color: SKColors.skoller_blue1,
+                      boxShadow: [
+                        BoxShadow(
+                            color: Colors.grey,
+                            spreadRadius: 1.5,
+                            offset: Offset(1, 1),
+                            blurRadius: 10),
+                      ],
+                    ),
+                    child: Center(
+                      child: Text(
+                        'Upgrade to Premium!',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                  )
+            : Container(
+                height: 30,
+                width: MediaQuery.of(context).size.width,
+                decoration: BoxDecoration(
+                  color: SKColors.skoller_blue1,
+                  boxShadow: [
+                    BoxShadow(
+                        color: Colors.grey,
+                        spreadRadius: 1.5,
+                        offset: Offset(1, 1),
+                        blurRadius: 10),
+                  ],
+                ),
+                child: Center(
+                  child: Text(
+                    'Upgrade to Premium!',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+              ),
         Expanded(
           child: RefreshIndicator(
             key: _refreshIndicatorKey,

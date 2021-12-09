@@ -162,6 +162,8 @@ class Subscriptions {
   static MySubscriptions? mySubscriptions;
 }
 
+bool? isSubscriptionAvailable;
+
 final statesMap = LinkedHashMap.fromIterables([
   "Alabama",
   "Alaska",

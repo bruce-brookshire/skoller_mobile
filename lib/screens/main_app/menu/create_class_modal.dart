@@ -2,8 +2,8 @@ import 'dart:collection';
 
 import 'package:dart_notification_center/dart_notification_center.dart';
 import 'package:dropdown_banner/dropdown_banner.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:skoller/screens/main_app/menu/class_status_modal.dart';
 import 'package:skoller/screens/main_app/menu/professor_search_view.dart';
 import 'package:skoller/tools.dart';
@@ -81,8 +81,8 @@ class _CreateClassModalState extends State<CreateClassModal> {
         return day[0];
     };
 
-    final days = selectedDays.keys
-        .fold('', (r, k) => selectedDays[k]! ? r.toString() + interpreter(k) : r);
+    final days = selectedDays.keys.fold(
+        '', (r, k) => selectedDays[k]! ? r.toString() + interpreter(k) : r);
 
     final loadingScreen = SKLoadingScreen.fadeIn(context);
 
@@ -450,7 +450,7 @@ class _CreateClassScreenOneState extends State<_CreateClassScreenOne> {
                   child: Container(
                     decoration: BoxDecoration(
                       color: isValid
-                          ? SKColors.skoller_blue
+                          ? SKColors.skoller_blue1
                           : SKColors.inactive_gray,
                       borderRadius: BorderRadius.circular(5),
                       border: Border.all(color: SKColors.border_gray),
@@ -559,7 +559,7 @@ class _CreateClassScreenTwoState extends State<_CreateClassScreenTwo> {
                       child: Text(
                         'Cancel',
                         style: TextStyle(
-                            color: SKColors.skoller_blue,
+                            color: SKColors.skoller_blue1,
                             fontWeight: FontWeight.normal),
                       ),
                     ),
@@ -579,7 +579,7 @@ class _CreateClassScreenTwoState extends State<_CreateClassScreenTwo> {
                       alignment: Alignment.center,
                       child: Text(
                         'Select',
-                        style: TextStyle(color: SKColors.skoller_blue),
+                        style: TextStyle(color: SKColors.skoller_blue1),
                       ),
                     ),
                   ),
@@ -764,7 +764,8 @@ class _CreateClassScreenTwoState extends State<_CreateClassScreenTwo> {
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(5),
                 border: Border.all(color: SKColors.border_gray),
-                color: isValid ? SKColors.skoller_blue : SKColors.inactive_gray,
+                color:
+                    isValid ? SKColors.skoller_blue1 : SKColors.inactive_gray,
                 boxShadow: UIAssets.boxShadow,
               ),
               alignment: Alignment.center,
@@ -798,7 +799,7 @@ class _CreateClassScreenTwoState extends State<_CreateClassScreenTwo> {
             color: parent.selectedDays[day]!
                 ? (parent.isOnline
                     ? SKColors.light_gray
-                    : SKColors.skoller_blue)
+                    : SKColors.skoller_blue1)
                 : null,
             border: day == 'Sat'
                 ? null

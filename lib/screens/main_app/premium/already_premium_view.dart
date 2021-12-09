@@ -217,12 +217,15 @@ class _AlreadyPremiumViewState extends State<AlreadyPremiumView>
                                     ),
                                     GestureDetector(
                                       behavior: HitTestBehavior.opaque,
-                                      onTapUp: (details) => Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                            builder: (context) =>
-                                                PremiumPackagesView(),
-                                          )),
+                                      onTapUp: (details) {
+                                        Navigator.pop(context);
+                                        Navigator.pop(context);
+                                        showDialog(
+                                            context: context,
+                                            builder: (_) {
+                                              return PremiumPackagesView(true);
+                                            });
+                                      },
                                       child: Padding(
                                         padding: EdgeInsets.only(top: 12),
                                         child: Container(
@@ -279,12 +282,15 @@ class _AlreadyPremiumViewState extends State<AlreadyPremiumView>
                                         ),
                                         GestureDetector(
                                           behavior: HitTestBehavior.opaque,
-                                          onTapUp: (details) => Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                builder: (context) =>
-                                                    PremiumPackagesView(),
-                                              )),
+                                          onTapUp: (details) {
+                                            Navigator.pop(context);
+                                            showDialog(
+                                                context: context,
+                                                builder: (_) {
+                                                  return PremiumPackagesView(
+                                                      true);
+                                                });
+                                          },
                                           child: Padding(
                                             padding: EdgeInsets.only(top: 12),
                                             child: Container(

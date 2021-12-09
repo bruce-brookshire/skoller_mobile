@@ -9,6 +9,7 @@ import 'package:skoller/constants/constants.dart';
 import 'package:skoller/screens/main_app/classes/class_menu_modal.dart';
 import 'package:skoller/screens/main_app/menu/add_classes_view.dart';
 import 'package:skoller/screens/main_app/menu/major_search_modal.dart';
+import 'package:skoller/screens/main_app/premium/premium_packages_view.dart';
 import 'package:skoller/screens/main_app/tutorial/tutorial.dart';
 import 'package:skoller/tools.dart';
 
@@ -301,8 +302,8 @@ class _MainState extends State<MainView> {
   }
 
   getSubs() async {
-    bool isSubscriptionAvailable = await stripeBloc.mySubscriptionsList();
-    if (isSubscriptionAvailable) {
+    isSubscriptionAvailable = await stripeBloc.mySubscriptionsList();
+    if (isSubscriptionAvailable ?? false) {
       if (!(Subscriptions.mySubscriptions?.user?.trial ?? true) &&
               !(Subscriptions.mySubscriptions?.user?.lifetimeSubscription ??
                   true) ||
@@ -311,16 +312,27 @@ class _MainState extends State<MainView> {
           createAPremiumFreeUserDialog();
         }
       }
-    } else {
-      createAPremiumFreeUserDialog();
     }
-    /*Future.delayed(Duration(seconds: 2), () {
-      print('token-login' +
-          tokenLoginMap['user']['lifetime_subscription'].toString());
-      if ((tokenLoginMap['user']['lifetime_subscription'] ?? false) == true) {
-        createAPremiumFreeUserDialog();
+    /*else {
+      createAPremiumFreeUserDialog();
+    }*/
+
+    if (isSubscriptionAvailable ?? false) {
+      if (Subscriptions.mySubscriptions?.user?.trialDaysLeft == 0) {
+        if ((Subscriptions.mySubscriptions?.user?.lifetimeSubscription ??
+                false) ==
+            false) {
+          if ((Subscriptions.mySubscriptions?.user?.lifetimeTrial ?? false) ==
+              false) {
+            showDialog(
+                context: context,
+                builder: (_) {
+                  return PremiumPackagesView(false);
+                });
+          }
+        }
       }
-    });*/
+    }
   }
 
   Future<dynamic> createAPremiumFreeUserDialog() async {

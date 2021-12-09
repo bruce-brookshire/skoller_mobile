@@ -160,6 +160,158 @@ class MenuView extends StatelessWidget {
           ))
       .toList();
 
+  // final List<Widget> menuOptions = [
+  //   [
+  //     {
+  //       'name': Text(
+  //         'Profile',
+  //         style: TextStyle(fontWeight: FontWeight.normal, fontSize: 16),
+  //       ),
+  //       'builder': () => ProfileView(),
+  //       'image': Image.asset(ImageNames.peopleImages.person_blue)
+  //     },
+  //     {
+  //       'name': Text(
+  //         'Account Settings',
+  //         style: TextStyle(fontWeight: FontWeight.normal, fontSize: 16),
+  //       ),
+  //       'builder': (context) => showDialog(
+  //           context: context,
+  //           builder: (_) {
+  //             return AlreadyPremiumView();
+  //           }),
+  //       'image': Image.asset(ImageNames.peopleImages.person_blue)
+  //     }
+  //   ],
+  //   [
+  //     {
+  //       'name': Text(
+  //         'Share Skoller',
+  //         style: TextStyle(fontWeight: FontWeight.normal, fontSize: 16),
+  //       ),
+  //       'builder': () => ProfileLinkSharingView(),
+  //       'image': Image.asset(ImageNames.peopleImages.people_blue)
+  //     },
+  //     {
+  //       'name': Text(
+  //         'My rewards',
+  //         style: TextStyle(fontWeight: FontWeight.normal, fontSize: 16),
+  //       ),
+  //       'builder': () => RewardsView(),
+  //       'image': Image.asset(ImageNames.menuImages.points)
+  //     },
+  //   ],
+  //   [
+  //     {
+  //       'name': Text(
+  //         'Reminders',
+  //         style: TextStyle(fontWeight: FontWeight.normal, fontSize: 16),
+  //       ),
+  //       // 'builder': () => AlreadyPremiumView(),
+  //       'image': Image.asset(ImageNames.menuImages.reminders)
+  //     },
+  //     {
+  //       'name': Text(
+  //         'Manage classes',
+  //         style: TextStyle(fontWeight: FontWeight.normal, fontSize: 16),
+  //       ),
+  //       'builder': () => ManageClassesView(),
+  //       'image': Image.asset('image_assets/tab_bar_assets/classes_blue.png')
+  //     },
+  //   ],
+  //   [
+  //     {
+  //       'name': Text(
+  //         'Send us feedback',
+  //         style: TextStyle(fontWeight: FontWeight.normal, fontSize: 16),
+  //       ),
+  //       'action': () async {
+  //         final url = 'mailto:support@skoller.co?subject=Feedback';
+  //
+  //         if (await canLaunch(url)) launch(url);
+  //       },
+  //     },
+  //     {
+  //       'name': Text(
+  //         'Tutorial',
+  //         style: TextStyle(fontWeight: FontWeight.normal, fontSize: 16),
+  //       ),
+  //       'builder': () => TutorialTab(
+  //             (newContext) => Navigator.of(newContext).pop(),
+  //             'Dismiss',
+  //           ),
+  //     },
+  //     // {
+  //     //   'name': Text(
+  //     //     'Payment',
+  //     //     style: TextStyle(fontWeight: FontWeight.normal, fontSize: 16),
+  //     //   ),
+  //     //   'builder': () => PremiumPackagesView()
+  //     // },
+  //   ]
+  // ]
+  //     .map((group) => Container(
+  //           decoration: BoxDecoration(
+  //             color: Colors.white,
+  //             border: Border(bottom: BorderSide(color: SKColors.border_gray)),
+  //           ),
+  //           margin: EdgeInsets.symmetric(vertical: 8),
+  //           child: Column(
+  //             crossAxisAlignment: CrossAxisAlignment.stretch,
+  //             children: group
+  //                 .map(
+  //                   (row) => Container(
+  //                     height: 44,
+  //                     decoration: BoxDecoration(
+  //                         border: Border(
+  //                             top: BorderSide(color: SKColors.border_gray))),
+  //                     padding: EdgeInsets.symmetric(horizontal: 12),
+  //                     child: GestureDetector(
+  //                       behavior: HitTestBehavior.opaque,
+  //                       onTapUp: (details) {
+  //                         if (row.containsKey('builder')) {
+  //                           String channel;
+  //                           Widget view = (row['builder'] as Function)();
+  //
+  //                           if (view is ProfileLinkSharingView)
+  //                             channel = NotificationChannels
+  //                                 .presentModalViewOverTabBar;
+  //                           else
+  //                             channel =
+  //                                 NotificationChannels.presentViewOverTabBar;
+  //
+  //                           DartNotificationCenter.post(
+  //                             channel: channel,
+  //                             options: view,
+  //                           );
+  //                         } else if (row.containsKey('action'))
+  //                           (row['action'] as VoidCallback)();
+  //                       },
+  //                       child: Row(
+  //                         children: [
+  //                           ...row.containsKey('image')
+  //                               ? [
+  //                                   Padding(
+  //                                     padding:
+  //                                         EdgeInsets.only(right: 8, bottom: 1),
+  //                                     child: SizedBox(
+  //                                         width: 20,
+  //                                         height: 20,
+  //                                         child: row['image'] as Widget),
+  //                                   ),
+  //                                 ]
+  //                               : [],
+  //                           Expanded(child: row['name'] as Widget),
+  //                         ],
+  //                       ),
+  //                     ),
+  //                   ),
+  //                 )
+  //                 .toList(),
+  //           ),
+  //         ))
+  //     .toList();
+
   @override
   Widget build(BuildContext context) {
     return Material(

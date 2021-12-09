@@ -45,8 +45,10 @@ dependencies:
   flutter_multi_formatter: ^2.3.5
   fluttertoast: ^7.1.1
   rxdart: ^0.27.2
-  stripe_payment: 1.0.11
+  stripe_payment: ^1.0.11
   screen_loader: ^2.0.1
+  pay: ^1.0.6
+
 
   flutter:
     sdk: flutter
@@ -91,5 +93,6 @@ flutter:
     - image_assets/tutorial_assets/
     - image_assets/share_assets/
     - image_assets/todolist_gif_assets/
+    - assets/
     - packages/time_machine/data/cultures/cultures.bin
     - packages/time_machine/data/tzdb/tzdb.bin
