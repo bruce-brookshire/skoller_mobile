@@ -203,7 +203,7 @@ class _PremiumPackages extends State<PremiumPackagesView>
                   BlacklistingTextInputFormatter.singleLineFormatter,
                 ],
                 keyboardType: TextInputType.phone,
-                autofocus: true,
+                autofocus: false,
               ),
               Divider(
                 height: 0,
@@ -225,7 +225,7 @@ class _PremiumPackages extends State<PremiumPackagesView>
                         BlacklistingTextInputFormatter.singleLineFormatter,
                       ],
                       keyboardType: TextInputType.phone,
-                      autofocus: true,
+                      autofocus: false,
                     ),
                   ),
                   Flexible(
@@ -250,7 +250,7 @@ class _PremiumPackages extends State<PremiumPackagesView>
                         BlacklistingTextInputFormatter.singleLineFormatter,
                       ],
                       keyboardType: TextInputType.phone,
-                      autofocus: true,
+                      autofocus: false,
                     ),
                   ),
                   Flexible(
@@ -268,7 +268,7 @@ class _PremiumPackages extends State<PremiumPackagesView>
                         BlacklistingTextInputFormatter.singleLineFormatter,
                       ],
                       keyboardType: TextInputType.phone,
-                      autofocus: true,
+                      autofocus: false,
                     ),
                   ),
                 ],
@@ -285,7 +285,7 @@ class _PremiumPackages extends State<PremiumPackagesView>
                     TextStyle(fontSize: 14, color: SKColors.text_light_gray),
                 inputFormatters: [CreditCardNumberInputFormatter()],
                 keyboardType: TextInputType.phone,
-                autofocus: true,
+                autofocus: false,
               ),
             ],
           ),
@@ -709,7 +709,6 @@ class _PremiumPackages extends State<PremiumPackagesView>
                                       if (snapshot.data == true) {
                                         return RawApplePayButton(
                                           style: ApplePayButtonStyle.automatic,
-                                          type: ApplePayButtonType.contribute,
                                           onPressed: () {
                                             onGooglePayPressed();
                                           },

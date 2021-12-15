@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:intl/intl.dart';
 import 'package:skoller/constants/constants.dart';
+import 'package:skoller/screens/main_app/premium/premium_packages_view.dart';
 import 'package:skoller/screens/main_app/tasks/dateless_assignments_modal.dart';
 import 'package:skoller/screens/main_app/tasks/todo_preferences_modal.dart';
 import 'package:skoller/tools.dart';
@@ -312,29 +313,44 @@ class _TodoState extends State<TodoView> {
         (isSubscriptionAvailable ?? false)
             ? !(Subscriptions.mySubscriptions?.user?.trial ?? false)
                 ? Container()
-                : Container(
-                    height: 30,
-                    width: MediaQuery.of(context).size.width,
-                    decoration: BoxDecoration(
-                      color: SKColors.skoller_blue1,
-                      boxShadow: [
-                        BoxShadow(
-                            color: Colors.grey,
-                            spreadRadius: 1.5,
-                            offset: Offset(1, 1),
-                            blurRadius: 10),
-                      ],
-                    ),
-                    child: Center(
-                      child: Text(
-                        'Upgrade to Premium!',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          color: Colors.white,
-                        ),
-                      ),
-                    ),
-                  )
+                : (Subscriptions.mySubscriptions?.user?.lifetimeSubscription ??
+                        false)
+                    ? Container()
+                    : (Subscriptions.mySubscriptions?.user?.lifetimeTrial ??
+                            false)
+                        ? Container()
+                        : GestureDetector(
+                            onTap: () {
+                              showDialog(
+                                  context: context,
+                                  builder: (_) {
+                                    return PremiumPackagesView(true);
+                                  });
+                            },
+                            child: Container(
+                              height: 30,
+                              width: MediaQuery.of(context).size.width,
+                              decoration: BoxDecoration(
+                                color: SKColors.skoller_blue1,
+                                boxShadow: [
+                                  BoxShadow(
+                                      color: Colors.grey,
+                                      spreadRadius: 1.5,
+                                      offset: Offset(1, 1),
+                                      blurRadius: 10),
+                                ],
+                              ),
+                              child: Center(
+                                child: Text(
+                                  'Upgrade to Premium!',
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          )
             : Container(
                 height: 30,
                 width: MediaQuery.of(context).size.width,

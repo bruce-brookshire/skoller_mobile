@@ -1,6 +1,7 @@
+import 'package:collection/collection.dart';
 import 'package:dart_notification_center/dart_notification_center.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:skoller/screens/main_app/classes/assignment_weight_view.dart';
 import 'package:skoller/screens/main_app/classes/weight_extraction_view.dart';
@@ -8,9 +9,9 @@ import 'package:skoller/screens/main_app/menu/add_classes_view.dart';
 import 'package:skoller/screens/main_app/menu/class_search_settings_modal.dart';
 import 'package:skoller/tools.dart';
 import 'package:url_launcher/url_launcher.dart';
+
 import './modals/syllabus_instructions_modal.dart';
 import 'class_detail_view.dart';
-import 'package:collection/collection.dart';
 
 enum _CardType {
   sammiSyllabusInstruction,
@@ -143,16 +144,18 @@ class _ClassesState extends State<ClassesView> {
           ..removeWhere((p) => !p.isMainPeriod)
           ..sort((p1, p2) => p1.startDate!.compareTo(p2.startDate!)))
         .firstWhereOrNull(
-            (p) =>
-                p.startDate!.millisecondsSinceEpoch >
-                DateTime.now().millisecondsSinceEpoch,);
+      (p) =>
+          p.startDate!.millisecondsSinceEpoch >
+          DateTime.now().millisecondsSinceEpoch,
+    );
 
     final now = DateTime.now();
     final today = DateTime(now.year, now.month, now.day);
     final nowInMS = today.millisecondsSinceEpoch;
 
-    final daysTillPeriodEnds =
-        SKUser.current?.student.primaryPeriod?.endDate!.difference(today).inDays;
+    final daysTillPeriodEnds = SKUser.current?.student.primaryPeriod?.endDate!
+        .difference(today)
+        .inDays;
 
     final shouldPromptPeriod = promptPeriod != null &&
         !periodClasses.containsKey(promptPeriod) &&
@@ -358,7 +361,7 @@ class _ClassesState extends State<ClassesView> {
                       style: TextStyle(fontWeight: FontWeight.normal)),
                   TextSpan(
                       text: 'Join your 2nd class ',
-                      style: TextStyle(color: SKColors.skoller_blue)),
+                      style: TextStyle(color: SKColors.skoller_blue1)),
                 ]),
             style: TextStyle(fontSize: 15),
           ),
@@ -398,10 +401,11 @@ class _ClassesState extends State<ClassesView> {
     Map<int, int> weightDensity = {};
 
     studentClass.weights?.map((w) => weightDensity[w.id] = 0);
-    studentClass.assignments!.map((a) => weightDensity[a.weight_id] =weightDensity[a.weight_id]!+1);
+    studentClass.assignments!.map(
+        (a) => weightDensity[a.weight_id] = weightDensity[a.weight_id]! + 1);
 
-    final weightsWithoutAssignments = weightDensity.values
-        .fold(0, (acc, elem) => elem == 0 ? (int.parse(acc.toString()) + 1) : acc);
+    final weightsWithoutAssignments = weightDensity.values.fold(
+        0, (acc, elem) => elem == 0 ? (int.parse(acc.toString()) + 1) : acc);
 
     return GestureDetector(
       onTapDown: (_) {
@@ -479,7 +483,7 @@ class _ClassesState extends State<ClassesView> {
                         child: Material(
                           type: MaterialType.transparency,
                           child: Text(
-                            studentClass.name??'',
+                            studentClass.name ?? '',
                             textScaleFactor: 1,
                             style: TextStyle(
                                 fontSize: 17,
@@ -599,7 +603,7 @@ class _ClassesState extends State<ClassesView> {
                     Container(
                       padding: EdgeInsets.only(bottom: 1),
                       child: Text(
-                        studentClass.name??'',
+                        studentClass.name ?? '',
                         style: TextStyle(
                             fontSize: 17,
                             color: needsAssignments
@@ -684,7 +688,7 @@ class _ClassesState extends State<ClassesView> {
                     Container(
                       padding: EdgeInsets.only(bottom: 1),
                       child: Text(
-                        studentClass.name??'',
+                        studentClass.name ?? '',
                         textScaleFactor: 1,
                         style: TextStyle(
                             fontSize: 17,
@@ -770,7 +774,7 @@ class _ClassesState extends State<ClassesView> {
                     Container(
                       padding: EdgeInsets.only(bottom: 1),
                       child: Text(
-                        studentClass.name??'',
+                        studentClass.name ?? '',
                         textScaleFactor: 1,
                         style: TextStyle(
                             fontSize: 17,
