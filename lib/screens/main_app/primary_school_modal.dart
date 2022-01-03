@@ -344,7 +344,7 @@ class _PrimarySchoolState extends State<PrimarySchoolModal> {
                             EdgeInsets.symmetric(horizontal: 24, vertical: 8),
                         decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(5),
-                            color: SKColors.skoller_blue,
+                            color: SKColors.skoller_blue1,
                             boxShadow: UIAssets.boxShadow),
                         child: Text(
                           'Get started',

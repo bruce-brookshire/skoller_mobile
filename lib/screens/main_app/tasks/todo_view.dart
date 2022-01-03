@@ -7,6 +7,7 @@ import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:intl/intl.dart';
 import 'package:skoller/constants/constants.dart';
 import 'package:skoller/screens/main_app/premium/premium_packages_view.dart';
+import 'package:skoller/screens/main_app/premium/stripe_bloc.dart';
 import 'package:skoller/screens/main_app/tasks/dateless_assignments_modal.dart';
 import 'package:skoller/screens/main_app/tasks/todo_preferences_modal.dart';
 import 'package:skoller/tools.dart';
@@ -36,6 +37,7 @@ class _TodoState extends State<TodoView> {
 
   @override
   void initState() {
+    getSubs();
     super.initState();
 
     loadTasks();
@@ -259,6 +261,106 @@ class _TodoState extends State<TodoView> {
     if (result is bool && result) loadTasks();
   }
 
+  getSubs() async {
+    isSubscriptionAvailable = await stripeBloc.mySubscriptionsList();
+    if (isSubscriptionAvailable ?? false) {
+      if (!(Subscriptions.mySubscriptions?.user?.trial ?? true) &&
+              !(Subscriptions.mySubscriptions?.user?.lifetimeSubscription ??
+                  true) ||
+          !(Subscriptions.mySubscriptions?.user?.lifetimeTrial ?? true)) {
+        if (!(Subscriptions.mySubscriptions?.user?.isActive ?? true)) {
+          createAPremiumFreeUserDialog();
+        }
+      }
+    }
+    setState(() {});
+    /*else {
+      createAPremiumFreeUserDialog();
+    }*/
+
+    if (isSubscriptionAvailable ?? false) {
+      if (Subscriptions.mySubscriptions?.user?.trialDaysLeft == 0) {
+        if ((Subscriptions.mySubscriptions?.user?.lifetimeSubscription ??
+                false) ==
+            false) {
+          if ((Subscriptions.mySubscriptions?.user?.lifetimeTrial ?? false) ==
+              false) {
+            showDialog(
+                context: context,
+                builder: (_) {
+                  return PremiumPackagesView(false);
+                });
+          }
+        }
+      }
+    }
+  }
+
+  Future<dynamic> createAPremiumFreeUserDialog() async {
+    return showDialog(
+      context: context,
+      builder: (context) => Dialog(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10),
+          side: BorderSide(color: SKColors.border_gray),
+        ),
+        child: Padding(
+          padding: EdgeInsets.all(12),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: <Widget>[
+              Row(
+                children: [
+                  Image.asset(ImageNames.sammiImages.big_smile),
+                  Flexible(
+                    child: Column(
+                      children: [
+                        Text(
+                          'Your trial is expired!',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w800,
+                          ),
+                        ),
+                        Text(
+                          'Login on desktop at Skoller.com to manage your account settings.',
+                          style: TextStyle(
+                              fontSize: 15, fontWeight: FontWeight.normal),
+                          textAlign: TextAlign.center,
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+              GestureDetector(
+                behavior: HitTestBehavior.opaque,
+                onTapUp: (details) => Navigator.pop(context, true),
+                child: Padding(
+                  padding: EdgeInsets.only(top: 12),
+                  child: Container(
+                    alignment: Alignment.center,
+                    padding: EdgeInsets.symmetric(vertical: 8),
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(5),
+                        color: SKColors.skoller_blue,
+                        boxShadow: UIAssets.boxShadow),
+                    child: Text(
+                      'Close',
+                      style: TextStyle(color: Colors.white),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     //If we do not have a setup class
@@ -301,7 +403,7 @@ class _TodoState extends State<TodoView> {
     final todoDaysFuture = SKUser.current?.student.todoDaysFuture;
 
     return SKNavView(
-      title: 'To-Do\'s',
+      title: 'Assignments',
       leftBtn: SKHeaderProfilePhoto(),
       callbackLeft: () {
         DartNotificationCenter.post(channel: NotificationChannels.toggleMenu);
@@ -311,69 +413,45 @@ class _TodoState extends State<TodoView> {
       titleOption: titleOption,
       children: <Widget>[
         (isSubscriptionAvailable ?? false)
-            ? !(Subscriptions.mySubscriptions?.user?.trial ?? false)
+            ? ((Subscriptions.mySubscriptions?.user?.lifetimeSubscription ??
+                        false) ||
+                    (Subscriptions.mySubscriptions?.user?.lifetimeTrial ??
+                        false) ||
+                    (Subscriptions.mySubscriptions?.user?.isActive ?? false))
                 ? Container()
-                : (Subscriptions.mySubscriptions?.user?.lifetimeSubscription ??
-                        false)
-                    ? Container()
-                    : (Subscriptions.mySubscriptions?.user?.lifetimeTrial ??
-                            false)
-                        ? Container()
-                        : GestureDetector(
-                            onTap: () {
-                              showDialog(
-                                  context: context,
-                                  builder: (_) {
-                                    return PremiumPackagesView(true);
-                                  });
-                            },
-                            child: Container(
-                              height: 30,
-                              width: MediaQuery.of(context).size.width,
-                              decoration: BoxDecoration(
-                                color: SKColors.skoller_blue1,
-                                boxShadow: [
-                                  BoxShadow(
-                                      color: Colors.grey,
-                                      spreadRadius: 1.5,
-                                      offset: Offset(1, 1),
-                                      blurRadius: 10),
-                                ],
-                              ),
-                              child: Center(
-                                child: Text(
-                                  'Upgrade to Premium!',
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          )
-            : Container(
-                height: 30,
-                width: MediaQuery.of(context).size.width,
-                decoration: BoxDecoration(
-                  color: SKColors.skoller_blue1,
-                  boxShadow: [
-                    BoxShadow(
-                        color: Colors.grey,
-                        spreadRadius: 1.5,
-                        offset: Offset(1, 1),
-                        blurRadius: 10),
-                  ],
-                ),
-                child: Center(
-                  child: Text(
-                    'Upgrade to Premium!',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      color: Colors.white,
+                : GestureDetector(
+                    onTap: () {
+                      showDialog(
+                          context: context,
+                          builder: (_) {
+                            return PremiumPackagesView(true);
+                          });
+                    },
+                    child: Container(
+                      height: 30,
+                      width: MediaQuery.of(context).size.width,
+                      decoration: BoxDecoration(
+                        color: SKColors.skoller_blue1,
+                        boxShadow: [
+                          BoxShadow(
+                              color: Colors.grey,
+                              spreadRadius: 1.5,
+                              offset: Offset(1, 1),
+                              blurRadius: 10),
+                        ],
+                      ),
+                      child: Center(
+                        child: Text(
+                          'Upgrade to Premium!',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
                     ),
-                  ),
-                ),
-              ),
+                  )
+            : Container(),
         Expanded(
           child: RefreshIndicator(
             key: _refreshIndicatorKey,
@@ -419,7 +497,7 @@ class _TodoState extends State<TodoView> {
                                       ? 'Hide completed tasks'
                                       : 'Show completed (${numberCompleted})',
                                   style: TextStyle(
-                                      color: SKColors.skoller_blue,
+                                      color: SKColors.skoller_blue1,
                                       fontWeight: FontWeight.normal,
                                       fontSize: 14),
                                 ),
@@ -443,11 +521,11 @@ class _TodoState extends State<TodoView> {
                               border: Border.all(
                                   color: StudentClass.currentClasses.length == 1
                                       ? Colors.white
-                                      : SKColors.skoller_blue),
+                                      : SKColors.skoller_blue1),
                               borderRadius: BorderRadius.circular(5),
                               boxShadow: UIAssets.boxShadow,
                               color: StudentClass.currentClasses.length == 1
-                                  ? SKColors.skoller_blue
+                                  ? SKColors.skoller_blue1
                                   : Colors.white),
                           child: StudentClass.currentClasses.length == 1
                               ? Text(

@@ -9,12 +9,10 @@ import 'package:skoller/constants/constants.dart';
 import 'package:skoller/screens/main_app/classes/class_menu_modal.dart';
 import 'package:skoller/screens/main_app/menu/add_classes_view.dart';
 import 'package:skoller/screens/main_app/menu/major_search_modal.dart';
-import 'package:skoller/screens/main_app/premium/premium_packages_view.dart';
 import 'package:skoller/screens/main_app/tutorial/tutorial.dart';
 import 'package:skoller/tools.dart';
 
 import 'menu_view.dart';
-import 'premium/stripe_bloc.dart';
 import 'primary_school_modal.dart';
 import 'tab_bar.dart';
 
@@ -79,7 +77,7 @@ class _MainState extends State<MainView> {
     Mod.fetchMods();
 
     WidgetsBinding.instance!.addPostFrameCallback((_) => setScreenSize());
-    getSubs();
+
     super.initState();
   }
 
@@ -294,105 +292,6 @@ class _MainState extends State<MainView> {
                     ),
                   ),
                 ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  getSubs() async {
-    isSubscriptionAvailable = await stripeBloc.mySubscriptionsList();
-    if (isSubscriptionAvailable ?? false) {
-      if (!(Subscriptions.mySubscriptions?.user?.trial ?? true) &&
-              !(Subscriptions.mySubscriptions?.user?.lifetimeSubscription ??
-                  true) ||
-          !(Subscriptions.mySubscriptions?.user?.lifetimeTrial ?? true)) {
-        if (!(Subscriptions.mySubscriptions?.user?.isActive ?? true)) {
-          createAPremiumFreeUserDialog();
-        }
-      }
-    }
-    /*else {
-      createAPremiumFreeUserDialog();
-    }*/
-
-    if (isSubscriptionAvailable ?? false) {
-      if (Subscriptions.mySubscriptions?.user?.trialDaysLeft == 0) {
-        if ((Subscriptions.mySubscriptions?.user?.lifetimeSubscription ??
-                false) ==
-            false) {
-          if ((Subscriptions.mySubscriptions?.user?.lifetimeTrial ?? false) ==
-              false) {
-            showDialog(
-                context: context,
-                builder: (_) {
-                  return PremiumPackagesView(false);
-                });
-          }
-        }
-      }
-    }
-  }
-
-  Future<dynamic> createAPremiumFreeUserDialog() async {
-    return showDialog(
-      context: context,
-      builder: (context) => Dialog(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(10),
-          side: BorderSide(color: SKColors.border_gray),
-        ),
-        child: Padding(
-          padding: EdgeInsets.all(12),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: <Widget>[
-              Row(
-                children: [
-                  Image.asset(ImageNames.sammiImages.big_smile),
-                  Flexible(
-                    child: Column(
-                      children: [
-                        Text(
-                          'Your trial is expired!',
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w800,
-                          ),
-                        ),
-                        Text(
-                          'Login on desktop at Skoller.com to manage your account settings.',
-                          style: TextStyle(
-                              fontSize: 15, fontWeight: FontWeight.normal),
-                          textAlign: TextAlign.center,
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-              GestureDetector(
-                behavior: HitTestBehavior.opaque,
-                onTapUp: (details) => Navigator.pop(context, true),
-                child: Padding(
-                  padding: EdgeInsets.only(top: 12),
-                  child: Container(
-                    alignment: Alignment.center,
-                    padding: EdgeInsets.symmetric(vertical: 8),
-                    decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(5),
-                        color: SKColors.skoller_blue,
-                        boxShadow: UIAssets.boxShadow),
-                    child: Text(
-                      'Close',
-                      style: TextStyle(color: Colors.white),
-                    ),
-                  ),
-                ),
-              ),
             ],
           ),
         ),

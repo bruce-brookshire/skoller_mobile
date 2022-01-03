@@ -306,7 +306,7 @@ class _ClassesState extends State<ClassesView> {
                 margin: EdgeInsets.only(left: 12),
                 alignment: Alignment.center,
                 decoration: BoxDecoration(
-                    color: SKColors.skoller_blue,
+                    color: SKColors.skoller_blue1,
                     borderRadius: BorderRadius.circular(5),
                     boxShadow: UIAssets.boxShadow),
                 child: Text(

@@ -119,6 +119,8 @@ class _PremiumPackages extends State<PremiumPackagesView>
   }
 
   Widget getPlans(AsyncSnapshot<PlansModel> snapshot) {
+    stripeBloc.planIdCont.sink.add(snapshot.data!.data[selectedIndex].id);
+
     return Container(
         decoration: BoxDecoration(
           color: Colors.white,
@@ -155,7 +157,11 @@ class _PremiumPackages extends State<PremiumPackagesView>
                                 fontSize: 14, color: SKColors.light_gray),
                           ),
                           Text(
-                            'Save 20%',
+                            index == 0
+                                ? ''
+                                : index == 1
+                                    ? 'Save 20%'
+                                    : 'Save 50%',
                             style: TextStyle(
                                 fontSize: 13,
                                 fontWeight: FontWeight.w400,
@@ -543,269 +549,271 @@ class _PremiumPackages extends State<PremiumPackagesView>
           child: Padding(
             padding: EdgeInsets.all(16),
             child: Material(
-              color: Colors.white,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10),
-                side: BorderSide(color: SKColors.border_gray),
-              ),
-              child: StreamBuilder<PlansModel>(
-                  stream: stripeBloc.allPlans,
-                  builder: (context, AsyncSnapshot<PlansModel> snapshot) {
-                    if (!snapshot.hasData) {
-                      return Center(child: CircularProgressIndicator());
-                    } else
-                      return Padding(
-                        padding:
-                            EdgeInsets.symmetric(horizontal: 24, vertical: 24),
-                        child: SingleChildScrollView(
-                          child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              GestureDetector(
-                                behavior: HitTestBehavior.opaque,
-                                onTapUp: (_) {
-                                  if (widget.canpop ?? false)
-                                    Navigator.pop(context);
-                                },
-                                child: SizedBox(
-                                  width: 32,
-                                  height: 24,
-                                  child: Image.asset(
-                                      ImageNames.navArrowImages.down),
+              child: Container(
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  border: Border.all(color: SKColors.border_gray),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: StreamBuilder<PlansModel>(
+                    stream: stripeBloc.allPlans,
+                    builder: (context, AsyncSnapshot<PlansModel> snapshot) {
+                      if (!snapshot.hasData) {
+                        return Center(child: CircularProgressIndicator());
+                      } else
+                        return Padding(
+                          padding: EdgeInsets.symmetric(
+                              horizontal: 24, vertical: 24),
+                          child: SingleChildScrollView(
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                GestureDetector(
+                                  behavior: HitTestBehavior.opaque,
+                                  onTapUp: (_) {
+                                    if (widget.canpop ?? false)
+                                      Navigator.pop(context);
+                                  },
+                                  child: SizedBox(
+                                    width: 32,
+                                    height: 24,
+                                    child: Image.asset(
+                                        ImageNames.navArrowImages.down),
+                                  ),
                                 ),
-                              ),
-                              Row(
-                                children: [
-                                  Image.asset(
-                                    ImageNames.sammiImages.big_smile,
-                                  ),
-                                  SizedBox(
-                                    width: 8,
-                                  ),
-                                  Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      !(Subscriptions.mySubscriptions?.user
-                                                  ?.trial ??
-                                              false)
-                                          ? Padding(
-                                              padding: EdgeInsets.all(12),
-                                              child: Flexible(
+                                Row(
+                                  children: [
+                                    Image.asset(
+                                      ImageNames.sammiImages.big_smile,
+                                    ),
+                                    SizedBox(
+                                      width: 8,
+                                    ),
+                                    Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        !(Subscriptions.mySubscriptions?.user
+                                                    ?.trial ??
+                                                false)
+                                            ? Padding(
+                                                padding: EdgeInsets.all(12),
                                                 child: Text(
                                                   'Your free trial has expired!',
-                                                  textAlign: TextAlign.center,
+                                                  textAlign: TextAlign.start,
                                                   style: TextStyle(
                                                     fontSize: 14,
                                                     fontWeight: FontWeight.w800,
                                                   ),
                                                 ),
-                                              ),
-                                            )
-                                          : ((Subscriptions
-                                                          .mySubscriptions
-                                                          ?.user
-                                                          ?.lifetimeSubscription ??
-                                                      false) ==
-                                                  false)
-                                              ? Text(
-                                                  'Your free trial expires in ${(Subscriptions.mySubscriptions?.user?.trial ?? false) == false ? '' : Subscriptions.mySubscriptions?.user?.trialDaysLeft!.toStringAsFixed(0)} days',
-                                                  textAlign: TextAlign.center,
-                                                  style: TextStyle(
-                                                    fontSize: 14,
-                                                    fontWeight: FontWeight.w800,
-                                                  ),
-                                                )
-                                              : ((Subscriptions
-                                                              .mySubscriptions
-                                                              ?.user
-                                                              ?.lifetimeTrial ??
-                                                          false) ==
-                                                      true)
-                                                  ? Text(
-                                                      'You have a lifetime trial',
-                                                      textAlign:
-                                                          TextAlign.center,
-                                                      style: TextStyle(
-                                                        fontSize: 14,
-                                                        fontWeight:
-                                                            FontWeight.w800,
-                                                      ),
-                                                    )
-                                                  : Text(
-                                                      'Your free trial expires in ${(Subscriptions.mySubscriptions?.user?.trial ?? false) == false ? '' : Subscriptions.mySubscriptions?.user?.trialDaysLeft.toString()} days',
-                                                      textAlign:
-                                                          TextAlign.center,
-                                                      style: TextStyle(
-                                                        fontSize: 14,
-                                                        fontWeight:
-                                                            FontWeight.w800,
-                                                      ),
+                                              )
+                                            : ((Subscriptions
+                                                            .mySubscriptions
+                                                            ?.user
+                                                            ?.lifetimeSubscription ??
+                                                        false) ==
+                                                    false)
+                                                ? Text(
+                                                    'Your free trial expires in ${(Subscriptions.mySubscriptions?.user?.trial ?? false) == false ? '' : Subscriptions.mySubscriptions?.user?.trialDaysLeft!.toStringAsFixed(0)} days',
+                                                    textAlign: TextAlign.center,
+                                                    style: TextStyle(
+                                                      fontSize: 14,
+                                                      fontWeight:
+                                                          FontWeight.w800,
                                                     ),
-                                      Text(
-                                        'Upgrade to premium.',
-                                        textAlign: TextAlign.center,
-                                        style: TextStyle(
-                                          fontSize: 12,
-                                          fontWeight: FontWeight.w400,
+                                                  )
+                                                : ((Subscriptions
+                                                                .mySubscriptions
+                                                                ?.user
+                                                                ?.lifetimeTrial ??
+                                                            false) ==
+                                                        true)
+                                                    ? Text(
+                                                        'You have a lifetime trial',
+                                                        textAlign:
+                                                            TextAlign.center,
+                                                        style: TextStyle(
+                                                          fontSize: 14,
+                                                          fontWeight:
+                                                              FontWeight.w800,
+                                                        ),
+                                                      )
+                                                    : Text(
+                                                        'Your free trial expires in ${(Subscriptions.mySubscriptions?.user?.trial ?? false) == false ? '' : Subscriptions.mySubscriptions?.user?.trialDaysLeft.toString()} days',
+                                                        textAlign:
+                                                            TextAlign.center,
+                                                        style: TextStyle(
+                                                          fontSize: 14,
+                                                          fontWeight:
+                                                              FontWeight.w800,
+                                                        ),
+                                                      ),
+                                        Text(
+                                          'Upgrade to premium.',
+                                          textAlign: TextAlign.center,
+                                          style: TextStyle(
+                                            fontSize: 12,
+                                            fontWeight: FontWeight.w400,
+                                          ),
                                         ),
-                                      ),
-                                    ],
-                                  ),
-                                ],
-                              ),
-                              SizedBox(
-                                height: 12,
-                              ),
-                              Row(
-                                children: [
-                                  Expanded(
-                                    child: Divider(
-                                      height: 0,
-                                      thickness: 1,
-                                      color: Colors.black,
+                                      ],
                                     ),
-                                  ),
-                                  SizedBox(
-                                    width: 8,
-                                  ),
-                                  Text(
-                                    'Select a Plan',
-                                    textAlign: TextAlign.center,
-                                    style: TextStyle(
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w800,
-                                    ),
-                                  ),
-                                  SizedBox(
-                                    width: 8,
-                                  ),
-                                  Expanded(
-                                    child: Divider(
-                                      height: 0,
-                                      thickness: 1,
-                                      color: Colors.black,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              SizedBox(
-                                height: 16,
-                              ),
-                              getPlans(snapshot),
-                              SizedBox(
-                                height: 16,
-                              ),
-                              Container(
-                                width: MediaQuery.of(context).size.width,
-                                margin: EdgeInsets.only(top: 10.0),
-                                child: FutureBuilder<bool>(
-                                  future: _payClient
-                                      .userCanPay(PayProvider.apple_pay),
-                                  builder: (context, snapshot) {
-                                    if (snapshot.connectionState ==
-                                        ConnectionState.done) {
-                                      if (snapshot.data == true) {
-                                        return RawApplePayButton(
-                                          style: ApplePayButtonStyle.automatic,
-                                          onPressed: () {
-                                            onGooglePayPressed();
-                                          },
-                                        );
-                                      } else {
-                                        return Container();
-                                        // userCanPay returned false
-                                        // Consider showing an alternative payment method
-                                      }
-                                    }
-                                    return Container();
-                                  },
+                                  ],
                                 ),
-                              ),
-                              SizedBox(
-                                height: 16,
-                              ),
-                              Row(
-                                children: [
-                                  Expanded(
-                                    child: Divider(
-                                      height: 0,
-                                      thickness: 1,
-                                      color: Colors.black,
+                                SizedBox(
+                                  height: 12,
+                                ),
+                                Row(
+                                  children: [
+                                    Expanded(
+                                      child: Divider(
+                                        height: 0,
+                                        thickness: 1,
+                                        color: Colors.black,
+                                      ),
                                     ),
-                                  ),
-                                  SizedBox(
-                                    width: 8,
-                                  ),
-                                  Text(
-                                    'Or Pay With Card',
-                                    textAlign: TextAlign.center,
-                                    style: TextStyle(
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w800,
+                                    SizedBox(
+                                      width: 8,
                                     ),
-                                  ),
-                                  SizedBox(
-                                    width: 8,
-                                  ),
-                                  Expanded(
-                                    child: Divider(
-                                      height: 0,
-                                      thickness: 1,
-                                      color: Colors.black,
+                                    Text(
+                                      'Select a Plan',
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w800,
+                                      ),
                                     ),
+                                    SizedBox(
+                                      width: 8,
+                                    ),
+                                    Expanded(
+                                      child: Divider(
+                                        height: 0,
+                                        thickness: 1,
+                                        color: Colors.black,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                SizedBox(
+                                  height: 16,
+                                ),
+                                getPlans(snapshot),
+                                SizedBox(
+                                  height: 16,
+                                ),
+                                Container(
+                                  width: MediaQuery.of(context).size.width,
+                                  margin: EdgeInsets.only(top: 10.0),
+                                  child: FutureBuilder<bool>(
+                                    future: _payClient
+                                        .userCanPay(PayProvider.apple_pay),
+                                    builder: (context, snapshot) {
+                                      if (snapshot.connectionState ==
+                                          ConnectionState.done) {
+                                        if (snapshot.data == true) {
+                                          return RawApplePayButton(
+                                            style: ApplePayButtonStyle.black,
+                                            onPressed: () {
+                                              onApplePayResult();
+                                            },
+                                          );
+                                        } else {
+                                          return Container();
+                                          // userCanPay returned false
+                                          // Consider showing an alternative payment method
+                                        }
+                                      }
+                                      return Container();
+                                    },
                                   ),
-                                ],
-                              ),
-                              SizedBox(
-                                height: 16,
-                              ),
+                                ),
+                                SizedBox(
+                                  height: 16,
+                                ),
+                                Row(
+                                  children: [
+                                    Expanded(
+                                      child: Divider(
+                                        height: 0,
+                                        thickness: 1,
+                                        color: Colors.black,
+                                      ),
+                                    ),
+                                    SizedBox(
+                                      width: 8,
+                                    ),
+                                    Text(
+                                      'Or Pay With Card',
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w800,
+                                      ),
+                                    ),
+                                    SizedBox(
+                                      width: 8,
+                                    ),
+                                    Expanded(
+                                      child: Divider(
+                                        height: 0,
+                                        thickness: 1,
+                                        color: Colors.black,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                SizedBox(
+                                  height: 16,
+                                ),
 
-                              getCardInput(),
-                              StreamBuilder<String>(
-                                  initialData:
-                                      snapshot.data!.data[0].id.toString(),
-                                  stream: stripeBloc.planId,
-                                  builder: (context, snapshotId) {
-                                    return SKButton(
-                                      buttonText: 'Pay',
-                                      width: MediaQuery.of(context).size.width,
-                                      isDark: true,
-                                      callback: (context) {
-                                        payment(snapshotId.data.toString());
-                                      },
-                                      margin: EdgeInsets.only(top: 24),
-                                    );
-                                  }),
-                              // Center(
-                              //   child: ApplePayButton(
-                              //     paymentConfigurationAsset:
-                              //         'default_payment_profile_apple_pay.json',
-                              //     paymentItems: [
-                              //       PaymentItem(
-                              //           label: 'Total',
-                              //           amount: "20.00",
-                              //           status: PaymentItemStatus.final_price,
-                              //           type: PaymentItemType.item)
-                              //     ],
-                              //     onError: (error) {
-                              //       print('erroe' + error.toString());
-                              //     },
-                              //     style: ApplePayButtonStyle.automatic,
-                              //     type: ApplePayButtonType.buy,
-                              //     margin: const EdgeInsets.only(top: 15.0),
-                              //     onPaymentResult: onApplePayResult,
-                              //     loadingIndicator: const Center(
-                              //       child: CircularProgressIndicator(),
-                              //     ),
-                              //   ),
-                              // ),
-                            ],
+                                Container(child: getCardInput()),
+                                StreamBuilder<String>(
+                                    initialData:
+                                        snapshot.data!.data[0].id.toString(),
+                                    stream: stripeBloc.planId,
+                                    builder: (context, snapshotId) {
+                                      return SKButton(
+                                        buttonText: 'Pay',
+                                        width:
+                                            MediaQuery.of(context).size.width,
+                                        isDark: true,
+                                        callback: (context) {
+                                          payment(snapshotId.data.toString());
+                                        },
+                                        margin: EdgeInsets.only(top: 24),
+                                      );
+                                    }),
+                                // Center(
+                                //   child: ApplePayButton(
+                                //     paymentConfigurationAsset:
+                                //         'default_payment_profile_apple_pay.json',
+                                //     paymentItems: [
+                                //       PaymentItem(
+                                //           label: 'Total',
+                                //           amount: "20.00",
+                                //           status: PaymentItemStatus.final_price,
+                                //           type: PaymentItemType.item)
+                                //     ],
+                                //     onError: (error) {
+                                //       print('erroe' + error.toString());
+                                //     },
+                                //     style: ApplePayButtonStyle.automatic,
+                                //     type: ApplePayButtonType.buy,
+                                //     margin: const EdgeInsets.only(top: 15.0),
+                                //     onPaymentResult: onApplePayResult,
+                                //     loadingIndicator: const Center(
+                                //       child: CircularProgressIndicator(),
+                                //     ),
+                                //   ),
+                                // ),
+                              ],
+                            ),
                           ),
-                        ),
-                      );
-                  }),
+                        );
+                    }),
+              ),
             ),
           ),
         ),
@@ -813,7 +821,7 @@ class _PremiumPackages extends State<PremiumPackagesView>
     );
   }
 
-  void onGooglePayPressed() async {
+  void onApplePayResult() async {
     final result = await _payClient.showPaymentSelector(
       provider: PayProvider.apple_pay,
       paymentItems: [
@@ -824,25 +832,20 @@ class _PremiumPackages extends State<PremiumPackagesView>
             type: PaymentItemType.item)
       ],
     );
-    debugPrint(result.toString());
+
+    debugPrint('diuuwd' + result.toString());
     String tokenToBeSentToCloud = result["token"];
+
+    debugPrint('diuuwd' + result["token"].toString());
     BehaviorSubject<String> planId = await stripeBloc.planIdCont;
     String planid = await planId.first;
     print(planid);
-    startLoading();
-    hitSubscriptionApi(planid, tokenToBeSentToCloud);
 
-    // Send the resulting Google Pay token to your server / PSP
+    //
+    // hitSubscriptionApi(planid, tokenToBeSentToCloud);
   }
 
   void setError(dynamic error) {
     setState(() {});
-  }
-
-  Future<void> onApplePayResult(paymentResult) async {
-    debugPrint(paymentResult.toString());
-    String tokenToBeSentToCloud = paymentResult["token"];
-    BehaviorSubject<String> planId = await stripeBloc.planIdCont;
-    hitSubscriptionApi(await planId.last, tokenToBeSentToCloud);
   }
 }

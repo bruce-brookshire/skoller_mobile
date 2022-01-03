@@ -5,14 +5,14 @@ import 'package:stripe_payment/stripe_payment.dart';
 
 class StripePayments {
   final String stripeSecreteKey =
-      "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";
+      "sk_test_51JHvLoGtOURsTxun9zAvF8xXT9LBVHtV58UggeaE3HwoKVy4UCEEw9g8rI41LH0EKH3EizCLJwjP6rMjUicVXhlW00WnQo5cAq";
 
   Future addSource(CreditCard testCard, BuildContext context) async {
     Completer completer = new Completer();
     StripePayment.setOptions(StripeOptions(
       publishableKey:
-          "pk_live_51JHvLoGtOURsTxunmypyAUNfbRF4jOahklknp1RTBHhxpy3qEveFU7lCWdrBt4YggE5ytlblCgYYHPPzsLC0Gf8K00NC7FWyoh",
-      merchantId: "merchant.com.erchant.co.skoller.skoller-staging",
+          "pk_test_51JHvLoGtOURsTxunH2YZl8bG4pvpTQUKRoTVXjqEtZUFR8SsgUIMps4qGBl9OrPYiAGEy8dlAiRATkrRnRUiHMMa00xYgr7qtu",
+      merchantId: "merchant.erchant.co.skoller.skoller-staging",
       androidPayMode: 'test',
     ));
     StripePayment.createTokenWithCard(

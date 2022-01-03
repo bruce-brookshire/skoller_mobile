@@ -1,5 +1,5 @@
-import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:share/share.dart';
 import 'package:skoller/tools.dart';
 
@@ -78,7 +78,7 @@ class RewardsView extends StatelessWidget {
                       Padding(
                         padding: EdgeInsets.only(left: 8),
                         child: Text(
-                          SKUser.current?.student.primarySchool?.name??'',
+                          SKUser.current?.student.primarySchool?.name ?? '',
                           style: TextStyle(
                               fontWeight: FontWeight.normal,
                               fontSize: 13,
@@ -155,11 +155,11 @@ class RewardsView extends StatelessWidget {
             border: Border.all(color: SKColors.border_gray),
             boxShadow: UIAssets.boxShadow),
         child: Column(children: [
-          Text(
+          /*Text(
             'You earn rewards when other \nstudents sign up using your links.',
             style: TextStyle(fontWeight: FontWeight.w300, fontSize: 14),
             textAlign: TextAlign.center,
-          ),
+          ),*/
           Padding(
             padding: EdgeInsets.all(16),
             child: Image.asset(ImageNames.shareImages.amazon_card_image),
@@ -191,7 +191,7 @@ class RewardsView extends StatelessWidget {
               padding: EdgeInsets.symmetric(vertical: 8),
               margin: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
               decoration: BoxDecoration(
-                color: SKColors.skoller_blue,
+                color: SKColors.skoller_blue1,
                 borderRadius: BorderRadius.circular(5),
               ),
               child: Text(
@@ -200,14 +200,14 @@ class RewardsView extends StatelessWidget {
               ),
             ),
           ),
-          Text(
+          /*Text(
             'A Skoller employee will email you when you qualify!',
             textAlign: TextAlign.center,
             style: TextStyle(
                 fontSize: 13,
                 fontWeight: FontWeight.normal,
                 color: SKColors.text_light_gray),
-          ),
+          ),*/
         ]),
       );
 }
