@@ -205,8 +205,8 @@ class _PremiumPackages extends State<PremiumPackagesView>
                     TextStyle(fontSize: 14, color: SKColors.text_light_gray),
                 inputFormatters: <TextInputFormatter>[
                   LengthLimitingTextInputFormatter(16),
-                  WhitelistingTextInputFormatter.digitsOnly,
-                  BlacklistingTextInputFormatter.singleLineFormatter,
+                  FilteringTextInputFormatter.digitsOnly,
+                  FilteringTextInputFormatter.singleLineFormatter,
                 ],
                 keyboardType: TextInputType.phone,
                 autofocus: false,
@@ -227,8 +227,8 @@ class _PremiumPackages extends State<PremiumPackagesView>
                           fontSize: 14, color: SKColors.text_light_gray),
                       inputFormatters: <TextInputFormatter>[
                         LengthLimitingTextInputFormatter(2),
-                        WhitelistingTextInputFormatter.digitsOnly,
-                        BlacklistingTextInputFormatter.singleLineFormatter,
+                        FilteringTextInputFormatter.digitsOnly,
+                        FilteringTextInputFormatter.singleLineFormatter,
                       ],
                       keyboardType: TextInputType.phone,
                       autofocus: false,
@@ -252,8 +252,8 @@ class _PremiumPackages extends State<PremiumPackagesView>
                           fontSize: 14, color: SKColors.text_light_gray),
                       inputFormatters: <TextInputFormatter>[
                         LengthLimitingTextInputFormatter(2),
-                        WhitelistingTextInputFormatter.digitsOnly,
-                        BlacklistingTextInputFormatter.singleLineFormatter,
+                        FilteringTextInputFormatter.digitsOnly,
+                        FilteringTextInputFormatter.singleLineFormatter,
                       ],
                       keyboardType: TextInputType.phone,
                       autofocus: false,
@@ -270,8 +270,8 @@ class _PremiumPackages extends State<PremiumPackagesView>
                           fontSize: 14, color: SKColors.text_light_gray),
                       inputFormatters: <TextInputFormatter>[
                         LengthLimitingTextInputFormatter(3),
-                        WhitelistingTextInputFormatter.digitsOnly,
-                        BlacklistingTextInputFormatter.singleLineFormatter,
+                        FilteringTextInputFormatter.digitsOnly,
+                        FilteringTextInputFormatter.singleLineFormatter,
                       ],
                       keyboardType: TextInputType.phone,
                       autofocus: false,

@@ -1,5 +1,6 @@
-import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:skoller/tools.dart';
 
 class AssignmentNotesModal extends StatefulWidget {
@@ -113,7 +114,7 @@ class _AssignmentNotesModal extends State<AssignmentNotesModal> {
                 child: CupertinoTextField(
                   decoration: BoxDecoration(border: null),
                   maxLength: 2000,
-                  maxLengthEnforced: true,
+                  maxLengthEnforcement: MaxLengthEnforcement.enforced,
                   autofocus: true,
                   maxLines: null,
                   keyboardType: TextInputType.multiline,
