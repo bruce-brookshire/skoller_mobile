@@ -168,35 +168,37 @@ class MenuView extends StatelessWidget {
   }
 
   loadData(context) {
-    if (!((Subscriptions.mySubscriptions?.user?.lifetimeSubscription ?? true) ||
-        (Subscriptions.mySubscriptions?.user?.lifetimeTrial ?? true))) {
-      if (!(Subscriptions.mySubscriptions?.user?.isActive ?? false)) {
-        if (!(Subscriptions.mySubscriptions?.user?.trial ?? false)) {
+    final user = Subscriptions.mySubscriptions?.user;
+    final lifeTimeSub = user?.lifetimeSubscription ?? true;
+    final lifeTimeTrial = user?.lifetimeTrial ?? true;
+    final trial = Subscriptions.mySubscriptions?.user?.trial ?? false;
+    final isActive = user?.isActive ?? false;
+
+    if (lifeTimeSub || lifeTimeTrial) {
+      showDialog(
+        context: context,
+        builder: (_) => AlreadyPremiumView(),
+      );
+    } else {
+      if (isActive) {
+        showDialog(
+          context: context,
+          builder: (_) => PremiumPackagesView(true),
+          // builder: (_) => AlreadyPremiumView(),
+        );
+      } else {
+        if (trial) {
           showDialog(
-              context: context,
-              builder: (_) {
-                return PremiumPackagesView(true);
-              });
+            context: context,
+            builder: (_) => AlreadyPremiumView(),
+          );
         } else {
           showDialog(
-              context: context,
-              builder: (_) {
-                return AlreadyPremiumView();
-              });
-        }
-      } else {
-        showDialog(
             context: context,
-            builder: (_) {
-              return AlreadyPremiumView();
-            });
+            builder: (_) => PremiumPackagesView(true),
+          );
+        }
       }
-    } else {
-      showDialog(
-          context: context,
-          builder: (_) {
-            return AlreadyPremiumView();
-          });
     }
   }
 
