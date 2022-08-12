@@ -2,7 +2,8 @@ import 'package:dropdown_banner/dropdown_banner.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_multi_formatter/flutter_multi_formatter.dart';
+import 'package:flutter_multi_formatter/formatters/credit_card_number_input_formatter.dart';
+import 'package:flutter_stripe/flutter_stripe.dart' hide ApplePayButtonStyle;
 import 'package:pay/pay.dart';
 import 'package:rxdart/src/subjects/behavior_subject.dart';
 import 'package:screen_loader/screen_loader.dart';
@@ -12,7 +13,6 @@ import 'package:skoller/model/plans_model.dart';
 import 'package:skoller/requests/stripe_payments.dart';
 import 'package:skoller/screens/main_app/main_view.dart';
 import 'package:skoller/tools.dart';
-import 'package:stripe_payment/stripe_payment.dart' as stripeCard;
 
 import 'stripe_bloc.dart';
 
@@ -75,21 +75,25 @@ class _PremiumPackages extends State<PremiumPackagesView>
       alert("Please select a plan");
       return;
     }
-    stripeCard.CreditCard _testCard = stripeCard.CreditCard(
-        number: cardNumberController.text,
-        expMonth: int.parse(monthController.text),
-        expYear: int.parse(yearController.text),
-        cvc: cvcController.text);
+
+    final cardDetails = CardDetails(
+      number: cardNumberController.text,
+      expirationMonth: int.parse(monthController.text),
+      expirationYear: int.parse(yearController.text),
+      cvc: cvcController.text,
+    );
+
     startLoading();
-    _stripePayment.addSource(_testCard, context).then((value) {
-      if (value.toString().isNotEmpty) {
-        Utilities.showSuccessMessage("Card added successfully");
-        hitSubscriptionApi(planId, value);
-      }
-    }).catchError((onError) {
-      startLoading();
-      alert("Your card is not supported");
+
+    _stripePayment.payWithCard(cardDetails).then((token) {
+      Utilities.showSuccessMessage("Card added successfully");
+      hitSubscriptionApi(planId, token);
+    }).catchError((error) {
+      stopLoading();
+      alert(error.toString());
     });
+
+    stopLoading();
   }
 
   void alert(String text) {

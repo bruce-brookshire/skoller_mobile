@@ -1,26 +1,27 @@
 import 'dart:async';
 
-import 'package:flutter/material.dart';
-import 'package:stripe_payment/stripe_payment.dart';
+import 'package:flutter_stripe/flutter_stripe.dart';
 
 class StripePayments {
-  final String stripeSecreteKey =
-      "sk_test_51JHvLoGtOURsTxun9zAvF8xXT9LBVHtV58UggeaE3HwoKVy4UCEEw9g8rI41LH0EKH3EizCLJwjP6rMjUicVXhlW00WnQo5cAq";
+  final publishableKey =
+      "pk_live_51JHvLoGtOURsTxunmypyAUNfbRF4jOahklknp1RTBHhxpy3qEveFU7lCWdrBt4YggE5ytlblCgYYHPPzsLC0Gf8K00NC7FWyoh";
+  // "pk_test_51JHvLoGtOURsTxunH2YZl8bG4pvpTQUKRoTVXjqEtZUFR8SsgUIMps4qGBl9OrPYiAGEy8dlAiRATkrRnRUiHMMa00xYgr7qtu";
+  final merchantId = "merchant.erchant.co.skoller.skoller-staging";
 
-  Future addSource(CreditCard testCard, BuildContext context) async {
-    Completer completer = new Completer();
-    StripePayment.setOptions(StripeOptions(
-      publishableKey:
-          "pk_test_51JHvLoGtOURsTxunH2YZl8bG4pvpTQUKRoTVXjqEtZUFR8SsgUIMps4qGBl9OrPYiAGEy8dlAiRATkrRnRUiHMMa00xYgr7qtu",
-      merchantId: "merchant.erchant.co.skoller.skoller-staging",
-      androidPayMode: 'test',
-    ));
-    StripePayment.createTokenWithCard(
-      testCard,
-    ).then((token) async {
-      debugPrint("token for stripe account >>>> ${token.tokenId}");
-      completer.complete(token.tokenId);
-    }).catchError((error) => completer.completeError(error));
-    return completer.future;
+  Future payWithCard(CardDetails cardDetails) async {
+    try {
+      Stripe.publishableKey = publishableKey;
+      Stripe.merchantIdentifier = merchantId;
+      await Stripe.instance.dangerouslyUpdateCardDetails(cardDetails);
+
+      final cardTokenParams = CardTokenParams();
+      final tokenParams = CreateTokenParams.card(params: cardTokenParams);
+      final token = await Stripe.instance.createToken(tokenParams);
+      return token.id;
+    } on StripeException catch (error) {
+      throw error.error.message ?? 'Couldn\'t process payment';
+    } catch (error) {
+      throw 'Something went wrong';
+    }
   }
 }
