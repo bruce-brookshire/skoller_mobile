@@ -26,20 +26,25 @@ class PremiumPackagesView extends StatefulWidget {
 
 class _PremiumPackages extends State<PremiumPackagesView>
     with ScreenLoader<PremiumPackagesView> {
-  TextEditingController cardNumberController = TextEditingController();
-  TextEditingController monthController = TextEditingController();
-  TextEditingController yearController = TextEditingController();
-  TextEditingController cvcController = TextEditingController();
-  TextEditingController zipCodeController = TextEditingController();
-  TextEditingController emailController = TextEditingController();
+  final cardNumberController = TextEditingController();
+  final monthController = TextEditingController();
+  final yearController = TextEditingController();
+  final cvcController = TextEditingController();
+  final zipCodeController = TextEditingController();
+  final emailController = TextEditingController();
   int selectedIndex = 0;
   String? selectPlanAmounts = '3.0';
   final _stripePayment = new StripePayments();
 
   @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
+  void dispose() {
+    cardNumberController.dispose();
+    monthController.dispose();
+    yearController.dispose();
+    cvcController.dispose();
+    zipCodeController.dispose();
+    emailController.dispose();
+    super.dispose();
   }
 
   @override
