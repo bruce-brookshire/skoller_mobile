@@ -37,7 +37,7 @@ class _MainState extends State<MainView> {
     // If the student does not have a primary school or term, set it
     if (SKUser.current?.student.primarySchool == null ||
         SKUser.current?.student.primaryPeriod == null)
-      WidgetsBinding.instance!.addPostFrameCallback(
+      WidgetsBinding.instance.addPostFrameCallback(
         (_) => showPrimarySchoolModal(),
       );
     // If the student has no majors and they have at least one class set up
@@ -46,7 +46,7 @@ class _MainState extends State<MainView> {
               ClassStatuses.class_setup,
               ClassStatuses.class_issue
             ].contains(sc.status.id ?? 0)))
-      WidgetsBinding.instance!.addPostFrameCallback(
+      WidgetsBinding.instance.addPostFrameCallback(
         (_) => showMajorSelection(),
       );
 
@@ -76,7 +76,7 @@ class _MainState extends State<MainView> {
 
     Mod.fetchMods();
 
-    WidgetsBinding.instance!.addPostFrameCallback((_) => setScreenSize());
+    WidgetsBinding.instance.addPostFrameCallback((_) => setScreenSize());
 
     super.initState();
   }

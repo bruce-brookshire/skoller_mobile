@@ -1,11 +1,14 @@
 import 'dart:async';
 
 import 'package:dart_notification_center/dart_notification_center.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:skoller/screens/main_app/activity/mod_modal.dart';
+import 'package:skoller/screens/main_app/classes/assignment_info_view.dart';
+import 'package:skoller/screens/main_app/classes/assignment_weight_view.dart';
 import 'package:skoller/screens/main_app/classes/class_menu_modal.dart';
 import 'package:skoller/tools.dart';
+
 import 'assignment_info_view.dart';
 import 'assignment_weight_view.dart';
 
@@ -95,7 +98,8 @@ class _ClassDetailState extends State<ClassDetailView> {
         .where((m) =>
             m.modType == ModType.newAssignment &&
             m.parentClass.id == studentClass.id)
-        .map((m) => _AssignmentLikeItem(m.id, true, (m.data as Assignment).due!))
+        .map(
+            (m) => _AssignmentLikeItem(m.id, true, (m.data as Assignment).due!))
         .toList();
 
     items
@@ -114,7 +118,7 @@ class _ClassDetailState extends State<ClassDetailView> {
     final studentClass = StudentClass.currentClasses[widget.classId];
 
     if (studentClass == null) {
-      WidgetsBinding.instance!
+      WidgetsBinding.instance
           .addPostFrameCallback((_) => Navigator.pop(context));
       return Scaffold(backgroundColor: Colors.white);
     }
@@ -597,7 +601,7 @@ class _AssignmentCellState extends State<_AssignmentCell> {
                             child: Material(
                               type: MaterialType.transparency,
                               child: Text(
-                                assignment.name??'',
+                                assignment.name ?? '',
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
                                 textScaleFactor: 1,

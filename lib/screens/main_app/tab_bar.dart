@@ -74,7 +74,7 @@ class _SKTabBarState extends State<SKTabBar> {
       },
     );
 
-    SchedulerBinding.instance!.addPostFrameCallback(afterFirstLayout);
+    SchedulerBinding.instance.addPostFrameCallback(afterFirstLayout);
     stripeBloc.AlPlans();
   }
 
