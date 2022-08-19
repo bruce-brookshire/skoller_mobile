@@ -9,6 +9,7 @@ import 'package:skoller/constants/constants.dart';
 import 'package:skoller/screens/main_app/classes/class_menu_modal.dart';
 import 'package:skoller/screens/main_app/menu/add_classes_view.dart';
 import 'package:skoller/screens/main_app/menu/major_search_modal.dart';
+import 'package:skoller/screens/main_app/premium/expired_trial_pay_wall_model.dart';
 import 'package:skoller/screens/main_app/tutorial/tutorial.dart';
 import 'package:skoller/tools.dart';
 
@@ -74,6 +75,12 @@ class _MainState extends State<MainView> {
       onNotification: presentModalWidgetOverMainView,
     );
 
+    DartNotificationCenter.subscribe(
+      channel: NotificationChannels.subscriptionChanged,
+      observer: this,
+      onNotification: showPayWallModalIfSubscriptionExpired,
+    );
+
     Mod.fetchMods();
 
     WidgetsBinding.instance.addPostFrameCallback((_) => setScreenSize());
@@ -100,6 +107,22 @@ class _MainState extends State<MainView> {
       channel: NotificationChannels.presentViewOverTabBar,
       options: AddClassesView(),
     );
+  }
+
+  void showPayWallModalIfSubscriptionExpired(dynamic userState) async {
+    final user = Subscriptions.mySubscriptions?.user;
+    if (user == null) return;
+    if (user.trial == null) return;
+
+    // if (user.trial! && (user.trialDaysLeft ?? 30.0) == 0.0) {
+    await Navigator.push(
+      context,
+      SKNavOverlayRoute(
+        builder: (context) => ExpiredTrialPayWallModal(),
+        isBarrierDismissible: false,
+      ),
+    );
+    // }
   }
 
   void showMajorSelection() async {

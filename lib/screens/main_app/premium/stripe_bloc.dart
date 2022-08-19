@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 
+import 'package:dart_notification_center/dart_notification_center.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:skoller/constants/BaseUtilities.dart';
 import 'package:skoller/constants/constants.dart';
@@ -222,6 +223,10 @@ class StripeBloc implements BlocBase {
 
           Subscriptions.mySubscriptions = parsedResponse;
           mySubscriptions.sink.add(parsedResponse);
+
+          /// Notify subscription listeners
+          DartNotificationCenter.post(
+              channel: NotificationChannels.subscriptionChanged);
           return true;
         }
       }

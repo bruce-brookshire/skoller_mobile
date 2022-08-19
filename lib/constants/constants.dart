@@ -104,6 +104,7 @@ class NotificationChannels {
   static const selectTab = 'select-tab';
   static const newTabSelected = 'new-tab-selected';
   static const jobsChanged = 'jobs-changed';
+  static const subscriptionChanged = 'subscription-changed';
 }
 
 class PreferencesKeys {
