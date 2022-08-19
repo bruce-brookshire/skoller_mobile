@@ -34,6 +34,9 @@ part 'school.dart';
 part 'student_class.dart';
 part 'user.dart';
 
+/// To build a release app:
+///   1. change [isProd] variable to true.
+///   2. change iOS app bundle id to [co.skoller.skoller].
 const bool isProd = false;
 const bool isLocal = false;
 
