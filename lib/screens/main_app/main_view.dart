@@ -114,7 +114,7 @@ class _MainState extends State<MainView> {
     if (user == null) return;
     if (user.trial == null) return;
 
-    // if (user.trial! && (user.trialDaysLeft ?? 30.0) == 0.0) {
+    if (user.trial! && (user.trialDaysLeft ?? 30.0) == 0.0) {
     await Navigator.push(
       context,
       SKNavOverlayRoute(
@@ -122,7 +122,7 @@ class _MainState extends State<MainView> {
         isBarrierDismissible: false,
       ),
     );
-    // }
+    }
   }
 
   void showMajorSelection() async {
