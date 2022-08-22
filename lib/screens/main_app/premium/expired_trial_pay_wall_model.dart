@@ -29,12 +29,12 @@ class ExpiredTrialPayWallModal extends StatelessWidget {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Text(
-                      'Your 3-day free trial has expired.',
+                      'Your 30-day free trial has expired.',
                       style: TextStyle(fontSize: 16),
                     ),
                     SizedBox(height: 20),
                     Text(
-                      'Go to skoller.co on desktop and\nlogin to continue useing Skoller.',
+                      'Go to skoller.co on desktop and\nlogin to continue using Skoller.',
                       style: TextStyle(
                         fontWeight: FontWeight.normal,
                       ),
