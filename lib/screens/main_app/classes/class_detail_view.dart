@@ -91,7 +91,7 @@ class _ClassDetailState extends State<ClassDetailView> {
     final assignments = studentClass!.assignments;
 
     final items = assignments!
-        .map((a) => _AssignmentLikeItem(a.id, false, a.due!))
+        .map((a) => _AssignmentLikeItem(a.id, false, a.due))
         .toList();
 
     final newAssignmentMods = Mod.currentMods.values

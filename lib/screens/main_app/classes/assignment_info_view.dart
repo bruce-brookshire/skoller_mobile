@@ -449,7 +449,7 @@ class _AssignmentInfoState extends State<AssignmentInfoView> {
     final now = DateTime.now();
     final today = DateTime(now.year, now.month, now.day);
 
-    final days = assignment!.due!.difference(today).inDays;
+    final days = assignment?.due?.difference(today).inDays;
 
     if (assignment!.weight_id == null)
       weightDescr = 'Not graded';
