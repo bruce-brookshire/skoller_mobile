@@ -233,9 +233,9 @@ class StudentClass {
   Future<RequestResponse> createBatchAssignment(
     String name,
     Weight weight,
-    DateTime dueDate,
+    DateTime? dueDate,
   ) async {
-    String? tzCorrectedString = dueDate.toUtc().toIso8601String();
+    String? tzCorrectedString = dueDate?.toUtc().toIso8601String();
 
     DateTime? correctedDueDate = dueDate == null
         ? null
