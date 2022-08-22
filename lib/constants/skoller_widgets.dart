@@ -349,7 +349,7 @@ class SKCalendarPicker extends StatefulWidget {
                           EdgeInsets.symmetric(vertical: 8, horizontal: 12),
                       child: GestureDetector(
                         onTapUp: (_) {
-                          onSelect!(DateTime.now());
+                          // onSelect!(DateTime.now());
                           Navigator.pop(context);
                         },
                         child: Text(
@@ -1351,6 +1351,7 @@ enum SammiPersonality {
   jobsCool,
   jobsLargeSmile
 }
+
 enum SammiSide { left, right }
 
 class SammiSpeechBubble extends StatelessWidget {
