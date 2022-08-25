@@ -46,6 +46,7 @@ class User {
     bool? isActive,
     int? id,
     String? email,
+    List? subscription,
   }) {
     _trialDaysLeft = trialDaysLeft;
     _trial = trial;
@@ -54,6 +55,7 @@ class User {
     _isActive = isActive;
     _id = id;
     _email = email;
+    _subscriptions = subscription;
   }
 
   User.fromJson(dynamic json) {
@@ -64,6 +66,7 @@ class User {
     _isActive = json['is_active'];
     _id = json['id'];
     _email = json['email'];
+    _subscriptions = json['subscriptions'];
   }
   double? _trialDaysLeft;
   bool? _trial;
@@ -72,6 +75,7 @@ class User {
   bool? _isActive;
   int? _id;
   String? _email;
+  List? _subscriptions;
 
   double? get trialDaysLeft => _trialDaysLeft;
   bool? get trial => _trial;
@@ -80,6 +84,7 @@ class User {
   bool? get isActive => _isActive;
   int? get id => _id;
   String? get email => _email;
+  List? get subscriptions => _subscriptions;
 
   Map<String, dynamic> toJson() {
     final map = <String, dynamic>{};
@@ -90,6 +95,7 @@ class User {
     map['is_active'] = _isActive;
     map['id'] = _id;
     map['email'] = _email;
+    map['subscriptions'] = _subscriptions;
     return map;
   }
 }
