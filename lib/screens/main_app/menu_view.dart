@@ -5,6 +5,7 @@ import 'package:skoller/screens/main_app/menu/manage_classes_view.dart';
 import 'package:skoller/screens/main_app/menu/profile_link_sharing_view.dart';
 import 'package:skoller/screens/main_app/menu/profile_view.dart';
 import 'package:skoller/screens/main_app/menu/rewards_view.dart';
+import 'package:skoller/screens/main_app/premium/account_setting_dialog_view.dart';
 import 'package:skoller/screens/main_app/premium/premium_packages_view.dart';
 import 'package:skoller/screens/main_app/tutorial/tutorial.dart';
 import 'package:skoller/tools.dart';
@@ -121,7 +122,11 @@ class MenuView extends StatelessWidget {
                           behavior: HitTestBehavior.opaque,
                           onTapUp: (details) {
                             if (row.containsKey('builder1')) {
-                              loadData(context);
+                              showDialog(
+                                context: context,
+                                builder: (_) => AccountSettingsDialogView(),
+                              );
+                              // loadData(context);
                             }
                             if (row.containsKey('builder')) {
                               String channel;
