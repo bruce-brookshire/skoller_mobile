@@ -88,7 +88,7 @@ DateTime? _dateParser(String date) =>
 
 class SKRequests {
   static const String _environment = isProd
-      ? 'https://skoller.co'
+      ? 'https://api.skoller.co'
       : (isLocal
           ? 'http://10.1.10.110:4000'
           : 'https://api-staging.skoller.co');

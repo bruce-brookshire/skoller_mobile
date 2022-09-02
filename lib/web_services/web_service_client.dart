@@ -8,6 +8,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:skoller/constants/BaseUtilities.dart';
 import 'package:skoller/constants/constants.dart';
 import 'package:skoller/constants/log.dart';
+import 'package:skoller/requests/requests_core.dart';
 
 enum HttpMethod { HTTP_GET, HTTP_POST, HTTP_PUT }
 
@@ -33,7 +34,11 @@ enum WebError {
 
 ///this class handles api calls
 class WebServiceClient {
-  static const BASE_URL = "https://api-staging.skoller.co/api/v1/";
+  static const BASE_URL = isProd
+      ? 'https://api.skoller.co/api/v1/'
+      : (isLocal
+          ? 'http://10.1.10.110:4000'
+          : 'https://api-staging.skoller.co/api/v1/');
 
   /// Get All Plans for payment
   static Future<dynamic> AllPlans() async {
@@ -72,7 +77,7 @@ class WebServiceClient {
 
   /// get Subscriptions List
   static Future<dynamic> mySub() async {
-    var url = 'https://api-staging.skoller.co/api/v1/' + "users/token-login";
+    final url = BASE_URL + "users/token-login";
     var response;
     await _hitService(url, HttpMethod.HTTP_POST, RequestBodyType.TYPE_JSON,
             TokenType.TYPE_BEARER)
