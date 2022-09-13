@@ -115,7 +115,7 @@ class _AddClassesState extends State<AddClassesView> {
   }
 
   void didTapClassCard(int index) async {
-    SchoolClass schoolClass = searchedClasses[index];
+    final SchoolClass schoolClass = searchedClasses[index];
 
     final bool isEnrolled =
         StudentClass.currentClasses.containsKey(schoolClass.id);
@@ -146,7 +146,7 @@ class _AddClassesState extends State<AddClassesView> {
                 children: <Widget>[
                   Expanded(
                     child: Text(
-                      '${schoolClass.subject} ${schoolClass.code}.${schoolClass.section}',
+                      '${schoolClass.subject ?? '-'} ${schoolClass.code ?? '-'}.${schoolClass.section ?? '-'}',
                       style: TextStyle(
                           fontWeight: FontWeight.normal, fontSize: 14),
                     ),
@@ -199,7 +199,7 @@ class _AddClassesState extends State<AddClassesView> {
                     ),
                   ),
                   Text(
-                    '${schoolClass.professor.firstName ?? ''} ${schoolClass.professor.lastName ?? ''}',
+                    '${schoolClass.professor?.firstName ?? '-'} ${schoolClass.professor?.lastName ?? '-'}',
                     style: TextStyle(
                       fontSize: 15,
                       fontWeight: FontWeight.normal,
@@ -583,7 +583,7 @@ class _AddClassesState extends State<AddClassesView> {
               Padding(
                 padding: EdgeInsets.symmetric(vertical: 2),
                 child: Text(
-                  '${schoolClass.professor.firstName ?? ''} ${schoolClass.professor.lastName ?? ''}',
+                  '${schoolClass.professor?.firstName ?? '-'} ${schoolClass.professor?.lastName ?? '-'}',
                   style: TextStyle(
                     fontWeight: FontWeight.normal,
                   ),
@@ -595,7 +595,7 @@ class _AddClassesState extends State<AddClassesView> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
               Text(
-                '${schoolClass.subject} ${schoolClass.code}.${schoolClass.section}',
+                '${schoolClass.subject ?? '-'} ${schoolClass.code ?? '-'}.${schoolClass.section ?? '-'}',
                 style: TextStyle(
                     fontWeight: FontWeight.normal,
                     fontSize: 14,
