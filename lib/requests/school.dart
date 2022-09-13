@@ -193,10 +193,10 @@ class Period {
 
   Future<RequestResponse> createClass({
     required String className,
-    required String subject,
-    required String code,
-    required String section,
-    required int professorId,
+    String? subject,
+    String? code,
+    String? section,
+    int? professorId,
     bool? isOnline,
     String? meetDays,
     TimeOfDay? meetTime,
@@ -214,8 +214,9 @@ class Period {
       body['meet_days'] = 'online';
     } else {
       body['meet_days'] = meetDays;
-      body['meet_start_time'] =
-          '${meetTime!.hour < 10 ? '0' : ''}${meetTime.hour}:${meetTime.minute < 10 ? '0' : ''}${meetTime.minute}:00';
+      body['meet_start_time'] = meetTime == null
+          ? null
+          : '${meetTime.hour < 10 ? '0' : ''}${meetTime.hour}:${meetTime.minute < 10 ? '0' : ''}${meetTime.minute}:00';
     }
 
     return SKRequests.post(
