@@ -351,7 +351,6 @@ class _CreateClassScreenOneState extends State<_CreateClassScreenOne> {
                           onChanged: checkValid,
                           onEditingComplete: () => nodes[0].nextFocus(),
                           textInputAction: TextInputAction.next,
-                          autofocus: true,
                         ),
                       ],
                     ),
