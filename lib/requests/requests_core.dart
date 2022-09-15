@@ -37,6 +37,10 @@ part 'user.dart';
 /// To build a release app:
 ///   1. change [isProd] variable to true.
 ///   2. change iOS app bundle id to [co.skoller.skoller].
+///     A. ios/Runner.xcodeproj/project.pbxproj
+///   3. change iOS app version.
+///     A. Version: 6.6
+///     B. Build: 21
 const bool isProd = false;
 const bool isLocal = false;
 
