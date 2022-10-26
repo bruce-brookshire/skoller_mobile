@@ -9,6 +9,8 @@ class SubscriptionManager {
 
   final _inAppPurchase = InAppPurchase.instance;
 
+  late PurchaseDetails purchase;
+
   final purchaseStream = InAppPurchase.instance.purchaseStream;
 
   static const Set<String> productIds = isProd
@@ -35,22 +37,42 @@ class SubscriptionManager {
             .firstWhere((element) => product.title == element.title);
         final purchaseParam = PurchaseParam(productDetails: selectedProduct);
 
-        final didPurchase =
+        final isPurchasing =
             await _inAppPurchase.buyNonConsumable(purchaseParam: purchaseParam);
-        return didPurchase;
+        return isPurchasing;
       }
       return false;
     } catch (error) {
       log(error.toString());
-      throw 'Failed to load subscription';
+      throw 'Failed to initialize subscription';
     }
   }
 
-  Future<void> completePurchase(PurchaseDetails purchaseDetails) async {
+  Future<void> processPurchase(PurchaseDetails purchase) async {
     try {
-      await _inAppPurchase.completePurchase(purchaseDetails);
+      final isPurchased = purchase.status == PurchaseStatus.purchased;
+      final isRestored = purchase.status == PurchaseStatus.restored;
+      if (isPurchased || isRestored) {
+        log(purchase.toString());
+        await _inAppPurchase.completePurchase(purchase);
+        this.purchase = purchase;
+      }
     } catch (error) {
       return;
+    }
+  }
+
+  Future<bool> finalizePurchase() async {
+    try {
+      /// Send payment info to the backend
+
+      final test = purchase;
+      final purchaseData = purchase.toMap();
+      log(purchaseData.toString());
+
+      return true;
+    } catch (error) {
+      throw error;
     }
   }
 
@@ -85,5 +107,47 @@ class SubscriptionManager {
     } catch (error) {
       rethrow;
     }
+  }
+}
+
+extension PurchaseDetailsEncoder on PurchaseDetails {
+  Map<String, dynamic> toMap() {
+    return {
+      'purchaseID': this.purchaseID,
+      'productID': this.productID,
+      'verificationData': this.verificationData,
+      'transactionDate': this.transactionDate,
+      'status': this.status,
+      'error': this.error,
+      'pendingCompletePurchase': this.pendingCompletePurchase,
+    };
+  }
+
+  PurchaseDetails fromMap(Map<String, dynamic> map) {
+    return PurchaseDetails(
+      purchaseID: map['purchaseID'] as String,
+      productID: map['productID'] as String,
+      verificationData: map['verificationData'] as PurchaseVerificationData,
+      transactionDate: map['transactionDate'] as String,
+      status: map['status'] as PurchaseStatus,
+    );
+  }
+}
+
+extension PurchaseVerificationDataEncoder on PurchaseVerificationData {
+  Map<String, dynamic> toMap() {
+    return {
+      'localVerificationData': this.localVerificationData,
+      'serverVerificationData': this.serverVerificationData,
+      'source': this.source,
+    };
+  }
+
+  PurchaseVerificationData fromMap(Map<String, dynamic> map) {
+    return PurchaseVerificationData(
+      localVerificationData: map['localVerificationData'] as String,
+      serverVerificationData: map['serverVerificationData'] as String,
+      source: map['source'] as String,
+    );
   }
 }

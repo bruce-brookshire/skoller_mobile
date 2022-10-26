@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:in_app_purchase/in_app_purchase.dart';
 import 'package:intl/intl.dart';
+import 'package:skoller/constants/BaseUtilities.dart';
 import 'package:skoller/requests/subscription_manager.dart';
 import 'package:skoller/screens/main_app/main_view.dart';
 import 'package:skoller/tools.dart';
@@ -26,19 +27,19 @@ class _AccountSettingsDialogViewState extends State<AccountSettingsDialogView> {
   final subscriptions =
       Subscriptions.mySubscriptions?.user?.subscriptions ?? [];
 
-  Future<void> purchaseSubscription(ProductDetails selectedSubscription) async {
+  Future<void> initializePurchase() async {
     SubscriptionManager.instance
-        .initializePurchase(selectedSubscription)
-        .then((value) {
-      if (value) {
+        .initializePurchase(selectedSubscription!)
+        .then((isPurchasing) {
+      if (isPurchasing) {
         setState(() {
-          showPurchaseStatus = value;
+          showPurchaseStatus = isPurchasing;
         });
       }
+    }).catchError((error) {
+      Utilities.showErrorMessage(error.toString());
     });
   }
-
-  Future<void> sendInAppPurchaseToBackEnd() async {}
 
   @override
   Widget build(BuildContext context) {
@@ -146,8 +147,7 @@ class _AccountSettingsDialogViewState extends State<AccountSettingsDialogView> {
                                 },
                                 buttonOnPress: selectedSubscription == null
                                     ? null
-                                    : () => purchaseSubscription(
-                                        selectedSubscription!),
+                                    : () => initializePurchase(),
                               ),
                       ),
                     ],
@@ -291,12 +291,16 @@ class _SubscriptionPurchaseStatusStream extends StatelessWidget {
             style:
                 TextStyle(color: isSubscriptionSelected ? null : Colors.white),
           ),
-          onPressed: () {
-            Navigator.pushAndRemoveUntil(
-              context,
-              MaterialPageRoute(builder: (context) => MainView()),
-              (route) => false,
-            );
+          onPressed: () async {
+            await SubscriptionManager.instance.finalizePurchase().then((value) {
+              Navigator.pushAndRemoveUntil(
+                context,
+                MaterialPageRoute(builder: (context) => MainView()),
+                (route) => false,
+              );
+            }).catchError((error) {
+              Utilities.showErrorMessage(error.toString());
+            });
           },
         ),
       ],
