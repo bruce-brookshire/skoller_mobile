@@ -25,14 +25,14 @@ class MenuView extends StatelessWidget {
           'builder': () => ProfileView(),
           'image': Image.asset(ImageNames.peopleImages.person_blue)
         },
-        // {
-        //   'name': Text(
-        //     'Account Settings',
-        //     style: TextStyle(fontWeight: FontWeight.normal, fontSize: 16),
-        //   ),
-        //   'builder1': () => AlreadyPremiumView(),
-        //   'image': Image.asset(ImageNames.peopleImages.person_blue)
-        // }
+        {
+          'name': Text(
+            'Account Settings',
+            style: TextStyle(fontWeight: FontWeight.normal, fontSize: 16),
+          ),
+          'builder1': () => AlreadyPremiumView(),
+          'image': Image.asset(ImageNames.peopleImages.person_blue)
+        }
       ],
       [
         {
