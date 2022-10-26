@@ -6,6 +6,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:skoller/constants/constants.dart';
+import 'package:skoller/requests/subscription_manager.dart';
 import 'package:skoller/screens/main_app/classes/class_menu_modal.dart';
 import 'package:skoller/screens/main_app/menu/add_classes_view.dart';
 import 'package:skoller/screens/main_app/menu/major_search_modal.dart';
@@ -110,6 +111,8 @@ class _MainState extends State<MainView> {
   }
 
   void showPayWallModalIfSubscriptionExpired(dynamic userState) async {
+    await SubscriptionManager.instance.init();
+
     /// User has an active trial if true.
     /// Default is [true] so it doesn't lock users out immediately.
     /// This method will rerun after [Subscriptions.mySubscriptions] updates.
