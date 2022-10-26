@@ -1,10 +1,19 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:in_app_purchase/in_app_purchase.dart';
 import 'package:intl/intl.dart';
+import 'package:skoller/requests/subscription_manager.dart';
 import 'package:skoller/tools.dart';
 
-class AccountSettingsDialogView extends StatelessWidget {
+class AccountSettingsDialogView extends StatefulWidget {
   AccountSettingsDialogView({Key? key}) : super(key: key);
+
+  @override
+  State<AccountSettingsDialogView> createState() =>
+      _AccountSettingsDialogViewState();
+}
+
+class _AccountSettingsDialogViewState extends State<AccountSettingsDialogView> {
+  ProductDetails? selectedSubscription;
 
   /// User has an active trial if true.
   final isTrial = Subscriptions.mySubscriptions?.user?.trial ?? false;
@@ -59,14 +68,112 @@ class AccountSettingsDialogView extends StatelessWidget {
                           : subscriptions.isEmpty
                               ? _SubscriptionWidget(
                                   title: 'Your free trial has expired!',
-                                  subtitle:
-                                      'Go to skoller.co on desktop to continue using skoller.',
+                                  subtitle: 'Upgrade to premium',
                                 )
                               : _SubscriptionWidget(
                                   title: 'You have a premium account.',
                                   subtitle:
                                       'Go to skoller.co to manage your account.',
                                 ),
+                      SizedBox(height: 12),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: Divider(
+                              height: 0,
+                              thickness: 1,
+                              color: Colors.black,
+                            ),
+                          ),
+                          SizedBox(width: 8),
+                          Text(
+                            'Select a Plan',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w800,
+                            ),
+                          ),
+                          SizedBox(width: 8),
+                          Expanded(
+                            child: Divider(
+                              height: 0,
+                              thickness: 1,
+                              color: Colors.black,
+                            ),
+                          ),
+                        ],
+                      ),
+                      SizedBox(height: 16),
+                      Container(
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          border: Border.all(color: SKColors.border_gray),
+                          borderRadius: BorderRadius.circular(10),
+                          boxShadow: UIAssets.boxShadow,
+                        ),
+                        child: ListView.separated(
+                          shrinkWrap: true,
+                          itemCount:
+                              SubscriptionManager.instance.subscriptions.length,
+                          separatorBuilder: (context, index) =>
+                              Divider(height: 0),
+                          itemBuilder: (context, index) {
+                            final product = SubscriptionManager
+                                .instance.subscriptions[index];
+                            return GestureDetector(
+                              onTap: () {
+                                setState(() {
+                                  selectedSubscription = product;
+                                });
+                              },
+                              child: Container(
+                                padding: EdgeInsets.symmetric(
+                                    horizontal: 12, vertical: 8),
+                                decoration: BoxDecoration(
+                                  color: selectedSubscription?.id == product.id
+                                      ? SKColors.menu_blue
+                                      : null,
+                                ),
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text(
+                                      '${product.price} ${product.title.toLowerCase()}',
+                                      style: TextStyle(
+                                          fontSize: 14,
+                                          color: SKColors.light_gray),
+                                    ),
+                                    Text(
+                                      product.description == 'null'
+                                          ? ''
+                                          : product.description,
+                                      style: TextStyle(
+                                        fontSize: 13,
+                                        fontWeight: FontWeight.w400,
+                                        color: SKColors.light_gray,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+                      SizedBox(height: 16),
+                      ElevatedButton(
+                        style: ButtonStyle(
+                          backgroundColor: MaterialStateProperty.all(
+                            selectedSubscription == null
+                                ? null
+                                : SKColors.dark_gray,
+                          ),
+                        ),
+                        child: Text('Upgrade'),
+                        onPressed: () {},
+                      ),
                     ],
                   ),
                 ),
