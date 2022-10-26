@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:in_app_purchase/in_app_purchase.dart';
 import 'package:intl/intl.dart';
 import 'package:skoller/requests/subscription_manager.dart';
+import 'package:skoller/screens/main_app/main_view.dart';
 import 'package:skoller/tools.dart';
 
 class AccountSettingsDialogView extends StatefulWidget {
@@ -15,6 +16,8 @@ class AccountSettingsDialogView extends StatefulWidget {
 class _AccountSettingsDialogViewState extends State<AccountSettingsDialogView> {
   ProductDetails? selectedSubscription;
 
+  bool showPurchaseStatus = false;
+
   /// User has an active trial if true.
   final isTrial = Subscriptions.mySubscriptions?.user?.trial ?? false;
 
@@ -22,6 +25,20 @@ class _AccountSettingsDialogViewState extends State<AccountSettingsDialogView> {
   /// This could mean that the user still has an active trial.
   final subscriptions =
       Subscriptions.mySubscriptions?.user?.subscriptions ?? [];
+
+  Future<void> purchaseSubscription(ProductDetails selectedSubscription) async {
+    SubscriptionManager.instance
+        .initializePurchase(selectedSubscription)
+        .then((value) {
+      if (value) {
+        setState(() {
+          showPurchaseStatus = value;
+        });
+      }
+    });
+  }
+
+  Future<void> sendInAppPurchaseToBackEnd() async {}
 
   @override
   Widget build(BuildContext context) {
@@ -87,7 +104,7 @@ class _AccountSettingsDialogViewState extends State<AccountSettingsDialogView> {
                           ),
                           SizedBox(width: 8),
                           Text(
-                            'Select a Plan',
+                            showPurchaseStatus ? 'Purchasing' : 'Select a Plan',
                             textAlign: TextAlign.center,
                             style: TextStyle(
                               fontSize: 14,
@@ -112,67 +129,26 @@ class _AccountSettingsDialogViewState extends State<AccountSettingsDialogView> {
                           borderRadius: BorderRadius.circular(10),
                           boxShadow: UIAssets.boxShadow,
                         ),
-                        child: ListView.separated(
-                          shrinkWrap: true,
-                          itemCount:
-                              SubscriptionManager.instance.subscriptions.length,
-                          separatorBuilder: (context, index) =>
-                              Divider(height: 0),
-                          itemBuilder: (context, index) {
-                            final product = SubscriptionManager
-                                .instance.subscriptions[index];
-                            return GestureDetector(
-                              onTap: () {
-                                setState(() {
-                                  selectedSubscription = product;
-                                });
-                              },
-                              child: Container(
-                                padding: EdgeInsets.symmetric(
-                                    horizontal: 12, vertical: 8),
-                                decoration: BoxDecoration(
-                                  color: selectedSubscription?.id == product.id
-                                      ? SKColors.menu_blue
-                                      : null,
-                                ),
-                                child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Text(
-                                      '${product.price} ${product.title.toLowerCase()}',
-                                      style: TextStyle(
-                                          fontSize: 14,
-                                          color: SKColors.light_gray),
-                                    ),
-                                    Text(
-                                      product.description == 'null'
-                                          ? ''
-                                          : product.description,
-                                      style: TextStyle(
-                                        fontSize: 13,
-                                        fontWeight: FontWeight.w400,
-                                        color: SKColors.light_gray,
-                                      ),
-                                    ),
-                                  ],
-                                ),
+                        child: showPurchaseStatus
+                            ? _SubscriptionPurchaseStatusStream(
+                                isSubscriptionSelected:
+                                    selectedSubscription == null,
+                              )
+                            : _SubscriptionsList(
+                                isSubscriptionSelected:
+                                    selectedSubscription == null,
+                                selectedSubscriptionId:
+                                    selectedSubscription?.id,
+                                onSubscriptionSelection: (subscription) {
+                                  setState(() {
+                                    selectedSubscription = subscription;
+                                  });
+                                },
+                                buttonOnPress: selectedSubscription == null
+                                    ? null
+                                    : () => purchaseSubscription(
+                                        selectedSubscription!),
                               ),
-                            );
-                          },
-                        ),
-                      ),
-                      SizedBox(height: 16),
-                      ElevatedButton(
-                        style: ButtonStyle(
-                          backgroundColor: MaterialStateProperty.all(
-                            selectedSubscription == null
-                                ? null
-                                : SKColors.dark_gray,
-                          ),
-                        ),
-                        child: Text('Upgrade'),
-                        onPressed: () {},
                       ),
                     ],
                   ),
@@ -182,6 +158,148 @@ class _AccountSettingsDialogViewState extends State<AccountSettingsDialogView> {
           ),
         ),
       ),
+    );
+  }
+}
+
+class _SubscriptionsList extends StatelessWidget {
+  const _SubscriptionsList({
+    Key? key,
+    required this.onSubscriptionSelection,
+    required this.selectedSubscriptionId,
+    required this.isSubscriptionSelected,
+    required this.buttonOnPress,
+  }) : super(key: key);
+
+  final Function(ProductDetails) onSubscriptionSelection;
+  final String? selectedSubscriptionId;
+  final bool isSubscriptionSelected;
+  final Function()? buttonOnPress;
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          ListView.separated(
+            shrinkWrap: true,
+            itemCount: SubscriptionManager.instance.subscriptions.length,
+            separatorBuilder: (context, index) => Divider(height: 0),
+            itemBuilder: (context, index) {
+              final subscription =
+                  SubscriptionManager.instance.subscriptions[index];
+              return GestureDetector(
+                onTap: () => onSubscriptionSelection(subscription),
+                child: Container(
+                  padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                  decoration: BoxDecoration(
+                    color: selectedSubscriptionId == subscription.id
+                        ? SKColors.menu_blue
+                        : null,
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        '${subscription.price} ${subscription.title.toLowerCase()}',
+                        style:
+                            TextStyle(fontSize: 14, color: SKColors.light_gray),
+                      ),
+                      Text(
+                        subscription.description == 'null'
+                            ? ''
+                            : subscription.description,
+                        style: TextStyle(
+                          fontSize: 13,
+                          fontWeight: FontWeight.w400,
+                          color: SKColors.light_gray,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            },
+          ),
+          SizedBox(height: 16),
+          ElevatedButton(
+            style: ButtonStyle(
+              backgroundColor: MaterialStateProperty.all(
+                isSubscriptionSelected ? null : SKColors.dark_gray,
+              ),
+            ),
+            child: Text(
+              'Upgrade',
+              style: TextStyle(
+                  color: isSubscriptionSelected ? null : Colors.white),
+            ),
+            onPressed: buttonOnPress,
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _SubscriptionPurchaseStatusStream extends StatelessWidget {
+  const _SubscriptionPurchaseStatusStream({
+    Key? key,
+    required this.isSubscriptionSelected,
+  }) : super(key: key);
+  final bool isSubscriptionSelected;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        SizedBox(height: 16),
+        StreamBuilder<List<PurchaseDetails>>(
+          stream: SubscriptionManager.instance.purchaseStream,
+          builder: (context, snapshot) {
+            if (snapshot.hasData) {
+              final data = snapshot.data!;
+
+              return ListView.builder(
+                shrinkWrap: true,
+                itemCount: data.length,
+                itemBuilder: (context, index) {
+                  final purchase = data[index];
+                  SubscriptionManager.instance.processPurchase(purchase);
+
+                  return ListTile(
+                    title: Text(purchase.productID),
+                    subtitle: Text(purchase.status.toString()),
+                  );
+                },
+              );
+            }
+
+            return Text('Something went wrong');
+          },
+        ),
+        SizedBox(height: 16),
+        ElevatedButton(
+          style: ButtonStyle(
+            backgroundColor: MaterialStateProperty.all(
+              isSubscriptionSelected ? null : SKColors.dark_gray,
+            ),
+          ),
+          child: Text(
+            'Complete',
+            style:
+                TextStyle(color: isSubscriptionSelected ? null : Colors.white),
+          ),
+          onPressed: () {
+            Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(builder: (context) => MainView()),
+              (route) => false,
+            );
+          },
+        ),
+      ],
     );
   }
 }
