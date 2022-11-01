@@ -104,6 +104,23 @@ class WebServiceClient {
     return response;
   }
 
+  static Future<dynamic> sendInAppPurchaseToBackend(
+      Map<String, dynamic> params) async {
+    // https://api-staging.skoller.co/api/v1/apple/in-app-purchases/submit-receipt
+    final url = BASE_URL + 'apple/in-app-purchases/submit-receipt';
+    var response;
+    await _hitService(
+      url,
+      HttpMethod.HTTP_POST,
+      RequestBodyType.TYPE_JSON,
+      TokenType.TYPE_BASIC,
+      fieldMap: params,
+    ).then((value) {
+      return {response = value};
+    });
+    return response;
+  }
+
   ///this method will actually hit the service based on method(GET,PUT,POST
   static Future<dynamic> _hitService(
       String url, HttpMethod method, RequestBodyType type, TokenType tokenType,

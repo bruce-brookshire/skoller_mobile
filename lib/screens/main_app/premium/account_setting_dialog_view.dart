@@ -292,12 +292,16 @@ class _SubscriptionPurchaseStatusStream extends StatelessWidget {
                 TextStyle(color: isSubscriptionSelected ? null : Colors.white),
           ),
           onPressed: () async {
-            await SubscriptionManager.instance.finalizePurchase().then((value) {
-              Navigator.pushAndRemoveUntil(
-                context,
-                MaterialPageRoute(builder: (context) => MainView()),
-                (route) => false,
-              );
+            await SubscriptionManager.instance
+                .finalizePurchase()
+                .then((didSucceed) {
+              if (didSucceed) {
+                Navigator.pushAndRemoveUntil(
+                  context,
+                  MaterialPageRoute(builder: (context) => MainView()),
+                  (route) => false,
+                );
+              }
             }).catchError((error) {
               Utilities.showErrorMessage(error.toString());
             });

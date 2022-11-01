@@ -1,7 +1,9 @@
+import 'dart:convert';
 import 'dart:developer';
 
 import 'package:in_app_purchase/in_app_purchase.dart';
 import 'package:skoller/requests/requests_core.dart';
+import 'package:skoller/screens/main_app/premium/stripe_bloc.dart';
 
 class SubscriptionManager {
   SubscriptionManager._();
@@ -53,6 +55,14 @@ class SubscriptionManager {
       final isPurchased = purchase.status == PurchaseStatus.purchased;
       final isRestored = purchase.status == PurchaseStatus.restored;
       if (isPurchased || isRestored) {
+        final bool valid = await _verifyPurchase(purchase);
+        if (valid) {
+          // deliverProduct(purchaseDetails);
+        } else {
+          // _handleInvalidPurchase(purchaseDetails);
+          return;
+        }
+
         log(purchase.toString());
         await _inAppPurchase.completePurchase(purchase);
         this.purchase = purchase;
@@ -65,15 +75,23 @@ class SubscriptionManager {
   Future<bool> finalizePurchase() async {
     try {
       /// Send payment info to the backend
-
       final test = purchase;
       final purchaseData = purchase.toMap();
-      log(purchaseData.toString());
-
-      return true;
+      // log(purchaseData.toString());
+      log(jsonEncode(purchaseData));
+      // print(jsonEncode(purchaseData));
+      final didSucceed =
+          await stripeBloc.sendInAppPurchaseToBackend(purchaseData);
+      return didSucceed;
     } catch (error) {
       throw error;
     }
+  }
+
+  Future<bool> _verifyPurchase(PurchaseDetails purchaseDetails) {
+    // IMPORTANT!! Always verify a purchase before delivering the product.
+    // For the purpose of an example, we directly return true.
+    return Future<bool>.value(true);
   }
 
   Future<bool> isStoreAvailable() async {
@@ -115,22 +133,13 @@ extension PurchaseDetailsEncoder on PurchaseDetails {
     return {
       'purchaseID': this.purchaseID,
       'productID': this.productID,
-      'verificationData': this.verificationData,
+      // 'verificationData': this.verificationData,
+      'verificationData': this.verificationData.toMap(),
       'transactionDate': this.transactionDate,
-      'status': this.status,
+      'status': this.status.name,
       'error': this.error,
       'pendingCompletePurchase': this.pendingCompletePurchase,
     };
-  }
-
-  PurchaseDetails fromMap(Map<String, dynamic> map) {
-    return PurchaseDetails(
-      purchaseID: map['purchaseID'] as String,
-      productID: map['productID'] as String,
-      verificationData: map['verificationData'] as PurchaseVerificationData,
-      transactionDate: map['transactionDate'] as String,
-      status: map['status'] as PurchaseStatus,
-    );
   }
 }
 
@@ -141,13 +150,5 @@ extension PurchaseVerificationDataEncoder on PurchaseVerificationData {
       'serverVerificationData': this.serverVerificationData,
       'source': this.source,
     };
-  }
-
-  PurchaseVerificationData fromMap(Map<String, dynamic> map) {
-    return PurchaseVerificationData(
-      localVerificationData: map['localVerificationData'] as String,
-      serverVerificationData: map['serverVerificationData'] as String,
-      source: map['source'] as String,
-    );
   }
 }

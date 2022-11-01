@@ -279,6 +279,56 @@ class StripeBloc implements BlocBase {
     });
   }
 
+  Future<bool> sendInAppPurchaseToBackend(Map<String, dynamic> params) async {
+    return WebServiceClient.sendInAppPurchaseToBackend(params)
+        .then((response) async {
+      if (response is WebError) {
+        switch (response) {
+          case WebError.INTERNAL_SERVER_ERROR:
+            {
+              Utilities.showErrorMessage(
+                  "Unable to reach server. Please check connection.");
+              break;
+            }
+          case WebError.UNAUTHORIZED:
+            {
+              Utilities.showErrorMessage("Invalid Code!");
+              break;
+            }
+          case WebError.ALREADY_EXIST:
+            {
+              Utilities.showErrorMessage("Phone already exist");
+              break;
+            }
+          case WebError.BAD_REQUEST:
+            {
+              Utilities.showErrorMessage("Internal Server Error");
+              break;
+            }
+          default:
+            Utilities.showErrorMessage(
+                "Something went unexpectedly wrong. Please try again later");
+            break;
+        }
+        return false;
+      } else {
+        if (response == null) {
+          Utilities.showErrorMessage(
+              "Something went unexpectedly wrong. Please try again later");
+          return false;
+        } else {
+          var decodedRes = json.decode(response);
+          print(decodedRes);
+          return true;
+        }
+      }
+    }).catchError((error) {
+      Utilities.showErrorMessage("Something is broken \n $error");
+      print("errro $error");
+      return false;
+    });
+  }
+
   @override
   void dispose() {
     // TODO: implement dispose
