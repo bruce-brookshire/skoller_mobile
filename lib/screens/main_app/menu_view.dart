@@ -124,6 +124,7 @@ class MenuView extends StatelessWidget {
                             if (row.containsKey('builder1')) {
                               showDialog(
                                 context: context,
+                                barrierDismissible: false,
                                 builder: (_) => AccountSettingsDialogView(),
                               );
                               // loadData(context);

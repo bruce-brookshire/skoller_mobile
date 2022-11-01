@@ -3,14 +3,12 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_multi_formatter/formatters/credit_card_number_input_formatter.dart';
-import 'package:flutter_stripe/flutter_stripe.dart' hide ApplePayButtonStyle;
+// import 'package:flutter_stripe/flutter_stripe.dart' hide ApplePayButtonStyle;
 import 'package:pay/pay.dart';
 import 'package:rxdart/src/subjects/behavior_subject.dart';
 import 'package:screen_loader/screen_loader.dart';
-import 'package:skoller/constants/BaseUtilities.dart';
 import 'package:skoller/constants/constants.dart';
 import 'package:skoller/model/plans_model.dart';
-import 'package:skoller/requests/stripe_payments.dart';
 import 'package:skoller/screens/main_app/main_view.dart';
 import 'package:skoller/tools.dart';
 
@@ -34,7 +32,7 @@ class _PremiumPackages extends State<PremiumPackagesView>
   final emailController = TextEditingController();
   int selectedIndex = 0;
   String? selectPlanAmounts = '3.0';
-  final _stripePayment = new StripePayments();
+  // final _stripePayment = new StripePayments();
 
   @override
   void dispose() {
@@ -76,22 +74,22 @@ class _PremiumPackages extends State<PremiumPackagesView>
       return;
     }
 
-    final cardDetails = CardDetails(
-      number: cardNumberController.text,
-      expirationMonth: int.parse(monthController.text),
-      expirationYear: int.parse(yearController.text),
-      cvc: cvcController.text,
-    );
+    // final cardDetails = CardDetails(
+    //   number: cardNumberController.text,
+    //   expirationMonth: int.parse(monthController.text),
+    //   expirationYear: int.parse(yearController.text),
+    //   cvc: cvcController.text,
+    // );
 
     startLoading();
 
-    _stripePayment.payWithCard(cardDetails).then((token) {
-      Utilities.showSuccessMessage("Card added successfully");
-      hitSubscriptionApi(planId, token);
-    }).catchError((error) {
-      stopLoading();
-      alert(error.toString());
-    });
+    // _stripePayment.payWithCard(cardDetails).then((token) {
+    //   Utilities.showSuccessMessage("Card added successfully");
+    //   hitSubscriptionApi(planId, token);
+    // }).catchError((error) {
+    //   stopLoading();
+    //   alert(error.toString());
+    // });
 
     stopLoading();
   }
