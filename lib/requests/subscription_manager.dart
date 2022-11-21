@@ -131,6 +131,7 @@ class SubscriptionManager {
 extension PurchaseDetailsEncoder on PurchaseDetails {
   Map<String, dynamic> toMap() {
     return {
+      'skollerUserId': SKUser.current?.id,
       'purchaseID': this.purchaseID,
       'productID': this.productID,
       // 'verificationData': this.verificationData,
