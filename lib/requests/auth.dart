@@ -174,7 +174,7 @@ class Auth {
   static Future<RequestResponse> createUser({
     required String nameFirst,
     required String nameLast,
-    required String email,
+    String? email,
     required String phone,
   }) {
     final offset = DateTime.now().timeZoneOffset.inHours;

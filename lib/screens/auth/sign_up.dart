@@ -18,12 +18,10 @@ class SignUp extends StatefulWidget {
 class _SignUpState extends State<SignUp> {
   final firstNameController = TextEditingController();
   final lastNameController = TextEditingController();
-  final emailController = TextEditingController();
   final phoneController = TextEditingController();
 
   final firstNameFocus = FocusNode();
   final lastNameFocus = FocusNode();
-  final emailFocus = FocusNode();
   final phoneFocus = FocusNode();
 
   bool validState = false;
@@ -33,11 +31,9 @@ class _SignUpState extends State<SignUp> {
     [
       firstNameController,
       lastNameController,
-      emailController,
       phoneController,
       firstNameFocus,
       lastNameFocus,
-      emailFocus,
       phoneFocus,
     ].forEach((obj) => (obj as dynamic).dispose());
 
@@ -47,13 +43,10 @@ class _SignUpState extends State<SignUp> {
   void verifyState(String _) {
     final firstName = firstNameController.text.trim();
     final lastName = lastNameController.text.trim();
-    final email = emailController.text.trim();
     final phone = phoneController.text.trim();
 
-    final isValid = firstName.length > 0 &&
-        lastName.length > 0 &&
-        email.contains(RegExp(r'(.+?)@(.+?)\.(.+?)')) &&
-        phone.length == 14;
+    final isValid =
+        firstName.length > 0 && lastName.length > 0 && phone.length == 14;
 
     if (isValid != validState) {
       setState(() => validState = isValid);
@@ -63,7 +56,6 @@ class _SignUpState extends State<SignUp> {
   void tappedSignUp(TapUpDetails details) {
     final firstName = firstNameController.text.trim();
     final lastName = lastNameController.text.trim();
-    final email = emailController.text.trim();
     final phone = phoneController.text.trim();
 
     final loadingScreen = SKLoadingScreen.fadeIn(context);
@@ -72,7 +64,6 @@ class _SignUpState extends State<SignUp> {
       nameFirst: firstName,
       nameLast: lastName,
       phone: phone.replaceAll(RegExp(r'[\(\) \-]+'), ''),
-      email: email,
     ).then((response) async {
       loadingScreen.fadeOut();
 
@@ -108,7 +99,7 @@ class _SignUpState extends State<SignUp> {
         setState(() => validState = false);
 
         String message = [422, 401].contains(response.status)
-            ? 'A user already exists with that phone number or email. Try logging in!'
+            ? 'A user already exists with that phone number. Try logging in!'
             : 'Failed to create account. Try again later, or visit skoller.co';
 
         DropdownBanner.showBanner(
@@ -139,7 +130,6 @@ class _SignUpState extends State<SignUp> {
                     [
                       firstNameFocus,
                       lastNameFocus,
-                      emailFocus,
                       phoneFocus,
                     ].forEach((node) => node.hasFocus ? node.unfocus() : null);
 
@@ -265,7 +255,7 @@ class _SignUpState extends State<SignUp> {
                                         TextCapitalization.words,
                                     textInputAction: TextInputAction.next,
                                     onSubmitted: (_) {
-                                      emailFocus.requestFocus();
+                                      phoneFocus.requestFocus();
                                       // return lastNameFocus.nextFocus();
                                     },
                                     onChanged: verifyState,
@@ -277,53 +267,6 @@ class _SignUpState extends State<SignUp> {
                           ),
                         ),
                       ],
-                    ),
-                    GestureDetector(
-                      onTapUp: (details) => emailFocus.requestFocus(),
-                      child: Container(
-                        margin:
-                            EdgeInsets.symmetric(vertical: 6, horizontal: 24),
-                        padding:
-                            EdgeInsets.symmetric(vertical: 4, horizontal: 8),
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(5),
-                          border: Border.all(color: SKColors.border_gray),
-                          boxShadow: UIAssets.boxShadow,
-                        ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisSize: MainAxisSize.min,
-                          children: <Widget>[
-                            Text(
-                              'Email',
-                              style: TextStyle(
-                                  color: SKColors.skoller_blue,
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.normal),
-                            ),
-                            CupertinoTextField(
-                              padding: EdgeInsets.all(1),
-                              controller: emailController,
-                              style: TextStyle(
-                                  fontSize: 15, color: SKColors.dark_gray),
-                              placeholder: 'School email recommended',
-                              placeholderStyle: TextStyle(
-                                  fontSize: 14,
-                                  color: SKColors.text_light_gray),
-                              decoration: BoxDecoration(border: null),
-                              textCapitalization: TextCapitalization.none,
-                              textInputAction: TextInputAction.next,
-                              onSubmitted: (_) {
-                                // return emailFocus.nextFocus();
-                                phoneFocus.requestFocus();
-                              },
-                              onChanged: verifyState,
-                              focusNode: emailFocus,
-                            ),
-                          ],
-                        ),
-                      ),
                     ),
                     GestureDetector(
                       onTapUp: (details) => phoneFocus.requestFocus(),
