@@ -26,10 +26,17 @@ class SKButton extends StatelessWidget {
         height: 36,
         width: width,
         child: SizedBox.expand(
-          child: RaisedButton(
-            color: isDark ? SKColors.dark_gray : Colors.white,
-            shape:
-                RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
+          child: ElevatedButton(
+            style: ButtonStyle(
+              backgroundColor: MaterialStateProperty.all(
+                isDark ? SKColors.dark_gray : Colors.white,
+              ),
+              shape: MaterialStateProperty.all(
+                RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(5),
+                ),
+              ),
+            ),
             child: Text(
               buttonText,
               style: TextStyle(
