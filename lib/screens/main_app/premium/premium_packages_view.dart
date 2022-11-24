@@ -3,9 +3,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_multi_formatter/formatters/credit_card_number_input_formatter.dart';
-// import 'package:flutter_stripe/flutter_stripe.dart' hide ApplePayButtonStyle;
-import 'package:pay/pay.dart';
-import 'package:rxdart/src/subjects/behavior_subject.dart';
 import 'package:screen_loader/screen_loader.dart';
 import 'package:skoller/constants/constants.dart';
 import 'package:skoller/model/plans_model.dart';
@@ -543,9 +540,9 @@ class _PremiumPackages extends State<PremiumPackagesView>
     );
   }
 
-  Pay _payClient = Pay.withAssets([
-    'default_payment_profile_apple_pay.json',
-  ]);
+  // Pay _payClient = Pay.withAssets([
+  //   'default_payment_profile_apple_pay.json',
+  // ]);
 
   @override
   Widget screen(BuildContext context) {
@@ -713,28 +710,28 @@ class _PremiumPackages extends State<PremiumPackagesView>
                                 Container(
                                   width: MediaQuery.of(context).size.width,
                                   margin: EdgeInsets.only(top: 10.0),
-                                  child: FutureBuilder<bool>(
-                                    future: _payClient
-                                        .userCanPay(PayProvider.apple_pay),
-                                    builder: (context, snapshot) {
-                                      if (snapshot.connectionState ==
-                                          ConnectionState.done) {
-                                        if (snapshot.data == true) {
-                                          return RawApplePayButton(
-                                            style: ApplePayButtonStyle.black,
-                                            onPressed: () {
-                                              onApplePayResult();
-                                            },
-                                          );
-                                        } else {
-                                          return Container();
-                                          // userCanPay returned false
-                                          // Consider showing an alternative payment method
-                                        }
-                                      }
-                                      return Container();
-                                    },
-                                  ),
+                                  // child: FutureBuilder<bool>(
+                                  //   future: _payClient
+                                  //       .userCanPay(PayProvider.apple_pay),
+                                  //   builder: (context, snapshot) {
+                                  //     if (snapshot.connectionState ==
+                                  //         ConnectionState.done) {
+                                  //       if (snapshot.data == true) {
+                                  //         return RawApplePayButton(
+                                  //           style: ApplePayButtonStyle.black,
+                                  //           onPressed: () {
+                                  //             onApplePayResult();
+                                  //           },
+                                  //         );
+                                  //       } else {
+                                  //         return Container();
+                                  //         // userCanPay returned false
+                                  //         // Consider showing an alternative payment method
+                                  //       }
+                                  //     }
+                                  //     return Container();
+                                  //   },
+                                  // ),
                                 ),
                                 SizedBox(
                                   height: 16,
@@ -829,24 +826,24 @@ class _PremiumPackages extends State<PremiumPackagesView>
   }
 
   void onApplePayResult() async {
-    final result = await _payClient.showPaymentSelector(
-      provider: PayProvider.apple_pay,
-      paymentItems: [
-        PaymentItem(
-            label: 'Total',
-            amount: selectPlanAmounts.toString(),
-            status: PaymentItemStatus.final_price,
-            type: PaymentItemType.item)
-      ],
-    );
-
-    debugPrint('diuuwd' + result.toString());
-    String tokenToBeSentToCloud = result["token"];
-
-    debugPrint('diuuwd' + result["token"].toString());
-    BehaviorSubject<String> planId = await stripeBloc.planIdCont;
-    String planid = await planId.first;
-    print(planid);
+    // final result = await _payClient.showPaymentSelector(
+    //   provider: PayProvider.apple_pay,
+    //   paymentItems: [
+    //     PaymentItem(
+    //         label: 'Total',
+    //         amount: selectPlanAmounts.toString(),
+    //         status: PaymentItemStatus.final_price,
+    //         type: PaymentItemType.item)
+    //   ],
+    // );
+    //
+    // debugPrint('diuuwd' + result.toString());
+    // String tokenToBeSentToCloud = result["token"];
+    //
+    // debugPrint('diuuwd' + result["token"].toString());
+    // BehaviorSubject<String> planId = await stripeBloc.planIdCont;
+    // String planid = await planId.first;
+    // print(planid);
 
     //
     // hitSubscriptionApi(planid, tokenToBeSentToCloud);
