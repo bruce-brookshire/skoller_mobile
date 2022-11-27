@@ -15,9 +15,8 @@ class SubscriptionManager {
 
   final purchaseStream = InAppPurchase.instance.purchaseStream;
 
-  static const Set<String> productIds = isProd
-      ? {'monthly', 'annual', 'lifetime'}
-      : {'monthlyStaging', 'annualStaging2', 'lifetimeStaging'};
+  static const Set<String> productIds =
+      isProd ? {'monthly', 'annual'} : {'monthlyStaging', 'annualStaging2'};
 
   List<ProductDetails> _subscriptions = [];
   List<ProductDetails> get subscriptions => _subscriptions;
@@ -105,22 +104,18 @@ class SubscriptionManager {
   Future<List<ProductDetails>> fetchStoreSubscriptions() async {
     try {
       final response = await _inAppPurchase.queryProductDetails(productIds);
+      if (response.notFoundIDs.isNotEmpty) throw 'Failed to load products';
+
       final customList = <ProductDetails>[];
 
-      if (response.notFoundIDs.isEmpty) {
-        final subscriptions = response.productDetails;
-        final monthly = subscriptions.firstWhere((item) =>
-            item.title == 'monthly' || item.title == 'monthlyStaging');
-        customList.add(monthly);
-        final annual = subscriptions.firstWhere(
-            (item) => item.title == 'annual' || item.title == 'annualStaging2');
-        customList.add(annual);
-        final lifetime = subscriptions.firstWhere((item) =>
-            item.title == 'lifetime' || item.title == 'lifetimeStaging');
-        customList.add(lifetime);
-      } else {
-        throw 'Failed to load products';
-      }
+      final subscriptions = response.productDetails;
+      final monthly = subscriptions.firstWhere(
+          (item) => item.title == 'monthly' || item.title == 'monthlyStaging');
+      final annual = subscriptions.firstWhere(
+          (item) => item.title == 'annual' || item.title == 'annualStaging2');
+
+      customList.addAll([monthly, annual]);
+
       return customList;
     } catch (error) {
       rethrow;
