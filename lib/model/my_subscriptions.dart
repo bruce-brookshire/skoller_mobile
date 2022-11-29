@@ -46,7 +46,7 @@ class User {
     bool? isActive,
     int? id,
     String? email,
-    List? subscription,
+    SubscriptionData? subscription,
   }) {
     _trialDaysLeft = trialDaysLeft;
     _trial = trial;
@@ -55,7 +55,7 @@ class User {
     _isActive = isActive;
     _id = id;
     _email = email;
-    _subscriptions = subscription;
+    _subscription = subscription;
   }
 
   User.fromJson(dynamic json) {
@@ -66,7 +66,7 @@ class User {
     _isActive = json['is_active'];
     _id = json['id'];
     _email = json['email'];
-    _subscriptions = json['subscriptions'];
+    _subscription = SubscriptionData.fromJson(json['subscriptions']);
   }
   double? _trialDaysLeft;
   bool? _trial;
@@ -75,7 +75,7 @@ class User {
   bool? _isActive;
   int? _id;
   String? _email;
-  List? _subscriptions;
+  SubscriptionData? _subscription;
 
   double? get trialDaysLeft => _trialDaysLeft;
   bool? get trial => _trial;
@@ -84,7 +84,7 @@ class User {
   bool? get isActive => _isActive;
   int? get id => _id;
   String? get email => _email;
-  List? get subscriptions => _subscriptions;
+  SubscriptionData? get subscription => _subscription;
 
   Map<String, dynamic> toJson() {
     final map = <String, dynamic>{};
@@ -95,7 +95,75 @@ class User {
     map['is_active'] = _isActive;
     map['id'] = _id;
     map['email'] = _email;
-    map['subscriptions'] = _subscriptions;
+    map['subscriptions'] = _subscription;
     return map;
+  }
+}
+
+// final test = {
+//   "data": {
+//     "user_id": 10124,
+//     "status": "active",
+//     "platform": "in_app",
+//     "interval": "lifetime",
+//     "id": "2000000210591722",
+//     "expirationIntent": null,
+//     "created": 1669237564000,
+//     "cancelAt": null
+//   },
+// };
+
+// expirationIntent:apple_cancelled,
+//                 :apple_billing_error,
+//                 :apple_non_consent_price_increase,
+//                 :apple_product_not_available,
+//                 :apple_other,
+//                 :stripe_cancelled
+
+class SubscriptionData {
+  const SubscriptionData({
+    required this.id,
+    required this.userId,
+    required this.platform,
+    required this.created,
+    this.status,
+    this.interval,
+    this.expirationIntent,
+    this.cancelAt,
+  });
+
+  final String id;
+  final int userId;
+  final String platform;
+  final int created;
+  final bool? status;
+  final String? interval;
+  final String? expirationIntent;
+  final int? cancelAt;
+
+  factory SubscriptionData.fromJson(Map<String, dynamic> json) {
+    return SubscriptionData(
+      userId: json["user_id"],
+      status: json["status"] == 'active' ? true : false,
+      platform: json["platform"],
+      interval: json["interval"],
+      id: json["id"],
+      expirationIntent: json["expirationIntent"],
+      created: json["created"],
+      cancelAt: json["cancelAt"],
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      "user_id": userId,
+      "status": status,
+      "platform": platform,
+      "interval": interval,
+      "id": id,
+      "expirationIntent": expirationIntent,
+      "created": created,
+      "cancelAt": cancelAt,
+    };
   }
 }
