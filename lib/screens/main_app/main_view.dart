@@ -116,14 +116,13 @@ class _MainState extends State<MainView> {
     /// User has an active trial if true.
     /// Default is [true] so it doesn't lock users out immediately.
     /// This method will rerun after [Subscriptions.mySubscriptions] updates.
-    final isTrial = Subscriptions.mySubscriptions?.user?.trial ?? true;
+    final isTrial = Subscriptions.isTrial;
 
-    /// User has no active subscription if subscriptionList is empty.
+    /// User has no active subscription if subscription is null.
     /// This could mean that the user still has an active trial.
-    final subscriptions =
-        Subscriptions.mySubscriptions?.user?.subscriptions ?? [];
+    final noSubscriptionData = Subscriptions.noSubscriptionData;
 
-    if (!isTrial && subscriptions.isEmpty) {
+    if (!isTrial && noSubscriptionData) {
       await Navigator.push(
         context,
         SKNavOverlayRoute(

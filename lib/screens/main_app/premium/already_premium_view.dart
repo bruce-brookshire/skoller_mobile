@@ -139,12 +139,8 @@ class _AlreadyPremiumViewState extends State<AlreadyPremiumView>
                           ),
                         ],
                       ),
-                      (Subscriptions.mySubscriptions?.user
-                                      ?.lifetimeSubscription ??
-                                  true) ||
-                              (Subscriptions
-                                      .mySubscriptions?.user?.lifetimeTrial ??
-                                  true)
+                      Subscriptions.isLifetimeSubscription ||
+                              Subscriptions.isLifetimeTrial
                           ? Padding(
                               padding: EdgeInsets.all(12),
                               child: Column(
@@ -193,8 +189,7 @@ class _AlreadyPremiumViewState extends State<AlreadyPremiumView>
                                 ],
                               ),
                             )
-                          : (Subscriptions.mySubscriptions?.user?.isActive ??
-                                  false)
+                          : Subscriptions.isSubscriptionActive
                               ? Padding(
                                   padding: const EdgeInsets.all(10.0),
                                   child: Column(
@@ -286,8 +281,7 @@ class _AlreadyPremiumViewState extends State<AlreadyPremiumView>
                                     ],
                                   ),
                                 )
-                              : (Subscriptions.mySubscriptions?.user?.trial ??
-                                      false)
+                              : Subscriptions.isTrial
                                   ? Padding(
                                       padding: EdgeInsets.all(5),
                                       child: Column(
@@ -304,7 +298,7 @@ class _AlreadyPremiumViewState extends State<AlreadyPremiumView>
                                                   margin: EdgeInsets.only(
                                                       left: 10.0),
                                                   child: Text(
-                                                    'Your free trial expires in ${(Subscriptions.mySubscriptions?.user?.trial ?? false) == false ? '' : Subscriptions.mySubscriptions?.user?.trialDaysLeft?.toStringAsFixed(0)} days',
+                                                    'Your free trial expires in ${Subscriptions.isTrial == false ? '' : Subscriptions.trialDaysLeft.toStringAsFixed(0)} days',
                                                     style: TextStyle(
                                                       fontSize: 16,
                                                       fontWeight:
@@ -362,7 +356,7 @@ class _AlreadyPremiumViewState extends State<AlreadyPremiumView>
                                               top: 5,
                                             ),
                                             child: Text(
-                                              'Trial ends ${DateFormat('MMMM dd, yyyy').format(DateTime.now().add(Duration(days: int.parse(Subscriptions.mySubscriptions?.user?.trialDaysLeft?.toStringAsFixed(0) ?? '0'))))}',
+                                              'Trial ends ${DateFormat('MMMM dd, yyyy').format(DateTime.now().add(Duration(days: int.parse(Subscriptions.trialDaysLeft.toStringAsFixed(0)))))}',
                                               style: TextStyle(
                                                 fontSize: 15,
                                                 fontWeight: FontWeight.normal,

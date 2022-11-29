@@ -161,6 +161,31 @@ Map tokenLoginMap = Map();
 
 class Subscriptions {
   static MySubscriptions? mySubscriptions;
+
+  /// Subscriptions
+  static bool get noSubscriptionData =>
+      mySubscriptions?.user?.subscription == null;
+
+  static bool get isSubscriptionActive {
+    final isCanceled =
+        mySubscriptions?.user?.subscription?.expirationIntent != null;
+
+    final int canceledAt = mySubscriptions?.user?.subscription?.cancelAt ?? 0;
+    final int currentTime = DateTime.now().millisecondsSinceEpoch;
+    final bool hasExpired = canceledAt > currentTime;
+
+    return isCanceled && hasExpired;
+  }
+
+  static bool get isTrial => mySubscriptions?.user?.trial ?? false;
+  static double get trialDaysLeft =>
+      Subscriptions.mySubscriptions?.user?.trialDaysLeft ?? 0;
+
+  /// Lifetime
+  static bool get isLifetimeSubscription =>
+      mySubscriptions?.user?.lifetimeSubscription ?? false;
+  static bool get isLifetimeTrial =>
+      mySubscriptions?.user?.lifetimeTrial ?? false;
 }
 
 bool? isSubscriptionAvailable;

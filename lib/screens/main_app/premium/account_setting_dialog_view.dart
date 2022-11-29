@@ -20,12 +20,11 @@ class _AccountSettingsDialogViewState extends State<AccountSettingsDialogView> {
   bool showPurchaseStatus = false;
 
   /// User has an active trial if true.
-  final isTrial = Subscriptions.mySubscriptions?.user?.trial ?? false;
+  final isTrial = Subscriptions.isTrial;
 
-  /// User has no active subscription if subscriptionList is empty.
+  /// User has no active subscription if subscription is null.
   /// This could mean that the user still has an active trial.
-  final subscriptions =
-      Subscriptions.mySubscriptions?.user?.subscriptions ?? [];
+  final noSubscriptionData = Subscriptions.noSubscriptionData;
 
   Future<void> initializePurchase() async {
     SubscriptionManager.instance
@@ -76,14 +75,14 @@ class _AccountSettingsDialogViewState extends State<AccountSettingsDialogView> {
                           ),
                         ],
                       ),
-                      isTrial && subscriptions.isEmpty
+                      isTrial && noSubscriptionData
                           ? _SubscriptionWidget(
                               title:
-                                  'Your free trial expires in ${(Subscriptions.mySubscriptions?.user?.trial ?? false) == false ? '' : Subscriptions.mySubscriptions?.user?.trialDaysLeft?.toStringAsFixed(0)} days',
+                                  'Your free trial expires in ${Subscriptions.isTrial == false ? '' : Subscriptions.trialDaysLeft.toStringAsFixed(0)} days',
                               subtitle:
-                                  'Trial ends ${DateFormat('MMMM dd, yyyy').format(DateTime.now().add(Duration(days: int.parse(Subscriptions.mySubscriptions?.user?.trialDaysLeft?.toStringAsFixed(0) ?? '0'))))}',
+                                  'Trial ends ${DateFormat('MMMM dd, yyyy').format(DateTime.now().add(Duration(days: int.parse(Subscriptions.trialDaysLeft.toStringAsFixed(0)))))}',
                             )
-                          : subscriptions.isEmpty
+                          : noSubscriptionData
                               ? _SubscriptionWidget(
                                   title: 'Your free trial has expired!',
                                   subtitle: 'Upgrade to premium',

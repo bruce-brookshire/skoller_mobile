@@ -598,9 +598,7 @@ class _PremiumPackages extends State<PremiumPackagesView>
                                       crossAxisAlignment:
                                           CrossAxisAlignment.start,
                                       children: [
-                                        !(Subscriptions.mySubscriptions?.user
-                                                    ?.trial ??
-                                                false)
+                                        !Subscriptions.isTrial
                                             ? Padding(
                                                 padding: EdgeInsets.all(12),
                                                 child: Text(
@@ -612,14 +610,10 @@ class _PremiumPackages extends State<PremiumPackagesView>
                                                   ),
                                                 ),
                                               )
-                                            : ((Subscriptions
-                                                            .mySubscriptions
-                                                            ?.user
-                                                            ?.lifetimeSubscription ??
-                                                        false) ==
-                                                    false)
+                                            : !Subscriptions
+                                                    .isLifetimeSubscription
                                                 ? Text(
-                                                    'Your free trial expires in ${(Subscriptions.mySubscriptions?.user?.trial ?? false) == false ? '' : Subscriptions.mySubscriptions?.user?.trialDaysLeft!.toStringAsFixed(0)} days',
+                                                    'Your free trial expires in ${Subscriptions.isTrial == false ? '' : Subscriptions.trialDaysLeft.toStringAsFixed(0)} days',
                                                     textAlign: TextAlign.center,
                                                     style: TextStyle(
                                                       fontSize: 14,
@@ -627,12 +621,7 @@ class _PremiumPackages extends State<PremiumPackagesView>
                                                           FontWeight.w800,
                                                     ),
                                                   )
-                                                : ((Subscriptions
-                                                                .mySubscriptions
-                                                                ?.user
-                                                                ?.lifetimeTrial ??
-                                                            false) ==
-                                                        true)
+                                                : Subscriptions.isLifetimeTrial
                                                     ? Text(
                                                         'You have a lifetime trial',
                                                         textAlign:
@@ -644,7 +633,7 @@ class _PremiumPackages extends State<PremiumPackagesView>
                                                         ),
                                                       )
                                                     : Text(
-                                                        'Your free trial expires in ${(Subscriptions.mySubscriptions?.user?.trial ?? false) == false ? '' : Subscriptions.mySubscriptions?.user?.trialDaysLeft.toString()} days',
+                                                        'Your free trial expires in ${Subscriptions.isTrial == false ? '' : Subscriptions.trialDaysLeft.toString()} days',
                                                         textAlign:
                                                             TextAlign.center,
                                                         style: TextStyle(

@@ -264,11 +264,9 @@ class _TodoState extends State<TodoView> {
   getSubs() async {
     isSubscriptionAvailable = await stripeBloc.mySubscriptionsList();
     if (isSubscriptionAvailable ?? false) {
-      if (!(Subscriptions.mySubscriptions?.user?.trial ?? true) &&
-              !(Subscriptions.mySubscriptions?.user?.lifetimeSubscription ??
-                  true) ||
-          !(Subscriptions.mySubscriptions?.user?.lifetimeTrial ?? true)) {
-        if (!(Subscriptions.mySubscriptions?.user?.isActive ?? true)) {
+      if (!Subscriptions.isTrial && !Subscriptions.isLifetimeSubscription ||
+          !Subscriptions.isLifetimeTrial) {
+        if (!Subscriptions.isSubscriptionActive) {
           createAPremiumFreeUserDialog();
         }
       }
@@ -279,12 +277,9 @@ class _TodoState extends State<TodoView> {
     }*/
 
     if (isSubscriptionAvailable ?? false) {
-      if (Subscriptions.mySubscriptions?.user?.trialDaysLeft == 0) {
-        if ((Subscriptions.mySubscriptions?.user?.lifetimeSubscription ??
-                false) ==
-            false) {
-          if ((Subscriptions.mySubscriptions?.user?.lifetimeTrial ?? false) ==
-              false) {
+      if (Subscriptions.trialDaysLeft == 0) {
+        if (Subscriptions.isLifetimeSubscription == false) {
+          if (Subscriptions.isLifetimeTrial == false) {
             showDialog(
                 context: context,
                 builder: (_) {
@@ -413,11 +408,9 @@ class _TodoState extends State<TodoView> {
       titleOption: titleOption,
       children: <Widget>[
         (isSubscriptionAvailable ?? false)
-            ? ((Subscriptions.mySubscriptions?.user?.lifetimeSubscription ??
-                        false) ||
-                    (Subscriptions.mySubscriptions?.user?.lifetimeTrial ??
-                        false) ||
-                    (Subscriptions.mySubscriptions?.user?.isActive ?? false))
+            ? (Subscriptions.isLifetimeSubscription ||
+                    Subscriptions.isLifetimeTrial ||
+                    Subscriptions.isSubscriptionActive)
                 ? Container()
                 : GestureDetector(
                     onTap: () {

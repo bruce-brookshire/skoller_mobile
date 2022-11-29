@@ -174,26 +174,20 @@ class MenuView extends StatelessWidget {
   }
 
   loadData(context) {
-    final user = Subscriptions.mySubscriptions?.user;
-    final lifeTimeSub = user?.lifetimeSubscription ?? true;
-    final lifeTimeTrial = user?.lifetimeTrial ?? true;
-    final trial = Subscriptions.mySubscriptions?.user?.trial ?? false;
-    final isActive = user?.isActive ?? false;
-
-    if (lifeTimeSub || lifeTimeTrial) {
+    if (Subscriptions.isLifetimeSubscription || Subscriptions.isLifetimeTrial) {
       showDialog(
         context: context,
         builder: (_) => AlreadyPremiumView(),
       );
     } else {
-      if (isActive) {
+      if (Subscriptions.isSubscriptionActive) {
         showDialog(
           context: context,
           builder: (_) => PremiumPackagesView(true),
           // builder: (_) => AlreadyPremiumView(),
         );
       } else {
-        if (trial) {
+        if (Subscriptions.isTrial) {
           showDialog(
             context: context,
             builder: (_) => AlreadyPremiumView(),
