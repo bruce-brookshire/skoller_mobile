@@ -66,7 +66,9 @@ class User {
     _isActive = json['is_active'];
     _id = json['id'];
     _email = json['email'];
-    _subscription = SubscriptionData.fromJson(json['subscriptions']);
+    _subscription = json['subscriptions'] == null
+        ? null
+        : SubscriptionData.fromJson(json['subscriptions']);
   }
   double? _trialDaysLeft;
   bool? _trial;
