@@ -407,44 +407,6 @@ class _TodoState extends State<TodoView> {
       callbackRight: tappedAdd,
       titleOption: titleOption,
       children: <Widget>[
-        (isSubscriptionAvailable ?? false)
-            ? (Subscriptions.isLifetimeSubscription ||
-                    Subscriptions.isLifetimeTrial ||
-                    Subscriptions.isSubscriptionActive)
-                ? Container()
-                : GestureDetector(
-                    onTap: () {
-                      showDialog(
-                          context: context,
-                          builder: (_) {
-                            return PremiumPackagesView(true);
-                          });
-                    },
-                    child: Container(
-                      height: 30,
-                      width: MediaQuery.of(context).size.width,
-                      decoration: BoxDecoration(
-                        color: SKColors.skoller_blue1,
-                        boxShadow: [
-                          BoxShadow(
-                              color: Colors.grey,
-                              spreadRadius: 1.5,
-                              offset: Offset(1, 1),
-                              blurRadius: 10),
-                        ],
-                      ),
-                      child: Center(
-                        child: Text(
-                          'Upgrade to Premium!',
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            color: Colors.white,
-                          ),
-                        ),
-                      ),
-                    ),
-                  )
-            : Container(),
         Expanded(
           child: RefreshIndicator(
             key: _refreshIndicatorKey,
