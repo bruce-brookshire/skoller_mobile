@@ -1,5 +1,4 @@
 import 'package:dart_notification_center/dart_notification_center.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:skoller/screens/main_app/menu/manage_classes_view.dart';
 import 'package:skoller/screens/main_app/menu/profile_link_sharing_view.dart';
@@ -174,30 +173,30 @@ class MenuView extends StatelessWidget {
   }
 
   loadData(context) {
-    if (Subscriptions.isLifetimeSubscription || Subscriptions.isLifetimeTrial) {
+    // if (Subscriptions.isLifetimeSubscription || Subscriptions.isLifetimeTrial) {
+    //   showDialog(
+    //     context: context,
+    //     builder: (_) => AlreadyPremiumView(),
+    //   );
+    // }
+
+    if (Subscriptions.isSubscriptionActive) {
       showDialog(
         context: context,
-        builder: (_) => AlreadyPremiumView(),
+        builder: (_) => PremiumPackagesView(true),
+        // builder: (_) => AlreadyPremiumView(),
       );
     } else {
-      if (Subscriptions.isSubscriptionActive) {
+      if (Subscriptions.isTrial) {
+        showDialog(
+          context: context,
+          builder: (_) => AlreadyPremiumView(),
+        );
+      } else {
         showDialog(
           context: context,
           builder: (_) => PremiumPackagesView(true),
-          // builder: (_) => AlreadyPremiumView(),
         );
-      } else {
-        if (Subscriptions.isTrial) {
-          showDialog(
-            context: context,
-            builder: (_) => AlreadyPremiumView(),
-          );
-        } else {
-          showDialog(
-            context: context,
-            builder: (_) => PremiumPackagesView(true),
-          );
-        }
       }
     }
   }

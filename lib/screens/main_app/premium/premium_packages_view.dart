@@ -598,8 +598,16 @@ class _PremiumPackages extends State<PremiumPackagesView>
                                       crossAxisAlignment:
                                           CrossAxisAlignment.start,
                                       children: [
-                                        !Subscriptions.isTrial
-                                            ? Padding(
+                                        Subscriptions.isTrial
+                                            ? Text(
+                                                'Your free trial expires in ${Subscriptions.isTrial == false ? '' : Subscriptions.trialDaysLeft.toStringAsFixed(0)} days',
+                                                textAlign: TextAlign.center,
+                                                style: TextStyle(
+                                                  fontSize: 14,
+                                                  fontWeight: FontWeight.w800,
+                                                ),
+                                              )
+                                            : Padding(
                                                 padding: EdgeInsets.all(12),
                                                 child: Text(
                                                   'Your free trial has expired!',
@@ -609,39 +617,7 @@ class _PremiumPackages extends State<PremiumPackagesView>
                                                     fontWeight: FontWeight.w800,
                                                   ),
                                                 ),
-                                              )
-                                            : !Subscriptions
-                                                    .isLifetimeSubscription
-                                                ? Text(
-                                                    'Your free trial expires in ${Subscriptions.isTrial == false ? '' : Subscriptions.trialDaysLeft.toStringAsFixed(0)} days',
-                                                    textAlign: TextAlign.center,
-                                                    style: TextStyle(
-                                                      fontSize: 14,
-                                                      fontWeight:
-                                                          FontWeight.w800,
-                                                    ),
-                                                  )
-                                                : Subscriptions.isLifetimeTrial
-                                                    ? Text(
-                                                        'You have a lifetime trial',
-                                                        textAlign:
-                                                            TextAlign.center,
-                                                        style: TextStyle(
-                                                          fontSize: 14,
-                                                          fontWeight:
-                                                              FontWeight.w800,
-                                                        ),
-                                                      )
-                                                    : Text(
-                                                        'Your free trial expires in ${Subscriptions.isTrial == false ? '' : Subscriptions.trialDaysLeft.toString()} days',
-                                                        textAlign:
-                                                            TextAlign.center,
-                                                        style: TextStyle(
-                                                          fontSize: 14,
-                                                          fontWeight:
-                                                              FontWeight.w800,
-                                                        ),
-                                                      ),
+                                              ),
                                         Text(
                                           'Upgrade to premium.',
                                           textAlign: TextAlign.center,

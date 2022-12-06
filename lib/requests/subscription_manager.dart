@@ -6,7 +6,11 @@ import 'package:skoller/requests/requests_core.dart';
 import 'package:skoller/screens/main_app/premium/stripe_bloc.dart';
 
 class SubscriptionManager {
-  SubscriptionManager._();
+  SubscriptionManager._() {
+    init();
+    stripeBloc.mySubscriptionsList();
+  }
+
   static final instance = SubscriptionManager._();
 
   final _inAppPurchase = InAppPurchase.instance;
@@ -23,7 +27,7 @@ class SubscriptionManager {
 
   Future<void> init() async {
     try {
-      _subscriptions = await fetchStoreSubscriptions();
+      _subscriptions = await _fetchStoreSubscriptions();
     } catch (error) {
       return;
     }
@@ -45,7 +49,7 @@ class SubscriptionManager {
       return false;
     } catch (error) {
       log(error.toString());
-      throw 'Failed to initialize subscription';
+      throw 'Failed to initialize subscription. Please try again later!';
     }
   }
 
@@ -101,7 +105,7 @@ class SubscriptionManager {
     }
   }
 
-  Future<List<ProductDetails>> fetchStoreSubscriptions() async {
+  Future<List<ProductDetails>> _fetchStoreSubscriptions() async {
     try {
       final response = await _inAppPurchase.queryProductDetails(productIds);
       if (response.notFoundIDs.isNotEmpty) throw 'Failed to load products';

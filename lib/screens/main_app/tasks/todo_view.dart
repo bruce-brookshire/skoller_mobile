@@ -5,9 +5,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:intl/intl.dart';
-import 'package:skoller/constants/constants.dart';
-import 'package:skoller/screens/main_app/premium/premium_packages_view.dart';
-import 'package:skoller/screens/main_app/premium/stripe_bloc.dart';
 import 'package:skoller/screens/main_app/tasks/dateless_assignments_modal.dart';
 import 'package:skoller/screens/main_app/tasks/todo_preferences_modal.dart';
 import 'package:skoller/tools.dart';
@@ -37,7 +34,6 @@ class _TodoState extends State<TodoView> {
 
   @override
   void initState() {
-    getSubs();
     super.initState();
 
     loadTasks();
@@ -259,101 +255,6 @@ class _TodoState extends State<TodoView> {
     );
 
     if (result is bool && result) loadTasks();
-  }
-
-  getSubs() async {
-    isSubscriptionAvailable = await stripeBloc.mySubscriptionsList();
-    if (isSubscriptionAvailable ?? false) {
-      if (!Subscriptions.isTrial && !Subscriptions.isLifetimeSubscription ||
-          !Subscriptions.isLifetimeTrial) {
-        if (!Subscriptions.isSubscriptionActive) {
-          createAPremiumFreeUserDialog();
-        }
-      }
-    }
-    setState(() {});
-    /*else {
-      createAPremiumFreeUserDialog();
-    }*/
-
-    if (isSubscriptionAvailable ?? false) {
-      if (Subscriptions.trialDaysLeft == 0) {
-        if (Subscriptions.isLifetimeSubscription == false) {
-          if (Subscriptions.isLifetimeTrial == false) {
-            showDialog(
-                context: context,
-                builder: (_) {
-                  return PremiumPackagesView(false);
-                });
-          }
-        }
-      }
-    }
-  }
-
-  Future<dynamic> createAPremiumFreeUserDialog() async {
-    return showDialog(
-      context: context,
-      builder: (context) => Dialog(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(10),
-          side: BorderSide(color: SKColors.border_gray),
-        ),
-        child: Padding(
-          padding: EdgeInsets.all(12),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: <Widget>[
-              Row(
-                children: [
-                  Image.asset(ImageNames.sammiImages.big_smile),
-                  Flexible(
-                    child: Column(
-                      children: [
-                        Text(
-                          'Your trial is expired!',
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w800,
-                          ),
-                        ),
-                        Text(
-                          'Login on desktop at Skoller.com to manage your account settings.',
-                          style: TextStyle(
-                              fontSize: 15, fontWeight: FontWeight.normal),
-                          textAlign: TextAlign.center,
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-              GestureDetector(
-                behavior: HitTestBehavior.opaque,
-                onTapUp: (details) => Navigator.pop(context, true),
-                child: Padding(
-                  padding: EdgeInsets.only(top: 12),
-                  child: Container(
-                    alignment: Alignment.center,
-                    padding: EdgeInsets.symmetric(vertical: 8),
-                    decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(5),
-                        color: SKColors.skoller_blue,
-                        boxShadow: UIAssets.boxShadow),
-                    child: Text(
-                      'Close',
-                      style: TextStyle(color: Colors.white),
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
   }
 
   @override

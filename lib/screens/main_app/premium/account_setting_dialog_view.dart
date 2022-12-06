@@ -19,13 +19,6 @@ class _AccountSettingsDialogViewState extends State<AccountSettingsDialogView> {
 
   bool showPurchaseStatus = false;
 
-  /// User has an active trial if true.
-  final isTrial = Subscriptions.isTrial;
-
-  /// User has no active subscription if subscription is null.
-  /// This could mean that the user still has an active trial.
-  final noSubscriptionData = Subscriptions.noSubscriptionData;
-
   Future<void> initializePurchase() async {
     SubscriptionManager.instance
         .initializePurchase(selectedSubscription!)
@@ -75,14 +68,15 @@ class _AccountSettingsDialogViewState extends State<AccountSettingsDialogView> {
                           ),
                         ],
                       ),
-                      isTrial && noSubscriptionData
+                      Subscriptions.isTrial &&
+                              Subscriptions.isSubscriptionAvailable
                           ? _SubscriptionWidget(
                               title:
                                   'Your free trial expires in ${Subscriptions.isTrial == false ? '' : Subscriptions.trialDaysLeft.toStringAsFixed(0)} days',
                               subtitle:
                                   'Trial ends ${DateFormat('MMMM dd, yyyy').format(DateTime.now().add(Duration(days: int.parse(Subscriptions.trialDaysLeft.toStringAsFixed(0)))))}',
                             )
-                          : noSubscriptionData
+                          : Subscriptions.isSubscriptionAvailable
                               ? _SubscriptionWidget(
                                   title: 'Your free trial has expired!',
                                   subtitle: 'Upgrade to premium',

@@ -36,6 +36,9 @@ class _MainState extends State<MainView> {
 
   @override
   void initState() {
+    /// Initializes [SubscriptionManager] which triggers fetching and setting User subscription
+    SubscriptionManager.instance;
+
     // If the student does not have a primary school or term, set it
     if (SKUser.current?.student.primarySchool == null ||
         SKUser.current?.student.primaryPeriod == null)

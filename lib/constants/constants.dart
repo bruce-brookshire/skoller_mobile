@@ -162,11 +162,14 @@ Map tokenLoginMap = Map();
 class Subscriptions {
   static MySubscriptions? mySubscriptions;
 
-  /// Subscriptions
-  static bool get noSubscriptionData =>
-      mySubscriptions?.user?.subscription == null;
+  /// User has no active subscription if subscription is null.
+  /// This could mean that the user still has an active trial.
+  static bool get isSubscriptionAvailable =>
+      mySubscriptions?.user?.subscription != null;
 
   static bool get isSubscriptionActive {
+    // if (isSubscriptionAvailable) return false;
+
     final isCanceled =
         mySubscriptions?.user?.subscription?.expirationIntent != null;
 
@@ -177,7 +180,12 @@ class Subscriptions {
     return isCanceled && hasExpired;
   }
 
+  /// User has an active trial if true.
+  /// Default is [true] so it doesn't lock users out immediately.
+  /// This method will rerun after [Subscriptions.mySubscriptions] updates.
   static bool get isTrial => mySubscriptions?.user?.trial ?? false;
+
+  /// Shows how many days User has left on their [Trial] subscription
   static double get trialDaysLeft =>
       Subscriptions.mySubscriptions?.user?.trialDaysLeft ?? 0;
 
@@ -187,8 +195,6 @@ class Subscriptions {
   static bool get isLifetimeTrial =>
       mySubscriptions?.user?.lifetimeTrial ?? false;
 }
-
-bool? isSubscriptionAvailable;
 
 final statesMap = LinkedHashMap.fromIterables([
   "Alabama",
