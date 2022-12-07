@@ -42,9 +42,9 @@ class SubscriptionManager {
 
   Future<bool> initializePurchase(ProductDetails product) async {
     try {
-      final isAvailable = await isStoreAvailable();
+      final isStoreAvailable = await _isStoreAvailable();
 
-      if (isAvailable) {
+      if (isStoreAvailable) {
         final selectedProduct = _subscriptions
             .firstWhere((element) => product.title == element.title);
         final purchaseParam = PurchaseParam(productDetails: selectedProduct);
@@ -53,29 +53,20 @@ class SubscriptionManager {
             await _inAppPurchase.buyNonConsumable(purchaseParam: purchaseParam);
         return isPurchasing;
       }
+
       return false;
     } catch (error) {
       log(error.toString());
-      throw 'Failed to initialize subscription. Please try again later!';
+      throw 'Failed to initialize subscription. Please try again!';
     }
   }
 
-  Future<void> processPurchase(PurchaseDetails purchase) async {
+  Future<void> setSelectedSubscription(PurchaseDetails purchase) async {
     try {
-      final isPurchased = purchase.status == PurchaseStatus.purchased;
-      final isRestored = purchase.status == PurchaseStatus.restored;
-      if (isPurchased || isRestored) {
-        final bool valid = await _verifyPurchase(purchase);
-        if (valid) {
-          // deliverProduct(purchaseDetails);
-        } else {
-          // _handleInvalidPurchase(purchaseDetails);
-          return;
-        }
+      this.purchase = purchase;
 
-        log(purchase.toString());
+      if (purchase.pendingCompletePurchase) {
         await _inAppPurchase.completePurchase(purchase);
-        this.purchase = purchase;
       }
     } catch (error) {
       return;
@@ -85,11 +76,8 @@ class SubscriptionManager {
   Future<bool> finalizePurchase() async {
     try {
       /// Send payment info to the backend
-      final test = purchase;
       final purchaseData = purchase.toMap();
-      // log(purchaseData.toString());
       log(jsonEncode(purchaseData));
-      // print(jsonEncode(purchaseData));
       final didSucceed =
           await stripeBloc.sendInAppPurchaseToBackend(purchaseData);
       return didSucceed;
@@ -98,13 +86,7 @@ class SubscriptionManager {
     }
   }
 
-  Future<bool> _verifyPurchase(PurchaseDetails purchaseDetails) {
-    // IMPORTANT!! Always verify a purchase before delivering the product.
-    // For the purpose of an example, we directly return true.
-    return Future<bool>.value(true);
-  }
-
-  Future<bool> isStoreAvailable() async {
+  Future<bool> _isStoreAvailable() async {
     try {
       return await _inAppPurchase.isAvailable();
     } catch (error) {
@@ -115,7 +97,10 @@ class SubscriptionManager {
   Future<List<ProductDetails>> _fetchStoreSubscriptions() async {
     try {
       final response = await _inAppPurchase.queryProductDetails(productIds);
-      if (response.notFoundIDs.isNotEmpty) throw 'Failed to load products';
+
+      if (response.notFoundIDs.isNotEmpty) {
+        throw 'Failed to load subscriptions.';
+      }
 
       final customList = <ProductDetails>[];
 
@@ -140,7 +125,6 @@ extension PurchaseDetailsEncoder on PurchaseDetails {
       'skollerUserId': SKUser.current?.id,
       'purchaseID': this.purchaseID,
       'productID': this.productID,
-      // 'verificationData': this.verificationData,
       'verificationData': this.verificationData.toMap(),
       'transactionDate': this.transactionDate,
       'status': this.status.name,

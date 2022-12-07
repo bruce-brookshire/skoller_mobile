@@ -257,8 +257,10 @@ class _SubscriptionPurchaseStatusStream extends StatelessWidget {
                 shrinkWrap: true,
                 itemCount: data.length,
                 itemBuilder: (context, index) {
-                  final purchase = data[index];
-                  SubscriptionManager.instance.processPurchase(purchase);
+                  // final purchase = data[index];
+                  final purchase = data[0];
+                  SubscriptionManager.instance
+                      .setSelectedSubscription(purchase);
 
                   return ListTile(
                     title: Text(purchase.productID),
