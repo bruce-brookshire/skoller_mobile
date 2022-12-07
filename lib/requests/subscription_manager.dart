@@ -2,12 +2,13 @@ import 'dart:convert';
 import 'dart:developer';
 
 import 'package:in_app_purchase/in_app_purchase.dart';
+import 'package:in_app_purchase_storekit/store_kit_wrappers.dart';
 import 'package:skoller/requests/requests_core.dart';
 import 'package:skoller/screens/main_app/premium/stripe_bloc.dart';
 
 class SubscriptionManager {
   SubscriptionManager._() {
-    init();
+    _init();
     stripeBloc.mySubscriptionsList();
   }
 
@@ -25,8 +26,14 @@ class SubscriptionManager {
   List<ProductDetails> _subscriptions = [];
   List<ProductDetails> get subscriptions => _subscriptions;
 
-  Future<void> init() async {
+  Future<void> _init() async {
     try {
+      final paymentWrapper = SKPaymentQueueWrapper();
+      final transactions = await paymentWrapper.transactions();
+      transactions.forEach((transaction) async {
+        await paymentWrapper.finishTransaction(transaction);
+      });
+
       _subscriptions = await _fetchStoreSubscriptions();
     } catch (error) {
       return;
