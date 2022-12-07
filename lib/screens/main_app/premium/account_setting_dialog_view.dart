@@ -68,23 +68,22 @@ class _AccountSettingsDialogViewState extends State<AccountSettingsDialogView> {
                           ),
                         ],
                       ),
-                      Subscriptions.isTrial &&
-                              Subscriptions.isSubscriptionAvailable
+                      Subscriptions.isTrial
                           ? _SubscriptionWidget(
                               title:
                                   'Your free trial expires in ${Subscriptions.isTrial == false ? '' : Subscriptions.trialDaysLeft.toStringAsFixed(0)} days',
                               subtitle:
                                   'Trial ends ${DateFormat('MMMM dd, yyyy').format(DateTime.now().add(Duration(days: int.parse(Subscriptions.trialDaysLeft.toStringAsFixed(0)))))}',
                             )
-                          : Subscriptions.isSubscriptionAvailable
+                          : Subscriptions.isSubscriptionActive
                               ? _SubscriptionWidget(
-                                  title: 'Your free trial has expired!',
-                                  subtitle: 'Upgrade to premium',
-                                )
-                              : _SubscriptionWidget(
                                   title: 'You have a premium account.',
                                   subtitle:
                                       'Go to skoller.co to manage your account.',
+                                )
+                              : _SubscriptionWidget(
+                                  title: 'Your free trial has expired!',
+                                  subtitle: 'Upgrade to premium',
                                 ),
                       SizedBox(height: 12),
                       Row(

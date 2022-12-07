@@ -164,11 +164,12 @@ class Subscriptions {
 
   /// User has no active subscription if subscription is null.
   /// This could mean that the user still has an active trial.
-  static bool get isSubscriptionAvailable =>
+  static bool get _isSubscriptionAvailable =>
       mySubscriptions?.user?.subscription != null;
 
+  /// Indicates whether user has an active Subscription or not.
   static bool get isSubscriptionActive {
-    // if (isSubscriptionAvailable) return false;
+    if (!_isSubscriptionAvailable) return false;
 
     final isCanceled =
         mySubscriptions?.user?.subscription?.expirationIntent != null;

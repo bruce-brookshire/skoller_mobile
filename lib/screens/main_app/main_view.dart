@@ -114,18 +114,7 @@ class _MainState extends State<MainView> {
   }
 
   void showPayWallModalIfSubscriptionExpired(dynamic userState) async {
-    await SubscriptionManager.instance.init();
-
-    /// User has an active trial if true.
-    /// Default is [true] so it doesn't lock users out immediately.
-    /// This method will rerun after [Subscriptions.mySubscriptions] updates.
-    final isTrial = Subscriptions.isTrial;
-
-    /// User has no active subscription if subscription is null.
-    /// This could mean that the user still has an active trial.
-    final noSubscriptionData = Subscriptions.noSubscriptionData;
-
-    if (!isTrial && noSubscriptionData) {
+    if (!Subscriptions.isTrial && !Subscriptions.isSubscriptionActive) {
       await Navigator.push(
         context,
         SKNavOverlayRoute(
