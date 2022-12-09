@@ -8,7 +8,8 @@ import 'package:skoller/screens/main_app/premium/stripe_bloc.dart';
 
 class SubscriptionManager {
   SubscriptionManager._() {
-    _init();
+    _setSubscriptions();
+    _completePendingTransaction();
     stripeBloc.mySubscriptionsList();
   }
 
@@ -16,29 +17,16 @@ class SubscriptionManager {
 
   final _inAppPurchase = InAppPurchase.instance;
 
+  Stream<List<PurchaseDetails>> get purchaseStream =>
+      InAppPurchase.instance.purchaseStream;
+
   late PurchaseDetails purchase;
 
-  final purchaseStream = InAppPurchase.instance.purchaseStream;
-
-  static const Set<String> productIds =
+  final Set<String> _productIds =
       isProd ? {'monthly', 'annual'} : {'monthlyStaging', 'annualStaging2'};
 
   List<ProductDetails> _subscriptions = [];
   List<ProductDetails> get subscriptions => _subscriptions;
-
-  Future<void> _init() async {
-    try {
-      final paymentWrapper = SKPaymentQueueWrapper();
-      final transactions = await paymentWrapper.transactions();
-      transactions.forEach((transaction) async {
-        await paymentWrapper.finishTransaction(transaction);
-      });
-
-      _subscriptions = await _fetchStoreSubscriptions();
-    } catch (error) {
-      return;
-    }
-  }
 
   Future<bool> initializePurchase(ProductDetails product) async {
     try {
@@ -94,9 +82,29 @@ class SubscriptionManager {
     }
   }
 
+  Future<void> _setSubscriptions() async {
+    try {
+      _subscriptions = await _fetchStoreSubscriptions();
+    } catch (error) {
+      return;
+    }
+  }
+
+  Future<void> _completePendingTransaction() async {
+    try {
+      final paymentWrapper = SKPaymentQueueWrapper();
+      final transactions = await paymentWrapper.transactions();
+      transactions.forEach((transaction) async {
+        await paymentWrapper.finishTransaction(transaction);
+      });
+    } catch (_) {
+      return;
+    }
+  }
+
   Future<List<ProductDetails>> _fetchStoreSubscriptions() async {
     try {
-      final response = await _inAppPurchase.queryProductDetails(productIds);
+      final response = await _inAppPurchase.queryProductDetails(_productIds);
 
       if (response.notFoundIDs.isNotEmpty) {
         throw 'Failed to load subscriptions.';
