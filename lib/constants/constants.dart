@@ -162,23 +162,27 @@ Map tokenLoginMap = Map();
 class Subscriptions {
   static MySubscriptions? mySubscriptions;
 
-  /// User has no active subscription if subscription is null.
-  /// This could mean that the user still has an active trial.
-  static bool get _isSubscriptionAvailable =>
-      mySubscriptions?.user?.subscription != null;
-
   /// Indicates whether user has an active Subscription or not.
   static bool get isSubscriptionActive {
-    if (!_isSubscriptionAvailable) return false;
+    /// User has no active subscription if subscription data is null.
+    /// This could mean that the user still has an active trial.
+    final isSubscriptionDataAvailable =
+        mySubscriptions?.user?.subscription != null;
+
+    if (!isSubscriptionDataAvailable) return false;
 
     final isCanceled =
         mySubscriptions?.user?.subscription?.expirationIntent != null;
+
+    /// If subscription is NOT canceled, return true
+    /// which indicates that subscription is active
+    if (!isCanceled) return true;
 
     final int canceledAt = mySubscriptions?.user?.subscription?.cancelAt ?? 0;
     final int currentTime = DateTime.now().millisecondsSinceEpoch;
     final bool hasExpired = canceledAt > currentTime;
 
-    return isCanceled && hasExpired;
+    return hasExpired;
   }
 
   /// User has an active trial if true.
