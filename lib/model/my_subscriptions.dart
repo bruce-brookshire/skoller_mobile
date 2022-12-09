@@ -122,6 +122,8 @@ class User {
 //                 :apple_other,
 //                 :stripe_cancelled
 
+enum SubscriptionPlatform { stripe, ios, play }
+
 class SubscriptionData {
   const SubscriptionData({
     required this.id,
@@ -136,7 +138,7 @@ class SubscriptionData {
 
   final String id;
   final int userId;
-  final String platform;
+  final SubscriptionPlatform platform;
   final int created;
   final bool? status;
   final String? interval;
@@ -147,7 +149,10 @@ class SubscriptionData {
     return SubscriptionData(
       userId: json["user_id"],
       status: json["status"] == 'active' ? true : false,
-      platform: json["platform"],
+      platform: SubscriptionPlatform.values.firstWhere(
+        (platform) => platform.name == json["platform"],
+        orElse: () => SubscriptionPlatform.stripe,
+      ),
       interval: json["interval"],
       id: json["id"],
       expirationIntent: json["expirationIntent"],
