@@ -2,6 +2,7 @@ library constants;
 
 import 'dart:async';
 import 'dart:collection';
+import 'dart:io';
 import 'dart:math';
 import 'dart:ui' as dartUI;
 
@@ -193,6 +194,20 @@ class Subscriptions {
   /// Shows how many days User has left on their [Trial] subscription
   static double get trialDaysLeft =>
       Subscriptions.mySubscriptions?.user?.trialDaysLeft ?? 0;
+
+  /// Decides what platform
+  static SubscriptionPlatform get subscriptionPlatform {
+    final platform =
+        Subscriptions.mySubscriptions?.user?.subscription?.platform;
+
+    if (platform == null) {
+      return Platform.isIOS
+          ? SubscriptionPlatform.ios
+          : SubscriptionPlatform.ios;
+    }
+
+    return platform;
+  }
 
   /// Lifetime
   static bool get isLifetimeSubscription =>

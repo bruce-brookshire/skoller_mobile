@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:in_app_purchase/in_app_purchase.dart';
 import 'package:intl/intl.dart';
 import 'package:skoller/constants/BaseUtilities.dart';
+import 'package:skoller/model/my_subscriptions.dart';
 import 'package:skoller/requests/subscription_manager.dart';
 import 'package:skoller/screens/main_app/main_view.dart';
 import 'package:skoller/tools.dart';
@@ -20,7 +21,7 @@ class _AccountSettingsDialogViewState extends State<AccountSettingsDialogView> {
   bool showPurchaseStatus = false;
 
   Future<void> initializePurchase() async {
-    SubscriptionManager.instance
+    await SubscriptionManager.instance
         .initializePurchase(selectedSubscription!)
         .then((isPurchasing) {
       if (isPurchasing) {
@@ -35,6 +36,128 @@ class _AccountSettingsDialogViewState extends State<AccountSettingsDialogView> {
 
   @override
   Widget build(BuildContext context) {
+    if (Subscriptions.isSubscriptionActive &&
+        (Subscriptions.subscriptionPlatform == SubscriptionPlatform.ios ||
+            Subscriptions.subscriptionPlatform == SubscriptionPlatform.play)) {
+      return Center(
+        child: Container(
+          padding: EdgeInsets.all(10),
+          margin: EdgeInsets.all(20),
+          width: double.infinity,
+          decoration: BoxDecoration(
+            color: Colors.white,
+            border: Border.all(color: SKColors.border_gray),
+            borderRadius: BorderRadius.circular(10),
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  GestureDetector(
+                    behavior: HitTestBehavior.opaque,
+                    onTapUp: (_) => Navigator.pop(context),
+                    child: SizedBox(
+                      width: 32,
+                      height: 24,
+                      child: Image.asset(ImageNames.navArrowImages.down),
+                    ),
+                  ),
+                ],
+              ),
+              Text(
+                'You are a Premium user',
+                style: Theme.of(context)
+                    .textTheme
+                    .headline6
+                    ?.copyWith(fontWeight: FontWeight.bold),
+              ),
+              SizedBox(height: 10),
+              Text(
+                'Current subscription: ${Subscriptions.mySubscriptions?.user?.subscription?.interval}',
+                style: Theme.of(context)
+                    .textTheme
+                    .bodyText1
+                    ?.copyWith(fontWeight: FontWeight.normal),
+              ),
+              SizedBox(height: 20),
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 40),
+                child: OutlinedButton(
+                  child: Text('Manage subscription'),
+                  style: OutlinedButton.styleFrom(
+                    primary: SKColors.skoller_blue1,
+                    minimumSize: Size(double.infinity, 36),
+                    side: BorderSide(color: SKColors.skoller_blue1),
+                    textStyle: Theme.of(context)
+                        .textTheme
+                        .button
+                        ?.copyWith(fontWeight: FontWeight.bold),
+                  ),
+                  onPressed: () {},
+                ),
+              ),
+              SizedBox(height: 10),
+            ],
+          ),
+        ),
+      );
+    }
+
+    if (Subscriptions.isSubscriptionActive &&
+        Subscriptions.subscriptionPlatform == SubscriptionPlatform.stripe) {
+      return Center(
+        child: Container(
+          padding: EdgeInsets.all(10),
+          margin: EdgeInsets.all(20),
+          width: double.infinity,
+          decoration: BoxDecoration(
+            color: Colors.white,
+            border: Border.all(color: SKColors.border_gray),
+            borderRadius: BorderRadius.circular(10),
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  GestureDetector(
+                    behavior: HitTestBehavior.opaque,
+                    onTapUp: (_) => Navigator.pop(context),
+                    child: SizedBox(
+                      width: 32,
+                      height: 24,
+                      child: Image.asset(ImageNames.navArrowImages.down),
+                    ),
+                  ),
+                ],
+              ),
+              Text(
+                'You are a Premium user',
+                style: Theme.of(context)
+                    .textTheme
+                    .headline6
+                    ?.copyWith(fontWeight: FontWeight.bold),
+              ),
+              SizedBox(height: 10),
+              Text(
+                'Login on desktop at Skoller.co to\nmanage your account setting.',
+                textAlign: TextAlign.center,
+                style: Theme.of(context)
+                    .textTheme
+                    .bodyText1
+                    ?.copyWith(fontWeight: FontWeight.normal),
+              ),
+              SizedBox(height: 10),
+            ],
+          ),
+        ),
+      );
+    }
+
+    /// If user has no subscription or is on trial
     return SafeArea(
       child: Center(
         child: Padding(
@@ -68,23 +191,12 @@ class _AccountSettingsDialogViewState extends State<AccountSettingsDialogView> {
                           ),
                         ],
                       ),
-                      Subscriptions.isTrial
-                          ? _SubscriptionWidget(
-                              title:
-                                  'Your free trial expires in ${Subscriptions.isTrial == false ? '' : Subscriptions.trialDaysLeft.toStringAsFixed(0)} days',
-                              subtitle:
-                                  'Trial ends ${DateFormat('MMMM dd, yyyy').format(DateTime.now().add(Duration(days: int.parse(Subscriptions.trialDaysLeft.toStringAsFixed(0)))))}',
-                            )
-                          : Subscriptions.isSubscriptionActive
-                              ? _SubscriptionWidget(
-                                  title: 'You have a premium account.',
-                                  subtitle:
-                                      'Go to skoller.co to manage your account.',
-                                )
-                              : _SubscriptionWidget(
-                                  title: 'Your free trial has expired!',
-                                  subtitle: 'Upgrade to premium',
-                                ),
+                      _SubscriptionWidget(
+                        title:
+                            'Your free trial expires in ${Subscriptions.isTrial == false ? '' : Subscriptions.trialDaysLeft.toStringAsFixed(0)} days',
+                        subtitle:
+                            'Trial ends ${DateFormat('MMMM dd, yyyy').format(DateTime.now().add(Duration(days: int.parse(Subscriptions.trialDaysLeft.toStringAsFixed(0)))))}',
+                      ),
                       SizedBox(height: 12),
                       Row(
                         children: [
