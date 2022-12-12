@@ -415,6 +415,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.17.0"
+  ios_open_subscriptions_settings:
+    dependency: "direct main"
+    description:
+      name: ios_open_subscriptions_settings
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.0.4"
   js:
     dependency: transitive
     description:

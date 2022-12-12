@@ -52,6 +52,7 @@ dependencies:
 #  flutter_stripe: ^4.0.0
   screen_loader: ^2.0.1
 #  pay: ^1.0.6
+  ios_open_subscriptions_settings: ^0.0.4
 
 
   flutter:

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:in_app_purchase/in_app_purchase.dart';
 import 'package:intl/intl.dart';
+import 'package:ios_open_subscriptions_settings/ios_open_subscriptions_settings.dart';
 import 'package:skoller/constants/BaseUtilities.dart';
 import 'package:skoller/model/my_subscriptions.dart';
 import 'package:skoller/requests/subscription_manager.dart';
@@ -111,7 +112,8 @@ class _AccountSettingsDialogViewState extends State<AccountSettingsDialogView> {
                         .button
                         ?.copyWith(fontWeight: FontWeight.bold),
                   ),
-                  onPressed: () {},
+                  onPressed:
+                      IosOpenSubscriptionsSettings.openSubscriptionsSettings,
                 ),
               ),
               SizedBox(height: 10),
