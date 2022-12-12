@@ -18,16 +18,32 @@ class AccountSettingsDialogView extends StatefulWidget {
 class _AccountSettingsDialogViewState extends State<AccountSettingsDialogView> {
   ProductDetails? selectedSubscription;
 
+  bool showCloseIcon = true;
   bool showPurchaseStatus = false;
 
   Future<void> initializePurchase() async {
     await SubscriptionManager.instance
         .initializePurchase(selectedSubscription!)
-        .then((isPurchasing) {
+        .then((isPurchasing) async {
       if (isPurchasing) {
         setState(() {
           showPurchaseStatus = isPurchasing;
+          showCloseIcon = false;
         });
+      }
+    }).catchError((error) {
+      Utilities.showErrorMessage(error.toString());
+    });
+  }
+
+  Future<void> finalizePurchase() async {
+    await SubscriptionManager.instance.finalizePurchase().then((didSucceed) {
+      if (didSucceed) {
+        Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(builder: (context) => MainView()),
+          (route) => false,
+        );
       }
     }).catchError((error) {
       Utilities.showErrorMessage(error.toString());
@@ -176,21 +192,22 @@ class _AccountSettingsDialogViewState extends State<AccountSettingsDialogView> {
                     mainAxisSize: MainAxisSize.min,
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
-                      Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          GestureDetector(
-                            behavior: HitTestBehavior.opaque,
-                            onTapUp: (_) => Navigator.pop(context),
-                            child: SizedBox(
-                              width: 32,
-                              height: 24,
-                              child:
-                                  Image.asset(ImageNames.navArrowImages.down),
+                      if (showCloseIcon)
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[
+                            GestureDetector(
+                              behavior: HitTestBehavior.opaque,
+                              onTapUp: (_) => Navigator.pop(context),
+                              child: SizedBox(
+                                width: 32,
+                                height: 24,
+                                child:
+                                    Image.asset(ImageNames.navArrowImages.down),
+                              ),
                             ),
-                          ),
-                        ],
-                      ),
+                          ],
+                        ),
                       _SubscriptionWidget(
                         title:
                             'Your free trial expires in ${Subscriptions.isTrial == false ? '' : Subscriptions.trialDaysLeft.toStringAsFixed(0)} days',
@@ -238,6 +255,14 @@ class _AccountSettingsDialogViewState extends State<AccountSettingsDialogView> {
                             ? _SubscriptionPurchaseStatusStream(
                                 isSubscriptionSelected:
                                     selectedSubscription == null,
+                                completePurchase: () async =>
+                                    await finalizePurchase(),
+                                restartPurchase: () {
+                                  setState(() {
+                                    showPurchaseStatus = false;
+                                    showCloseIcon = true;
+                                  });
+                                },
                               )
                             : _SubscriptionsList(
                                 isSubscriptionSelected:
@@ -346,74 +371,132 @@ class _SubscriptionsList extends StatelessWidget {
   }
 }
 
-class _SubscriptionPurchaseStatusStream extends StatelessWidget {
+class _SubscriptionPurchaseStatusStream extends StatefulWidget {
   const _SubscriptionPurchaseStatusStream({
     Key? key,
     required this.isSubscriptionSelected,
+    required this.completePurchase,
+    required this.restartPurchase,
   }) : super(key: key);
   final bool isSubscriptionSelected;
+  final Function() completePurchase;
+  final Function() restartPurchase;
+
+  @override
+  State<_SubscriptionPurchaseStatusStream> createState() =>
+      _SubscriptionPurchaseStatusStreamState();
+}
+
+class _SubscriptionPurchaseStatusStreamState
+    extends State<_SubscriptionPurchaseStatusStream> {
+  PurchaseStatus purchaseStatus = PurchaseStatus.pending;
+
+  Widget trailingIcon(PurchaseStatus status) {
+    switch (status) {
+      case PurchaseStatus.pending:
+        return CircularProgressIndicator.adaptive();
+      case PurchaseStatus.purchased:
+        return Icon(Icons.check_circle_outline_outlined);
+      case PurchaseStatus.error:
+        return Icon(Icons.close_outlined);
+      case PurchaseStatus.restored:
+        return Icon(Icons.check_circle_outline_outlined);
+      case PurchaseStatus.canceled:
+        return Icon(Icons.close_outlined);
+    }
+  }
+
+  Widget button(PurchaseStatus status) {
+    String buttonTitle() {
+      switch (status) {
+        case PurchaseStatus.purchased:
+          return 'Complete';
+        case PurchaseStatus.restored:
+          return 'Complete';
+        case PurchaseStatus.canceled:
+          return 'Restart purchase';
+        case PurchaseStatus.pending:
+          return 'Processing...';
+        default:
+          return 'Done';
+      }
+    }
+
+    Function()? buttonOnPress() {
+      switch (status) {
+        case PurchaseStatus.purchased:
+          return () async => await widget.completePurchase();
+        case PurchaseStatus.restored:
+          return () {};
+        case PurchaseStatus.canceled:
+          return () async => await widget.restartPurchase();
+        case PurchaseStatus.pending:
+          return null;
+        default:
+          return null;
+      }
+    }
+
+    return ElevatedButton(
+      style: ButtonStyle(
+        backgroundColor: MaterialStateProperty.all(
+          widget.isSubscriptionSelected ? null : SKColors.dark_gray,
+        ),
+      ),
+      child: Text(
+        buttonTitle(),
+        style: TextStyle(
+          color: widget.isSubscriptionSelected ? null : Colors.white,
+        ),
+      ),
+      onPressed: buttonOnPress(),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        SizedBox(height: 16),
-        StreamBuilder<List<PurchaseDetails>>(
-          stream: SubscriptionManager.instance.purchaseStream,
-          builder: (context, snapshot) {
-            if (snapshot.hasData) {
-              final data = snapshot.data!;
-
-              return ListView.builder(
-                shrinkWrap: true,
-                itemCount: data.length,
-                itemBuilder: (context, index) {
-                  // final purchase = data[index];
-                  final purchase = data[0];
-                  SubscriptionManager.instance
-                      .setSelectedSubscription(purchase);
-
-                  return ListTile(
-                    title: Text(purchase.productID),
-                    subtitle: Text(purchase.status.toString()),
-                  );
-                },
-              );
-            }
-
-            return Text('Something went wrong');
-          },
-        ),
-        SizedBox(height: 16),
-        ElevatedButton(
-          style: ButtonStyle(
-            backgroundColor: MaterialStateProperty.all(
-              isSubscriptionSelected ? null : SKColors.dark_gray,
+    return StreamBuilder<List<PurchaseDetails>>(
+      stream: SubscriptionManager.instance.purchaseStream,
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return Center(
+            child: Padding(
+              padding: EdgeInsets.all(20),
+              child: CircularProgressIndicator(),
             ),
-          ),
-          child: Text(
-            'Complete',
-            style:
-                TextStyle(color: isSubscriptionSelected ? null : Colors.white),
-          ),
-          onPressed: () async {
-            await SubscriptionManager.instance
-                .finalizePurchase()
-                .then((didSucceed) {
-              if (didSucceed) {
-                Navigator.pushAndRemoveUntil(
-                  context,
-                  MaterialPageRoute(builder: (context) => MainView()),
-                  (route) => false,
-                );
-              }
-            }).catchError((error) {
-              Utilities.showErrorMessage(error.toString());
-            });
-          },
-        ),
-      ],
+          );
+        }
+
+        if (snapshot.hasData) {
+          final data = snapshot.data!;
+          final purchase = data[0];
+          SubscriptionManager.instance.setSelectedSubscription(purchase);
+
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              ListTile(
+                title: Text(
+                  purchase.productID.replaceFirst(
+                    purchase.productID[0],
+                    purchase.productID[0].toUpperCase(),
+                  ),
+                ),
+                subtitle: Text(
+                  purchase.status.name.replaceFirst(
+                    purchase.status.name[0],
+                    purchase.status.name[0].toUpperCase(),
+                  ),
+                ),
+                trailing: trailingIcon(purchase.status),
+              ),
+              button(purchase.status),
+            ],
+          );
+        }
+
+        return Text('Something went wrong');
+      },
     );
   }
 }
