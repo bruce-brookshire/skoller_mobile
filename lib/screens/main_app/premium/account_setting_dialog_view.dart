@@ -6,6 +6,7 @@ import 'package:skoller/constants/BaseUtilities.dart';
 import 'package:skoller/model/my_subscriptions.dart';
 import 'package:skoller/requests/subscription_manager.dart';
 import 'package:skoller/screens/main_app/main_view.dart';
+import 'package:skoller/screens/main_app/premium/stripe_bloc.dart';
 import 'package:skoller/tools.dart';
 
 class AccountSettingsDialogView extends StatefulWidget {
@@ -40,6 +41,7 @@ class _AccountSettingsDialogViewState extends State<AccountSettingsDialogView> {
   Future<void> finalizePurchase() async {
     await SubscriptionManager.instance.finalizePurchase().then((didSucceed) {
       if (didSucceed) {
+        stripeBloc.mySubscriptionsList();
         Navigator.pushAndRemoveUntil(
           context,
           MaterialPageRoute(builder: (context) => MainView()),
