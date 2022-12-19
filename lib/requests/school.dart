@@ -110,12 +110,12 @@ class School {
 
     if (periods.isNotEmpty) {
       final findSemester = (int status) {
-        return periods.firstWhere(
+        return periods.firstWhereOrNull(
           (period) => period.periodStatusId == status && period.isMainPeriod,
         );
       };
 
-      Period activePeriod = findSemester(200);
+      Period? activePeriod = findSemester(200);
 
       if (activePeriod == null) {
         activePeriod = findSemester(400);
