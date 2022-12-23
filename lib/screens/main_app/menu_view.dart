@@ -98,6 +98,28 @@ class MenuView extends StatelessWidget {
         //   ),
         //   'builder': () => PremiumPackagesView()
         // },
+      ],
+      [
+        {
+          'name': Text(
+            'Privacy Policy',
+            style: TextStyle(fontWeight: FontWeight.normal, fontSize: 16),
+          ),
+          'action': () async {
+            final url = 'https://skoller.co/privacypolicy';
+            if (await canLaunch(url)) launch(url);
+          },
+        },
+        {
+          'name': Text(
+            'Terms of Use',
+            style: TextStyle(fontWeight: FontWeight.normal, fontSize: 16),
+          ),
+          'action': () async {
+            final url = 'https://skoller.co/useragreement';
+            if (await canLaunch(url)) launch(url);
+          },
+        },
       ]
     ]
         .map((group) => Container(
