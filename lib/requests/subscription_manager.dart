@@ -22,9 +22,6 @@ class SubscriptionManager {
 
   late PurchaseDetails purchase;
 
-  final Set<String> _productIds =
-      isProd ? {'monthly', 'annual'} : {'monthlyStaging', 'annualStaging2'};
-
   List<ProductDetails> _subscriptions = [];
   List<ProductDetails> get subscriptions => _subscriptions;
 
@@ -104,7 +101,10 @@ class SubscriptionManager {
 
   Future<List<ProductDetails>> _fetchStoreSubscriptions() async {
     try {
-      final response = await _inAppPurchase.queryProductDetails(_productIds);
+      final Set<String> productIds =
+          isProd ? {'monthly', 'annual'} : {'monthlyStaging', 'annualStaging2'};
+
+      final response = await _inAppPurchase.queryProductDetails(productIds);
 
       if (response.notFoundIDs.isNotEmpty) {
         throw 'Failed to load subscriptions.';
@@ -114,9 +114,9 @@ class SubscriptionManager {
 
       final subscriptions = response.productDetails;
       final monthly = subscriptions.firstWhere(
-          (item) => item.title == 'monthly' || item.title == 'monthlyStaging');
+          (item) => item.id == 'monthly' || item.id == 'monthlyStaging');
       final annual = subscriptions.firstWhere(
-          (item) => item.title == 'annual' || item.title == 'annualStaging2');
+          (item) => item.id == 'annual' || item.id == 'annualStaging2');
 
       customList.addAll([monthly, annual]);
 
