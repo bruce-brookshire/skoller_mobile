@@ -1,8 +1,35 @@
 import 'package:flutter/material.dart';
+import 'package:skoller/constants/BaseUtilities.dart';
 import 'package:skoller/constants/constants.dart';
+import 'package:skoller/requests/subscription_manager.dart';
+import 'package:skoller/screens/main_app/main_view.dart';
+import 'package:skoller/screens/main_app/premium/stripe_bloc.dart';
 
 class ExpiredTrialPayWallModal extends StatelessWidget {
   const ExpiredTrialPayWallModal({Key? key}) : super(key: key);
+
+  Future<void> restoreSubscription(BuildContext context) async {
+    await SubscriptionManager.instance.restorePurchase().then((didRestore) {
+      if (didRestore) {
+        stripeBloc.mySubscriptionsList();
+        Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(
+            builder: (context) => MainView(),
+          ),
+          (route) => false,
+        );
+      } else {
+        Utilities.showErrorMessage(
+          'Failed to restore subscription.',
+        );
+      }
+    }).catchError((error) {
+      Utilities.showErrorMessage(
+        'Failed to restore subscription.',
+      );
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -39,6 +66,16 @@ class ExpiredTrialPayWallModal extends StatelessWidget {
                         fontWeight: FontWeight.normal,
                       ),
                       textAlign: TextAlign.center,
+                    ),
+                    TextButton(
+                      child: Text(
+                        'Already subscribed? Restore!',
+                        style: Theme.of(context)
+                            .textTheme
+                            .caption
+                            ?.copyWith(color: SKColors.skoller_blue1),
+                      ),
+                      onPressed: () async => await restoreSubscription(context),
                     ),
                   ],
                 ),
