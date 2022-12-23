@@ -22,6 +22,7 @@ class _AccountSettingsDialogViewState extends State<AccountSettingsDialogView> {
 
   bool showCloseIcon = true;
   bool showPurchaseStatus = false;
+  bool isRestoring = false;
 
   Future<void> initializePurchase() async {
     await SubscriptionManager.instance
@@ -50,6 +51,44 @@ class _AccountSettingsDialogViewState extends State<AccountSettingsDialogView> {
       }
     }).catchError((error) {
       Utilities.showErrorMessage(error.toString());
+    });
+  }
+
+  Future<void> restoreSubscription() async {
+    setState(() {
+      selectedSubscription == null;
+      showCloseIcon = false;
+      isRestoring = true;
+    });
+
+    await SubscriptionManager.instance.restorePurchase().then((didRestore) {
+      if (didRestore) {
+        stripeBloc.mySubscriptionsList();
+        Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(
+            builder: (context) => MainView(),
+          ),
+          (route) => false,
+        );
+      } else {
+        Utilities.showErrorMessage(
+          'Failed to restore subscription.',
+        );
+        setState(() {
+          showCloseIcon = true;
+          isRestoring = false;
+        });
+      }
+    }).catchError((error) {
+      Utilities.showErrorMessage(
+        'Failed to restore subscription.',
+      );
+
+      setState(() {
+        showCloseIcon = true;
+        isRestoring = false;
+      });
     });
   }
 
@@ -230,7 +269,11 @@ class _AccountSettingsDialogViewState extends State<AccountSettingsDialogView> {
                           ),
                           SizedBox(width: 8),
                           Text(
-                            showPurchaseStatus ? 'Purchasing' : 'Select a Plan',
+                            isRestoring
+                                ? 'Restoring'
+                                : showPurchaseStatus
+                                    ? 'Purchasing'
+                                    : 'Select a Plan',
                             textAlign: TextAlign.center,
                             style: TextStyle(
                               fontSize: 14,
@@ -255,33 +298,40 @@ class _AccountSettingsDialogViewState extends State<AccountSettingsDialogView> {
                           borderRadius: BorderRadius.circular(10),
                           boxShadow: UIAssets.boxShadow,
                         ),
-                        child: showPurchaseStatus
-                            ? _SubscriptionPurchaseStatusStream(
-                                isSubscriptionSelected:
-                                    selectedSubscription == null,
-                                completePurchase: () async =>
-                                    await finalizePurchase(),
-                                restartPurchase: () {
-                                  setState(() {
-                                    showPurchaseStatus = false;
-                                    showCloseIcon = true;
-                                  });
-                                },
-                              )
-                            : _SubscriptionsList(
-                                isSubscriptionSelected:
-                                    selectedSubscription == null,
-                                selectedSubscriptionId:
-                                    selectedSubscription?.id,
-                                onSubscriptionSelection: (subscription) {
-                                  setState(() {
-                                    selectedSubscription = subscription;
-                                  });
-                                },
-                                buttonOnPress: selectedSubscription == null
-                                    ? null
-                                    : () => initializePurchase(),
-                              ),
+                        child: isRestoring
+                            ? Padding(
+                                padding: EdgeInsets.all(20),
+                                child: CircularProgressIndicator.adaptive())
+                            : showPurchaseStatus
+                                ? _SubscriptionPurchaseStatusStream(
+                                    isSubscriptionSelected:
+                                        selectedSubscription == null,
+                                    completePurchase: () async =>
+                                        await finalizePurchase(),
+                                    restartPurchase: () {
+                                      setState(() {
+                                        showPurchaseStatus = false;
+                                        showCloseIcon = true;
+                                      });
+                                    },
+                                  )
+                                : _SubscriptionsList(
+                                    isSubscriptionSelected:
+                                        selectedSubscription == null,
+                                    selectedSubscriptionId:
+                                        selectedSubscription?.id,
+                                    onSubscriptionSelection: (subscription) {
+                                      setState(() {
+                                        selectedSubscription = subscription;
+                                      });
+                                    },
+                                    buttonOnPress: selectedSubscription == null
+                                        ? null
+                                        : () => initializePurchase(),
+                                    restoreOnPress: () async {
+                                      await restoreSubscription();
+                                    },
+                                  ),
                       ),
                     ],
                   ),
@@ -302,12 +352,14 @@ class _SubscriptionsList extends StatelessWidget {
     required this.selectedSubscriptionId,
     required this.isSubscriptionSelected,
     required this.buttonOnPress,
+    required this.restoreOnPress,
   }) : super(key: key);
 
   final Function(ProductDetails) onSubscriptionSelection;
   final String? selectedSubscriptionId;
   final bool isSubscriptionSelected;
   final Function()? buttonOnPress;
+  final Function() restoreOnPress;
 
   @override
   Widget build(BuildContext context) {
@@ -369,6 +421,16 @@ class _SubscriptionsList extends StatelessWidget {
             ),
             onPressed: buttonOnPress,
           ),
+          TextButton(
+            child: Text(
+              'Already subscribed? Restore!',
+              style: Theme.of(context)
+                  .textTheme
+                  .caption
+                  ?.copyWith(color: SKColors.skoller_blue1),
+            ),
+            onPressed: restoreOnPress,
+          ),
         ],
       ),
     );
@@ -393,8 +455,6 @@ class _SubscriptionPurchaseStatusStream extends StatefulWidget {
 
 class _SubscriptionPurchaseStatusStreamState
     extends State<_SubscriptionPurchaseStatusStream> {
-  PurchaseStatus purchaseStatus = PurchaseStatus.pending;
-
   Widget trailingIcon(PurchaseStatus status) {
     switch (status) {
       case PurchaseStatus.pending:
