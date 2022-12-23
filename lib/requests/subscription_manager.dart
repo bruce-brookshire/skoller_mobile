@@ -71,6 +71,33 @@ class SubscriptionManager {
     }
   }
 
+  Future<bool> restorePurchase() async {
+    try {
+      bool didRestore = false;
+      List<PurchaseDetails> subscriptions = [];
+
+      await InAppPurchase.instance.restorePurchases();
+
+      await for (var subs in purchaseStream) {
+        subscriptions = subs;
+        break;
+      }
+
+      for (PurchaseDetails subscription in subscriptions) {
+        if (subscription.pendingCompletePurchase) {
+          await _inAppPurchase.completePurchase(subscription);
+        }
+
+        final purchaseData = subscription.toMap();
+        didRestore = await stripeBloc.sendInAppPurchaseToBackend(purchaseData);
+      }
+
+      return didRestore;
+    } catch (error) {
+      throw error;
+    }
+  }
+
   Future<bool> _isStoreAvailable() async {
     try {
       return await _inAppPurchase.isAvailable();
