@@ -41,7 +41,7 @@ part 'user.dart';
 ///     A. ios/Runner.xcodeproj/project.pbxproj
 ///   3. change iOS app version.
 ///     A. Version: 6.6
-///     B. Build: 21
+///     B. Build: 22
 const bool isProd = false;
 const bool isLocal = false;
 
