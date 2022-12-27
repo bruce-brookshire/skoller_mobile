@@ -1,8 +1,7 @@
 import 'package:dart_notification_center/dart_notification_center.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:skoller/screens/main_app/tutorial/calendar_tutorial_view.dart';
-import 'package:skoller/screens/main_app/tutorial/jobs_tutorial_view.dart';
 import 'package:skoller/screens/main_app/tutorial/todo_tutorial_view.dart';
 import 'package:skoller/tools.dart';
 
@@ -17,13 +16,13 @@ class TutorialTab extends StatefulWidget {
 }
 
 class _TutorialTabState extends State<TutorialTab> {
-  List<StatelessWidget> views;
+  List<StatelessWidget>? views;
 
   final List<String> _indexIconPartialPaths = [
     'todos_',
     'calendar_',
     'classes_',
-    'jobs_',
+    // 'jobs_',
   ];
 
   final tabController = CupertinoTabController(initialIndex: 0);
@@ -36,7 +35,7 @@ class _TutorialTabState extends State<TutorialTab> {
       TodoTutorialView(tapDismiss, widget.promptMsg),
       CalendarTutorialView(tapDismiss, widget.promptMsg),
       _ViewFour(tapDismiss, widget.promptMsg),
-      JobsTutorialView(tapDismiss, widget.promptMsg)
+      // JobsTutorialView(tapDismiss, widget.promptMsg)
     ];
 
     DartNotificationCenter.subscribe(
@@ -64,12 +63,12 @@ class _TutorialTabState extends State<TutorialTab> {
       controller: tabController,
       tabBuilder: (context, index) {
         return CupertinoTabView(builder: (context) {
-          return CupertinoPageScaffold(child: views[index]);
+          return CupertinoPageScaffold(child: views![index]);
         });
       },
       tabBar: CupertinoTabBar(
         backgroundColor: Colors.white,
-        items: List.generate(4, createTabIndex),
+        items: List.generate(3, createTabIndex),
         currentIndex: tabController.index,
         onTap: (index) => setState(() => tabController.index = index),
       ),
@@ -158,7 +157,7 @@ class _ViewFour extends StatelessWidget {
                       decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(8),
                           border: Border.all(color: Colors.white),
-                          color: SKColors.skoller_blue),
+                          color: SKColors.skoller_blue1),
                       padding: EdgeInsets.all(12),
                       child: Icon(
                         Icons.arrow_back_ios,
@@ -167,16 +166,16 @@ class _ViewFour extends StatelessWidget {
                       ),
                     ),
                   ),
-                  GestureDetector(
+                  /* GestureDetector(
                     onTapUp: (_) => DartNotificationCenter.post(
                       channel: NotificationChannels.selectTab,
-                      options: 3,
+                      options: 2,
                     ),
                     child: Container(
                       decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(8),
                           border: Border.all(color: Colors.white),
-                          color: SKColors.skoller_blue),
+                          color: SKColors.skoller_blue1),
                       padding: EdgeInsets.all(12),
                       child: Icon(
                         Icons.arrow_forward_ios,
@@ -184,7 +183,7 @@ class _ViewFour extends StatelessWidget {
                         size: 20,
                       ),
                     ),
-                  ),
+                  ),*/
                 ],
               ),
             ),
@@ -198,7 +197,7 @@ class _ViewFour extends StatelessWidget {
               padding: EdgeInsets.symmetric(vertical: 8, horizontal: 24),
               margin: EdgeInsets.only(bottom: 48),
               decoration: BoxDecoration(
-                color: SKColors.skoller_blue,
+                color: SKColors.skoller_blue1,
                 borderRadius: BorderRadius.circular(5),
                 border: Border.all(color: Colors.white),
                 boxShadow: UIAssets.boxShadow,

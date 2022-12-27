@@ -5,14 +5,14 @@ class School {
 
   bool isSyllabusOverload;
 
-  List<Period> periods;
+  List<Period>? periods;
 
   String timezone;
   String name;
-  String adrRegion;
-  String adrLocality;
+  String? adrRegion;
+  String? adrLocality;
 
-  Color color;
+  Color? color;
 
   School(
     this.id,
@@ -25,15 +25,15 @@ class School {
     this.color,
   );
 
-  Future<http.Response> _activeProfessorSearch;
+  Future<http.Response>? _activeProfessorSearch = null;
 
   void invalidateCurrentProfessorSearch() {
-    _activeProfessorSearch?.timeout(Duration.zero);
+    _activeProfessorSearch!.timeout(Duration.zero);
   }
 
   Future<RequestResponse> searchProfessors(String searchText) async {
     if (_activeProfessorSearch != null) {
-      _activeProfessorSearch.timeout(Duration.zero);
+      _activeProfessorSearch!.timeout(Duration.zero);
       _activeProfessorSearch = null;
     }
 
@@ -42,12 +42,12 @@ class School {
 
     final request = await _activeProfessorSearch;
 
-    return SKRequests.futureProcessor(request, Professor._fromJsonObj);
+    return SKRequests.futureProcessor(request!, Professor._fromJsonObj);
   }
 
   Future<RequestResponse> createProfessor({
-    String nameFirst,
-    String nameLast,
+    String? nameFirst,
+    String? nameLast,
   }) {
     return SKRequests.post(
         '/schools/$id/professors',
@@ -57,7 +57,7 @@ class School {
 
   static Map<int, School> currentSchools = {};
 
-  static School _fromJsonObj(Map content) {
+  static School? _fromJsonObj(Map content) {
     if (content == null) {
       return null;
     }
@@ -65,13 +65,13 @@ class School {
     List<Period> period_list = JsonListMaker.convert(
       Period._fromJsonObj,
       content['periods'] ?? [],
-    );
+    ) as List<Period>;
 
     for (final period in period_list) {
       Period.currentPeriods[period.id] = period;
     }
 
-    String color = content['color'];
+    String? color = content['color'];
 
     if (color != null) {
       color = 'ff' + color.substring(1);
@@ -85,11 +85,11 @@ class School {
       content['name'],
       content['adr_region'],
       content['adr_locality'],
-      color != null ? Color(int.parse(color, radix: 16) ?? 0xFF4A4A4A) : null,
+      color != null ? Color(int.parse(color, radix: 16)) : null,
     );
   }
 
-  Period getBestCurrentPeriod() {
+  getBestCurrentPeriod() {
     final today = DateTime.now();
 
     List<Period> periods = (this.periods ?? []).toList()
@@ -102,33 +102,34 @@ class School {
           } else if (p2.startDate == null) {
             return -1;
           } else {
-            return p1.startDate.compareTo(p2.startDate);
+            return p1.startDate!.compareTo(p2.startDate!);
           }
         },
       )
       ..removeWhere((period) => (period.endDate ?? today).isBefore(today));
 
-    final findSemester = (int status) {
-      return periods.firstWhere(
-        (period) => period.periodStatusId == status && period.isMainPeriod,
-        orElse: () => null,
-      );
-    };
+    if (periods.isNotEmpty) {
+      final findSemester = (int status) {
+        return periods.firstWhereOrNull(
+          (period) => period.periodStatusId == status && period.isMainPeriod,
+        );
+      };
 
-    Period activePeriod = findSemester(200);
+      Period? activePeriod = findSemester(200);
 
-    if (activePeriod == null) {
-      activePeriod = findSemester(400);
+      if (activePeriod == null) {
+        activePeriod = findSemester(400);
+      }
+      return activePeriod;
     }
-
-    return activePeriod;
+    return null;
   }
 
   static Future<RequestResponse> createSchool({
-    @required bool isUniversity,
-    @required String schoolName,
-    @required String cityName,
-    @required String stateAbv,
+    required bool isUniversity,
+    required String schoolName,
+    required String cityName,
+    required String stateAbv,
   }) {
     return SKRequests.post(
         '/schools/',
@@ -142,15 +143,15 @@ class School {
         School._fromJsonObj);
   }
 
-  static Future<http.Response> _activeSchoolSearch;
+  static Future<http.Response>? _activeSchoolSearch;
 
   static void invalidateCurrentSchoolSearch() {
-    _activeSchoolSearch?.timeout(Duration.zero);
+    _activeSchoolSearch!.timeout(Duration.zero);
   }
 
   static Future<RequestResponse> searchSchools(String searchText) async {
     if (_activeSchoolSearch != null) {
-      _activeSchoolSearch.timeout(Duration.zero);
+      _activeSchoolSearch!.timeout(Duration.zero);
       _activeSchoolSearch = null;
     }
 
@@ -159,7 +160,7 @@ class School {
 
     final request = await _activeSchoolSearch;
 
-    return SKRequests.futureProcessor(request, _fromJsonObj);
+    return SKRequests.futureProcessor(request!, _fromJsonObj);
   }
 }
 
@@ -171,8 +172,8 @@ class Period {
   bool isMainPeriod;
 
   String name;
-  DateTime startDate;
-  DateTime endDate;
+  DateTime? startDate;
+  DateTime? endDate;
 
   Period(
     this.id,
@@ -184,20 +185,21 @@ class Period {
     this.periodStatusId,
   );
 
-  School getSchool() => School.currentSchools[schoolId];
+  School? getSchool() => School.currentSchools[schoolId];
 
   int get hashCode => id;
+
   bool operator ==(rhs) => rhs is Period && rhs.id == id;
 
   Future<RequestResponse> createClass({
-    @required String className,
-    @required String subject,
-    @required String code,
-    @required String section,
-    @required int professorId,
-    bool isOnline,
-    String meetDays,
-    TimeOfDay meetTime,
+    required String className,
+    String? subject,
+    String? code,
+    String? section,
+    int? professorId,
+    bool? isOnline,
+    String? meetDays,
+    TimeOfDay? meetTime,
   }) {
     Map body = {
       "name": className,
@@ -208,12 +210,13 @@ class Period {
       "created_on": "mobile"
     };
 
-    if (isOnline) {
+    if (isOnline!) {
       body['meet_days'] = 'online';
     } else {
       body['meet_days'] = meetDays;
-      body['meet_start_time'] =
-          '${meetTime.hour < 10 ? '0' : ''}${meetTime.hour}:${meetTime.minute < 10 ? '0' : ''}${meetTime.minute}:00';
+      body['meet_start_time'] = meetTime == null
+          ? null
+          : '${meetTime.hour < 10 ? '0' : ''}${meetTime.hour}:${meetTime.minute < 10 ? '0' : ''}${meetTime.minute}:00';
     }
 
     return SKRequests.post(
@@ -222,7 +225,7 @@ class Period {
 
   static Map<int, Period> currentPeriods = {};
 
-  static Period _fromJsonObj(Map content) {
+  static Period? _fromJsonObj(Map content) {
     if (content == null) {
       return null;
     }
@@ -231,8 +234,8 @@ class Period {
       content['id'],
       content['school_id'],
       content['name'],
-      _dateParser(content['start_date']),
-      _dateParser(content['end_date']),
+      _dateParser(content['start_date'])!,
+      _dateParser(content['end_date'])!,
       content['is_main_period'] ?? false,
       content['class_period_status']['id'],
     );

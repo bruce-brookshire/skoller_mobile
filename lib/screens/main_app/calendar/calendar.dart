@@ -19,12 +19,12 @@ class _CalendarState extends State<CalendarView> {
   final weekDayStyle = TextStyle(fontSize: 14, color: SKColors.text_light_gray);
   final controller = PageController(initialPage: 1);
 
-  DateTime today;
+  DateTime? today;
 
   List<DateTime> children = [];
   int curIndex = 1;
 
-  DateTime selectedDate;
+  DateTime? selectedDate;
 
   Map<String, List<Assignment>> assignments = {};
 
@@ -37,9 +37,9 @@ class _CalendarState extends State<CalendarView> {
     updateAssignments();
 
     children = [
-      DateTime(today.year, today.month - 1, 1),
-      DateTime(today.year, today.month, 1),
-      DateTime(today.year, today.month + 1, 1),
+      DateTime(today!.year, today!.month - 1, 1),
+      DateTime(today!.year, today!.month, 1),
+      DateTime(today!.year, today!.month + 1, 1),
     ];
 
     DartNotificationCenter.subscribe(
@@ -64,12 +64,12 @@ class _CalendarState extends State<CalendarView> {
     //Add assignments to the day hash map
     for (var assignment in Assignment.currentAssignments.values) {
       if (assignment.due != null && assignment.parentClass != null) {
-        final dateStr = createDateStr(assignment.due);
+        final dateStr = createDateStr(assignment.due!);
 
         if (assignments[dateStr] == null) {
           assignments[dateStr] = [assignment];
         } else {
-          assignments[dateStr].add(assignment);
+          assignments[dateStr]!.add(assignment);
         }
       }
     }
@@ -116,7 +116,7 @@ class _CalendarState extends State<CalendarView> {
       } else {
         this.tappedNextMonth();
       }
-    } else if (dayListAssignments.length > 0) {
+    } else if (dayListAssignments!.length > 0) {
       this.detailModal(dayListAssignments);
     }
   }
@@ -130,7 +130,7 @@ class _CalendarState extends State<CalendarView> {
 
     classes
       ..sort((class1, class2) {
-        return class1.name.compareTo(class2.name);
+        return class1.name!.compareTo(class2.name!);
       })
       ..removeWhere((studentClass) => (studentClass.weights ?? []).length == 0);
 
@@ -141,7 +141,7 @@ class _CalendarState extends State<CalendarView> {
       builder: (context) => SKPickerModal(
         title: 'Select a class',
         subtitle: 'Choose a class to add an assignment to',
-        items: classes.map((cl) => cl.name).toList(),
+        items: classes.map((cl) => cl.name!).toList(),
         onSelect: (newIndex) => selectedIndex = newIndex,
       ),
     );
@@ -266,7 +266,7 @@ class _CalendarState extends State<CalendarView> {
                   padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                   margin: EdgeInsets.only(bottom: 7),
                   decoration: BoxDecoration(
-                    color: SKColors.skoller_blue,
+                    color: SKColors.skoller_blue1,
                     boxShadow: UIAssets.boxShadow,
                     borderRadius: BorderRadius.circular(5),
                     border: Border.all(color: Colors.white),
@@ -308,7 +308,7 @@ class _CalendarState extends State<CalendarView> {
                     padding: EdgeInsets.only(bottom: 12),
                     child: Text(
                       DateFormat('EEEE, MMMM d')
-                          .format(dateAssignments.first.due),
+                          .format(dateAssignments.first.due!),
                       style: TextStyle(fontSize: 17),
                     ),
                   ),
@@ -367,14 +367,14 @@ class _CalendarState extends State<CalendarView> {
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: <Widget>[
                     Text(
-                      assignment.name,
+                      assignment.name??'',
                       style: TextStyle(
                         color: assignment.parentClass.getColor(),
                         fontSize: 16,
                       ),
                     ),
                     Text(
-                      assignment.parentClass.name,
+                      assignment.parentClass.name!,
                       style: TextStyle(
                           fontSize: 13, fontWeight: FontWeight.normal),
                     )
@@ -397,9 +397,9 @@ class _CalendarBody extends StatelessWidget {
   final DateCallback onTappedDay;
 
   _CalendarBody(
-      {@required DateTime month,
-      @required this.assignmentsForDateCallback,
-      @required this.onTappedDay})
+      {required DateTime month,
+      required this.assignmentsForDateCallback,
+      required this.onTappedDay})
       : firstOfMonth = month,
         startDate = month.weekday == 7
             ? month
@@ -513,7 +513,7 @@ class _CalendarBody extends StatelessWidget {
                           alignment: Alignment.centerLeft,
                           height: 14,
                           child: Text(
-                            assignment.name,
+                            assignment.name??'',
                             maxLines: 1,
                             softWrap: false,
                             overflow: TextOverflow.fade,

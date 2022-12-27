@@ -1,14 +1,15 @@
 import 'package:dart_notification_center/dart_notification_center.dart';
-import 'package:skoller/requests/requests_core.dart';
 import 'package:firebase_analytics/observer.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/scheduler.dart';
 import 'package:flutter/material.dart';
-import 'package:skoller/screens/main_app/jobs/jobs_view.dart';
-import 'tasks/todo_view.dart';
+import 'package:flutter/scheduler.dart';
+import 'package:skoller/requests/requests_core.dart';
+import 'package:skoller/screens/main_app/premium/stripe_bloc.dart';
 import 'package:skoller/tools.dart';
-import 'classes/classes_view.dart';
+
 import 'calendar/calendar.dart';
+import 'classes/classes_view.dart';
+import 'tasks/todo_view.dart';
 
 class SKTabBar extends StatefulWidget {
   @override
@@ -20,11 +21,9 @@ class _SKTabBarState extends State<SKTabBar> {
     TodoView(),
     CalendarView(),
     ClassesView(),
-    JobsView(),
   ];
 
   final List<GlobalKey<NavigatorState>> _navigatorKeys = [
-    GlobalKey<NavigatorState>(),
     GlobalKey<NavigatorState>(),
     GlobalKey<NavigatorState>(),
     GlobalKey<NavigatorState>(),
@@ -34,19 +33,17 @@ class _SKTabBarState extends State<SKTabBar> {
     FirebaseAnalyticsObserver(analytics: Analytics.analytics),
     FirebaseAnalyticsObserver(analytics: Analytics.analytics),
     FirebaseAnalyticsObserver(analytics: Analytics.analytics),
-    FirebaseAnalyticsObserver(analytics: Analytics.analytics),
   ];
 
   final List<String> _indexIconPartialPaths = [
     'todos_',
     'calendar_',
     'classes_',
-    'jobs_'
   ];
 
-  List<bool> _indexNeedsDot = [false, false, false, false];
+  List<bool> _indexNeedsDot = [false, false, false];
 
-  CupertinoTabController controller;
+  CupertinoTabController? controller;
 
   var prevIndex =
       StudentClass.currentClasses.length == 0 ? CLASSES_TAB : FORECAST_TAB;
@@ -72,18 +69,19 @@ class _SKTabBarState extends State<SKTabBar> {
       observer: this,
       channel: NotificationChannels.selectTab,
       onNotification: (index) {
-        controller.index = index;
+        controller!.index = index;
         if (mounted) setState(() {});
       },
     );
 
     SchedulerBinding.instance.addPostFrameCallback(afterFirstLayout);
+    stripeBloc.AlPlans();
   }
 
   @override
   void dispose() {
     DartNotificationCenter.unsubscribe(observer: this);
-    controller.dispose();
+    controller!.dispose();
     super.dispose();
   }
 
@@ -109,7 +107,7 @@ class _SKTabBarState extends State<SKTabBar> {
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: () async {
-        _navigatorKeys[controller.index].currentState.maybePop();
+        _navigatorKeys[controller!.index].currentState!.maybePop();
         return false;
       },
       child: CupertinoTabScaffold(
@@ -124,7 +122,7 @@ class _SKTabBarState extends State<SKTabBar> {
         },
         tabBar: CupertinoTabBar(
           backgroundColor: Colors.white,
-          items: List.generate(4, createTabIndex),
+          items: List.generate(3, createTabIndex),
           onTap: _onItemTapped,
         ),
       ),
@@ -135,7 +133,7 @@ class _SKTabBarState extends State<SKTabBar> {
     if (!_indexNeedsDot[index])
       return BottomNavigationBarItem(
         icon: Image.asset(
-            'image_assets/tab_bar_assets/${_indexIconPartialPaths[index]}${controller.index == index ? 'blue' : 'gray'}.png'),
+            'image_assets/tab_bar_assets/${_indexIconPartialPaths[index]}${controller!.index == index ? 'blue' : 'gray'}.png'),
       );
     else
       return BottomNavigationBarItem(
@@ -145,7 +143,7 @@ class _SKTabBarState extends State<SKTabBar> {
               alignment: Alignment.center,
               child: Container(
                 child: Image.asset(
-                    'image_assets/tab_bar_assets/${_indexIconPartialPaths[index]}${controller.index == index ? 'blue' : 'gray'}.png'),
+                    'image_assets/tab_bar_assets/${_indexIconPartialPaths[index]}${controller!.index == index ? 'blue' : 'gray'}.png'),
               ),
             ),
             Align(
@@ -169,7 +167,7 @@ class _SKTabBarState extends State<SKTabBar> {
     if (prevIndex == index)
       _navigatorKeys[index]
           .currentState
-          ?.popUntil((route) => route.settings.isInitialRoute);
+          ?.popUntil((route) => route.settings.name == '/');
     else
       DartNotificationCenter.post(
           channel: NotificationChannels.newTabSelected, options: index);

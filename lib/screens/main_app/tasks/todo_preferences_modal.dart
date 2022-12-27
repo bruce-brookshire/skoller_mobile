@@ -11,15 +11,15 @@ class TodoPreferencesModal extends StatefulWidget {
 }
 
 class _TodoPreferencesState extends State<TodoPreferencesModal> {
-  int daysPast;
-  int daysFuture;
+  late int daysPast;
+  late int daysFuture;
 
   @override
   void initState() {
     super.initState();
 
-    daysFuture = SKUser.current.student.todoDaysFuture;
-    daysPast = SKUser.current.student.todoDaysPast;
+    daysFuture = SKUser.current!.student.todoDaysFuture!;
+    daysPast = SKUser.current!.student.todoDaysPast!;
   }
 
   void tappedNotifications(_) => DartNotificationCenter.post(
@@ -65,15 +65,15 @@ class _TodoPreferencesState extends State<TodoPreferencesModal> {
   }
 
   void tappedSave(_) async {
-    final student = SKUser.current.student;
+    final student = SKUser.current?.student;
 
-    if (daysFuture == student.todoDaysFuture &&
+    if (daysFuture == student!.todoDaysFuture &&
         daysPast == student.todoDaysPast)
       Navigator.pop(context);
     else {
       final loader = SKLoadingScreen.fadeIn(context);
 
-      final result = await SKUser.current
+      final result = await SKUser.current!
           .update(todoDaysFuture: daysFuture, todoDaysPast: daysPast);
 
       loader.fadeOut();
@@ -91,8 +91,8 @@ class _TodoPreferencesState extends State<TodoPreferencesModal> {
 
   @override
   Widget build(BuildContext context) {
-    final student = SKUser.current.student;
-    final shouldSave = daysPast != student.todoDaysPast ||
+    final student = SKUser.current?.student;
+    final shouldSave = daysPast != student!.todoDaysPast ||
         daysFuture != student.todoDaysFuture;
 
     return Dialog(

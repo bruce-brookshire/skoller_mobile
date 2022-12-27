@@ -1,16 +1,30 @@
+// @dart = 2.9
+
+import 'dart:io';
+
 import 'package:dart_notification_center/dart_notification_center.dart';
 import 'package:dropdown_banner/dropdown_banner.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:skoller/loading_view.dart';
 import 'package:skoller/screens/main_app/main_view.dart';
 import 'package:skoller/tools.dart';
-import 'screens/auth/auth_home.dart';
+
 import 'constants/constants.dart';
 import 'constants/timezone_manager.dart';
+import 'screens/auth/auth_home.dart';
 
-void main() {
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+
+  if (Platform.isAndroid) {
+    await Firebase.initializeApp();
+  }
+
   runApp(SkollerApp());
   //Allow currentTZ to cache through heuristic exploration before we need it
   TimeZoneManager.verifyTzDbActive();
@@ -43,8 +57,13 @@ void main() {
     };
 
   SKCacheManager.createCacheDir();
+  try {
+    Auth.requestNotificationPermissions();
+  } catch (e) {}
+}
 
-  Auth.requestNotificationPermissions();
+Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+  print("Handling a background message: ${message.messageId}");
 }
 
 class SkollerApp extends StatefulWidget {
@@ -72,7 +91,6 @@ class _SkollerAppState extends State<SkollerApp> {
     // SystemChrome.setSystemUIOverlayStyle(
     //   SystemUiOverlayStyle(statusBarBrightness: Brightness.light),
     // );
-
     DartNotificationCenter.subscribe(
       channel: NotificationChannels.appStateChanged,
       observer: this,
@@ -93,18 +111,18 @@ class _SkollerAppState extends State<SkollerApp> {
 
     if (_darkTheme) {
       currentTheme = ThemeData(
-        primaryColor: SKColors.skoller_blue,
-        accentColor: SKColors.skoller_blue,
+        primaryColor: SKColors.skoller_blue1,
+        accentColor: SKColors.skoller_blue1,
         backgroundColor: SKColors.dark_gray,
         scaffoldBackgroundColor: SKColors.dark_gray,
         textTheme: TextTheme(
-          body1: TextStyle(
+          bodyText1: TextStyle(
             color: Colors.white,
             fontSize: 15,
             fontWeight: FontWeight.bold,
             letterSpacing: -0.35,
           ),
-          body2: TextStyle(
+          bodyText2: TextStyle(
             color: SKColors.skoller_blue,
             fontSize: 15,
             fontWeight: FontWeight.bold,
@@ -115,18 +133,18 @@ class _SkollerAppState extends State<SkollerApp> {
       );
     } else {
       currentTheme = ThemeData(
-        primaryColor: SKColors.skoller_blue,
-        accentColor: SKColors.skoller_blue,
+        primaryColor: SKColors.skoller_blue1,
+        accentColor: SKColors.skoller_blue1,
         backgroundColor: SKColors.background_gray,
         scaffoldBackgroundColor: SKColors.background_gray,
         textTheme: TextTheme(
-          body1: TextStyle(
+          bodyText1: TextStyle(
             color: SKColors.dark_gray,
             fontSize: 15,
             fontWeight: FontWeight.bold,
             letterSpacing: -0.35,
           ),
-          body2: TextStyle(
+          bodyText2: TextStyle(
             color: SKColors.skoller_blue,
             fontSize: 15,
             fontWeight: FontWeight.bold,

@@ -29,7 +29,7 @@ class _PhoneVerificationState extends State<PhoneVerificationView> {
   ];
 
   int currentIndex = 0;
-  String errorMsg;
+  String? errorMsg;
   bool loading = false;
 
   @override
@@ -92,6 +92,7 @@ class _PhoneVerificationState extends State<PhoneVerificationView> {
       Navigator.pop(context, response.wasSuccessful());
     }).catchError(
       (onError) => setState(() {
+        Navigator.pop(context, '');
         loading = false;
         errorMsg = errorMsg is String ? errorMsg : 'Invalid code';
       }),
@@ -174,7 +175,7 @@ class _PhoneVerificationState extends State<PhoneVerificationView> {
             Padding(
               padding: EdgeInsets.only(bottom: 8),
               child: Text(
-                errorMsg,
+                errorMsg!,
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   color: SKColors.warning_red,

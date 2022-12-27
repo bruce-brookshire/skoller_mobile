@@ -1,22 +1,25 @@
 library constants;
 
+import 'dart:async';
 import 'dart:collection';
+import 'dart:io';
+import 'dart:math';
+import 'dart:ui' as dartUI;
 
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
-import '../requests/requests_core.dart';
 import 'package:intl/intl.dart';
-import 'dart:ui' as dartUI;
-import 'dart:async';
-import 'dart:math';
+import 'package:skoller/model/my_subscriptions.dart';
 
-part 'skoller_widgets.dart';
-part 'utilities.dart';
-part 'typedefs.dart';
+import '../requests/requests_core.dart';
+
 part 'image_names.dart';
+part 'skoller_widgets.dart';
+part 'typedefs.dart';
+part 'utilities.dart';
 
 const FORECAST_TAB = 0;
 const CALENDAR_TAB = 1;
@@ -26,7 +29,8 @@ const JOBS_TAB = 3;
 const PARTY_SIZE = 4;
 
 class SKColors {
-  static const skoller_blue = Color(0xFF57B9E4);
+  static const skoller_blue = Color(0xFF4A4A4A);
+  static const skoller_blue1 = Color(0xFF57B9E4);
   static const menu_blue = Color(0xFFEDFAFF);
 
   // General
@@ -78,7 +82,7 @@ class UIAssets {
       blurRadius: 3.5,
     )
   ];
-  static String versionNumber;
+  static String? versionNumber = '';
 }
 
 class ClassStatuses {
@@ -101,6 +105,7 @@ class NotificationChannels {
   static const selectTab = 'select-tab';
   static const newTabSelected = 'new-tab-selected';
   static const jobsChanged = 'jobs-changed';
+  static const subscriptionChanged = 'subscription-changed';
 }
 
 class PreferencesKeys {
@@ -153,6 +158,63 @@ class PushNotificationCategories {
       categories.contains(category);
 }
 
+Map tokenLoginMap = Map();
+
+class Subscriptions {
+  static MySubscriptions? mySubscriptions;
+
+  /// Indicates whether user has an active Subscription or not.
+  static bool get isSubscriptionActive {
+    /// User has no active subscription if subscription data is null.
+    /// This could mean that the user still has an active trial.
+    final isSubscriptionDataAvailable =
+        mySubscriptions?.user?.subscription != null;
+
+    if (!isSubscriptionDataAvailable) return false;
+
+    final isCanceled =
+        mySubscriptions?.user?.subscription?.expirationIntent != null;
+
+    /// If subscription is NOT canceled, return true
+    /// which indicates that subscription is active
+    if (!isCanceled) return true;
+
+    final int canceledAt = mySubscriptions?.user?.subscription?.cancelAt ?? 0;
+    final int currentTime = DateTime.now().millisecondsSinceEpoch;
+    final bool hasExpired = canceledAt > currentTime;
+
+    return hasExpired;
+  }
+
+  /// User has an active trial if true.
+  /// Default is [true] so it doesn't lock users out immediately.
+  /// This method will rerun after [Subscriptions.mySubscriptions] updates.
+  static bool get isTrial => mySubscriptions?.user?.trial ?? false;
+
+  /// Shows how many days User has left on their [Trial] subscription
+  static double get trialDaysLeft =>
+      Subscriptions.mySubscriptions?.user?.trialDaysLeft ?? 0;
+
+  /// Decides what platform
+  static SubscriptionPlatform get subscriptionPlatform {
+    final platform =
+        Subscriptions.mySubscriptions?.user?.subscription?.platform;
+
+    if (platform == null) {
+      return Platform.isIOS
+          ? SubscriptionPlatform.ios
+          : SubscriptionPlatform.ios;
+    }
+
+    return platform;
+  }
+
+  /// Lifetime
+  static bool get isLifetimeSubscription =>
+      mySubscriptions?.user?.lifetimeSubscription ?? false;
+  static bool get isLifetimeTrial =>
+      mySubscriptions?.user?.lifetimeTrial ?? false;
+}
 
 final statesMap = LinkedHashMap.fromIterables([
   "Alabama",

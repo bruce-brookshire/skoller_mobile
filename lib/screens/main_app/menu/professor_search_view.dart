@@ -18,13 +18,13 @@ class _ProfessorSearchState extends State<ProfessorSearchView> {
 
   List<Professor> searchedProfessors = [];
 
-  Timer _currentTimer;
+  Timer? _currentTimer;
   bool isSearching = false;
-  School school;
+  School? school;
 
   @override
   void initState() {
-    school = SKUser.current.student.primarySchool;
+    school = SKUser.current?.student.primarySchool;
 
     super.initState();
   }
@@ -37,7 +37,7 @@ class _ProfessorSearchState extends State<ProfessorSearchView> {
 
   void didTypeInSearch(String text) {
     if (_currentTimer != null) {
-      _currentTimer.cancel();
+      _currentTimer!.cancel();
       _currentTimer = null;
     }
 
@@ -50,7 +50,7 @@ class _ProfessorSearchState extends State<ProfessorSearchView> {
         });
       }
 
-      school.invalidateCurrentProfessorSearch();
+      school!.invalidateCurrentProfessorSearch();
 
       setState(() {
         searchedProfessors = [];
@@ -67,7 +67,7 @@ class _ProfessorSearchState extends State<ProfessorSearchView> {
     _currentTimer = Timer(
       Duration(milliseconds: searchText.length < 3 ? 800 : 300),
       () {
-        school.searchProfessors(searchText).then((response) {
+        school!.searchProfessors(searchText).then((response) {
           _currentTimer = null;
 
           if (response.wasSuccessful()) {
@@ -229,7 +229,7 @@ class _ProfessorSearchState extends State<ProfessorSearchView> {
     if (result is bool && result) {
       final loadingScreen = SKLoadingScreen.fadeIn(context);
 
-      final result = await school.createProfessor(
+      final result = await school!.createProfessor(
         nameFirst: firstNameController.text.trim(),
         nameLast: lastNameController.text.trim(),
       );
@@ -335,7 +335,7 @@ class _ProfessorSearchState extends State<ProfessorSearchView> {
                             crossAxisAlignment: CrossAxisAlignment.stretch,
                             children: [
                               Text(
-                                searchedProfessors[index].fullName,
+                                searchedProfessors[index].fullName??'',
                                 style: TextStyle(
                                     fontSize: 16, color: SKColors.dark_gray),
                               ),

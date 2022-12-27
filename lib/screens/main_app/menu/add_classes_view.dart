@@ -1,12 +1,13 @@
 import 'dart:async';
+
 import 'package:dart_notification_center/dart_notification_center.dart';
 import 'package:dropdown_banner/dropdown_banner.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:skoller/screens/main_app/menu/class_status_modal.dart';
-import 'package:skoller/tools.dart';
-import 'package:skoller/screens/main_app/menu/create_class_modal.dart';
 import 'package:skoller/screens/main_app/menu/class_search_settings_modal.dart';
+import 'package:skoller/screens/main_app/menu/class_status_modal.dart';
+import 'package:skoller/screens/main_app/menu/create_class_modal.dart';
+import 'package:skoller/tools.dart';
 
 class AddClassesView extends StatefulWidget {
   @override
@@ -16,9 +17,9 @@ class AddClassesView extends StatefulWidget {
 class _AddClassesState extends State<AddClassesView> {
   List<SchoolClass> searchedClasses = [];
 
-  Timer _currentTimer;
+  Timer? _currentTimer;
 
-  Period activePeriod;
+  Period? activePeriod;
 
   final searchController = TextEditingController();
   final searchFocusNode = FocusNode();
@@ -29,15 +30,15 @@ class _AddClassesState extends State<AddClassesView> {
   void initState() {
     super.initState();
 
-    activePeriod = SKUser.current.student.primaryPeriod ??
-        SKUser.current.student.primarySchool?.getBestCurrentPeriod();
+    activePeriod = SKUser.current?.student.primaryPeriod ??
+        SKUser.current?.student.primarySchool?.getBestCurrentPeriod();
 
     DartNotificationCenter.subscribe(
       observer: this,
       channel: NotificationChannels.classChanged,
       onNotification: (options) => SchoolClass.searchSchoolClasses(
         searchController.text.trim(),
-        activePeriod,
+        activePeriod!,
       ).then(
         (response) {
           _currentTimer = null;
@@ -64,7 +65,7 @@ class _AddClassesState extends State<AddClassesView> {
 
   void didTypeInSearch(String searchText) {
     if (_currentTimer != null) {
-      _currentTimer.cancel();
+      _currentTimer!.cancel();
       _currentTimer = null;
     }
 
@@ -96,7 +97,7 @@ class _AddClassesState extends State<AddClassesView> {
       () {
         SchoolClass.searchSchoolClasses(
           searchText,
-          activePeriod,
+          activePeriod!,
         ).then((response) {
           _currentTimer = null;
 
@@ -114,7 +115,7 @@ class _AddClassesState extends State<AddClassesView> {
   }
 
   void didTapClassCard(int index) async {
-    SchoolClass schoolClass = searchedClasses[index];
+    final SchoolClass schoolClass = searchedClasses[index];
 
     final bool isEnrolled =
         StudentClass.currentClasses.containsKey(schoolClass.id);
@@ -145,7 +146,7 @@ class _AddClassesState extends State<AddClassesView> {
                 children: <Widget>[
                   Expanded(
                     child: Text(
-                      '${schoolClass.subject} ${schoolClass.code}.${schoolClass.section}',
+                      '${schoolClass.subject ?? '-'} ${schoolClass.code ?? '-'}.${schoolClass.section ?? '-'}',
                       style: TextStyle(
                           fontWeight: FontWeight.normal, fontSize: 14),
                     ),
@@ -198,7 +199,7 @@ class _AddClassesState extends State<AddClassesView> {
                     ),
                   ),
                   Text(
-                    '${schoolClass.professor?.firstName ?? ''} ${schoolClass.professor?.lastName ?? ''}',
+                    '${schoolClass.professor?.firstName ?? '-'} ${schoolClass.professor?.lastName ?? '-'}',
                     style: TextStyle(
                       fontSize: 15,
                       fontWeight: FontWeight.normal,
@@ -209,7 +210,7 @@ class _AddClassesState extends State<AddClassesView> {
               GestureDetector(
                 onTapUp: (details) {
                   final requestFunc = isEnrolled
-                      ? StudentClass.currentClasses[schoolClass.id].dropClass
+                      ? StudentClass.currentClasses[schoolClass.id]!.dropClass
                       : schoolClass.enrollInClass;
 
                   final loader = SKLoadingScreen.fadeIn(newContext);
@@ -267,7 +268,7 @@ class _AddClassesState extends State<AddClassesView> {
                   decoration: BoxDecoration(
                     color: isEnrolled
                         ? SKColors.warning_red
-                        : SKColors.skoller_blue,
+                        : SKColors.skoller_blue1,
                     borderRadius: BorderRadius.circular(5),
                   ),
                   child: Text(
@@ -286,7 +287,7 @@ class _AddClassesState extends State<AddClassesView> {
   void tappedSettings([_]) async {
     final results = await showDialog(
       context: context,
-      builder: (context) => ClassSearchSettingsModal(activePeriod.id),
+      builder: (context) => ClassSearchSettingsModal(activePeriod!.id),
     );
 
     if (results is Map && results['period'] is Period) {
@@ -300,7 +301,7 @@ class _AddClassesState extends State<AddClassesView> {
       context,
       SKNavOverlayRoute(
         builder: (context) => CreateClassModal(
-          activePeriod,
+          activePeriod!,
           searchController.text.trim(),
         ),
       ),
@@ -312,14 +313,14 @@ class _AddClassesState extends State<AddClassesView> {
     final showSammiInstructions =
         StudentClass.currentClasses.length == 0 && searchController.text == '';
 
-    int rows;
+    int listViewItemCount;
 
     if (showSammiInstructions)
-      rows = 1;
-    else if (searchedClasses.length == 0 && searchController.text.trim() == '')
-      rows = 0;
+      listViewItemCount = 1;
+    else if (searchedClasses.isEmpty && searchController.text.trim() == '')
+      listViewItemCount = 1;
     else
-      rows = searchedClasses.length + (isSearching ? 0 : 1);
+      listViewItemCount = searchedClasses.length + (isSearching ? 0 : 1);
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -338,7 +339,7 @@ class _AddClassesState extends State<AddClassesView> {
                       Expanded(
                         child: ListView.builder(
                           padding: EdgeInsets.fromLTRB(8, 6, 8, 12),
-                          itemCount: rows,
+                          itemCount: listViewItemCount,
                           itemBuilder: (context, index) {
                             // If there are no classes, we need to guide the user
                             if (showSammiInstructions)
@@ -380,7 +381,7 @@ class _AddClassesState extends State<AddClassesView> {
                                               text:
                                                   ' Tap here to add it to Skoller.',
                                               style: TextStyle(
-                                                color: SKColors.skoller_blue,
+                                                color: SKColors.skoller_blue1,
                                               ),
                                             )
                                           ],
@@ -392,6 +393,13 @@ class _AddClassesState extends State<AddClassesView> {
                                   ),
                                 ],
                               );
+                            }
+
+                            /// If search field is empty and there's no results to display ,
+                            /// show background image and text
+                            if (searchedClasses.isEmpty &&
+                                searchController.text.trim() == '') {
+                              return const _EmptySearchClassBackground();
                             }
 
                             return GestureDetector(
@@ -435,11 +443,11 @@ class _AddClassesState extends State<AddClassesView> {
     final classCount = StudentClass.currentClasses.values.fold(
         0,
         (a, s) =>
-            a +
-            (s.classPeriod == SKUser.current.student.primaryPeriod ? 1 : 0));
+            int.parse(a.toString()) +
+            (s.classPeriod == SKUser.current?.student.primaryPeriod ? 1 : 0));
 
     return Container(
-      height: 128,
+      height: 136,
       padding: EdgeInsets.only(top: 12),
       decoration: BoxDecoration(
         boxShadow: [
@@ -478,11 +486,11 @@ class _AddClassesState extends State<AddClassesView> {
                   mainAxisSize: MainAxisSize.min,
                   children: <Widget>[
                     Text(
-                      SKUser.current.student.primarySchool?.name,
+                      SKUser.current?.student.primarySchool?.name ?? '',
                       overflow: TextOverflow.ellipsis,
                       style: TextStyle(
                           fontSize: 18,
-                          color: SKUser.current.student.primarySchool.color ??
+                          color: SKUser.current?.student.primarySchool?.color ??
                               SKColors.dark_gray),
                     ),
                     Padding(
@@ -582,7 +590,7 @@ class _AddClassesState extends State<AddClassesView> {
               Padding(
                 padding: EdgeInsets.symmetric(vertical: 2),
                 child: Text(
-                  '${schoolClass.professor?.firstName ?? ''} ${schoolClass.professor?.lastName ?? ''}',
+                  '${schoolClass.professor?.firstName ?? '-'} ${schoolClass.professor?.lastName ?? '-'}',
                   style: TextStyle(
                     fontWeight: FontWeight.normal,
                   ),
@@ -594,7 +602,7 @@ class _AddClassesState extends State<AddClassesView> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
               Text(
-                '${schoolClass.subject} ${schoolClass.code}.${schoolClass.section}',
+                '${schoolClass.subject ?? '-'} ${schoolClass.code ?? '-'}.${schoolClass.section ?? '-'}',
                 style: TextStyle(
                     fontWeight: FontWeight.normal,
                     fontSize: 14,
@@ -611,4 +619,44 @@ class _AddClassesState extends State<AddClassesView> {
           ),
         ],
       );
+}
+
+class _EmptySearchClassBackground extends StatelessWidget {
+  const _EmptySearchClassBackground({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Opacity(
+      opacity: 0.5,
+      child: Container(
+        alignment: Alignment.center,
+        padding: const EdgeInsets.only(top: 50),
+        child: Column(
+          children: [
+            Image.asset(
+              ImageNames.sammiImages.smile,
+              height: 100,
+              fit: BoxFit.fill,
+            ),
+            const SizedBox(height: 10),
+            Text(
+              'Search your class',
+              style: Theme.of(context)
+                  .textTheme
+                  .headline6
+                  ?.copyWith(fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 5),
+            Text(
+              "to see if it's already on Skoller!",
+              style: Theme.of(context)
+                  .textTheme
+                  .bodyText2
+                  ?.copyWith(fontWeight: FontWeight.normal),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
 }

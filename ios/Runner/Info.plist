@@ -2,8 +2,6 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>NSPhotoLibraryUsageDescription</key>
-	<string>So that you can upload profile photos and your syllabus</string>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>
@@ -34,6 +32,8 @@
 	<true/>
 	<key>NSCameraUsageDescription</key>
 	<string>We use the camera so you can take profile photos and upload your syllabus</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>So that you can upload profile photos and your syllabus</string>
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>fetch</string>
@@ -55,6 +55,8 @@
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
 	<key>io.flutter.embedded_views_preview</key>
+	<true/>
+	<key>CADisableMinimumFrameDurationOnPhone</key>
 	<true/>
 </dict>
 </plist>

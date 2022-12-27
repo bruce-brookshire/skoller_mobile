@@ -1,18 +1,22 @@
+import 'dart:io';
+
+import 'package:app_review/app_review.dart';
 import 'package:dart_notification_center/dart_notification_center.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:skoller/constants/constants.dart';
+import 'package:skoller/requests/subscription_manager.dart';
 import 'package:skoller/screens/main_app/classes/class_menu_modal.dart';
 import 'package:skoller/screens/main_app/menu/add_classes_view.dart';
 import 'package:skoller/screens/main_app/menu/major_search_modal.dart';
+import 'package:skoller/screens/main_app/premium/expired_trial_pay_wall_model.dart';
 import 'package:skoller/screens/main_app/tutorial/tutorial.dart';
-import 'package:skoller/constants/constants.dart';
-import 'package:app_review/app_review.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
 import 'package:skoller/tools.dart';
-import 'primary_school_modal.dart';
+
 import 'menu_view.dart';
+import 'primary_school_modal.dart';
 import 'tab_bar.dart';
-import 'dart:io';
 
 class MainView extends StatefulWidget {
   @override
@@ -32,14 +36,17 @@ class _MainState extends State<MainView> {
 
   @override
   void initState() {
+    /// Initializes [SubscriptionManager] which triggers fetching and setting User subscription
+    SubscriptionManager.instance;
+
     // If the student does not have a primary school or term, set it
-    if (SKUser.current.student.primarySchool == null ||
-        SKUser.current.student.primaryPeriod == null)
+    if (SKUser.current?.student.primarySchool == null ||
+        SKUser.current?.student.primaryPeriod == null)
       WidgetsBinding.instance.addPostFrameCallback(
         (_) => showPrimarySchoolModal(),
       );
     // If the student has no majors and they have at least one class set up
-    else if ((SKUser.current.student.fieldsOfStudy ?? []).length == 0 &&
+    else if ((SKUser.current?.student.fieldsOfStudy ?? []).length == 0 &&
         StudentClass.currentClasses.values.any((sc) => [
               ClassStatuses.class_setup,
               ClassStatuses.class_issue
@@ -72,6 +79,12 @@ class _MainState extends State<MainView> {
       onNotification: presentModalWidgetOverMainView,
     );
 
+    DartNotificationCenter.subscribe(
+      channel: NotificationChannels.subscriptionChanged,
+      observer: this,
+      onNotification: showPayWallModalIfSubscriptionExpired,
+    );
+
     Mod.fetchMods();
 
     WidgetsBinding.instance.addPostFrameCallback((_) => setScreenSize());
@@ -98,6 +111,18 @@ class _MainState extends State<MainView> {
       channel: NotificationChannels.presentViewOverTabBar,
       options: AddClassesView(),
     );
+  }
+
+  void showPayWallModalIfSubscriptionExpired(dynamic userState) async {
+    if (!Subscriptions.isTrial && !Subscriptions.isSubscriptionActive) {
+      await Navigator.push(
+        context,
+        SKNavOverlayRoute(
+          builder: (context) => ExpiredTrialPayWallModal(),
+          isBarrierDismissible: false,
+        ),
+      );
+    }
   }
 
   void showMajorSelection() async {
@@ -130,7 +155,8 @@ class _MainState extends State<MainView> {
     if (hasShown is bool || (hasShown != null && !(hasShown is String))) return;
 
     final now = DateTime.now();
-    final scheduled = hasShown == null ? null : DateTime.parse(hasShown);
+    final scheduled =
+        hasShown == null ? null : DateTime.parse(hasShown.toString());
 
     if (scheduled?.isAfter(now) ?? false) return;
 
@@ -144,10 +170,10 @@ class _MainState extends State<MainView> {
                     .contains(sc.status.id)
                 ? 1
                 : 0) +
-            curCount);
+            int.parse(curCount.toString()));
 
     final assignmentCompleted = Assignment.currentAssignments.values
-        .any((a) => (a.due?.isBefore(now) ?? false) || a.isCompleted);
+        .any((a) => (a.due?.isBefore(now) ?? false) || a.isCompleted!);
 
     final shouldReview = numSetupClasses >= 2 && assignmentCompleted;
 
@@ -187,7 +213,7 @@ class _MainState extends State<MainView> {
     backgroundLeft = -backgroundWidth - 5;
   }
 
-  Future<bool> createAndroidReviewRequest(bool showRatingDisable) async {
+  Future<dynamic> createAndroidReviewRequest(bool showRatingDisable) async {
     return showDialog(
       context: context,
       builder: (context) => Dialog(

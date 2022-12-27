@@ -14,7 +14,7 @@ final _colors = [
 ];
 
 class _TaskCellItem {
-  final String name;
+  final String? name;
   final String className;
   final int color;
   final String due;
@@ -44,7 +44,7 @@ class TodoTutorialView extends StatelessWidget {
       alignment: Alignment.center,
       children: <Widget>[
         SKNavView(
-          title: 'To-Do\'s',
+          title: 'Assignments',
           leftBtn: Image.asset(ImageNames.peopleImages.static_profile),
           rightBtn: Image.asset(ImageNames.rightNavImages.plus),
           children: [
@@ -69,13 +69,13 @@ class TodoTutorialView extends StatelessWidget {
                   GestureDetector(
                     onTapUp: (_) => DartNotificationCenter.post(
                       channel: NotificationChannels.selectTab,
-                      options: 2,
+                      options: 1,
                     ),
                     child: Container(
                       decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(8),
                           border: Border.all(color: Colors.white),
-                          color: SKColors.skoller_blue),
+                          color: SKColors.skoller_blue1),
                       padding: EdgeInsets.all(12),
                       child: Icon(
                         Icons.arrow_forward_ios,
@@ -124,7 +124,7 @@ class TodoTutorialView extends StatelessWidget {
               padding: EdgeInsets.symmetric(vertical: 8, horizontal: 24),
               margin: EdgeInsets.only(bottom: 48),
               decoration: BoxDecoration(
-                color: SKColors.skoller_blue,
+                color: SKColors.skoller_blue1,
                 borderRadius: BorderRadius.circular(5),
                 border: Border.all(color: Colors.white),
                 boxShadow: UIAssets.boxShadow,
@@ -147,7 +147,7 @@ class TodoTutorialView extends StatelessWidget {
               padding: EdgeInsets.symmetric(vertical: 8, horizontal: 24),
               margin: EdgeInsets.only(bottom: 48),
               decoration: BoxDecoration(
-                color: SKColors.skoller_blue,
+                color: SKColors.skoller_blue1,
                 borderRadius: BorderRadius.circular(5),
                 border: Border.all(color: Colors.white),
                 boxShadow: UIAssets.boxShadow,
@@ -175,7 +175,7 @@ class TodoTutorialView extends StatelessWidget {
                     child: SammiSpeechBubble(
                       sammiPersonality: SammiPersonality.smile,
                       speechBubbleContents: Text.rich(
-                        TextSpan(text: 'To-Do\'s', children: [
+                        TextSpan(text: 'Assignments\'s', children: [
                           TextSpan(
                               text: ' snapshots YOUR upcoming assignments!',
                               style: TextStyle(fontWeight: FontWeight.normal))
@@ -239,7 +239,7 @@ class _TodoRow extends StatelessWidget {
                   child: Material(
                     type: MaterialType.transparency,
                     child: Text(
-                      item.name,
+                      item.name ?? '',
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style: TextStyle(

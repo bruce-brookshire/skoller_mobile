@@ -19,7 +19,7 @@ const _createiveVsAnalytical = 'creative_vs_analytical';
 const _extrovertedVsIntroverted = 'extroverted_vs_introverted';
 
 class _PersonalityFormState extends State<PersonalityFormModal> {
-  Map<String, double> choices = {};
+  Map<String, double?> choices = {};
 
   Map<String, String> descriptions = {
     _enneagram: 'My Enneagram type is...',
@@ -46,7 +46,7 @@ class _PersonalityFormState extends State<PersonalityFormModal> {
   void initState() {
     super.initState();
 
-    final profilePersonality = JobProfile.currentProfile.personality;
+    final profilePersonality = JobProfile.currentProfile!.personality;
 
     if (profilePersonality != null) {
       final values = profilePersonality
@@ -57,9 +57,9 @@ class _PersonalityFormState extends State<PersonalityFormModal> {
 
   void tappedSave(_) async {
     final personalityEntries =
-        choices.map((key, value) => MapEntry(key, value.round().toString()));
+        choices.map((key, value) => MapEntry(key, value!.round().toString()));
     final loader = SKLoadingScreen.fadeIn(context);
-    final response = await JobProfile.currentProfile
+    final response = await JobProfile.currentProfile!
         .updateProfileWithParameters({'personality': personalityEntries});
     loader.fadeOut();
     if (response.wasSuccessful()) {
@@ -157,7 +157,7 @@ class _PersonalityFormState extends State<PersonalityFormModal> {
       Padding(
         padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
         child: Text(
-          descriptions[key],
+          descriptions[key]!,
           style: TextStyle(
               color: Colors.white, fontWeight: FontWeight.w300, fontSize: 14),
         ),

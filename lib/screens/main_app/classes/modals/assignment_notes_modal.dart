@@ -1,5 +1,6 @@
-import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:skoller/tools.dart';
 
 class AssignmentNotesModal extends StatefulWidget {
@@ -14,14 +15,14 @@ class AssignmentNotesModal extends StatefulWidget {
 
 class _AssignmentNotesModal extends State<AssignmentNotesModal> {
   final focusNode = FocusNode();
-  TextEditingController controller;
+  late TextEditingController controller;
 
   @override
   void initState() {
     super.initState();
 
     controller = TextEditingController(
-      text: Assignment.currentAssignments[widget.assignmentId].notes,
+      text: Assignment.currentAssignments[widget.assignmentId]!.notes,
     );
   }
 
@@ -113,7 +114,7 @@ class _AssignmentNotesModal extends State<AssignmentNotesModal> {
                 child: CupertinoTextField(
                   decoration: BoxDecoration(border: null),
                   maxLength: 2000,
-                  maxLengthEnforced: true,
+                  maxLengthEnforcement: MaxLengthEnforcement.enforced,
                   autofocus: true,
                   maxLines: null,
                   keyboardType: TextInputType.multiline,

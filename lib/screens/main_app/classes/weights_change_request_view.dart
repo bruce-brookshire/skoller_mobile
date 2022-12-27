@@ -17,19 +17,19 @@ class WeightsChangeRequestView extends StatefulWidget {
 }
 
 class _WeightsChangeRequestState extends State<WeightsChangeRequestView> {
-  List<Map> weights;
+  List<Map>? weights;
 
-  bool isPoints;
+  bool? isPoints;
   bool isEdited = false;
 
   int selectedSegment = 0;
 
   @override
   void initState() {
-    StudentClass studentClass = StudentClass.currentClasses[widget.classId];
+    StudentClass studentClass = StudentClass.currentClasses[widget.classId]!;
 
     isPoints = studentClass.isPoints;
-    weights = (StudentClass.currentClasses[widget.classId].weights ?? [])
+    weights = (StudentClass.currentClasses[widget.classId]!.weights ?? [])
         .map(
           (weight) => Map<dynamic, dynamic>.fromIterables(
             ['name', 'value'],
@@ -43,7 +43,7 @@ class _WeightsChangeRequestState extends State<WeightsChangeRequestView> {
 
   void checkValid() {
     final studentClass = StudentClass.currentClasses[widget.classId];
-    final weights = studentClass.weights ?? [];
+    final weights = studentClass!.weights ?? [];
     Map<String, double> weightMap = {};
     bool hasChanged = false;
 
@@ -52,7 +52,7 @@ class _WeightsChangeRequestState extends State<WeightsChangeRequestView> {
       weightMap[weight.name] = weight.weight;
     }
 
-    for (final weight in this.weights) {
+    for (final weight in this.weights!) {
       final name = weight['name'];
 
       if (weightMap.containsKey(name)) {
@@ -77,14 +77,14 @@ class _WeightsChangeRequestState extends State<WeightsChangeRequestView> {
   }
 
   void editWeight(int weightIndex) {
-    final weight = weights[weightIndex];
+    final weight = weights![weightIndex];
 
     showWeightMaker(weight['name'], '${weight['value']}', false, (name, value) {
       if (name != '' && value != '' && int.tryParse(value) != null) {
         setState(
           () {
-            weights[weightIndex]['name'] = name;
-            weights[weightIndex]['value'] = int.parse(value);
+            weights![weightIndex]['name'] = name;
+            weights![weightIndex]['value'] = int.parse(value);
           },
         );
         checkValid();
@@ -96,7 +96,7 @@ class _WeightsChangeRequestState extends State<WeightsChangeRequestView> {
     showWeightMaker('', '', true, (name, value) {
       if (name != '' && value != '' && int.tryParse(value) != null) {
         setState(
-          () => weights.add(Map<dynamic, dynamic>.fromIterables(
+          () => weights!.add(Map<dynamic, dynamic>.fromIterables(
             ['name', 'value'],
             [name, int.parse(value)],
           )),
@@ -106,7 +106,7 @@ class _WeightsChangeRequestState extends State<WeightsChangeRequestView> {
     });
   }
 
-  Future<bool> showWeightMaker(
+  Future<dynamic> showWeightMaker(
     String nameStr,
     String valueStr,
     bool isCreate,
@@ -115,21 +115,21 @@ class _WeightsChangeRequestState extends State<WeightsChangeRequestView> {
     return showDialog(
       context: context,
       builder: (context) =>
-          WeightCreationModal(isPoints, isCreate, nameStr, valueStr, results),
+          WeightCreationModal(isPoints!, isCreate, nameStr, valueStr, results),
     );
   }
 
   void tappedSubmit(TapUpDetails details) {
-    final currTotal = weights.fold(0, (val, item) => item['value'] + val);
+    final currTotal = weights!.fold(0, (val, item) => item['value'] + val);
 
-    if ((isPoints || currTotal == 100) && isEdited) {
+    if ((isPoints! || (currTotal == 100)) && isEdited) {
       final studentClass = StudentClass.currentClasses[widget.classId];
       final loader = SKLoadingScreen.fadeIn(context);
       final weights =
-          this.weights.map((w) => w..update('value', (v) => '$v')).toList();
+          this.weights!.map((w) => w..update('value', (v) => '$v')).toList();
 
-      studentClass
-          .submitWeightChangeRequest(isPoints, weights)
+      studentClass!
+          .submitWeightChangeRequest(isPoints!, weights)
           .then((success) async {
         if (success) {
           await studentClass.refetchSelf();
@@ -167,12 +167,12 @@ class _WeightsChangeRequestState extends State<WeightsChangeRequestView> {
 
   @override
   Widget build(BuildContext context) {
-    StudentClass studentClass = StudentClass.currentClasses[widget.classId];
+    StudentClass studentClass = StudentClass.currentClasses[widget.classId]!;
 
-    final currTotal = weights.fold(0, (val, item) => item['value'] + val);
+    final currTotal = weights!.fold(0, (val, item) => item['value'] + val);
 
     return SKNavView(
-      title: studentClass.name,
+      title: studentClass.name!,
       titleColor: studentClass.getColor(),
       leftBtn: Image.asset(ImageNames.navArrowImages.down),
       backgroundColor: SKColors.background_gray,
@@ -221,7 +221,7 @@ class _WeightsChangeRequestState extends State<WeightsChangeRequestView> {
                       ),
                     ],
                   ),
-                  onValueChanged: (index) {
+                  onValueChanged: (int index) {
                     isPoints = index == 1;
                     checkValid();
                     setState(() => selectedSegment = index);
@@ -240,9 +240,9 @@ class _WeightsChangeRequestState extends State<WeightsChangeRequestView> {
                         border: Border.all(color: SKColors.border_gray),
                         borderRadius: BorderRadius.circular(5)),
                     child: ListView.builder(
-                        itemCount: weights.length,
+                        itemCount: weights!.length,
                         itemBuilder: (context, index) {
-                          final weight = weights[index];
+                          final weight = weights![index];
                           return GestureDetector(
                             onTapUp: (details) => editWeight(index),
                             child: Container(
@@ -255,7 +255,7 @@ class _WeightsChangeRequestState extends State<WeightsChangeRequestView> {
                                   GestureDetector(
                                     onTapUp: (details) {
                                       setState(() {
-                                        weights.removeAt(index);
+                                        weights!.removeAt(index);
                                       });
                                       checkValid();
                                     },
@@ -300,7 +300,7 @@ class _WeightsChangeRequestState extends State<WeightsChangeRequestView> {
                         'Total',
                         style: TextStyle(fontSize: 20),
                       ),
-                      isPoints
+                      isPoints!
                           ? GestureDetector(
                               child: Text(
                                 '$currTotal pts.',
@@ -323,11 +323,11 @@ class _WeightsChangeRequestState extends State<WeightsChangeRequestView> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
                       Text(
-                        '${isPoints ? 'points' : 'percentage'}',
+                        '${isPoints! ? 'points' : 'percentage'}',
                         style: TextStyle(
                             fontSize: 15, fontWeight: FontWeight.normal),
                       ),
-                      if (!isPoints)
+                      if (!isPoints!)
                         Text(
                           'Weights must sum to 100',
                           style: TextStyle(
@@ -348,7 +348,7 @@ class _WeightsChangeRequestState extends State<WeightsChangeRequestView> {
                             padding: EdgeInsets.symmetric(vertical: 8),
                             decoration: BoxDecoration(
                                 color:
-                                    ((isPoints || currTotal == 100) && isEdited)
+                                    ((isPoints! || currTotal == 100) && isEdited)
                                         ? SKColors.success
                                         : SKColors.inactive_gray,
                                 borderRadius: BorderRadius.circular(5),
@@ -356,7 +356,7 @@ class _WeightsChangeRequestState extends State<WeightsChangeRequestView> {
                             child: Text(
                               'Submit weights',
                               style: TextStyle(
-                                  color: ((isPoints || currTotal == 100) &&
+                                  color: ((isPoints! || currTotal == 100) &&
                                           isEdited)
                                       ? Colors.white
                                       : SKColors.dark_gray),

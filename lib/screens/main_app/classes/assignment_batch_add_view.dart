@@ -1,21 +1,21 @@
 import 'package:dart_notification_center/dart_notification_center.dart';
 import 'package:dropdown_banner/dropdown_banner.dart';
 import 'package:flutter/material.dart';
-import 'package:skoller/tools.dart';
 import 'package:intl/intl.dart';
+import 'package:skoller/tools.dart';
 
 class _UnsavedAssignment {
   String name;
-  DateTime dueDate;
+  DateTime? dueDate;
 
-  _UnsavedAssignment({@required this.name, @required this.dueDate});
+  _UnsavedAssignment({required this.name, required this.dueDate});
 }
 
 class AssignmentBatchAddView extends StatefulWidget {
-  final int class_id;
-  final Weight weight;
+  final int? class_id;
+  final Weight? weight;
 
-  AssignmentBatchAddView({Key key, this.class_id, this.weight})
+  AssignmentBatchAddView({Key? key, this.class_id, this.weight})
       : super(key: key);
 
   @override
@@ -29,8 +29,8 @@ class _AssignmentBatchAddState extends State<AssignmentBatchAddView> {
   void initState() {
     super.initState();
 
-    StudentClass.currentClasses[widget.class_id]
-        .acquireAssignmentLock(widget.weight)
+    StudentClass.currentClasses[widget.class_id]!
+        .acquireAssignmentLock(widget.weight!)
         .then((response) {
       if (!response.wasSuccessful()) {
         DropdownBanner.showBanner(
@@ -60,15 +60,17 @@ class _AssignmentBatchAddState extends State<AssignmentBatchAddView> {
           shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.all(Radius.circular(10))),
           child: _AddAssignmentSubview(
-            weight: widget.weight,
+            weight: widget.weight!,
           ),
         );
       },
     );
 
     if (result != null) {
-      int index = queuedAssignments.indexWhere(
-          (element) => result.dueDate == null ? true : element.dueDate?.isAfter(result.dueDate) ?? false);
+      int index = queuedAssignments.indexWhere((element) =>
+          result.dueDate == null
+              ? true
+              : element.dueDate?.isAfter(result.dueDate!) ?? false);
 
       setState(() {
         queuedAssignments.insert(
@@ -88,8 +90,8 @@ class _AssignmentBatchAddState extends State<AssignmentBatchAddView> {
     final studentClass = StudentClass.currentClasses[widget.class_id];
 
     for (final assignment in queuedAssignments) {
-      final future = studentClass.createBatchAssignment(
-          assignment.name, widget.weight, assignment.dueDate);
+      final future = studentClass!.createBatchAssignment(
+          assignment.name, widget.weight!, assignment.dueDate);
 
       futureQueue.add(future);
     }
@@ -102,7 +104,7 @@ class _AssignmentBatchAddState extends State<AssignmentBatchAddView> {
       if (!response.wasSuccessful()) failedRequests += 1;
     }
 
-    await studentClass.releaseDIYLock();
+    await studentClass!.releaseDIYLock();
     await studentClass.refetchSelf();
 
     loadingScreen.fadeOut();
@@ -125,7 +127,7 @@ class _AssignmentBatchAddState extends State<AssignmentBatchAddView> {
     }
   }
 
-  Future<bool> showConfirmationModal() => showDialog(
+  Future<dynamic> showConfirmationModal() => showDialog(
         context: context,
         builder: (context) => SafeArea(
           child: Padding(
@@ -225,7 +227,7 @@ class _AssignmentBatchAddState extends State<AssignmentBatchAddView> {
     final studentClass = StudentClass.currentClasses[widget.class_id];
 
     return SKNavView(
-      title: studentClass.name,
+      title: studentClass!.name!,
       titleColor: studentClass.getColor(),
       children: [
         createInfoContainer(),
@@ -272,7 +274,7 @@ class _AssignmentBatchAddState extends State<AssignmentBatchAddView> {
                       TextSpan(
                           text: widget.weight == null
                               ? 'Not graded'
-                              : widget.weight.name,
+                              : widget.weight!.name,
                           style: TextStyle(
                               fontWeight: FontWeight.bold, fontSize: 15)),
                     ],
@@ -303,7 +305,7 @@ class _AssignmentBatchAddState extends State<AssignmentBatchAddView> {
 
   Widget createAssignmentQueueContainer(StudentClass studentClass) {
     if (queuedAssignments.length == 0) {
-      return null;
+      return Container();
     }
     final dateFormatter = DateFormat('EEE, MMM d');
 
@@ -406,16 +408,16 @@ class _AssignmentBatchAddState extends State<AssignmentBatchAddView> {
 }
 
 class _AddAssignmentSubview extends StatefulWidget {
-  final Weight weight;
+  final Weight? weight;
 
-  _AddAssignmentSubview({Key key, @required this.weight}) : super(key: key);
+  _AddAssignmentSubview({Key? key, @required this.weight}) : super(key: key);
 
   @override
   State createState() => _AddAssignmentSubState();
 }
 
 class _AddAssignmentSubState extends State<_AddAssignmentSubview> {
-  DateTime dueDate;
+  DateTime? dueDate;
 
   bool dateSelected = false;
   bool isValidState = false;
@@ -430,7 +432,7 @@ class _AddAssignmentSubState extends State<_AddAssignmentSubview> {
 
   checkState() {
     bool prevState = isValidState;
-    bool newState = textFieldController.text.trim() != "" && dateSelected;
+    bool newState = textFieldController.text.trim() != "";
     if (prevState != newState) {
       setState(() {
         isValidState = newState;
@@ -502,7 +504,7 @@ class _AddAssignmentSubState extends State<_AddAssignmentSubview> {
                         ? 'Select date'
                         : (dueDate == null
                             ? 'Unknown'
-                            : DateFormat('EEE, MMMM d').format(dueDate)),
+                            : DateFormat('EEE, MMMM d').format(dueDate!)),
                     style: TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 15,

@@ -1,11 +1,11 @@
 part of 'requests_core.dart';
 
 class SKUser {
-  static SKUser current;
+  static SKUser? current;
 
   int id;
-  String email;
-  String avatarUrl;
+  String? email;
+  String? avatarUrl = null;
   Student student;
 
   SKUser(this.id, this.email, this.avatarUrl, this.student);
@@ -18,30 +18,30 @@ class SKUser {
       Student._fromJson(content['student']),
     );
 
-    return SKUser.current;
+    return SKUser.current!;
   }
 
   Future<bool> delete() {
-    return SKRequests.delete('/users/$id', null)
+    return SKRequests.delete('/users/$id', Map())
         .then((response) => [200, 204].contains(response));
   }
 
   Future<bool> update({
-    String firstName,
-    String lastName,
-    String bio,
-    String organizations,
-    DateTime notificationTime,
-    DateTime futureNotificationTime,
-    int notificationDays,
-    bool isAssignmentPostNotifications,
-    School primarySchool,
-    Period primaryPeriod,
-    int todoDaysPast,
-    int todoDaysFuture,
-    List<int> fieldsOfStudy,
-    String gradYear,
-    TypeObject degreeType,
+    String? firstName,
+    String? lastName,
+    String? bio,
+    String? organizations,
+    DateTime? notificationTime,
+    DateTime? futureNotificationTime,
+    int? notificationDays,
+    bool? isAssignmentPostNotifications,
+    School? primarySchool,
+    Period? primaryPeriod,
+    int? todoDaysPast,
+    int? todoDaysFuture,
+    List<int>? fieldsOfStudy,
+    String? gradYear,
+    TypeObject? degreeType,
   }) {
     Map<String, dynamic> params = {
       'id': this.student.id,
@@ -77,7 +77,7 @@ class SKUser {
 
     if (params['primary_period_id'] == null &&
         params['primary_school_id'] != null)
-      params['primary_period_id'] = primarySchool.periods?.first?.id;
+      params['primary_period_id'] = primarySchool!.periods?.first.id;
 
     if (params.length == 1) {
       return Future.value(true);
@@ -96,7 +96,7 @@ class SKUser {
   Future<int> uploadProfilePhoto(String path) async {
     final uri = Uri.parse(SKRequests._baseUrl + '/users/$id');
     var request = http.MultipartRequest("PUT", uri)
-      ..headers['Authorization'] = SKRequests._headers['Authorization']
+      ..headers['Authorization'] = SKRequests._headers['Authorization']!
       ..files.add(
         await http.MultipartFile.fromPath(
           'file',
@@ -112,7 +112,7 @@ class SKUser {
   Future<int> deleteProfilePhoto() async {
     final uri = Uri.parse(SKRequests._baseUrl + '/users/$id');
     var request = http.MultipartRequest("PUT", uri)
-      ..headers['Authorization'] = SKRequests._headers['Authorization']
+      ..headers['Authorization'] = SKRequests._headers['Authorization']!
       ..files.add(
         http.MultipartFile.fromString(
           'file',
@@ -124,10 +124,13 @@ class SKUser {
     return (await request.send()).statusCode;
   }
 
-  Future<RequestResponse> checkEmailDomain() => SKRequests.get(
-        '/email_domains/${email.split('@')[1]}/check',
-        School._fromJsonObj,
-      );
+  Future<RequestResponse> checkEmailDomain() {
+    final userEmail = email == null ? '' : email!.split('@')[1];
+    return SKRequests.get(
+      '/email_domains/${userEmail}/check',
+      School._fromJsonObj,
+    );
+  }
 
   Future<RequestResponse> getJobProfile() => SKRequests.get(
         '/users/$id/job-profile',
@@ -136,38 +139,38 @@ class SKUser {
 }
 
 class Student {
-  int id;
-  int points;
-  int notificationDays;
-  int todoDaysFuture;
-  int todoDaysPast;
+  int? id;
+  int? points;
+  int? notificationDays;
+  int? todoDaysFuture;
+  int? todoDaysPast;
 
-  bool isAssignPostNotifications;
-  bool isVerified;
+  bool? isAssignPostNotifications;
+  bool? isVerified;
 
-  String nameFirst;
-  String nameLast;
-  String phone;
-  String primaryOrganization;
-  String gradYear;
-  String bio;
-  String organizations;
-  String enrollmentLink;
+  String? nameFirst;
+  String? nameLast;
+  String? phone;
+  String? primaryOrganization;
+  String? gradYear;
+  String? bio=null;
+  String? organizations=null;
+  String? enrollmentLink;
 
-  List<School> schools;
-  List<FieldsOfStudy> fieldsOfStudy;
+  List<School>? schools;
+  List<FieldsOfStudy>? fieldsOfStudy;
 
-  School primarySchool;
-  Period primaryPeriod;
-  TypeObject degreeType;
-  RaiseEffort raiseEffort;
+  School? primarySchool;
+  Period? primaryPeriod;
+  TypeObject? degreeType;
+  RaiseEffort? raiseEffort;
 
-  DateTime notificationTime;
-  DateTime futureNotificationTime;
+  DateTime? notificationTime;
+  DateTime? futureNotificationTime;
 
-  String get formattedPhone {
-    if (phone != null && phone.length == 10) {
-      return '(${phone.substring(0, 3)}) ${phone.substring(3, 6)}-${phone.substring(6, 10)}';
+  String? get formattedPhone {
+    if (phone != null && phone?.length == 10) {
+      return '(${phone?.substring(0, 3)}) ${phone?.substring(3, 6)}-${phone?.substring(6, 10)}';
     } else {
       return phone;
     }
@@ -180,22 +183,21 @@ class Student {
 
   Student._fromJson(Map content) {
     schools =
-        JsonListMaker.convert(School._fromJsonObj, content['schools'] ?? []) ??
-            [];
+        JsonListMaker.convert(School._fromJsonObj, content['schools'] ?? []) as List<School> ;
     School.currentSchools = {};
 
-    for (final school in schools) {
+    for (final school in schools!) {
       School.currentSchools[school.id] = school;
     }
 
-    primarySchool = content['primary_school'] == null
+    primarySchool = (content['primary_school'] == null
         ? null
         : School._fromJsonObj(
             content['primary_school'],
-          );
+          ));
 
     if (primarySchool != null) {
-      School.currentSchools[primarySchool.id] = primarySchool;
+      School.currentSchools[primarySchool!.id] = primarySchool!;
     }
 
     id = content['id'];
@@ -211,21 +213,21 @@ class Student {
     enrollmentLink = content['enrollment_link'];
     todoDaysFuture = content['todo_days_future'];
     todoDaysPast = content['todo_days_past'];
-    raiseEffort = content['raise_effort'] == null
+    raiseEffort = (content['raise_effort'] == null
         ? null
-        : RaiseEffort._fromJsonObject(content['raise_effort']);
+        : RaiseEffort._fromJsonObject(content['raise_effort']))!;
 
-    degreeType = content['degree_type'] != null
+    degreeType = (content['degree_type'] != null
         ? TypeObject._fromJsonObj(content['degree_type'])
-        : null;
+        : null);
 
-    primarySchool = content['primary_school'] != null
+    primarySchool = (content['primary_school'] != null
         ? School._fromJsonObj(content['primary_school'])
-        : null;
+        : null);
 
-    primaryPeriod = content['primary_period'] != null
+    primaryPeriod = (content['primary_period'] != null
         ? Period._fromJsonObj(content['primary_period'])
-        : null;
+        : null);
 
     final utcNow = DateTime.now().toUtc();
 
@@ -234,7 +236,7 @@ class Student {
         ?.map((item) => int.parse(item))
         ?.toList();
 
-    notificationTime = listTime != null
+    notificationTime = (listTime != null
         ? DateTime.utc(
             utcNow.year,
             utcNow.month,
@@ -242,7 +244,7 @@ class Student {
             listTime[0],
             listTime[1],
           ).toLocal()
-        : null;
+        : null)!;
 
     listTime = content['future_reminder_notification_time']
         ?.split(':')
@@ -265,11 +267,11 @@ class Student {
     fieldsOfStudy = JsonListMaker.convert(
       FieldsOfStudy._fromJsonObj,
       content['fields_of_study'],
-    );
+    ).cast<FieldsOfStudy>() ;
   }
 }
 
-class FieldsOfStudy {
+class  FieldsOfStudy {
   final int id;
   final String field;
 
@@ -289,12 +291,12 @@ class FieldsOfStudy {
 
 class PublicStudent {
   int id;
-  int points;
+  int? points;
 
   String name_first;
   String name_last;
-  String org;
-  String bio;
+  String? org;
+  String? bio;
 
   PublicUser user;
 
@@ -403,7 +405,7 @@ class Organization {
         content['signup_count'],
         content['name'],
         content['link'],
-        _dateParser(content['start_date']),
-        _dateParser(content['end_date']),
+        _dateParser(content['start_date'])!,
+        _dateParser(content['end_date'])!,
       );
 }

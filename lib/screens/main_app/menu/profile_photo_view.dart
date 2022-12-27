@@ -74,11 +74,14 @@ class ProfilePhotoSourceModal extends StatelessWidget {
             GestureDetector(
               behavior: HitTestBehavior.opaque,
               onTapUp: (_) async {
-                final imageFile =
-                    await ImagePicker.pickImage(source: ImageSource.gallery);
+                final ImagePicker _picker = ImagePicker();
+                // Pick an image
+                final XFile? image =
+                    await _picker.pickImage(source: ImageSource.gallery);
+                final imageFile = File(image!.path);
 
                 final loader = SKLoadingScreen.fadeIn(context);
-                SKUser.current
+                SKUser.current!
                     .uploadProfilePhoto(imageFile.path)
                     .then((response) {
                   if (![200, 204].contains(response))
@@ -90,7 +93,7 @@ class ProfilePhotoSourceModal extends StatelessWidget {
 
                   DartNotificationCenter.post(
                       channel: NotificationChannels.userChanged);
-                  return SKUser.current.getJobProfile();
+                  return SKUser.current!.getJobProfile();
                 }).then((response) {
                   if (!response.wasSuccessful())
                     throw 'Unable to fetch job profile';
@@ -121,13 +124,13 @@ class ProfilePhotoSourceModal extends StatelessWidget {
                 ),
               ),
             ),
-            if (SKUser.current.avatarUrl != null) ...[
+            if (SKUser.current?.avatarUrl != null) ...[
               SizedBox(height: 16),
               GestureDetector(
                 behavior: HitTestBehavior.opaque,
                 onTapUp: (_) async {
                   final loader = SKLoadingScreen.fadeIn(context);
-                  print(await SKUser.current.deleteProfilePhoto());
+                  print(await SKUser.current?.deleteProfilePhoto());
                   await Auth.tokenLogin();
                   DartNotificationCenter.post(
                       channel: NotificationChannels.userChanged);
@@ -164,8 +167,8 @@ class ProfilePhotoView extends StatefulWidget {
 class _ProfilePhotoViewState extends State<ProfilePhotoView> {
   // Add two variables to the state class to store the CameraController and
   // the Future.
-  cam.CameraController _controller;
-  File imageFile;
+  cam.CameraController? _controller;
+  File? imageFile;
 
   @override
   void initState() {
@@ -201,7 +204,7 @@ class _ProfilePhotoViewState extends State<ProfilePhotoView> {
     // Dispose of the controller when the widget is disposed.
     _controller?.dispose();
 
-    if (imageFile != null) imageFile.delete();
+    if (imageFile != null) imageFile!.delete();
 
     super.dispose();
   }
@@ -214,9 +217,13 @@ class _ProfilePhotoViewState extends State<ProfilePhotoView> {
           (await getTemporaryDirectory()).path + '${DateTime.now()}.png';
 
       // Attempt to take a picture and log where it's been saved.
-      await _controller.takePicture(path);
-      setState(() {
-        imageFile = File(path);
+
+      await _controller!.takePicture().then((XFile? file) {
+        if (mounted) {
+          setState(() {
+            imageFile = File(file!.path);
+          });
+        }
       });
     } catch (e) {
       // If an error occurs, log the error to the console.
@@ -225,7 +232,7 @@ class _ProfilePhotoViewState extends State<ProfilePhotoView> {
   }
 
   void tappedRemovePhoto(_) {
-    imageFile.delete();
+    imageFile!.delete();
     setState(() {
       imageFile = null;
     });
@@ -235,13 +242,13 @@ class _ProfilePhotoViewState extends State<ProfilePhotoView> {
     final loader = SKLoadingScreen.fadeIn(context);
 
     final tempDir = await getTemporaryDirectory();
-    final image = img.decodeImage(imageFile.readAsBytesSync());
+    final image = img.decodeImage(imageFile!.readAsBytesSync());
 
     final jpegImage = File('${tempDir.path}/upload_img.jpeg')
       ..writeAsBytesSync(
-          img.encodeJpg(img.copyRotate(image, 90), quality: 100));
+          img.encodeJpg(img.copyRotate(image!, 90), quality: 100));
 
-    await SKUser.current.uploadProfilePhoto(jpegImage.path).then((response) {
+    await SKUser.current?.uploadProfilePhoto(jpegImage.path).then((response) {
       if (![200, 204].contains(response)) throw 'Unable to upload photo';
 
       return Auth.tokenLogin();
@@ -282,8 +289,8 @@ class _ProfilePhotoViewState extends State<ProfilePhotoView> {
       ];
     else {
       final cameraChild = imageFile == null
-          ? cam.CameraPreview(_controller)
-          : Image.file(imageFile);
+          ? cam.CameraPreview(_controller!)
+          : Image.file(imageFile!);
 
       children = [
         Container(
@@ -304,10 +311,10 @@ class _ProfilePhotoViewState extends State<ProfilePhotoView> {
             child: ClipRRect(
               borderRadius: BorderRadius.circular(15),
               child: Transform.scale(
-                scale: (1 / _controller.value.aspectRatio) + 0.02,
+                scale: (1 / _controller!.value.aspectRatio) + 0.02,
                 child: Center(
                   child: AspectRatio(
-                    aspectRatio: _controller.value.aspectRatio,
+                    aspectRatio: _controller!.value.aspectRatio,
                     child: cameraChild,
                   ),
                 ),

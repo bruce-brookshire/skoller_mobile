@@ -1,177 +1,194 @@
 PODS:
-  - app_review (0.0.1):
+  - app_review (1.0.1):
     - Flutter
-  - camera (0.0.1):
+  - camera_avfoundation (0.0.1):
     - Flutter
-  - FacebookCore (0.9.0):
-    - FBSDKCoreKit (~> 5.0)
-  - FBSDKCoreKit (5.5.0):
-    - FBSDKCoreKit/Basics (= 5.5.0)
-    - FBSDKCoreKit/Core (= 5.5.0)
-  - FBSDKCoreKit/Basics (5.5.0)
-  - FBSDKCoreKit/Core (5.5.0):
-    - FBSDKCoreKit/Basics
-  - Firebase/Analytics (6.8.1):
+  - Firebase/Analytics (9.3.0):
     - Firebase/Core
-  - Firebase/Core (6.8.1):
+  - Firebase/Core (9.3.0):
     - Firebase/CoreOnly
-    - FirebaseAnalytics (= 6.1.1)
-  - Firebase/CoreOnly (6.8.1):
-    - FirebaseCore (= 6.2.3)
-  - Firebase/Messaging (6.8.1):
+    - FirebaseAnalytics (~> 9.3.0)
+  - Firebase/CoreOnly (9.3.0):
+    - FirebaseCore (= 9.3.0)
+  - Firebase/Messaging (9.3.0):
     - Firebase/CoreOnly
-    - FirebaseMessaging (~> 4.1.4)
-  - firebase_analytics (0.0.1):
-    - Firebase/Analytics (~> 6.0)
-    - Firebase/Core
+    - FirebaseMessaging (~> 9.3.0)
+  - firebase_analytics (8.3.4):
+    - Firebase/Analytics (= 9.3.0)
+    - firebase_core
     - Flutter
-  - firebase_core (0.0.1):
-    - Firebase/Core
+  - firebase_core (1.20.0):
+    - Firebase/CoreOnly (= 9.3.0)
     - Flutter
-  - firebase_messaging (0.0.1):
-    - Firebase/Core
-    - Firebase/Messaging
+  - firebase_messaging (10.0.9):
+    - Firebase/Messaging (= 9.3.0)
+    - firebase_core
     - Flutter
-  - FirebaseAnalytics (6.1.1):
-    - FirebaseCore (~> 6.2)
-    - FirebaseInstanceID (~> 4.2)
-    - GoogleAppMeasurement (= 6.1.1)
-    - GoogleUtilities/AppDelegateSwizzler (~> 6.0)
-    - GoogleUtilities/MethodSwizzler (~> 6.0)
-    - GoogleUtilities/Network (~> 6.0)
-    - "GoogleUtilities/NSData+zlib (~> 6.0)"
-    - nanopb (~> 0.3)
-  - FirebaseAnalyticsInterop (1.4.0)
-  - FirebaseCore (6.2.3):
-    - FirebaseCoreDiagnostics (~> 1.0)
-    - FirebaseCoreDiagnosticsInterop (~> 1.0)
-    - GoogleUtilities/Environment (~> 6.2)
-    - GoogleUtilities/Logger (~> 6.2)
-  - FirebaseCoreDiagnostics (1.0.1):
-    - FirebaseCoreDiagnosticsInterop (~> 1.0)
-    - GoogleDataTransportCCTSupport (~> 1.0)
-    - GoogleUtilities/Environment (~> 6.2)
-    - GoogleUtilities/Logger (~> 6.2)
-  - FirebaseCoreDiagnosticsInterop (1.0.0)
-  - FirebaseInstanceID (4.2.5):
-    - FirebaseCore (~> 6.0)
-    - GoogleUtilities/Environment (~> 6.0)
-    - GoogleUtilities/UserDefaults (~> 6.0)
-  - FirebaseMessaging (4.1.4):
-    - FirebaseAnalyticsInterop (~> 1.3)
-    - FirebaseCore (~> 6.2)
-    - FirebaseInstanceID (~> 4.1)
-    - GoogleUtilities/AppDelegateSwizzler (~> 6.2)
-    - GoogleUtilities/Environment (~> 6.2)
-    - GoogleUtilities/Reachability (~> 6.2)
-    - GoogleUtilities/UserDefaults (~> 6.2)
-    - Protobuf (~> 3.1)
+  - FirebaseAnalytics (9.3.0):
+    - FirebaseAnalytics/AdIdSupport (= 9.3.0)
+    - FirebaseCore (~> 9.0)
+    - FirebaseInstallations (~> 9.0)
+    - GoogleUtilities/AppDelegateSwizzler (~> 7.7)
+    - GoogleUtilities/MethodSwizzler (~> 7.7)
+    - GoogleUtilities/Network (~> 7.7)
+    - "GoogleUtilities/NSData+zlib (~> 7.7)"
+    - nanopb (< 2.30910.0, >= 2.30908.0)
+  - FirebaseAnalytics/AdIdSupport (9.3.0):
+    - FirebaseCore (~> 9.0)
+    - FirebaseInstallations (~> 9.0)
+    - GoogleAppMeasurement (= 9.3.0)
+    - GoogleUtilities/AppDelegateSwizzler (~> 7.7)
+    - GoogleUtilities/MethodSwizzler (~> 7.7)
+    - GoogleUtilities/Network (~> 7.7)
+    - "GoogleUtilities/NSData+zlib (~> 7.7)"
+    - nanopb (< 2.30910.0, >= 2.30908.0)
+  - FirebaseCore (9.3.0):
+    - FirebaseCoreDiagnostics (~> 9.0)
+    - FirebaseCoreInternal (~> 9.0)
+    - GoogleUtilities/Environment (~> 7.7)
+    - GoogleUtilities/Logger (~> 7.7)
+  - FirebaseCoreDiagnostics (9.6.0):
+    - GoogleDataTransport (< 10.0.0, >= 9.1.4)
+    - GoogleUtilities/Environment (~> 7.7)
+    - GoogleUtilities/Logger (~> 7.7)
+    - nanopb (< 2.30910.0, >= 2.30908.0)
+  - FirebaseCoreInternal (9.6.0):
+    - "GoogleUtilities/NSData+zlib (~> 7.7)"
+  - FirebaseInstallations (9.6.0):
+    - FirebaseCore (~> 9.0)
+    - GoogleUtilities/Environment (~> 7.7)
+    - GoogleUtilities/UserDefaults (~> 7.7)
+    - PromisesObjC (~> 2.1)
+  - FirebaseMessaging (9.3.0):
+    - FirebaseCore (~> 9.0)
+    - FirebaseInstallations (~> 9.0)
+    - GoogleDataTransport (< 10.0.0, >= 9.1.4)
+    - GoogleUtilities/AppDelegateSwizzler (~> 7.7)
+    - GoogleUtilities/Environment (~> 7.7)
+    - GoogleUtilities/Reachability (~> 7.7)
+    - GoogleUtilities/UserDefaults (~> 7.7)
+    - nanopb (< 2.30910.0, >= 2.30908.0)
   - Flutter (1.0.0)
-  - flutter_apns (0.0.1):
+  - flutter_apns_only (0.0.1):
     - Flutter
   - flutter_keychain (0.0.1):
     - Flutter
-  - flutter_plugin_android_lifecycle (0.0.1):
+  - fluttertoast (0.0.2):
     - Flutter
-  - GoogleAppMeasurement (6.1.1):
-    - GoogleUtilities/AppDelegateSwizzler (~> 6.0)
-    - GoogleUtilities/MethodSwizzler (~> 6.0)
-    - GoogleUtilities/Network (~> 6.0)
-    - "GoogleUtilities/NSData+zlib (~> 6.0)"
-    - nanopb (~> 0.3)
-  - GoogleDataTransport (1.2.0)
-  - GoogleDataTransportCCTSupport (1.0.3):
-    - GoogleDataTransport (~> 1.2)
-    - nanopb
-  - GoogleUtilities/AppDelegateSwizzler (6.2.5):
+    - Toast
+  - GoogleAppMeasurement (9.3.0):
+    - GoogleAppMeasurement/AdIdSupport (= 9.3.0)
+    - GoogleUtilities/AppDelegateSwizzler (~> 7.7)
+    - GoogleUtilities/MethodSwizzler (~> 7.7)
+    - GoogleUtilities/Network (~> 7.7)
+    - "GoogleUtilities/NSData+zlib (~> 7.7)"
+    - nanopb (< 2.30910.0, >= 2.30908.0)
+  - GoogleAppMeasurement/AdIdSupport (9.3.0):
+    - GoogleAppMeasurement/WithoutAdIdSupport (= 9.3.0)
+    - GoogleUtilities/AppDelegateSwizzler (~> 7.7)
+    - GoogleUtilities/MethodSwizzler (~> 7.7)
+    - GoogleUtilities/Network (~> 7.7)
+    - "GoogleUtilities/NSData+zlib (~> 7.7)"
+    - nanopb (< 2.30910.0, >= 2.30908.0)
+  - GoogleAppMeasurement/WithoutAdIdSupport (9.3.0):
+    - GoogleUtilities/AppDelegateSwizzler (~> 7.7)
+    - GoogleUtilities/MethodSwizzler (~> 7.7)
+    - GoogleUtilities/Network (~> 7.7)
+    - "GoogleUtilities/NSData+zlib (~> 7.7)"
+    - nanopb (< 2.30910.0, >= 2.30908.0)
+  - GoogleDataTransport (9.2.0):
+    - GoogleUtilities/Environment (~> 7.7)
+    - nanopb (< 2.30910.0, >= 2.30908.0)
+    - PromisesObjC (< 3.0, >= 1.2)
+  - GoogleUtilities/AppDelegateSwizzler (7.8.0):
     - GoogleUtilities/Environment
     - GoogleUtilities/Logger
     - GoogleUtilities/Network
-  - GoogleUtilities/Environment (6.2.5)
-  - GoogleUtilities/Logger (6.2.5):
+  - GoogleUtilities/Environment (7.8.0):
+    - PromisesObjC (< 3.0, >= 1.2)
+  - GoogleUtilities/Logger (7.8.0):
     - GoogleUtilities/Environment
-  - GoogleUtilities/MethodSwizzler (6.2.5):
+  - GoogleUtilities/MethodSwizzler (7.8.0):
     - GoogleUtilities/Logger
-  - GoogleUtilities/Network (6.2.5):
+  - GoogleUtilities/Network (7.8.0):
     - GoogleUtilities/Logger
     - "GoogleUtilities/NSData+zlib"
     - GoogleUtilities/Reachability
-  - "GoogleUtilities/NSData+zlib (6.2.5)"
-  - GoogleUtilities/Reachability (6.2.5):
+  - "GoogleUtilities/NSData+zlib (7.8.0)"
+  - GoogleUtilities/Reachability (7.8.0):
     - GoogleUtilities/Logger
-  - GoogleUtilities/UserDefaults (6.2.5):
+  - GoogleUtilities/UserDefaults (7.8.0):
     - GoogleUtilities/Logger
-  - image_picker (0.0.1):
+  - image_picker_ios (0.0.1):
     - Flutter
-  - nanopb (0.3.901):
-    - nanopb/decode (= 0.3.901)
-    - nanopb/encode (= 0.3.901)
-  - nanopb/decode (0.3.901)
-  - nanopb/encode (0.3.901)
+  - in_app_purchase_storekit (0.0.1):
+    - Flutter
+  - ios_open_subscriptions_settings (0.0.2):
+    - Flutter
+  - nanopb (2.30909.0):
+    - nanopb/decode (= 2.30909.0)
+    - nanopb/encode (= 2.30909.0)
+  - nanopb/decode (2.30909.0)
+  - nanopb/encode (2.30909.0)
   - package_info (0.0.1):
     - Flutter
-  - path_provider (0.0.1):
+  - package_info_plus (0.4.5):
     - Flutter
-  - Protobuf (3.9.0)
-  - share (0.5.2):
+  - path_provider_ios (0.0.1):
     - Flutter
-  - shared_preferences (0.0.1):
+  - PromisesObjC (2.1.1)
+  - share (0.0.1):
     - Flutter
-  - url_launcher (0.0.1):
+  - shared_preferences_ios (0.0.1):
     - Flutter
-  - url_launcher_macos (0.0.1):
+  - Toast (4.0.0)
+  - url_launcher_ios (0.0.1):
     - Flutter
-  - url_launcher_web (0.0.1):
-    - Flutter
-  - webview_flutter (0.0.1):
+  - webview_flutter_wkwebview (0.0.1):
     - Flutter
 
 DEPENDENCIES:
   - app_review (from `.symlinks/plugins/app_review/ios`)
-  - camera (from `.symlinks/plugins/camera/ios`)
-  - FacebookCore
-  - FBSDKCoreKit
+  - camera_avfoundation (from `.symlinks/plugins/camera_avfoundation/ios`)
   - firebase_analytics (from `.symlinks/plugins/firebase_analytics/ios`)
   - firebase_core (from `.symlinks/plugins/firebase_core/ios`)
   - firebase_messaging (from `.symlinks/plugins/firebase_messaging/ios`)
   - Flutter (from `Flutter`)
-  - flutter_apns (from `.symlinks/plugins/flutter_apns/ios`)
+  - flutter_apns_only (from `.symlinks/plugins/flutter_apns_only/ios`)
   - flutter_keychain (from `.symlinks/plugins/flutter_keychain/ios`)
-  - flutter_plugin_android_lifecycle (from `.symlinks/plugins/flutter_plugin_android_lifecycle/ios`)
-  - image_picker (from `.symlinks/plugins/image_picker/ios`)
+  - fluttertoast (from `.symlinks/plugins/fluttertoast/ios`)
+  - image_picker_ios (from `.symlinks/plugins/image_picker_ios/ios`)
+  - in_app_purchase_storekit (from `.symlinks/plugins/in_app_purchase_storekit/ios`)
+  - ios_open_subscriptions_settings (from `.symlinks/plugins/ios_open_subscriptions_settings/ios`)
   - package_info (from `.symlinks/plugins/package_info/ios`)
-  - path_provider (from `.symlinks/plugins/path_provider/ios`)
+  - package_info_plus (from `.symlinks/plugins/package_info_plus/ios`)
+  - path_provider_ios (from `.symlinks/plugins/path_provider_ios/ios`)
   - share (from `.symlinks/plugins/share/ios`)
-  - shared_preferences (from `.symlinks/plugins/shared_preferences/ios`)
-  - url_launcher (from `.symlinks/plugins/url_launcher/ios`)
-  - url_launcher_macos (from `.symlinks/plugins/url_launcher_macos/ios`)
-  - url_launcher_web (from `.symlinks/plugins/url_launcher_web/ios`)
-  - webview_flutter (from `.symlinks/plugins/webview_flutter/ios`)
+  - shared_preferences_ios (from `.symlinks/plugins/shared_preferences_ios/ios`)
+  - url_launcher_ios (from `.symlinks/plugins/url_launcher_ios/ios`)
+  - webview_flutter_wkwebview (from `.symlinks/plugins/webview_flutter_wkwebview/ios`)
 
 SPEC REPOS:
-  https://github.com/cocoapods/specs.git:
-    - FacebookCore
-    - FBSDKCoreKit
+  trunk:
     - Firebase
     - FirebaseAnalytics
-    - FirebaseAnalyticsInterop
     - FirebaseCore
     - FirebaseCoreDiagnostics
-    - FirebaseCoreDiagnosticsInterop
-    - FirebaseInstanceID
+    - FirebaseCoreInternal
+    - FirebaseInstallations
     - FirebaseMessaging
     - GoogleAppMeasurement
     - GoogleDataTransport
-    - GoogleDataTransportCCTSupport
     - GoogleUtilities
     - nanopb
-    - Protobuf
+    - PromisesObjC
+    - Toast
 
 EXTERNAL SOURCES:
   app_review:
     :path: ".symlinks/plugins/app_review/ios"
-  camera:
-    :path: ".symlinks/plugins/camera/ios"
+  camera_avfoundation:
+    :path: ".symlinks/plugins/camera_avfoundation/ios"
   firebase_analytics:
     :path: ".symlinks/plugins/firebase_analytics/ios"
   firebase_core:
@@ -180,67 +197,67 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/firebase_messaging/ios"
   Flutter:
     :path: Flutter
-  flutter_apns:
-    :path: ".symlinks/plugins/flutter_apns/ios"
+  flutter_apns_only:
+    :path: ".symlinks/plugins/flutter_apns_only/ios"
   flutter_keychain:
     :path: ".symlinks/plugins/flutter_keychain/ios"
-  flutter_plugin_android_lifecycle:
-    :path: ".symlinks/plugins/flutter_plugin_android_lifecycle/ios"
-  image_picker:
-    :path: ".symlinks/plugins/image_picker/ios"
+  fluttertoast:
+    :path: ".symlinks/plugins/fluttertoast/ios"
+  image_picker_ios:
+    :path: ".symlinks/plugins/image_picker_ios/ios"
+  in_app_purchase_storekit:
+    :path: ".symlinks/plugins/in_app_purchase_storekit/ios"
+  ios_open_subscriptions_settings:
+    :path: ".symlinks/plugins/ios_open_subscriptions_settings/ios"
   package_info:
     :path: ".symlinks/plugins/package_info/ios"
-  path_provider:
-    :path: ".symlinks/plugins/path_provider/ios"
+  package_info_plus:
+    :path: ".symlinks/plugins/package_info_plus/ios"
+  path_provider_ios:
+    :path: ".symlinks/plugins/path_provider_ios/ios"
   share:
     :path: ".symlinks/plugins/share/ios"
-  shared_preferences:
-    :path: ".symlinks/plugins/shared_preferences/ios"
-  url_launcher:
-    :path: ".symlinks/plugins/url_launcher/ios"
-  url_launcher_macos:
-    :path: ".symlinks/plugins/url_launcher_macos/ios"
-  url_launcher_web:
-    :path: ".symlinks/plugins/url_launcher_web/ios"
-  webview_flutter:
-    :path: ".symlinks/plugins/webview_flutter/ios"
+  shared_preferences_ios:
+    :path: ".symlinks/plugins/shared_preferences_ios/ios"
+  url_launcher_ios:
+    :path: ".symlinks/plugins/url_launcher_ios/ios"
+  webview_flutter_wkwebview:
+    :path: ".symlinks/plugins/webview_flutter_wkwebview/ios"
 
 SPEC CHECKSUMS:
-  app_review: 9496df930315fcc396542b68ad915e2d437dec71
-  camera: 38cc83ae9a5667bb5a71c7d9edaf60a91920fd4e
-  FacebookCore: ba86524b66cfa86d0f8e65d08faa8504a9f732dd
-  FBSDKCoreKit: 7ade9cfea30eef2f6cf105a1aa904f89ea68fb7d
-  Firebase: 9cbe4e5b5eaafa05dc932be58b7c8c3820d71e88
-  firebase_analytics: 5afaaf8f43ae6a640f200d98f3ecff32e9873538
-  firebase_core: ae55ea92448ec8675d325da4db22cf3b4d58a54d
-  firebase_messaging: b8543d17dd9825f4f24a585477f77db103e5228e
-  FirebaseAnalytics: 843c7f64a8f9c79f0d03281197ebe7bb1d58d477
-  FirebaseAnalyticsInterop: d48b6ab67bcf016a05e55b71fc39c61c0cb6b7f3
-  FirebaseCore: e9d9bd1dae61c1e82bc1e0e617a9d832392086a0
-  FirebaseCoreDiagnostics: 4c04ae09d0ab027c30179828c6bb47764df1bd13
-  FirebaseCoreDiagnosticsInterop: 6829da2b8d1fc795ff1bd99df751d3788035d2cb
-  FirebaseInstanceID: 550df9be1f99f751d8fcde3ac342a1e21a0e6c42
-  FirebaseMessaging: 9483ac438b7b223c09dad8712310e9ee7d562c99
-  Flutter: 0e3d915762c693b495b44d77113d4970485de6ec
-  flutter_apns: f516b118e423fe7c0a38771180549c4d6cb67c2f
+  app_review: 6f51001269c59a2f4a5b5ae68b7d106401152764
+  camera_avfoundation: 07c77549ea54ad95d8581be86617c094a46280d9
+  Firebase: ef75abb1cdbc746d5a38f4e26c422c807b189b8c
+  firebase_analytics: 6c8dfeb8481839246d00c19e81cd4f453547f7ef
+  firebase_core: 96214f90497b808a2cf2a24517084c5f6de37b53
+  firebase_messaging: 3ada71c8ab9c1c4484f24d2a71ad12aec7c9523f
+  FirebaseAnalytics: bf46f5163f44097ce2c789de0b3e6f87f1da834a
+  FirebaseCore: c088995ece701a021a48a1348ea0174877de2a6a
+  FirebaseCoreDiagnostics: 99a495094b10a57eeb3ae8efa1665700ad0bdaa6
+  FirebaseCoreInternal: bca76517fe1ed381e989f5e7d8abb0da8d85bed3
+  FirebaseInstallations: 0a115432c4e223c5ab20b0dbbe4cbefa793a0e8e
+  FirebaseMessaging: 2f6e38b6133059eb796ec224104f09379298a8c3
+  Flutter: f04841e97a9d0b0a8025694d0796dd46242b2854
+  flutter_apns_only: 3d91c0ca9dbef4439874858590909a19f8ed06a4
   flutter_keychain: 01aabf894ffe8b01adfda1d9df21c210c1b4b452
-  flutter_plugin_android_lifecycle: 47de533a02850f070f5696a623995e93eddcdb9b
-  GoogleAppMeasurement: 86a82f0e1f20b8eedf8e20326530138fd71409de
-  GoogleDataTransport: 8f9897b8e073687f24ca8d3c3a8013dec7d2d1cc
-  GoogleDataTransportCCTSupport: 51134d81fca795c60cc247d1cb6af63c3d67b8d8
-  GoogleUtilities: e7dc37039b19df7fe543479d3e4a02ac8d11bb69
-  image_picker: e3eacd46b94694dde7cf2705955cece853aa1a8f
-  nanopb: 2901f78ea1b7b4015c860c2fdd1ea2fee1a18d48
-  package_info: 78cabb3c322943c55d39676f4a5bfc748c01d055
-  path_provider: f96fff6166a8867510d2c25fdcc346327cc4b259
-  Protobuf: 1097ca58584c8d9be81bfbf2c5ff5975648dd87a
-  share: 7d22fe8baedfe93aefd864bf0b73f29711fbb0a3
-  shared_preferences: 1feebfa37bb57264736e16865e7ffae7fc99b523
-  url_launcher: a1c0cc845906122c4784c542523d8cacbded5626
-  url_launcher_macos: fd7894421cd39320dce5f292fc99ea9270b2a313
-  url_launcher_web: e5527357f037c87560776e36436bf2b0288b965c
-  webview_flutter: 1aa7604e6cdb451a9b7ed2c37d5454c0b440246b
+  fluttertoast: 6122fa75143e992b1d3470f61000f591a798cc58
+  GoogleAppMeasurement: b907bdad775b6975a8108762345b2cfbf1a93c37
+  GoogleDataTransport: 1c8145da7117bd68bbbed00cf304edb6a24de00f
+  GoogleUtilities: 1d20a6ad97ef46f67bbdec158ce00563a671ebb7
+  image_picker_ios: b786a5dcf033a8336a657191401bfdf12017dabb
+  in_app_purchase_storekit: d7fcf4646136ec258e237872755da8ea6c1b6096
+  ios_open_subscriptions_settings: 77d0506aefda2042facefdd3dadc04417e7857cc
+  nanopb: b552cce312b6c8484180ef47159bc0f65a1f0431
+  package_info: 873975fc26034f0b863a300ad47e7f1ac6c7ec62
+  package_info_plus: 6c92f08e1f853dc01228d6f553146438dafcd14e
+  path_provider_ios: 14f3d2fd28c4fdb42f44e0f751d12861c43cee02
+  PromisesObjC: ab77feca74fa2823e7af4249b8326368e61014cb
+  share: 0b2c3e82132f5888bccca3351c504d0003b3b410
+  shared_preferences_ios: 548a61f8053b9b8a49ac19c1ffbc8b92c50d68ad
+  Toast: 91b396c56ee72a5790816f40d3a94dd357abc196
+  url_launcher_ios: 839c58cdb4279282219f5e248c3321761ff3c4de
+  webview_flutter_wkwebview: b7e70ef1ddded7e69c796c7390ee74180182971f
 
-PODFILE CHECKSUM: 23d5a3edf15056d9dbfbddf6770cea749120f639
+PODFILE CHECKSUM: f6fe5a9f3bfe3d8342ae0f9cb1826fd3e9f4d419
 
-COCOAPODS: 1.7.1
+COCOAPODS: 1.11.3

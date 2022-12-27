@@ -1,11 +1,12 @@
+import 'dart:io';
+
 import 'package:dart_notification_center/dart_notification_center.dart';
-import 'package:skoller/screens/auth/phone_verification_view.dart';
 import 'package:dropdown_banner/dropdown_banner.dart';
-import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:skoller/screens/auth/phone_verification_view.dart';
 import 'package:skoller/tools.dart';
-import 'dart:io';
+import 'package:url_launcher/url_launcher.dart';
 
 class LoadingView extends StatefulWidget {
   @override
@@ -14,7 +15,7 @@ class LoadingView extends StatefulWidget {
 
 class _LoadingState extends State<LoadingView> {
   bool loading = false;
-  bool validVersion;
+  bool? validVersion;
 
   @override
   void initState() {
@@ -37,7 +38,7 @@ class _LoadingState extends State<LoadingView> {
       setState(() => loading = false);
     else {
       final result = await Auth.attemptLogin();
-      AppState nextState;
+      late AppState nextState;
       switch (result) {
         case LogInResponse.success:
           nextState = AppState.main;
@@ -46,7 +47,7 @@ class _LoadingState extends State<LoadingView> {
         case LogInResponse.needsVerification:
           final success = await showDialog(
             context: context,
-            builder: (context) => PhoneVerificationView(Auth.userPhone),
+            builder: (context) => PhoneVerificationView(Auth.userPhone!),
           );
 
           if (success is bool && success) {
@@ -66,7 +67,7 @@ class _LoadingState extends State<LoadingView> {
       if (nextState != null) {
         if (nextState == AppState.main) {
           final classResult = await StudentClass.getStudentClasses();
-          SKUser.current.getJobProfile();
+          SKUser.current?.getJobProfile();
 
           if (!classResult.wasSuccessful()) {
             return;
@@ -91,8 +92,7 @@ class _LoadingState extends State<LoadingView> {
 
   @override
   Widget build(BuildContext context) {
-    final isValidVersion = validVersion is bool && validVersion;
-
+    final isValidVersion = validVersion is bool && validVersion!;
     return Scaffold(
       backgroundColor: Colors.white,
       body: Container(
@@ -103,7 +103,7 @@ class _LoadingState extends State<LoadingView> {
             stops: [0, 0.35, 0.55, 1],
             colors: [
               Color(0xFF98D2EB),
-              SKColors.skoller_blue,
+              SKColors.skoller_blue1,
               Color(0xFF27A9D9),
               Color(0xFF0F7599),
             ],
