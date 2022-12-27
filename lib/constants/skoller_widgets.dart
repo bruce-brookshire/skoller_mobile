@@ -26,10 +26,17 @@ class SKButton extends StatelessWidget {
         height: 36,
         width: width,
         child: SizedBox.expand(
-          child: RaisedButton(
-            color: isDark ? SKColors.dark_gray : Colors.white,
-            shape:
-                RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
+          child: ElevatedButton(
+            style: ButtonStyle(
+              backgroundColor: MaterialStateProperty.all(
+                isDark ? SKColors.dark_gray : Colors.white,
+              ),
+              shape: MaterialStateProperty.all(
+                RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(5),
+                ),
+              ),
+            ),
             child: Text(
               buttonText,
               style: TextStyle(
@@ -349,12 +356,12 @@ class SKCalendarPicker extends StatefulWidget {
                           EdgeInsets.symmetric(vertical: 8, horizontal: 12),
                       child: GestureDetector(
                         onTapUp: (_) {
-                          onSelect!(DateTime.now());
+                          // onSelect!(DateTime.now());
                           Navigator.pop(context);
                         },
                         child: Text(
                           'Due date unknown?',
-                          style: TextStyle(color: SKColors.skoller_blue),
+                          style: TextStyle(color: SKColors.skoller_blue1),
                           textAlign: TextAlign.center,
                         ),
                       ),
@@ -373,7 +380,7 @@ class SKCalendarPicker extends StatefulWidget {
                             child: Text(
                               'Dismiss',
                               style: TextStyle(
-                                  color: SKColors.skoller_blue,
+                                  color: SKColors.skoller_blue1,
                                   fontWeight: FontWeight.normal),
                             ),
                           ),
@@ -399,7 +406,7 @@ class SKCalendarPicker extends StatefulWidget {
                               style: TextStyle(
                                 color: isSave
                                     ? SKColors.success
-                                    : SKColors.skoller_blue,
+                                    : SKColors.skoller_blue1,
                               ),
                             ),
                           ),
@@ -633,7 +640,7 @@ class _SKCalendarBodyState extends State<_SKCalendarBody> {
                   margin: EdgeInsets.all(3),
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    color: isSelected ? SKColors.skoller_blue : Colors.white,
+                    color: isSelected ? SKColors.skoller_blue1 : Colors.white,
                   ),
                   alignment: Alignment.center,
                   child: Text(
@@ -974,7 +981,7 @@ class SKAlertDialog extends StatelessWidget {
                       cancelText ?? 'Cancel',
                       textAlign: TextAlign.center,
                       style: TextStyle(
-                          color: SKColors.skoller_blue,
+                          color: SKColors.skoller_blue1,
                           fontWeight: FontWeight.normal),
                     ),
                   ),
@@ -1001,8 +1008,8 @@ class SKAlertDialog extends StatelessWidget {
                     child: Text(
                       confirmText ?? 'Select',
                       textAlign: TextAlign.center,
-                      style:
-                          TextStyle(color: SKColors.skoller_blue, fontSize: 15),
+                      style: TextStyle(
+                          color: SKColors.skoller_blue1, fontSize: 15),
                     ),
                   ),
                 ),
@@ -1284,7 +1291,7 @@ class _SKPickerModalState extends State<SKPickerModal> {
                       child: Text(
                         'Cancel',
                         style: TextStyle(
-                            color: SKColors.skoller_blue,
+                            color: SKColors.skoller_blue1,
                             fontWeight: FontWeight.normal),
                       ),
                     ),
@@ -1302,7 +1309,7 @@ class _SKPickerModalState extends State<SKPickerModal> {
                       padding: EdgeInsets.symmetric(vertical: 12),
                       child: Text(
                         'Select',
-                        style: TextStyle(color: SKColors.skoller_blue),
+                        style: TextStyle(color: SKColors.skoller_blue1),
                       ),
                     ),
                   ),
@@ -1351,6 +1358,7 @@ enum SammiPersonality {
   jobsCool,
   jobsLargeSmile
 }
+
 enum SammiSide { left, right }
 
 class SammiSpeechBubble extends StatelessWidget {

@@ -12,7 +12,6 @@ class SyllabusInstructionsModal extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Widget body;
-    
 
     switch (type) {
       case SammiExplanationType.diy:
@@ -201,12 +200,12 @@ class SyllabusInstructionsModal extends StatelessWidget {
                   padding: EdgeInsets.symmetric(vertical: 6, horizontal: 36),
                   margin: EdgeInsets.only(top: 4),
                   decoration: BoxDecoration(
-border: Border.all(color: SKColors.skoller_blue),
+                    border: Border.all(color: SKColors.skoller_blue1),
                     borderRadius: BorderRadius.circular(5),
                   ),
                   child: Text(
                     'Instant Setup',
-                    style: TextStyle(color: SKColors.skoller_blue),
+                    style: TextStyle(color: SKColors.skoller_blue1),
                   ),
                 ),
               )

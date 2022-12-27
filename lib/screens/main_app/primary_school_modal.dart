@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:skoller/screens/main_app/tutorial/calendar_tutorial_view.dart';
 import 'package:skoller/tools.dart';
+
 import './menu/school_search_view.dart';
 
 class PrimarySchoolModal extends StatefulWidget {
@@ -10,13 +11,13 @@ class PrimarySchoolModal extends StatefulWidget {
 }
 
 class _PrimarySchoolState extends State<PrimarySchoolModal> {
-  late List<School>? eligibleSchools=null;
+  late List<School>? eligibleSchools = null;
 
   int? selectedSchoolId;
   Period? selectedPeriod;
 
   bool showingGreeting = true;
-  bool loading=false;
+  bool loading = false;
 
   @override
   void initState() {
@@ -26,26 +27,26 @@ class _PrimarySchoolState extends State<PrimarySchoolModal> {
       eligibleSchools = [SKUser.current!.student.primarySchool!];
       selectedPeriod = eligibleSchools?.first.getBestCurrentPeriod();
       showingGreeting = false;
-    } else {
-      loading = true;
-
-      SKUser.current?.checkEmailDomain().then((response) async {
-        if (response.wasSuccessful()) {
-          final List<School> obj = response.obj;
-
-          if (obj.length == 1) {
-            selectedSchoolId = obj.first.id;
-            selectedPeriod = obj.first.getBestCurrentPeriod();
-            await SKUser.current?.update(primarySchool: obj.first);
-          } else if (obj.length == 0 && !showingGreeting) tappedSearch(null);
-
-          eligibleSchools = obj;
-        }
-
-        setState(() {
-          loading = false;
-        });
-      }).catchError((_) => setState(() => loading = false));
+      // } else {
+      //   loading = true;
+      //
+      //   SKUser.current?.checkEmailDomain().then((response) async {
+      //     if (response.wasSuccessful()) {
+      //       final List<School> obj = response.obj;
+      //
+      //       if (obj.length == 1) {
+      //         selectedSchoolId = obj.first.id;
+      //         selectedPeriod = obj.first.getBestCurrentPeriod();
+      //         await SKUser.current?.update(primarySchool: obj.first);
+      //       } else if (obj.length == 0 && !showingGreeting) tappedSearch(null);
+      //
+      //       eligibleSchools = obj;
+      //     }
+      //
+      //     setState(() {
+      //       loading = false;
+      //     });
+      //   }).catchError((_) => setState(() => loading = false));
     }
   }
 
@@ -67,8 +68,10 @@ class _PrimarySchoolState extends State<PrimarySchoolModal> {
 
     final eligiblePeriods = (eligibleSchools?.first.periods == null
         ? null
-        : eligibleSchools?.first.periods!.toList())!
-      ..removeWhere((period) => now.isAfter(period.endDate!))
+        : eligibleSchools?.first.periods!.toList())!;
+    final List<Period> remainingPeriods = eligiblePeriods
+      ..removeWhere((period) => now.isAfter(period.endDate!));
+    final List<Period> sortedPeriods = remainingPeriods
       ..sort(
         (period1, period2) {
           return period2.startDate != null
@@ -84,8 +87,8 @@ class _PrimarySchoolState extends State<PrimarySchoolModal> {
         title: 'Active term',
         subtitle: 'Which term are you using Skoller for right now?',
         onSelect: (index) =>
-            setState(() => selectedPeriod = eligiblePeriods[index]),
-        items: eligiblePeriods.toList().map((p) => p.name).toList(),
+            setState(() => selectedPeriod = sortedPeriods[index]),
+        items: sortedPeriods.toList().map((p) => p.name).toList(),
       ),
     );
   }
@@ -137,17 +140,17 @@ class _PrimarySchoolState extends State<PrimarySchoolModal> {
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    if (eligibleSchools == null)
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: <Widget>[
-                          SizedBox(
-                              width: 40,
-                              height: 40,
-                              child: CircularProgressIndicator()),
-                        ],
-                      ),
-                    if ((eligibleSchools?.length ?? -1) == 0) ...buildSearch(),
+                    // if (eligibleSchools == null)
+                    //   Row(
+                    //     mainAxisAlignment: MainAxisAlignment.center,
+                    //     children: <Widget>[
+                    //       SizedBox(
+                    //           width: 40,
+                    //           height: 40,
+                    //           child: CircularProgressIndicator()),
+                    //     ],
+                    //   ),
+                    if (eligibleSchools == null) ...buildSearch(),
                     if ((eligibleSchools?.length ?? -1) == 1) ...buildSingle(),
                     if ((eligibleSchools?.length ?? -1) > 1) ...buildMultiple(),
                   ]),
@@ -343,7 +346,7 @@ class _PrimarySchoolState extends State<PrimarySchoolModal> {
                             EdgeInsets.symmetric(horizontal: 24, vertical: 8),
                         decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(5),
-                            color: SKColors.skoller_blue,
+                            color: SKColors.skoller_blue1,
                             boxShadow: UIAssets.boxShadow),
                         child: Text(
                           'Get started',
@@ -562,7 +565,7 @@ class _PrimarySchoolState extends State<PrimarySchoolModal> {
           margin: EdgeInsets.fromLTRB(24, 24, 24, 16),
           padding: EdgeInsets.symmetric(vertical: 8),
           decoration: BoxDecoration(
-            color: SKColors.skoller_blue,
+            color: SKColors.skoller_blue1,
             borderRadius: BorderRadius.circular(5),
             boxShadow: UIAssets.boxShadow,
           ),

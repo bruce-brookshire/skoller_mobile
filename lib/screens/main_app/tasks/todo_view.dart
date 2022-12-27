@@ -1,19 +1,19 @@
 import 'dart:async';
 
 import 'package:dart_notification_center/dart_notification_center.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:intl/intl.dart';
-import 'package:skoller/constants/constants.dart';
 import 'package:skoller/screens/main_app/tasks/dateless_assignments_modal.dart';
 import 'package:skoller/screens/main_app/tasks/todo_preferences_modal.dart';
+import 'package:skoller/tools.dart';
+
 import '../activity/mod_modal.dart';
-import '../menu/add_classes_view.dart';
-import '../tutorial/todo_tutorial_view.dart';
 import '../classes/assignment_info_view.dart';
 import '../classes/assignment_weight_view.dart';
-import 'package:skoller/tools.dart';
+import '../menu/add_classes_view.dart';
+import '../tutorial/todo_tutorial_view.dart';
 
 class TodoView extends StatefulWidget {
   State createState() => _TodoState();
@@ -299,7 +299,7 @@ class _TodoState extends State<TodoView> {
     final todoDaysFuture = SKUser.current?.student.todoDaysFuture;
 
     return SKNavView(
-      title: 'To-Do\'s',
+      title: 'Assignments',
       leftBtn: SKHeaderProfilePhoto(),
       callbackLeft: () {
         DartNotificationCenter.post(channel: NotificationChannels.toggleMenu);
@@ -314,54 +314,56 @@ class _TodoState extends State<TodoView> {
             onRefresh: fetchTasks,
             child: Stack(
               children: [
-                (_taskItems != null && _taskItems?.length != 0)
-                    ? ListView.builder(
-                        padding: EdgeInsets.only(top: 4, bottom: 64),
-                        itemCount: (_taskItems?.length ?? 0) == 0
-                            ? _taskItems == null
-                                ? 1
-                                : 2
-                            : (_taskItems!.length +
-                                (completedTasksAvailable ? 2 : 1)),
-                        itemBuilder: (context, index) {
-                          if (index == 0)
-                            return createSammiPrompt(
-                                setupSecondClass, todoDaysFuture!);
-                          else if (index <= _taskItems!.length)
-                            return _TodoRow(
-                              item: _taskItems![index - 1],
-                              onCompleted: this.onCompleteAssignment,
-                              showingCompleted: showingCompletedTasks,
-                            );
-                          else if (_taskItems?.length == 0)
-                            return Image.asset(
-                                ImageNames.todoImages.students_in_pool);
-                          else
-                            return GestureDetector(
-                              key: Key('bottom item'),
-                              behavior: HitTestBehavior.opaque,
-                              onTapUp: (details) {
-                                setState(() => showingCompletedTasks =
-                                    !showingCompletedTasks);
-                                loadTasks();
-                              },
-                              child: Container(
-                                padding: EdgeInsets.symmetric(
-                                    horizontal: 8, vertical: 8),
-                                child: Text(
-                                  showingCompletedTasks
-                                      ? 'Hide completed tasks'
-                                      : 'Show completed (${numberCompleted})',
-                                  style: TextStyle(
-                                      color: SKColors.skoller_blue,
-                                      fontWeight: FontWeight.normal,
-                                      fontSize: 14),
-                                ),
-                              ),
-                            );
+                ListView.builder(
+                  padding: EdgeInsets.only(top: 4, bottom: 64),
+                  itemCount: (_taskItems?.length ?? 0) == 0
+                      ? _taskItems == null
+                          ? 1
+                          : 2
+                      : (_taskItems!.length +
+                          (completedTasksAvailable ? 2 : 1)),
+                  itemBuilder: (context, index) {
+                    if (index == 0) {
+                      return createSammiPrompt(
+                        setupSecondClass,
+                        todoDaysFuture!,
+                      );
+                    } else if (index <= _taskItems!.length) {
+                      return _TodoRow(
+                        item: _taskItems![index - 1],
+                        onCompleted: this.onCompleteAssignment,
+                        showingCompleted: showingCompletedTasks,
+                      );
+                    } else if (_taskItems?.length == 0) {
+                      return Image.asset(
+                        ImageNames.todoImages.students_in_pool,
+                      );
+                    } else {
+                      return GestureDetector(
+                        key: Key('bottom item'),
+                        behavior: HitTestBehavior.opaque,
+                        onTapUp: (details) {
+                          setState(() =>
+                              showingCompletedTasks = !showingCompletedTasks);
+                          loadTasks();
                         },
-                      )
-                    : SizedBox(),
+                        child: Container(
+                          padding:
+                              EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+                          child: Text(
+                            showingCompletedTasks
+                                ? 'Hide completed tasks'
+                                : 'Show completed (${numberCompleted})',
+                            style: TextStyle(
+                                color: SKColors.skoller_blue1,
+                                fontWeight: FontWeight.normal,
+                                fontSize: 14),
+                          ),
+                        ),
+                      );
+                    }
+                  },
+                ),
                 Align(
                   alignment: Alignment.bottomCenter,
                   child: Row(
@@ -377,11 +379,11 @@ class _TodoState extends State<TodoView> {
                               border: Border.all(
                                   color: StudentClass.currentClasses.length == 1
                                       ? Colors.white
-                                      : SKColors.skoller_blue),
+                                      : SKColors.skoller_blue1),
                               borderRadius: BorderRadius.circular(5),
                               boxShadow: UIAssets.boxShadow,
                               color: StudentClass.currentClasses.length == 1
-                                  ? SKColors.skoller_blue
+                                  ? SKColors.skoller_blue1
                                   : Colors.white),
                           child: StudentClass.currentClasses.length == 1
                               ? Text(

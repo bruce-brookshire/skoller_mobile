@@ -1,5 +1,5 @@
-import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:skoller/tools.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -102,7 +102,7 @@ class SkollerJobsView extends StatelessWidget {
                 child: Container(
                   decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(5),
-                      color: SKColors.skoller_blue,
+                      color: SKColors.skoller_blue1,
                       boxShadow: UIAssets.boxShadow),
                   padding: EdgeInsets.symmetric(horizontal: 18, vertical: 12),
                   margin: EdgeInsets.only(top: 24),

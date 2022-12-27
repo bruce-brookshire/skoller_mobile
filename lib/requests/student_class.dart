@@ -233,9 +233,9 @@ class StudentClass {
   Future<RequestResponse> createBatchAssignment(
     String name,
     Weight weight,
-    DateTime dueDate,
+    DateTime? dueDate,
   ) async {
-    String? tzCorrectedString = dueDate.toUtc().toIso8601String();
+    String? tzCorrectedString = dueDate?.toUtc().toIso8601String();
 
     DateTime? correctedDueDate = dueDate == null
         ? null
@@ -474,12 +474,13 @@ class StudentClass {
         content['weights'] ?? [],
       ) as List<Weight>,
       content['meet_days'],
-      startTime!,
+      startTime,
       Status._fromJsonObj(content['status'])!,
       content['subject'],
       content['code'],
       content['section'],
-      Professor._fromJsonObj(content['professor'])!,
+      Professor._fromJsonObj(content['professor']) ??
+          Professor.blankProfessor(),
       Period._fromJsonObj(content['class_period'])!,
       JsonListMaker.convert(
         PublicStudent._fromJsonObj,
@@ -541,13 +542,13 @@ class SchoolClass {
 
   String name;
   String? meetDays;
-  String subject;
-  String code;
-  String section;
+  String? subject;
+  String? code;
+  String? section;
 
   TimeOfDay? meetTime;
 
-  Professor professor;
+  Professor? professor;
   Period classPeriod;
 
   //----------------//
@@ -592,7 +593,8 @@ class SchoolClass {
       content['subject'],
       content['code'],
       content['section'],
-      Professor._fromJsonObj(content['professor'])!,
+      Professor._fromJsonObj(content['professor']) ??
+          Professor.blankProfessor(),
       Period._fromJsonObj(content['class_period'])!,
     );
 
@@ -741,6 +743,10 @@ class Professor {
       content['office_availability'],
       content['office_location'],
     );
+  }
+
+  static Professor blankProfessor() {
+    return Professor(0, '-', '-', '-', '-', '-', '-');
   }
 }
 

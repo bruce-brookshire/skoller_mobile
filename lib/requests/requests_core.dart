@@ -6,6 +6,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:math';
 
+import 'package:collection/collection.dart';
 import 'package:dart_notification_center/dart_notification_center.dart';
 import 'package:dropdown_banner/dropdown_banner.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -34,6 +35,13 @@ part 'school.dart';
 part 'student_class.dart';
 part 'user.dart';
 
+/// To build a release app:
+///   1. change [isProd] variable to true.
+///   2. change iOS app bundle id to [co.skoller.skoller].
+///     A. ios/Runner.xcodeproj/project.pbxproj
+///   3. change iOS app version.
+///     A. Version: 6.6
+///     B. Build: 22
 const bool isProd = false;
 const bool isLocal = false;
 
@@ -85,7 +93,7 @@ DateTime? _dateParser(String date) =>
 
 class SKRequests {
   static const String _environment = isProd
-      ? 'https://skoller.co'
+      ? 'https://api.skoller.co'
       : (isLocal
           ? 'http://10.1.10.110:4000'
           : 'https://api-staging.skoller.co');

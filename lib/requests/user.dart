@@ -4,8 +4,8 @@ class SKUser {
   static SKUser? current;
 
   int id;
-  String email;
-  String? avatarUrl=null;
+  String? email;
+  String? avatarUrl = null;
   Student student;
 
   SKUser(this.id, this.email, this.avatarUrl, this.student);
@@ -124,10 +124,13 @@ class SKUser {
     return (await request.send()).statusCode;
   }
 
-  Future<RequestResponse> checkEmailDomain() => SKRequests.get(
-        '/email_domains/${email.split('@')[1]}/check',
-        School._fromJsonObj,
-      );
+  Future<RequestResponse> checkEmailDomain() {
+    final userEmail = email == null ? '' : email!.split('@')[1];
+    return SKRequests.get(
+      '/email_domains/${userEmail}/check',
+      School._fromJsonObj,
+    );
+  }
 
   Future<RequestResponse> getJobProfile() => SKRequests.get(
         '/users/$id/job-profile',
@@ -150,8 +153,8 @@ class Student {
   String? phone;
   String? primaryOrganization;
   String? gradYear;
-  String? bio=null;
-  String? organizations=null;
+  String? bio = null;
+  String? organizations = null;
   String? enrollmentLink;
 
   List<School>? schools;
@@ -180,7 +183,8 @@ class Student {
 
   Student._fromJson(Map content) {
     schools =
-        JsonListMaker.convert(School._fromJsonObj, content['schools'] ?? []) as List<School> ;
+        JsonListMaker.convert(School._fromJsonObj, content['schools'] ?? [])
+            as List<School>;
     School.currentSchools = {};
 
     for (final school in schools!) {
@@ -264,11 +268,11 @@ class Student {
     fieldsOfStudy = JsonListMaker.convert(
       FieldsOfStudy._fromJsonObj,
       content['fields_of_study'],
-    ).cast<FieldsOfStudy>() ;
+    ).cast<FieldsOfStudy>();
   }
 }
 
-class  FieldsOfStudy {
+class FieldsOfStudy {
   final int id;
   final String field;
 

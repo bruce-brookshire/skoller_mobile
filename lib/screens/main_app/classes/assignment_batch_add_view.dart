@@ -1,8 +1,8 @@
 import 'package:dart_notification_center/dart_notification_center.dart';
 import 'package:dropdown_banner/dropdown_banner.dart';
 import 'package:flutter/material.dart';
-import 'package:skoller/tools.dart';
 import 'package:intl/intl.dart';
+import 'package:skoller/tools.dart';
 
 class _UnsavedAssignment {
   String name;
@@ -67,8 +67,10 @@ class _AssignmentBatchAddState extends State<AssignmentBatchAddView> {
     );
 
     if (result != null) {
-      int index = queuedAssignments.indexWhere(
-          (element) => result.dueDate == null ? true : element.dueDate?.isAfter(result.dueDate!) ?? false);
+      int index = queuedAssignments.indexWhere((element) =>
+          result.dueDate == null
+              ? true
+              : element.dueDate?.isAfter(result.dueDate!) ?? false);
 
       setState(() {
         queuedAssignments.insert(
@@ -89,7 +91,7 @@ class _AssignmentBatchAddState extends State<AssignmentBatchAddView> {
 
     for (final assignment in queuedAssignments) {
       final future = studentClass!.createBatchAssignment(
-          assignment.name, widget.weight!, assignment.dueDate!);
+          assignment.name, widget.weight!, assignment.dueDate);
 
       futureQueue.add(future);
     }
@@ -430,7 +432,7 @@ class _AddAssignmentSubState extends State<_AddAssignmentSubview> {
 
   checkState() {
     bool prevState = isValidState;
-    bool newState = textFieldController.text.trim() != "" && dateSelected;
+    bool newState = textFieldController.text.trim() != "";
     if (prevState != newState) {
       setState(() {
         isValidState = newState;

@@ -2,6 +2,7 @@ library constants;
 
 import 'dart:async';
 import 'dart:collection';
+import 'dart:io';
 import 'dart:math';
 import 'dart:ui' as dartUI;
 
@@ -104,6 +105,7 @@ class NotificationChannels {
   static const selectTab = 'select-tab';
   static const newTabSelected = 'new-tab-selected';
   static const jobsChanged = 'jobs-changed';
+  static const subscriptionChanged = 'subscription-changed';
 }
 
 class PreferencesKeys {
@@ -160,6 +162,58 @@ Map tokenLoginMap = Map();
 
 class Subscriptions {
   static MySubscriptions? mySubscriptions;
+
+  /// Indicates whether user has an active Subscription or not.
+  static bool get isSubscriptionActive {
+    /// User has no active subscription if subscription data is null.
+    /// This could mean that the user still has an active trial.
+    final isSubscriptionDataAvailable =
+        mySubscriptions?.user?.subscription != null;
+
+    if (!isSubscriptionDataAvailable) return false;
+
+    final isCanceled =
+        mySubscriptions?.user?.subscription?.expirationIntent != null;
+
+    /// If subscription is NOT canceled, return true
+    /// which indicates that subscription is active
+    if (!isCanceled) return true;
+
+    final int canceledAt = mySubscriptions?.user?.subscription?.cancelAt ?? 0;
+    final int currentTime = DateTime.now().millisecondsSinceEpoch;
+    final bool hasExpired = canceledAt > currentTime;
+
+    return hasExpired;
+  }
+
+  /// User has an active trial if true.
+  /// Default is [true] so it doesn't lock users out immediately.
+  /// This method will rerun after [Subscriptions.mySubscriptions] updates.
+  static bool get isTrial => mySubscriptions?.user?.trial ?? false;
+
+  /// Shows how many days User has left on their [Trial] subscription
+  static double get trialDaysLeft =>
+      Subscriptions.mySubscriptions?.user?.trialDaysLeft ?? 0;
+
+  /// Decides what platform
+  static SubscriptionPlatform get subscriptionPlatform {
+    final platform =
+        Subscriptions.mySubscriptions?.user?.subscription?.platform;
+
+    if (platform == null) {
+      return Platform.isIOS
+          ? SubscriptionPlatform.ios
+          : SubscriptionPlatform.ios;
+    }
+
+    return platform;
+  }
+
+  /// Lifetime
+  static bool get isLifetimeSubscription =>
+      mySubscriptions?.user?.lifetimeSubscription ?? false;
+  static bool get isLifetimeTrial =>
+      mySubscriptions?.user?.lifetimeTrial ?? false;
 }
 
 final statesMap = LinkedHashMap.fromIterables([

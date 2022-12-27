@@ -1,7 +1,7 @@
-import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:skoller/tools.dart';
+import 'package:flutter/material.dart';
 import 'package:share/share.dart';
+import 'package:skoller/tools.dart';
 
 class ProfileLinkSharingView extends StatefulWidget {
   final int? startingClassId;
@@ -115,7 +115,7 @@ class _ProfileLinkSharingState extends State<ProfileLinkSharingView> {
                                           Text(
                                             'with ${sharingType == _SharingType.anyone ? 'anyone' : 'classmates'}',
                                             style: TextStyle(
-                                                color: SKColors.skoller_blue,
+                                                color: SKColors.skoller_blue1,
                                                 fontWeight: FontWeight.w500),
                                           ),
                                           Padding(
@@ -134,31 +134,12 @@ class _ProfileLinkSharingState extends State<ProfileLinkSharingView> {
                             SizedBox(width: 32),
                           ],
                         ),
-                        Padding(
-                          padding: EdgeInsets.symmetric(
-                              horizontal: 24, vertical: 24),
-                          child: raiseEffort?.orgId == null
-                              ? Text.rich(
-                                  TextSpan(
-                                    text: 'Get ',
-                                    children: [
-                                      TextSpan(
-                                        text: '5 classmates',
-                                        style: TextStyle(
-                                            fontWeight: FontWeight.bold),
-                                      ),
-                                      TextSpan(
-                                          text:
-                                              ' on Skoller and earn a \$10 Gift Card!')
-                                    ],
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.w300,
-                                      fontSize: 16,
-                                    ),
-                                  ),
-                                  textAlign: TextAlign.center,
-                                )
-                              : Text.rich(
+                        raiseEffort?.orgId == null
+                            ? Container()
+                            : Padding(
+                                padding: EdgeInsets.symmetric(
+                                    horizontal: 24, vertical: 24),
+                                child: Text.rich(
                                   TextSpan(
                                     text: '',
                                     children: [
@@ -178,14 +159,14 @@ class _ProfileLinkSharingState extends State<ProfileLinkSharingView> {
                                   ),
                                   textAlign: TextAlign.center,
                                 ),
-                        ),
-                        Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 24),
-                          child: AspectRatio(
-                            aspectRatio: 1,
-                            child: buildShareImage(),
-                          ),
-                        ),
+                              ),
+                        // Padding(
+                        //   padding: EdgeInsets.symmetric(horizontal: 24),
+                        //   child: AspectRatio(
+                        //     aspectRatio: 1,
+                        //     child: buildShareImage(),
+                        //   ),
+                        // ),
                         if (raiseEffort?.orgId != null)
                           Padding(
                             padding: EdgeInsets.symmetric(vertical: 8),
@@ -221,8 +202,8 @@ class _ProfileLinkSharingState extends State<ProfileLinkSharingView> {
                                     subtitle:
                                         'Let your classmates use your class specific link to enroll',
                                     items: classes
-                                        .map(
-                                            (studentClass) => studentClass.name!)
+                                        .map((studentClass) =>
+                                            studentClass.name!)
                                         .toList(),
                                     onSelect: (index) {
                                       setState(
@@ -237,14 +218,14 @@ class _ProfileLinkSharingState extends State<ProfileLinkSharingView> {
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(5),
                                   border:
-                                      Border.all(color: SKColors.skoller_blue),
+                                      Border.all(color: SKColors.skoller_blue1),
                                 ),
                                 child: Text(
                                   studentClass == null
                                       ? 'Select class...'
                                       : studentClass!.name!,
                                   style:
-                                      TextStyle(color: SKColors.skoller_blue),
+                                      TextStyle(color: SKColors.skoller_blue1),
                                 ),
                               ),
                             ),
@@ -261,7 +242,7 @@ class _ProfileLinkSharingState extends State<ProfileLinkSharingView> {
                               child: Container(
                                 decoration: BoxDecoration(
                                   color: sharingType == _SharingType.anyone
-                                      ? SKColors.skoller_blue
+                                      ? SKColors.skoller_blue1
                                       : studentClass!.getColor(),
                                   borderRadius: BorderRadius.circular(5),
                                   boxShadow: UIAssets.boxShadow,
@@ -279,8 +260,9 @@ class _ProfileLinkSharingState extends State<ProfileLinkSharingView> {
                                     Text(
                                       linkStripper(
                                         sharingType == _SharingType.anyone
-                                            ? SKUser
-                                                .current?.student.enrollmentLink??''
+                                            ? SKUser.current?.student
+                                                    .enrollmentLink ??
+                                                ''
                                             : studentClass!.enrollmentLink,
                                       ),
                                       style: TextStyle(color: Colors.white),
@@ -290,7 +272,7 @@ class _ProfileLinkSharingState extends State<ProfileLinkSharingView> {
                               ),
                             ),
                           ),
-                        Padding(
+                        /* Padding(
                           padding: EdgeInsets.fromLTRB(8, 8, 8, 0),
                           child: Text(
                             raiseEffort?.orgId == null
@@ -302,7 +284,7 @@ class _ProfileLinkSharingState extends State<ProfileLinkSharingView> {
                                 fontWeight: FontWeight.normal,
                                 fontSize: 13),
                           ),
-                        ),
+                        ),*/
                       ],
                     ),
                   ),

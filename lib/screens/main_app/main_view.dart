@@ -6,14 +6,15 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:skoller/constants/constants.dart';
+import 'package:skoller/requests/subscription_manager.dart';
 import 'package:skoller/screens/main_app/classes/class_menu_modal.dart';
 import 'package:skoller/screens/main_app/menu/add_classes_view.dart';
 import 'package:skoller/screens/main_app/menu/major_search_modal.dart';
+import 'package:skoller/screens/main_app/premium/expired_trial_pay_wall_model.dart';
 import 'package:skoller/screens/main_app/tutorial/tutorial.dart';
 import 'package:skoller/tools.dart';
 
 import 'menu_view.dart';
-import 'premium/stripe_bloc.dart';
 import 'primary_school_modal.dart';
 import 'tab_bar.dart';
 
@@ -35,10 +36,13 @@ class _MainState extends State<MainView> {
 
   @override
   void initState() {
+    /// Initializes [SubscriptionManager] which triggers fetching and setting User subscription
+    SubscriptionManager.instance;
+
     // If the student does not have a primary school or term, set it
     if (SKUser.current?.student.primarySchool == null ||
         SKUser.current?.student.primaryPeriod == null)
-      WidgetsBinding.instance!.addPostFrameCallback(
+      WidgetsBinding.instance.addPostFrameCallback(
         (_) => showPrimarySchoolModal(),
       );
     // If the student has no majors and they have at least one class set up
@@ -75,6 +79,12 @@ class _MainState extends State<MainView> {
       onNotification: presentModalWidgetOverMainView,
     );
 
+    DartNotificationCenter.subscribe(
+      channel: NotificationChannels.subscriptionChanged,
+      observer: this,
+      onNotification: showPayWallModalIfSubscriptionExpired,
+    );
+
     Mod.fetchMods();
 
     WidgetsBinding.instance!.addPostFrameCallback((_) => setScreenSize());
@@ -101,6 +111,18 @@ class _MainState extends State<MainView> {
       channel: NotificationChannels.presentViewOverTabBar,
       options: AddClassesView(),
     );
+  }
+
+  void showPayWallModalIfSubscriptionExpired(dynamic userState) async {
+    if (!Subscriptions.isTrial && !Subscriptions.isSubscriptionActive) {
+      await Navigator.push(
+        context,
+        SKNavOverlayRoute(
+          builder: (context) => ExpiredTrialPayWallModal(),
+          isBarrierDismissible: false,
+        ),
+      );
+    }
   }
 
   void showMajorSelection() async {

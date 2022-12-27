@@ -106,7 +106,7 @@ class CalendarTutorialView extends StatelessWidget {
                         decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(8),
                             border: Border.all(color: Colors.white),
-                            color: SKColors.skoller_blue),
+                            color: SKColors.skoller_blue1),
                         padding: EdgeInsets.all(12),
                         child: Icon(
                           Icons.arrow_back_ios,
@@ -124,7 +124,7 @@ class CalendarTutorialView extends StatelessWidget {
                         decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(8),
                             border: Border.all(color: Colors.white),
-                            color: SKColors.skoller_blue),
+                            color: SKColors.skoller_blue1),
                         padding: EdgeInsets.all(12),
                         child: Icon(
                           Icons.arrow_forward_ios,
@@ -173,7 +173,7 @@ class CalendarTutorialView extends StatelessWidget {
                 padding: EdgeInsets.symmetric(vertical: 8, horizontal: 24),
                 margin: EdgeInsets.only(bottom: 48),
                 decoration: BoxDecoration(
-                  color: SKColors.skoller_blue,
+                  color: SKColors.skoller_blue1,
                   borderRadius: BorderRadius.circular(5),
                   border: Border.all(color: Colors.white),
                   boxShadow: UIAssets.boxShadow,

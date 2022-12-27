@@ -12,9 +12,10 @@ import 'package:flutter/services.dart';
 import 'package:skoller/loading_view.dart';
 import 'package:skoller/screens/main_app/main_view.dart';
 import 'package:skoller/tools.dart';
-import 'screens/auth/auth_home.dart';
+
 import 'constants/constants.dart';
 import 'constants/timezone_manager.dart';
+import 'screens/auth/auth_home.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -110,8 +111,8 @@ class _SkollerAppState extends State<SkollerApp> {
 
     if (_darkTheme) {
       currentTheme = ThemeData(
-        primaryColor: SKColors.skoller_blue,
-        accentColor: SKColors.skoller_blue,
+        primaryColor: SKColors.skoller_blue1,
+        accentColor: SKColors.skoller_blue1,
         backgroundColor: SKColors.dark_gray,
         scaffoldBackgroundColor: SKColors.dark_gray,
         textTheme: TextTheme(
@@ -132,8 +133,8 @@ class _SkollerAppState extends State<SkollerApp> {
       );
     } else {
       currentTheme = ThemeData(
-        primaryColor: SKColors.skoller_blue,
-        accentColor: SKColors.skoller_blue,
+        primaryColor: SKColors.skoller_blue1,
+        accentColor: SKColors.skoller_blue1,
         backgroundColor: SKColors.background_gray,
         scaffoldBackgroundColor: SKColors.background_gray,
         textTheme: TextTheme(

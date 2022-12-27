@@ -1,21 +1,23 @@
-import 'package:skoller/screens/main_app/activity/update_info_view.dart';
+import 'dart:async';
+import 'dart:collection';
+import 'dart:math';
+
 import 'package:dart_notification_center/dart_notification_center.dart';
 import 'package:dropdown_banner/dropdown_banner.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
+import 'package:intl/intl.dart';
+import 'package:share/share.dart';
 import 'package:skoller/constants/constants.dart';
+import 'package:skoller/screens/main_app/activity/update_info_view.dart';
 import 'package:skoller/screens/main_app/classes/weights_info_view.dart';
 import 'package:skoller/screens/main_app/menu/major_search_modal.dart';
-import './modals/assignment_notes_modal.dart';
-import './modals/assignment_edit_modal.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/widgets.dart';
-import 'package:flutter/material.dart';
 import 'package:skoller/tools.dart';
-import 'package:share/share.dart';
+
+import './modals/assignment_edit_modal.dart';
+import './modals/assignment_notes_modal.dart';
 import 'class_detail_view.dart';
-import 'package:intl/intl.dart';
-import 'dart:collection';
-import 'dart:async';
-import 'dart:math';
 
 class AssignmentInfoView extends StatefulWidget {
   final int? assignmentId;
@@ -320,7 +322,8 @@ class _AssignmentInfoState extends State<AssignmentInfoView> {
                   })
                   .map(
                     (c) => GestureDetector(
-                      onTapUp: (details) => tappedWithMods(c!['mods'] as List<Mod>, context),
+                      onTapUp: (details) =>
+                          tappedWithMods(c!['mods'] as List<Mod>, context),
                       child: Container(
                         margin: EdgeInsets.only(top: 4),
                         padding: EdgeInsets.symmetric(
@@ -446,7 +449,7 @@ class _AssignmentInfoState extends State<AssignmentInfoView> {
     final now = DateTime.now();
     final today = DateTime(now.year, now.month, now.day);
 
-    final days = assignment!.due!.difference(today).inDays;
+    final days = assignment?.due?.difference(today).inDays;
 
     if (assignment!.weight_id == null)
       weightDescr = 'Not graded';
@@ -495,7 +498,7 @@ class _AssignmentInfoState extends State<AssignmentInfoView> {
                     child: Material(
                       type: MaterialType.transparency,
                       child: Text(
-                        assignment!.name??'',
+                        assignment!.name ?? '',
                         // maxLines: 1,
                         // overflow: TextOverflow.ellipsis,
                         style: TextStyle(
@@ -860,24 +863,12 @@ class _AssignmentInfoState extends State<AssignmentInfoView> {
             ),
             Padding(
               padding: EdgeInsets.symmetric(vertical: 12),
-              child: Text.rich(
-                TextSpan(
-                  text: 'You\'re ',
-                  children: [
-                    TextSpan(
-                      text: '4 SIGN UPS',
-                      style: TextStyle(fontWeight: FontWeight.w600),
-                    ),
-                    TextSpan(
-                      text: ' away from a \n\$10 Amazon.com® Gift Card!',
-                    )
-                  ],
-                  style: TextStyle(
-                    fontWeight: FontWeight.normal,
-                    fontSize: 14,
-                  ),
-                ),
+              child: Text(
+                'Send this sign-up link to your classmates in Business Finance!',
                 textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontWeight: FontWeight.w600,
+                ),
               ),
             ),
             Padding(
@@ -891,36 +882,12 @@ class _AssignmentInfoState extends State<AssignmentInfoView> {
                   decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(5),
                       boxShadow: UIAssets.boxShadow,
-                      color: assignment!.parentClass.getColor()),
+                      color: SKColors.skoller_blue1),
                   child: Text(
                     assignment!.parentClass.enrollmentLink.split("//")[1],
                     style: TextStyle(color: Colors.white),
                   ),
                 ),
-              ),
-            ),
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 24, vertical: 8),
-              child: Text.rich(
-                TextSpan(
-                  text: 'This link is a ',
-                  children: [
-                    TextSpan(
-                      text: 'FAST PASS',
-                      style: TextStyle(fontWeight: FontWeight.w600),
-                    ),
-                    TextSpan(
-                      text:
-                          ' for classmates\nin ${assignment!.parentClass.name} to join Skoller',
-                    )
-                  ],
-                  style: TextStyle(
-                    color: SKColors.text_light_gray,
-                    fontWeight: FontWeight.normal,
-                    fontSize: 12,
-                  ),
-                ),
-                textAlign: TextAlign.center,
               ),
             ),
           ],
