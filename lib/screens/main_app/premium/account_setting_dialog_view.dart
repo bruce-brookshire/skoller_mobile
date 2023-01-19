@@ -6,6 +6,9 @@ import 'package:skoller/constants/BaseUtilities.dart';
 import 'package:skoller/model/my_subscriptions.dart';
 import 'package:skoller/requests/subscription_manager.dart';
 import 'package:skoller/screens/main_app/main_view.dart';
+import 'package:skoller/screens/main_app/premium/components/subscription_data_widget.dart';
+import 'package:skoller/screens/main_app/premium/components/subscription_purchase_status_stream.dart';
+import 'package:skoller/screens/main_app/premium/components/subscriptions_data_list.dart';
 import 'package:skoller/screens/main_app/premium/stripe_bloc.dart';
 import 'package:skoller/tools.dart';
 
@@ -251,7 +254,7 @@ class _AccountSettingsDialogViewState extends State<AccountSettingsDialogView> {
                             ),
                           ],
                         ),
-                      _SubscriptionWidget(
+                      SubscriptionDataWidget(
                         title:
                             'Your free trial expires in ${Subscriptions.isTrial == false ? '' : Subscriptions.trialDaysLeft.toStringAsFixed(0)} days',
                         subtitle:
@@ -303,7 +306,7 @@ class _AccountSettingsDialogViewState extends State<AccountSettingsDialogView> {
                                 padding: EdgeInsets.all(20),
                                 child: CircularProgressIndicator.adaptive())
                             : showPurchaseStatus
-                                ? _SubscriptionPurchaseStatusStream(
+                                ? SubscriptionPurchaseStatusStream(
                                     isSubscriptionSelected:
                                         selectedSubscription == null,
                                     completePurchase: () async =>
@@ -315,7 +318,7 @@ class _AccountSettingsDialogViewState extends State<AccountSettingsDialogView> {
                                       });
                                     },
                                   )
-                                : _SubscriptionsList(
+                                : SubscriptionsDataList(
                                     isSubscriptionSelected:
                                         selectedSubscription == null,
                                     selectedSubscriptionId:
@@ -340,289 +343,6 @@ class _AccountSettingsDialogViewState extends State<AccountSettingsDialogView> {
             ),
           ),
         ),
-      ),
-    );
-  }
-}
-
-class _SubscriptionsList extends StatelessWidget {
-  const _SubscriptionsList({
-    Key? key,
-    required this.onSubscriptionSelection,
-    required this.selectedSubscriptionId,
-    required this.isSubscriptionSelected,
-    required this.buttonOnPress,
-    required this.restoreOnPress,
-  }) : super(key: key);
-
-  final Function(ProductDetails) onSubscriptionSelection;
-  final String? selectedSubscriptionId;
-  final bool isSubscriptionSelected;
-  final Function()? buttonOnPress;
-  final Function() restoreOnPress;
-
-  @override
-  Widget build(BuildContext context) {
-    return Material(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          ListView.separated(
-            shrinkWrap: true,
-            itemCount: SubscriptionManager.instance.subscriptions.length,
-            separatorBuilder: (context, index) => Divider(height: 0),
-            itemBuilder: (context, index) {
-              final subscription =
-                  SubscriptionManager.instance.subscriptions[index];
-              return GestureDetector(
-                onTap: () => onSubscriptionSelection(subscription),
-                child: Container(
-                  padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                  decoration: BoxDecoration(
-                    color: selectedSubscriptionId == subscription.id
-                        ? SKColors.menu_blue
-                        : null,
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        '${subscription.price} ${subscription.title.toLowerCase()}',
-                        style:
-                            TextStyle(fontSize: 14, color: SKColors.light_gray),
-                      ),
-                      Text(
-                        subscription.description == 'null'
-                            ? ''
-                            : subscription.description,
-                        style: TextStyle(
-                          fontSize: 13,
-                          fontWeight: FontWeight.w400,
-                          color: SKColors.light_gray,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              );
-            },
-          ),
-          SizedBox(height: 16),
-          ElevatedButton(
-            style: ButtonStyle(
-              backgroundColor: MaterialStateProperty.all(
-                isSubscriptionSelected ? null : SKColors.dark_gray,
-              ),
-            ),
-            child: Text(
-              'Upgrade',
-              style: TextStyle(
-                  color: isSubscriptionSelected ? null : Colors.white),
-            ),
-            onPressed: buttonOnPress,
-          ),
-          TextButton(
-            child: Text(
-              'Already subscribed? Restore!',
-              style: Theme.of(context)
-                  .textTheme
-                  .caption
-                  ?.copyWith(color: SKColors.skoller_blue1),
-            ),
-            onPressed: restoreOnPress,
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _SubscriptionPurchaseStatusStream extends StatefulWidget {
-  const _SubscriptionPurchaseStatusStream({
-    Key? key,
-    required this.isSubscriptionSelected,
-    required this.completePurchase,
-    required this.restartPurchase,
-  }) : super(key: key);
-  final bool isSubscriptionSelected;
-  final Function() completePurchase;
-  final Function() restartPurchase;
-
-  @override
-  State<_SubscriptionPurchaseStatusStream> createState() =>
-      _SubscriptionPurchaseStatusStreamState();
-}
-
-class _SubscriptionPurchaseStatusStreamState
-    extends State<_SubscriptionPurchaseStatusStream> {
-  Widget trailingIcon(PurchaseStatus status) {
-    switch (status) {
-      case PurchaseStatus.pending:
-        return CircularProgressIndicator.adaptive();
-      case PurchaseStatus.purchased:
-        return Icon(Icons.check_circle_outline_outlined);
-      case PurchaseStatus.error:
-        return Icon(Icons.close_outlined);
-      case PurchaseStatus.restored:
-        return Icon(Icons.check_circle_outline_outlined);
-      case PurchaseStatus.canceled:
-        return Icon(Icons.close_outlined);
-    }
-  }
-
-  Widget button(PurchaseStatus status) {
-    String buttonTitle() {
-      switch (status) {
-        case PurchaseStatus.purchased:
-          return 'Complete';
-        case PurchaseStatus.restored:
-          return 'Complete';
-        case PurchaseStatus.canceled:
-          return 'Restart purchase';
-        case PurchaseStatus.pending:
-          return 'Processing...';
-        default:
-          return 'Done';
-      }
-    }
-
-    Function()? buttonOnPress() {
-      switch (status) {
-        case PurchaseStatus.purchased:
-          return () async => await widget.completePurchase();
-        case PurchaseStatus.restored:
-          return () {};
-        case PurchaseStatus.canceled:
-          return () async => await widget.restartPurchase();
-        case PurchaseStatus.pending:
-          return null;
-        default:
-          return null;
-      }
-    }
-
-    return ElevatedButton(
-      style: ButtonStyle(
-        backgroundColor: MaterialStateProperty.all(
-          widget.isSubscriptionSelected ? null : SKColors.dark_gray,
-        ),
-      ),
-      child: Text(
-        buttonTitle(),
-        style: TextStyle(
-          color: widget.isSubscriptionSelected ? null : Colors.white,
-        ),
-      ),
-      onPressed: buttonOnPress(),
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return StreamBuilder<List<PurchaseDetails>>(
-      stream: SubscriptionManager.instance.purchaseStream,
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return Center(
-            child: Padding(
-              padding: EdgeInsets.all(20),
-              child: CircularProgressIndicator(),
-            ),
-          );
-        }
-
-        if (snapshot.hasData) {
-          final data = snapshot.data!;
-          final purchase = data[0];
-          SubscriptionManager.instance.setSelectedSubscription(purchase);
-
-          return Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              ListTile(
-                title: Text(
-                  purchase.productID.replaceFirst(
-                    purchase.productID[0],
-                    purchase.productID[0].toUpperCase(),
-                  ),
-                ),
-                subtitle: Text(
-                  purchase.status.name.replaceFirst(
-                    purchase.status.name[0],
-                    purchase.status.name[0].toUpperCase(),
-                  ),
-                ),
-                trailing: trailingIcon(purchase.status),
-              ),
-              button(purchase.status),
-            ],
-          );
-        }
-
-        return Text('Something went wrong');
-      },
-    );
-  }
-}
-
-class _SubscriptionWidget extends StatelessWidget {
-  const _SubscriptionWidget({
-    Key? key,
-    required this.title,
-    required this.subtitle,
-  }) : super(key: key);
-
-  final String title;
-  final String subtitle;
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.all(5),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: <Widget>[
-          Row(
-            children: [
-              Image.asset(ImageNames.sammiImages.big_smile),
-              Flexible(
-                child: Container(
-                  margin: EdgeInsets.only(left: 10.0),
-                  child: Column(
-                    children: [
-                      Text(
-                        title,
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black,
-                        ),
-                        textAlign: TextAlign.center,
-                      ),
-                      Container(
-                        alignment: Alignment.center,
-                        margin: EdgeInsets.only(
-                          left: 10.0,
-                          top: 5,
-                        ),
-                        child: Text(
-                          subtitle,
-                          style: TextStyle(
-                            fontSize: 15,
-                            fontWeight: FontWeight.normal,
-                            color: Colors.black,
-                          ),
-                          textAlign: TextAlign.center,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ],
       ),
     );
   }
