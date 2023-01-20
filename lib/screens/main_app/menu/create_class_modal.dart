@@ -299,19 +299,7 @@ class _CreateClassScreenOneState extends State<_CreateClassScreenOne> {
               mainAxisSize: MainAxisSize.min,
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Padding(
-                  padding: EdgeInsets.only(bottom: 16, top: 12),
-                  child: SammiSpeechBubble(
-                    sammiPersonality: SammiPersonality.cool,
-                    speechBubbleContents: Text.rich(
-                      TextSpan(text: 'Create your class ', children: [
-                        TextSpan(
-                            text: 'in seconds!',
-                            style: TextStyle(fontWeight: FontWeight.normal)),
-                      ]),
-                    ),
-                  ),
-                ),
+                const SizedBox(height: 18),
                 GestureDetector(
                   onTapUp: (details) => nodes[0].requestFocus(),
                   child: Container(
@@ -672,10 +660,10 @@ class _CreateClassScreenOneState extends State<_CreateClassScreenOne> {
                         border: Border.all(color: SKColors.border_gray),
                         boxShadow: UIAssets.boxShadow,
                       ),
-                      padding: EdgeInsets.symmetric(vertical: 6),
+                      padding: EdgeInsets.symmetric(vertical: 12),
                       alignment: Alignment.center,
                       child: Text(
-                        'Create Class! 🎉',
+                        'Next',
                         style: TextStyle(
                             color: isValid ? Colors.white : SKColors.dark_gray),
                       ),
@@ -747,6 +735,7 @@ class _AnimatedExpansionTile extends StatefulWidget {
 }
 
 class _AnimatedExpansionTileState extends State<_AnimatedExpansionTile> {
+  final greyColor = Color(0xffBDBDBD);
   bool showChildren = false;
 
   void _toggleChildren() {
@@ -762,29 +751,29 @@ class _AnimatedExpansionTileState extends State<_AnimatedExpansionTile> {
         GestureDetector(
           onTap: _toggleChildren,
           child: Container(
-            padding: const EdgeInsets.all(8),
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 10),
             margin: const EdgeInsets.all(10),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(5),
-              border: Border.all(color: SKColors.skoller_blue1, width: 1),
+              border: Border.all(color: greyColor, width: 1),
             ),
             child: Row(
               children: [
                 Text(
                   showChildren
                       ? 'Hide class details'
-                      : 'Add class details (optional)',
+                      : 'Class Details (optional)',
                   style: Theme.of(context)
                       .textTheme
                       .bodyText1
-                      ?.copyWith(color: SKColors.skoller_blue1),
+                      ?.copyWith(color: greyColor),
                 ),
                 const Spacer(),
                 Icon(
                   showChildren
                       ? Icons.keyboard_arrow_up_outlined
                       : Icons.keyboard_arrow_down_outlined,
-                  color: SKColors.skoller_blue1,
+                  color: greyColor,
                 ),
               ],
             ),

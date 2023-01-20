@@ -338,13 +338,12 @@ class _AddClassesState extends State<AddClassesView> {
                     children: [
                       Expanded(
                         child: ListView.builder(
-                          padding: EdgeInsets.fromLTRB(8, 6, 8, 12),
                           itemCount: listViewItemCount,
                           itemBuilder: (context, index) {
                             // If there are no classes, we need to guide the user
                             if (showSammiInstructions)
                               return Padding(
-                                padding: EdgeInsets.only(top: 8),
+                                padding: EdgeInsets.fromLTRB(8, 12, 8, 12),
                                 child: SammiSpeechBubble(
                                   sammiPersonality: SammiPersonality.smile,
                                   speechBubbleContents:
@@ -360,35 +359,36 @@ class _AddClassesState extends State<AddClassesView> {
 
                               contents = createClassCard(schoolClass);
                             } else {
-                              contents = Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
+                              contents = Column(
+                                crossAxisAlignment: CrossAxisAlignment.stretch,
                                 children: [
-                                  Padding(
-                                    padding: EdgeInsets.symmetric(
-                                        horizontal: 8, vertical: 2),
-                                    child: Image.asset(
-                                        ImageNames.sammiImages.shocked),
-                                  ),
-                                  Expanded(
-                                    child: Padding(
-                                      padding:
-                                          EdgeInsets.only(top: 4, right: 8),
-                                      child: Text.rich(
-                                        TextSpan(
-                                          text: 'Can\'t find your class?',
-                                          children: [
-                                            TextSpan(
-                                              text:
-                                                  ' Tap here to add it to Skoller.',
-                                              style: TextStyle(
-                                                color: SKColors.skoller_blue1,
-                                              ),
-                                            )
-                                          ],
-                                        ),
-                                        style: TextStyle(fontSize: 16),
-                                        textAlign: TextAlign.left,
+                                  const SizedBox(height: 10),
+                                  Container(
+                                    padding: const EdgeInsets.all(15),
+                                    margin: const EdgeInsets.symmetric(
+                                        horizontal: 10),
+                                    decoration: BoxDecoration(
+                                      color: SKColors.menu_blue,
+                                      borderRadius: BorderRadius.circular(10),
+                                      border: Border.all(
+                                        width: 2,
+                                        color: SKColors.skoller_blue1,
                                       ),
+                                    ),
+                                    child: Text.rich(
+                                      TextSpan(
+                                        text: 'Class: ',
+                                        children: [
+                                          TextSpan(
+                                            text: searchController.text.trim(),
+                                            style: TextStyle(
+                                              color: SKColors.skoller_blue1,
+                                            ),
+                                          )
+                                        ],
+                                      ),
+                                      style: TextStyle(fontSize: 16),
+                                      textAlign: TextAlign.left,
                                     ),
                                   ),
                                 ],
@@ -523,6 +523,7 @@ class _AddClassesState extends State<AddClassesView> {
           ),
           Container(
             margin: EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+            padding: EdgeInsets.only(right: 8),
             decoration: BoxDecoration(
               color: SKColors.background_gray,
               borderRadius: BorderRadius.circular(5),
@@ -538,7 +539,7 @@ class _AddClassesState extends State<AddClassesView> {
                     cursorColor: SKColors.skoller_blue,
                     decoration: BoxDecoration(border: null),
                     padding: EdgeInsets.symmetric(horizontal: 8, vertical: 12),
-                    placeholder: 'Search a class name',
+                    placeholder: 'e.g. Math 101',
                     placeholderStyle:
                         TextStyle(color: SKColors.text_light_gray),
                     style: TextStyle(fontSize: 15, color: SKColors.dark_gray),
@@ -547,16 +548,13 @@ class _AddClassesState extends State<AddClassesView> {
                     autocorrect: false,
                   ),
                 ),
-                Padding(
-                  padding: EdgeInsets.only(right: 8),
-                  child: isSearching
-                      ? Container(
-                          width: 16,
-                          height: 16,
-                          child: CircularProgressIndicator(strokeWidth: 2),
-                        )
-                      : Image.asset(ImageNames.rightNavImages.magnifying_glass),
-                )
+                isSearching
+                    ? Container(
+                        width: 16,
+                        height: 16,
+                        child: CircularProgressIndicator(strokeWidth: 2),
+                      )
+                    : Container(),
               ],
             ),
           )
@@ -565,7 +563,10 @@ class _AddClassesState extends State<AddClassesView> {
     );
   }
 
-  Widget createClassCard(SchoolClass schoolClass) => Column(
+  Widget createClassCard(SchoolClass schoolClass) {
+    return Padding(
+      padding: EdgeInsets.fromLTRB(8, 6, 8, 12),
+      child: Column(
         children: <Widget>[
           Row(
             children: <Widget>[
@@ -618,7 +619,9 @@ class _AddClassesState extends State<AddClassesView> {
             ],
           ),
         ],
-      );
+      ),
+    );
+  }
 }
 
 class _EmptySearchClassBackground extends StatelessWidget {
@@ -626,35 +629,16 @@ class _EmptySearchClassBackground extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Opacity(
-      opacity: 0.5,
-      child: Container(
-        alignment: Alignment.center,
-        padding: const EdgeInsets.only(top: 50),
-        child: Column(
-          children: [
-            Image.asset(
-              ImageNames.sammiImages.smile,
-              height: 100,
-              fit: BoxFit.fill,
-            ),
-            const SizedBox(height: 10),
-            Text(
-              'Search your class',
-              style: Theme.of(context)
-                  .textTheme
-                  .headline6
-                  ?.copyWith(fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 5),
-            Text(
-              "to see if it's already on Skoller!",
-              style: Theme.of(context)
-                  .textTheme
-                  .bodyText2
-                  ?.copyWith(fontWeight: FontWeight.normal),
-            ),
-          ],
+    return Padding(
+      padding: const EdgeInsets.only(top: 15),
+      child: SammiSpeechBubble(
+        sammiPersonality: SammiPersonality.smile,
+        speechBubbleContents: Text(
+          '👆 Now, add your first class!',
+          style: Theme.of(context)
+              .textTheme
+              .bodyText2
+              ?.copyWith(fontWeight: FontWeight.bold),
         ),
       ),
     );
