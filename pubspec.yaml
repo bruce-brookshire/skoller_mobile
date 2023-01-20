@@ -1,6 +1,6 @@
 name: skoller
 description: A new Flutter project.
-version: 6.6.1+35
+version: 6.7.0+26
 
 # I manually upgraded Dart SDK version to 2.14 to access Enum's name features.
 # It shouldn't be done this way. Dart SDK are automatically updated when updating Flutter.
