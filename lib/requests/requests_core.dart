@@ -39,10 +39,11 @@ part 'user.dart';
 ///   1. change [isProd] variable to true.
 ///   2. change iOS app bundle id to [co.skoller.skoller].
 ///     A. ios/Runner.xcodeproj/project.pbxproj
-///   3. change iOS app version.
-///     A. Version: 6.6
-///     B. Build: 22
-const bool isProd = false;
+///   3. change iOS app version in 3 places:
+///     A. Version: 6.7 (MARKETING_VERSION)
+///     B. Build: 26 (CURRENT_PROJECT_VERSION)
+///   4. Make sure [ExpiredTrialPayWallModal] is enabled.
+const bool isProd = true;
 const bool isLocal = false;
 
 class RequestResponse<T> {
