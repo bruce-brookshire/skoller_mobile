@@ -22,6 +22,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:skoller/constants/global_singleton.dart';
 import 'package:skoller/screens/main_app/menu/profile_link_sharing_view.dart';
 import 'package:skoller/tools.dart';
+import 'package:skoller/screens/main_app/premium/expired_trial_pay_wall_model.dart';
 import 'package:time_machine/time_machine.dart' as time_machine;
 
 import '../constants/timezone_manager.dart';
