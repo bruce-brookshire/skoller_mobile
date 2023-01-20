@@ -335,9 +335,16 @@ class _PrimarySchoolState extends State<PrimarySchoolModal> {
                       ),
                     )
                   : GestureDetector(
-                      onTapUp: (details) {
+                      onTapUp: (details) async {
                         if (eligibleSchools?.length == 0) tappedSearch(null);
-                        setState(() => showingGreeting = false);
+
+                        /// Navigates to [SchoolSearchView] skipping greeting.
+                        await Navigator.push(
+                          context,
+                          SKNavFadeUpRoute(
+                              builder: (context) => SchoolSearchView()),
+                        );
+                        // setState(() => showingGreeting = false);
                       },
                       child: Container(
                         alignment: Alignment.center,
